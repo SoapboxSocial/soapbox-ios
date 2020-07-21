@@ -1,0 +1,13 @@
+included:
+  - Sources
+  - Tests
+  - UITests
+excluded:
+  - Pods/
+
+identifier_name:
+  excluded:
+    - id
+    - to
+disabled_rules:
+    - trailing_comma

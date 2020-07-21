@@ -1,0 +1,4 @@
+# file options
+
+--exclude Pods,Snapshots
+
