@@ -58,12 +58,12 @@ class NavigationViewController: UINavigationController {
     func showOwnerAlert() {
         let alert = UIAlertController(
             title: "Are you sure?",
-            message: "You are then owner of this room, if you exit it will be closed.", 
+            message: "You are then owner of this room, if you exit it will be closed.",
             preferredStyle: .alert
         )
 
         alert.addAction(UIAlertAction(title: "No", style: .default, handler: nil))
-        alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { _ in 
+        alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { _ in
             self.exitCurrentRoom()
         }))
 

@@ -8,7 +8,5 @@
 import UIKit
 
 class Room: NSObject {
-
-    var isOwner = false;
-
+    var isOwner = false
 }

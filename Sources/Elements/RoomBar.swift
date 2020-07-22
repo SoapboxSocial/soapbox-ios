@@ -49,7 +49,7 @@ class RoomBar: UIView {
         )
 
         exitButton.setTitle("🔇", for: .normal)
-        exitButton.addTarget(self, action: #selector(self.exitTapped), for: .touchUpInside)
+        exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         addSubview(exitButton)
     }
 
