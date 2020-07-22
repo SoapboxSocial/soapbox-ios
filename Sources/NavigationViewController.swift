@@ -10,7 +10,7 @@ import UIKit
 class NavigationViewController: UINavigationController {
     private var currentRoom: Room?
 
-    private var roomBarView: RoomBarView?
+    private var roomBarView: RoomBar?
 
     private let createRoomButton: CreateRoomButton
 
@@ -37,7 +37,7 @@ class NavigationViewController: UINavigationController {
         createRoomButton.addTarget(self, action: #selector(openRoom), for: .touchUpInside)
         view.addSubview(createRoomButton)
 
-        roomBarView = RoomBarView(
+        roomBarView = RoomBar(
             frame: CGRect(x: 0, y: view.frame.size.height - 60, width: view.frame.size.width, height: 60)
         )
 
@@ -58,14 +58,14 @@ class NavigationViewController: UINavigationController {
     }
 }
 
-extension NavigationViewController: RoomBarViewDelegate {
-    func didExit() {
+extension NavigationViewController: RoomBarDelegate {
+    func didTapExit() {
         roomBarView?.isHidden = true
         currentRoom = nil
         createRoomButton.isHidden = false
     }
 
-    func didTap() {
+    func didTapBar() {
         openRoom()
     }
 }

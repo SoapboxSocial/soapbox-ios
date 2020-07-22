@@ -7,13 +7,13 @@
 
 import UIKit
 
-protocol RoomBarViewDelegate {
-    func didTap()
-    func didExit()
+protocol RoomBarDelegate {
+    func didTapBar()
+    func didTapExit()
 }
 
-class RoomBarView: UIView {
-    var delegate: RoomBarViewDelegate?
+class RoomBar: UIView {
+    var delegate: RoomBarDelegate?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,26 +33,26 @@ class RoomBarView: UIView {
 
         addSubview(label)
 
-        let recognizer = UITapGestureRecognizer(target: self, action: #selector(selector))
+        let recognizer = UITapGestureRecognizer(target: self, action: #selector(barTapped))
         recognizer.numberOfTapsRequired = 1
         let recognizerView = UIView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height))
         recognizerView.addGestureRecognizer(recognizer)
         addSubview(recognizerView)
 
-        let exit = UIButton(
+        let exitButton = UIButton(
             frame: CGRect(x: frame.size.width - 30, y: frame.size.height / 2 - 15, width: 30, height: 30)
         )
 
-        exit.setTitle("🔇", for: .normal)
-        exit.addTarget(self, action: #selector(self.exit), for: .touchUpInside)
-        addSubview(exit)
+        exitButton.setTitle("🔇", for: .normal)
+        exitButton.addTarget(self, action: #selector(self.exitTapped), for: .touchUpInside)
+        addSubview(exitButton)
     }
 
-    @objc private func selector() {
-        delegate?.didTap()
+    @objc private func barTapped() {
+        delegate?.didTapBar()
     }
 
-    @objc private func exit() {
-        delegate?.didExit()
+    @objc private func exitTapped() {
+        delegate?.didTapExit()
     }
 }
