@@ -12,10 +12,8 @@ struct Member {
     let username: String
 }
 
-struct Room {
-    
+struct RoomStruct {
     let title: String
-    
+
     let members: [Member]
-    
 }
