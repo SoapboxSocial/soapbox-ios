@@ -18,7 +18,7 @@ class CreateRoomButton: UIButton {
         layer.cornerRadius = frame.height / 2
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: layer.cornerRadius).cgPath
-        layer.shadowOffset = CGSize(width: 0.0, height: 3.0)
+        layer.shadowOffset = CGSize(width: 0.0, height: 1.0)
         layer.shadowOpacity = 0.5
         layer.shadowRadius = 1.0
 

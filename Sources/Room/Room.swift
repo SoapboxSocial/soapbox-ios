@@ -7,4 +7,8 @@
 
 import UIKit
 
-class Room: NSObject {}
+class Room: NSObject {
+
+    var isOwner = false;
+
+}
