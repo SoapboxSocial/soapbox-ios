@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AVFoundation
 
 class NavigationViewController: UINavigationController {
     private var currentRoom: Room?
@@ -49,10 +50,40 @@ class NavigationViewController: UINavigationController {
     }
 
     @objc func createRoom() {
-        currentRoom = Room()
-        currentRoom?.isOwner = true
+        func execute() {
+            currentRoom = Room()
+            currentRoom?.isOwner = true
 
-        presentCurrentRoom()
+            presentCurrentRoom()
+        }
+
+        func showWarning() {
+            let alert = UIAlertController(
+                title: "Microphone permissions denied",
+                message: "Please enable microphone for this app to start a room", preferredStyle: .alert
+            )
+
+            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            present(alert, animated: true)
+        }
+
+        switch AVAudioSession.sharedInstance().recordPermission {
+        case .granted:
+            execute()
+        case .denied:
+            showWarning()
+            return
+        case .undetermined:
+            AVAudioSession.sharedInstance().requestRecordPermission({ (granted) in
+                DispatchQueue.main.async {
+                    if granted {
+                        execute()
+                    } else {
+                        showWarning()
+                    }
+                }
+            })
+        }
     }
 
     func showOwnerAlert() {

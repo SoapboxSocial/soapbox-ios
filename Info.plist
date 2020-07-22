@@ -20,5 +20,7 @@
 	<string>1</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Microphone is required</string>
 </dict>
 </plist>
