@@ -19,16 +19,30 @@ class RoomListViewController: UIViewController {
         super.viewDidLoad()
 
         let layout = UICollectionViewFlowLayout()
+
         rooms = UICollectionView(frame: view.frame, collectionViewLayout: layout)
         rooms.dataSource = self
-
+        rooms.alwaysBounceVertical = true
         rooms.register(RoomCell.self, forCellWithReuseIdentifier: cellId)
-
         rooms.delegate = self
         rooms.backgroundColor = .clear
+
         view.backgroundColor = .clear
 
+        let refresh = UIRefreshControl()
+        rooms.refreshControl = refresh
+        refresh.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
+
         view.addSubview(rooms)
+    }
+
+    @objc
+    private func didPullToRefresh(sender: UIRefreshControl) {
+        // Do you your api calls in here, and then asynchronously remember to stop the
+        // refreshing when you've got a result (either positive or negative)
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
+            sender.endRefreshing()
+        })
     }
 }
 
