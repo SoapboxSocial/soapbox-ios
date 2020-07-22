@@ -29,7 +29,12 @@ class RoomBar: UIView {
         let label = UILabel(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height))
         label.text = "Yay room"
 
-        backgroundColor = .gray
+        backgroundColor = .white
+
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.5
+        layer.shadowOffset = .zero
+        layer.shadowRadius = 3
 
         addSubview(label)
 

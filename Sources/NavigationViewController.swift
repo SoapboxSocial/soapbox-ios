@@ -100,7 +100,7 @@ extension NavigationViewController: RoomBarDelegate {
 }
 
 extension NavigationViewController: RoomListViewDelegate {
-    func didSelectRoom(_: RoomStruct?) {
+    func didSelectRoom(_: RoomData?) {
         currentRoom = Room()
         presentCurrentRoom()
     }

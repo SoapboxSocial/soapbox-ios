@@ -5,7 +5,7 @@
 import UIKit
 
 protocol RoomListViewDelegate {
-    func didSelectRoom(_: RoomStruct?);
+    func didSelectRoom(_: RoomData?);
 }
 
 class RoomListViewController: UIViewController {

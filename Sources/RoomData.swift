@@ -12,7 +12,7 @@ struct Member {
     let username: String
 }
 
-struct RoomStruct {
+struct RoomData {
     let title: String
 
     let members: [Member]
