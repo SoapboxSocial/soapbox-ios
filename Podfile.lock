@@ -1,16 +1,20 @@
 PODS:
+  - Alamofire (4.9.1)
   - GoogleWebRTC (1.1.27828)
 
 DEPENDENCIES:
+  - Alamofire
   - GoogleWebRTC
 
 SPEC REPOS:
   trunk:
+    - Alamofire
     - GoogleWebRTC
 
 SPEC CHECKSUMS:
+  Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
   GoogleWebRTC: 55e46bee9ac2a4961542e9571bea589b64493f45
 
-PODFILE CHECKSUM: ae5d64c9ed11ac07eedf4c54539e6538f49e6715
+PODFILE CHECKSUM: 5ae3cd92af9522c0bf306a65851a94534603886a
 
 COCOAPODS: 1.9.1

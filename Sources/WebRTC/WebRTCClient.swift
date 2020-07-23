@@ -21,9 +21,7 @@ final class WebRTCClient: NSObject {
     // A new RTCPeerConnection should be created every new call, but the factory is shared.
     private static let factory: RTCPeerConnectionFactory = {
         RTCInitializeSSL()
-        let videoEncoderFactory = RTCDefaultVideoEncoderFactory()
-        let videoDecoderFactory = RTCDefaultVideoDecoderFactory()
-        return RTCPeerConnectionFactory(encoderFactory: videoEncoderFactory, decoderFactory: videoDecoderFactory)
+        return RTCPeerConnectionFactory()
     }()
 
     weak var delegate: WebRTCClientDelegate?
@@ -31,10 +29,7 @@ final class WebRTCClient: NSObject {
     private let rtcAudioSession =  RTCAudioSession.sharedInstance()
     private let audioQueue = DispatchQueue(label: "audio")
     private let mediaConstrains = [kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue,
-                                   kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueTrue]
-    private var videoCapturer: RTCVideoCapturer?
-    private var localVideoTrack: RTCVideoTrack?
-    private var remoteVideoTrack: RTCVideoTrack?
+                                   kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueFalse]
     private var localDataChannel: RTCDataChannel?
     private var remoteDataChannel: RTCDataChannel?
 
@@ -100,38 +95,6 @@ final class WebRTCClient: NSObject {
         self.peerConnection.add(remoteCandidate)
     }
 
-    // MARK: Media
-    func startCaptureLocalVideo(renderer: RTCVideoRenderer) {
-        guard let capturer = self.videoCapturer as? RTCCameraVideoCapturer else {
-            return
-        }
-
-        guard
-            let frontCamera = (RTCCameraVideoCapturer.captureDevices().first { $0.position == .front }),
-
-            // choose highest res
-            let format = (RTCCameraVideoCapturer.supportedFormats(for: frontCamera).sorted { (f1, f2) -> Bool in
-                let width1 = CMVideoFormatDescriptionGetDimensions(f1.formatDescription).width
-                let width2 = CMVideoFormatDescriptionGetDimensions(f2.formatDescription).width
-                return width1 < width2
-            }).last,
-
-            // choose highest fps
-            let fps = (format.videoSupportedFrameRateRanges.sorted { return $0.maxFrameRate < $1.maxFrameRate }.last) else {
-            return
-        }
-
-        capturer.startCapture(with: frontCamera,
-            format: format,
-            fps: Int(fps.maxFrameRate))
-
-        self.localVideoTrack?.add(renderer)
-    }
-
-    func renderRemoteVideo(to renderer: RTCVideoRenderer) {
-        self.remoteVideoTrack?.add(renderer)
-    }
-
     private func configureAudioSession() {
         self.rtcAudioSession.lockForConfiguration()
         do {
@@ -150,12 +113,6 @@ final class WebRTCClient: NSObject {
         let audioTrack = self.createAudioTrack()
         self.peerConnection.add(audioTrack, streamIds: [streamId])
 
-        // Video
-        let videoTrack = self.createVideoTrack()
-        self.localVideoTrack = videoTrack
-        self.peerConnection.add(videoTrack, streamIds: [streamId])
-        self.remoteVideoTrack = self.peerConnection.transceivers.first { $0.mediaType == .video }?.receiver.track as? RTCVideoTrack
-
         // Data
         if let dataChannel = createDataChannel() {
             dataChannel.delegate = self
@@ -168,19 +125,6 @@ final class WebRTCClient: NSObject {
         let audioSource = WebRTCClient.factory.audioSource(with: audioConstrains)
         let audioTrack = WebRTCClient.factory.audioTrack(with: audioSource, trackId: "audio0")
         return audioTrack
-    }
-
-    private func createVideoTrack() -> RTCVideoTrack {
-        let videoSource = WebRTCClient.factory.videoSource()
-
-        #if TARGET_OS_SIMULATOR
-        self.videoCapturer = RTCFileVideoCapturer(delegate: videoSource)
-        #else
-        self.videoCapturer = RTCCameraVideoCapturer(delegate: videoSource)
-        #endif
-
-        let videoTrack = WebRTCClient.factory.videoTrack(with: videoSource, trackId: "video0")
-        return videoTrack
     }
 
     // MARK: Data Channels

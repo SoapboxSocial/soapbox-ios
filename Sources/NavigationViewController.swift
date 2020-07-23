@@ -15,8 +15,12 @@ class NavigationViewController: UINavigationController {
 
     private let createRoomButton: CreateRoomButton
 
+    private var webRTCClient: WebRTCClient?
+    private var client: APIClient
+
     override init(rootViewController: UIViewController) {
         createRoomButton = CreateRoomButton()
+        client = APIClient()
 
         super.init(rootViewController: rootViewController)
 
@@ -133,6 +137,63 @@ extension NavigationViewController: RoomBarDelegate {
 extension NavigationViewController: RoomListViewDelegate {
     func didSelectRoom(_: RoomData?) {
         currentRoom = Room()
+        
+        webRTCClient = WebRTCClient(iceServers: [
+            "stun:stun.l.google.com:19302",
+            "stun:stun1.l.google.com:19302",
+            "stun:stun2.l.google.com:19302",
+            "stun:stun3.l.google.com:19302",
+            "stun:stun4.l.google.com:19302"
+        ])
+
+        webRTCClient?.offer { (sdp) in
+            self.client.join(room: 0, sdp: sdp) { answer in
+                guard let remote = answer else {
+                    // @todo error
+                    return
+                }
+                
+                self.webRTCClient?.set(remoteSdp: remote, completion: { error in
+                    
+                })
+            }
+//            let message = Message.sdp(SessionDescription(from: sdp))
+//            do {
+//                let dataMessage = try self.encoder.encode(message)
+//
+//                self.client.write(packet: dataMessage)
+//            } catch {
+//                debugPrint("Warning: Could not encode sdp: \(error)")
+//            }
+        }
+        
         presentCurrentRoom()
     }
 }
+
+//extension NavigationViewController: ClientDelegate {
+//    func client(_ client: TCPClient, changedState state: ClientState) {
+//
+//    }
+//
+//    func client(_ client: TCPClient, receivedPacket packet: Data) {
+//        debugPrint(packet)
+//        let message: Message
+//        do {
+//            message = try self.decoder.decode(Message.self, from: packet)
+//        }
+//        catch {
+//            debugPrint("Warning: Could not decode incoming message: \(error)")
+//            return
+//        }
+//
+//        guard case let .sdp(sessionDescription) = message else {
+//            return
+//        }
+//
+//
+//        webRTCClient?.set(remoteSdp: sessionDescription.rtcSessionDescription, completion: { (error) in
+//
+//        })
+//    }
+//}

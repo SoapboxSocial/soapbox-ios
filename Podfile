@@ -8,6 +8,7 @@ target 'Voicely' do
   # Pods for trollbox
 
   pod 'GoogleWebRTC'
+  pod 'Alamofire'
 
   target 'VoicelyTests' do
     inherit! :search_paths
