@@ -6,6 +6,11 @@ import Foundation
 import Alamofire
 import WebRTC
 
+struct SDPPayload: Decodable {
+    let sdp: String
+    let type: String
+}
+
 class APIClient {
     
     let decoder = JSONDecoder()
@@ -13,12 +18,8 @@ class APIClient {
     func join(room: Int, sdp: RTCSessionDescription, callback: @escaping (RTCSessionDescription?) -> Void) {
 
         let parameters: [String: AnyObject] = [
-            "type": "SessionDescription" as AnyObject,
-            "payload": [
-                "sdp": sdp.sdp,
-                "type": "offer" // @todo
-            ] as AnyObject
-
+            "sdp": sdp.sdp as AnyObject,
+            "type": "offer" as AnyObject
         ]
 
         Alamofire.request("http://127.0.0.1:8080/join", method: .post, parameters: parameters, encoding: JSONEncoding())
@@ -30,22 +31,33 @@ class APIClient {
                     // @todo error handling
                     return
                 }
+                
+                debugPrint(data)
                                 
-                let message: Message
                 do {
-                    message = try self.decoder.decode(Message.self, from: data)
+                    let payload = try self.decoder.decode(SDPPayload.self, from: data)
+                    let description = RTCSessionDescription(type: self.type(type: payload.type), sdp: payload.sdp)
+
+                    callback(description)
                 }
                 catch {
                     debugPrint("Warning: Could not decode incoming message: \(error)")
                     return
                 }
-                
-                guard case let .sdp(sessionDescription) = message else {
-                    // @todo error
-                    return
-                }
-                
-                callback(sessionDescription.rtcSessionDescription)
             }
+    }
+
+    func type(type: String) -> RTCSdpType {
+        switch type {
+        case "offer":
+             return .offer
+        case "answer":
+             return .answer
+        case "pranswer":
+             return .prAnswer
+        default:
+            // @todo error
+            return .offer
+        }
     }
 }
