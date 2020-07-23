@@ -22,7 +22,9 @@ class APIClient {
             "type": "offer" as AnyObject
         ]
 
-        Alamofire.request("http://127.0.0.1:8080/join", method: .post, parameters: parameters, encoding: JSONEncoding())
+       let path = String(format: "/v1/rooms/%d/join", room)
+
+        Alamofire.request("http://127.0.0.1:8080" + path, method: .post, parameters: parameters, encoding: JSONEncoding())
             .response { result in
                 
                 // @todo actual handling
