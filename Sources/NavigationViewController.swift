@@ -15,7 +15,6 @@ class NavigationViewController: UINavigationController {
 
     private let createRoomButton: CreateRoomButton
 
-    private var webRTCClient: WebRTCClient?
     private var client: APIClient
 
     override init(rootViewController: UIViewController) {
@@ -54,13 +53,17 @@ class NavigationViewController: UINavigationController {
     }
 
     @objc func createRoom() {
-        // @todo call API And all that
-
         func execute() {
-            currentRoom = Room()
-            currentRoom?.isOwner = true
+            currentRoom = newRoom()
+            currentRoom?.create { error in
+                if error == nil {
+                    return
+                }
 
-            presentCurrentRoom()
+                DispatchQueue.main.async {
+                    self.presentCurrentRoom()
+                }
+            }
         }
 
         func showWarning() {
@@ -111,7 +114,6 @@ class NavigationViewController: UINavigationController {
         roomBarView?.isHidden = true
         currentRoom = nil
         createRoomButton.isHidden = false
-        webRTCClient = nil
     }
 
     func presentCurrentRoom() {
@@ -119,6 +121,18 @@ class NavigationViewController: UINavigationController {
             self.createRoomButton.isHidden = true
             self.roomBarView!.isHidden = false
         }
+    }
+
+    private func newRoom() -> Room {
+        let webRTCClient = WebRTCClient(iceServers: [
+            "stun:stun.l.google.com:19302",
+            "stun:stun1.l.google.com:19302",
+            "stun:stun2.l.google.com:19302",
+            "stun:stun3.l.google.com:19302",
+            "stun:stun4.l.google.com:19302"
+        ])
+
+        return Room(rtc: webRTCClient, client: client)
     }
 }
 
@@ -139,31 +153,16 @@ extension NavigationViewController: RoomBarDelegate {
 
 extension NavigationViewController: RoomListViewDelegate {
     func didSelectRoom(room: RoomData) {
-        currentRoom = Room()
+        currentRoom = newRoom()
 
-        // @todo, check if selected room is current room
-        
-        webRTCClient = WebRTCClient(iceServers: [
-            "stun:stun.l.google.com:19302",
-            "stun:stun1.l.google.com:19302",
-            "stun:stun2.l.google.com:19302",
-            "stun:stun3.l.google.com:19302",
-            "stun:stun4.l.google.com:19302"
-        ])
+        currentRoom?.join(id: room.id) { error in
+            if error == nil {
+                return
+            }
 
-        webRTCClient?.offer { (sdp) in
-            self.client.join(room: room.id, sdp: sdp) { answer in
-                guard let remote = answer else {
-                    // @todo error
-                    return
-                }
-                
-                self.webRTCClient?.set(remoteSdp: remote, completion: { error in
-                    // @todo check error
-                })
+            DispatchQueue.main.async {
+                self.presentCurrentRoom()
             }
         }
-
-        presentCurrentRoom()
     }
 }
