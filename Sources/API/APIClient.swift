@@ -84,8 +84,7 @@ class APIClient {
 
                 guard let data = result.data else {
                     // @todo error handling
-                    callback(nil)
-                    return
+                    return callback(nil)
                 }
 
                 do {
@@ -94,8 +93,7 @@ class APIClient {
                 }
                 catch {
                     // @todo error handling
-                    callback(nil)
-                    return
+                    return callback(nil)
                 }
             }
     }
