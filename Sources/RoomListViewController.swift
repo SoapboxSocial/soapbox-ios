@@ -10,6 +10,7 @@ protocol RoomListViewDelegate {
 
 extension UICollectionView {
 
+    // @todo, lets make this a cell, the size of the window, then pull to refresh doesn't look awkward.
     func setEmptyMessage(title: String, message: String) {
         let emptyView = UIView(frame: CGRect(x: self.center.x, y: self.center.y, width: self.bounds.size.width, height: self.bounds.size.height))
         emptyView.backgroundColor = .clear
