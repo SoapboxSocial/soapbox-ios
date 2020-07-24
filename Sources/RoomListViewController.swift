@@ -67,17 +67,17 @@ class RoomListViewController: UIViewController {
     }
 
     private func loadData() {
-        api.rooms { array in
+        api.rooms { data in
             DispatchQueue.main.async {
                 self.rooms.refreshControl?.endRefreshing()
             }
 
-            guard let data = array else {
+            guard let rooms = data else {
                 // @todo
                 return
             }
 
-            self.roomsData = data
+            self.roomsData = rooms
 
             DispatchQueue.main.async {
                 self.rooms.reloadData()
