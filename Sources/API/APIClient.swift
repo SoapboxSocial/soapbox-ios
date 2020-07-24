@@ -57,6 +57,10 @@ class APIClient {
             .response { result in
 
                 // @todo actual handling
+                if result.error != nil {
+                    // @todo error handling
+                    return callback(nil)
+                }
 
                 guard let data = result.data else {
                     // @todo error handling
