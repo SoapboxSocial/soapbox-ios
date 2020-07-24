@@ -115,7 +115,7 @@ extension RoomListViewController: UICollectionViewDataSource {
         if (roomsData.count == 0) {
             rooms.setEmptyMessage(
                 title: "There are currently no active rooms.",
-                message: "You can start one by clicking below!\n\n👇"
+                message: "Why not start one?\n\n👇"
             )
         } else {
             rooms.restore()
