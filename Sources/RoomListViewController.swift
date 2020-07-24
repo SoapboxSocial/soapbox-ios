@@ -102,6 +102,10 @@ extension RoomListViewController: UICollectionViewDataSource {
 
 extension RoomListViewController: UICollectionViewDelegate {
     public func collectionView(_: UICollectionView, didSelectItemAt index: IndexPath) {
+        if roomsData.count == 0 {
+            return
+        }
+
         delegate?.didSelectRoom(room: RoomData(id: index.item, title: "", members: [Member]()))
     }
 }
