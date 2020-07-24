@@ -30,7 +30,7 @@ extension UICollectionView {
         messageLabel.rightAnchor.constraint(equalTo: emptyView.rightAnchor, constant: -20).isActive = true
         titleLabel.text = title
         messageLabel.text = message
-        messageLabel.numberOfLines = 0
+        messageLabel.numberOfLines = 3
         messageLabel.textAlignment = .center
         self.backgroundView = emptyView
     }
@@ -115,7 +115,7 @@ extension RoomListViewController: UICollectionViewDataSource {
         if (roomsData.count == 0) {
             rooms.setEmptyMessage(
                 title: "There are currently no active rooms.",
-                message: "You can start one by clicking below!"
+                message: "You can start one by clicking below!\n\n👇"
             )
         } else {
             rooms.restore()
