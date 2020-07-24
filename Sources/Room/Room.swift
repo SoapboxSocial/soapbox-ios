@@ -13,6 +13,7 @@ protocol RoomDelegate {
 
 class Room {
 
+    var id: Int?
     let isOwner = false
 
     private let rtc: WebRTCClient
@@ -34,6 +35,8 @@ class Room {
 
                 self.rtc.set(remoteSdp: remote, completion: { error in
                     // @todo check error
+                    // @todo so this is a bit too late, it makes it really slow.
+                    // Maybe we should complete before this and throw errors in case with a delegat?
                     completion(nil)
                 })
             }
@@ -50,8 +53,12 @@ class Room {
                 }
 
                 self.rtc.set(remoteSdp: remote, completion: { error in
+                    if error != nil {
+
+                    }
                     // @todo check error
                     completion(nil)
+                    self.id = id
                 })
             }
         }

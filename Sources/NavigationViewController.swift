@@ -9,6 +9,9 @@ import UIKit
 import AVFoundation
 
 class NavigationViewController: UINavigationController {
+
+    var activityIndicator = UIActivityIndicatorView(style: .medium)
+
     private var currentRoom: Room?
 
     private var roomBarView: RoomBar?
@@ -50,17 +53,29 @@ class NavigationViewController: UINavigationController {
         roomBarView?.isHidden = true
         roomBarView?.delegate = self
         view.addSubview(roomBarView!)
+
+        activityIndicator.isHidden = true
+        activityIndicator.hidesWhenStopped = true
+
+        activityIndicator.center = view.center
+
+        view.addSubview(activityIndicator)
     }
 
     @objc func createRoom() {
         func execute() {
+            activityIndicator.startAnimating()
+            activityIndicator.isHidden = false
+
             currentRoom = newRoom()
             currentRoom?.create { error in
-                if error == nil {
+                if error != nil {
                     return
                 }
 
                 DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                    self.activityIndicator.isHidden = true
                     self.presentCurrentRoom()
                 }
             }
@@ -153,14 +168,24 @@ extension NavigationViewController: RoomBarDelegate {
 
 extension NavigationViewController: RoomListViewDelegate {
     func didSelectRoom(room: RoomData) {
+        if currentRoom != nil, let id = currentRoom?.id, room.id == id {
+            self.presentCurrentRoom()
+            return
+        }
+
+        activityIndicator.startAnimating()
+        activityIndicator.isHidden = false
+
         currentRoom = newRoom()
 
         currentRoom?.join(id: room.id) { error in
-            if error == nil {
+            if error != nil {
                 return
             }
 
             DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
+                self.activityIndicator.isHidden = true
                 self.presentCurrentRoom()
             }
         }
