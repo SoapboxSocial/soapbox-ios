@@ -94,6 +94,7 @@ class NavigationViewController: UINavigationController {
             present(alert, animated: true)
         }
 
+        // @todo this should be requested on app launch.
         switch AVAudioSession.sharedInstance().recordPermission {
         case .granted:
             execute()
