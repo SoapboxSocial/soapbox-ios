@@ -8,6 +8,38 @@ protocol RoomListViewDelegate {
     func didSelectRoom(room: RoomData)
 }
 
+extension UICollectionView {
+
+    func setEmptyMessage(title: String, message: String) {
+        let emptyView = UIView(frame: CGRect(x: self.center.x, y: self.center.y, width: self.bounds.size.width, height: self.bounds.size.height))
+        emptyView.backgroundColor = .clear
+        let titleLabel = UILabel()
+        let messageLabel = UILabel()
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        messageLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.textColor = UIColor.black
+        titleLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 18)
+        messageLabel.textColor = UIColor.lightGray
+        messageLabel.font = UIFont(name: "HelveticaNeue-Regular", size: 17)
+        emptyView.addSubview(titleLabel)
+        emptyView.addSubview(messageLabel)
+        titleLabel.centerYAnchor.constraint(equalTo: emptyView.centerYAnchor).isActive = true
+        titleLabel.centerXAnchor.constraint(equalTo: emptyView.centerXAnchor).isActive = true
+        messageLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20).isActive = true
+        messageLabel.leftAnchor.constraint(equalTo: emptyView.leftAnchor, constant: 20).isActive = true
+        messageLabel.rightAnchor.constraint(equalTo: emptyView.rightAnchor, constant: -20).isActive = true
+        titleLabel.text = title
+        messageLabel.text = message
+        messageLabel.numberOfLines = 0
+        messageLabel.textAlignment = .center
+        self.backgroundView = emptyView
+    }
+
+    func restore() {
+        self.backgroundView = nil
+    }
+}
+
 class RoomListViewController: UIViewController {
     let cellId = "room"
 
@@ -60,6 +92,10 @@ class RoomListViewController: UIViewController {
 
     private func loadData() {
         api.rooms { array in
+            DispatchQueue.main.async {
+                self.rooms.refreshControl?.endRefreshing()
+            }
+
             guard let data = array else {
                 // @todo
                 return
@@ -69,7 +105,6 @@ class RoomListViewController: UIViewController {
 
             DispatchQueue.main.async {
                 self.rooms.reloadData()
-                self.rooms.refreshControl?.endRefreshing()
             }
         }
     }
@@ -77,6 +112,15 @@ class RoomListViewController: UIViewController {
 
 extension RoomListViewController: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
+        if (roomsData.count == 0) {
+            rooms.setEmptyMessage(
+                title: "There are currently no active rooms.",
+                message: "You can start one by clicking below!"
+            )
+        } else {
+            rooms.restore()
+        }
+
         return roomsData.count
     }
 
@@ -88,7 +132,7 @@ extension RoomListViewController: UICollectionViewDataSource {
 
 extension RoomListViewController: UICollectionViewDelegate {
     public func collectionView(_: UICollectionView, didSelectItemAt index: IndexPath) {
-        delegate?.didSelectRoom(RoomData(id: index.item, title: "", members: [Member]()))
+        delegate?.didSelectRoom(room: RoomData(id: index.item, title: "", members: [Member]()))
     }
 }
 

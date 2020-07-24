@@ -81,6 +81,7 @@ class APIClient {
 
                 guard let data = result.data else {
                     // @todo error handling
+                    callback(nil)
                     return
                 }
 
@@ -89,7 +90,8 @@ class APIClient {
                     callback(rooms)
                 }
                 catch {
-                    debugPrint("Warning: Could not decode incoming message: \(error)")
+                    // @todo error handling
+                    callback(nil)
                     return
                 }
             }

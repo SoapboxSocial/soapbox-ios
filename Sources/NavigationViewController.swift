@@ -54,6 +54,8 @@ class NavigationViewController: UINavigationController {
     }
 
     @objc func createRoom() {
+        // @todo call API And all that
+
         func execute() {
             currentRoom = Room()
             currentRoom?.isOwner = true
@@ -109,6 +111,7 @@ class NavigationViewController: UINavigationController {
         roomBarView?.isHidden = true
         currentRoom = nil
         createRoomButton.isHidden = false
+        webRTCClient = nil
     }
 
     func presentCurrentRoom() {
