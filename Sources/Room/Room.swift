@@ -11,6 +11,11 @@ protocol RoomDelegate {
 
 }
 
+// @todo
+class RoomError: Error {
+
+}
+
 class Room {
 
     var id: Int?
@@ -47,14 +52,12 @@ class Room {
         rtc.offer { (sdp) in
             self.client.join(room: id, sdp: sdp) { answer in
                 guard let remote = answer else {
-                    completion(nil)
-                    // @todo
-                    return
+                    return completion(RoomError())
                 }
 
                 self.rtc.set(remoteSdp: remote, completion: { error in
                     if error != nil {
-
+                        return completion(error)
                     }
                     // @todo check error
                     completion(nil)

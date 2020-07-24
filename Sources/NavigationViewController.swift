@@ -69,13 +69,16 @@ class NavigationViewController: UINavigationController {
 
             currentRoom = newRoom()
             currentRoom?.create { error in
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                    self.activityIndicator.isHidden = true
+                }
+
                 if error != nil {
                     return
                 }
 
                 DispatchQueue.main.async {
-                    self.activityIndicator.stopAnimating()
-                    self.activityIndicator.isHidden = true
                     self.presentCurrentRoom()
                 }
             }
@@ -179,13 +182,17 @@ extension NavigationViewController: RoomListViewDelegate {
         currentRoom = newRoom()
 
         currentRoom?.join(id: room.id) { error in
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
+                self.activityIndicator.isHidden = true
+            }
+
             if error != nil {
+                // @todo indicate there was some error.
                 return
             }
 
             DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-                self.activityIndicator.isHidden = true
                 self.presentCurrentRoom()
             }
         }

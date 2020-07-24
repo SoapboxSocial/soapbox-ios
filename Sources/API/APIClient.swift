@@ -40,6 +40,7 @@ class APIClient {
                     callback(description)
                 }
                 catch {
+                    callback(nil)
                     debugPrint("Warning: Could not decode incoming message: \(error)")
                     return
                 }
