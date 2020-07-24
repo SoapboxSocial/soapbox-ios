@@ -8,41 +8,9 @@ protocol RoomListViewDelegate {
     func didSelectRoom(room: RoomData)
 }
 
-extension UICollectionView {
-
-    // @todo, lets make this a cell, the size of the window, then pull to refresh doesn't look awkward.
-    func setEmptyMessage(title: String, message: String) {
-        let emptyView = UIView(frame: CGRect(x: self.center.x, y: self.center.y, width: self.bounds.size.width, height: self.bounds.size.height))
-        emptyView.backgroundColor = .clear
-        let titleLabel = UILabel()
-        let messageLabel = UILabel()
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        messageLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.textColor = UIColor.black
-        titleLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 18)
-        messageLabel.textColor = UIColor.lightGray
-        messageLabel.font = UIFont(name: "HelveticaNeue-Regular", size: 17)
-        emptyView.addSubview(titleLabel)
-        emptyView.addSubview(messageLabel)
-        titleLabel.centerYAnchor.constraint(equalTo: emptyView.centerYAnchor).isActive = true
-        titleLabel.centerXAnchor.constraint(equalTo: emptyView.centerXAnchor).isActive = true
-        messageLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20).isActive = true
-        messageLabel.leftAnchor.constraint(equalTo: emptyView.leftAnchor, constant: 20).isActive = true
-        messageLabel.rightAnchor.constraint(equalTo: emptyView.rightAnchor, constant: -20).isActive = true
-        titleLabel.text = title
-        messageLabel.text = message
-        messageLabel.numberOfLines = 3
-        messageLabel.textAlignment = .center
-        self.backgroundView = emptyView
-    }
-
-    func restore() {
-        self.backgroundView = nil
-    }
-}
-
 class RoomListViewController: UIViewController {
     let cellId = "room"
+    let emptyCellId = "empty"
 
     var delegate: RoomListViewDelegate?
 
@@ -71,6 +39,7 @@ class RoomListViewController: UIViewController {
         rooms.dataSource = self
         rooms.alwaysBounceVertical = true
         rooms.register(RoomCell.self, forCellWithReuseIdentifier: cellId)
+        rooms.register(RoomListEmptyCell.self, forCellWithReuseIdentifier: "empty")
         rooms.delegate = self
         rooms.backgroundColor = .clear
 
@@ -114,18 +83,18 @@ class RoomListViewController: UIViewController {
 extension RoomListViewController: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         if (roomsData.count == 0) {
-            rooms.setEmptyMessage(
-                title: "There are currently no active rooms.",
-                message: "Why not start one?\n\n👇"
-            )
-        } else {
-            rooms.restore()
+            return 1
         }
 
         return roomsData.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if roomsData.count == 0 {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: emptyCellId, for: indexPath) as! RoomListEmptyCell
+            return cell
+        }
+
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! RoomCell
         return cell
     }
@@ -139,6 +108,10 @@ extension RoomListViewController: UICollectionViewDelegate {
 
 extension RoomListViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
+        if roomsData.count == 0 {
+            return collectionView.frame.size
+        }
+
         return CGSize(width: collectionView.frame.width, height: 300)
     }
 

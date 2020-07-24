@@ -140,6 +140,8 @@ extension NavigationViewController: RoomBarDelegate {
 extension NavigationViewController: RoomListViewDelegate {
     func didSelectRoom(room: RoomData) {
         currentRoom = Room()
+
+        // @todo, check if selected room is current room
         
         webRTCClient = WebRTCClient(iceServers: [
             "stun:stun.l.google.com:19302",
