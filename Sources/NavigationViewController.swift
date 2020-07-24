@@ -5,11 +5,10 @@
 //  Created by Dean Eigenmann on 22.07.20.
 //
 
-import UIKit
 import AVFoundation
+import UIKit
 
 class NavigationViewController: UINavigationController {
-
     var activityIndicator = UIActivityIndicatorView(style: .medium)
 
     private var currentRoom: Room?
@@ -102,7 +101,7 @@ class NavigationViewController: UINavigationController {
             showWarning()
             return
         case .undetermined:
-            AVAudioSession.sharedInstance().requestRecordPermission({ (granted) in
+            AVAudioSession.sharedInstance().requestRecordPermission { granted in
                 DispatchQueue.main.async {
                     if granted {
                         execute()
@@ -110,7 +109,7 @@ class NavigationViewController: UINavigationController {
                         showWarning()
                     }
                 }
-            })
+            }
         }
     }
 
@@ -148,7 +147,7 @@ class NavigationViewController: UINavigationController {
             "stun:stun1.l.google.com:19302",
             "stun:stun2.l.google.com:19302",
             "stun:stun3.l.google.com:19302",
-            "stun:stun4.l.google.com:19302"
+            "stun:stun4.l.google.com:19302",
         ])
 
         return Room(rtc: webRTCClient, client: client)
@@ -173,7 +172,7 @@ extension NavigationViewController: RoomBarDelegate {
 extension NavigationViewController: RoomListViewDelegate {
     func didSelectRoom(room: RoomData) {
         if currentRoom != nil, let id = currentRoom?.id, room.id == id {
-            self.presentCurrentRoom()
+            presentCurrentRoom()
             return
         }
 

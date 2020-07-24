@@ -9,10 +9,9 @@ protocol RoomListViewDelegate {
 }
 
 class RoomListViewController: UIViewController {
-
     enum CellIdentifier: String {
-        case room = "room"
-        case empty = "empty"
+        case room
+        case empty
     }
 
     var delegate: RoomListViewDelegate?
@@ -21,11 +20,11 @@ class RoomListViewController: UIViewController {
 
     var api: APIClient
 
-    var roomsData: Array<Int>
+    var roomsData: [Int]
 
     init(api: APIClient) {
         self.api = api
-        self.roomsData = Array<Int>()
+        roomsData = [Int]()
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -63,7 +62,7 @@ class RoomListViewController: UIViewController {
 
     @objc
     private func didPullToRefresh() {
-        self.loadData()
+        loadData()
     }
 
     private func loadData() {
@@ -88,7 +87,7 @@ class RoomListViewController: UIViewController {
 
 extension RoomListViewController: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        if (roomsData.count == 0) {
+        if roomsData.count == 0 {
             return 1
         }
 

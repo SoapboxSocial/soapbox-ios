@@ -7,17 +7,12 @@
 
 import Foundation
 
-protocol RoomDelegate {
-
-}
+protocol RoomDelegate {}
 
 // @todo
-class RoomError: Error {
-
-}
+class RoomError: Error {}
 
 class Room {
-
     var id: Int?
     let isOwner = false
 
@@ -30,7 +25,7 @@ class Room {
     }
 
     func create(completion: @escaping (Error?) -> Void) {
-        rtc.offer { (sdp) in
+        rtc.offer { sdp in
             self.client.createRoom(sdp: sdp) { answer in
                 guard let remote = answer else {
                     return completion(RoomError())
@@ -50,7 +45,7 @@ class Room {
     }
 
     func join(id: Int, completion: @escaping (Error?) -> Void) {
-        rtc.offer { (sdp) in
+        rtc.offer { sdp in
             self.client.join(room: id, sdp: sdp) { answer in
                 guard let remote = answer else {
                     return completion(RoomError())

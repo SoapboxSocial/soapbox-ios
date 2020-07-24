@@ -5,7 +5,6 @@
 import UIKit
 
 class RoomListEmptyCell: UICollectionViewCell {
-
     override func layoutSubviews() {
         super.layoutSubviews()
 
