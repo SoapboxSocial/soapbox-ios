@@ -9,13 +9,15 @@ import UIKit
 import AVFoundation
 
 class NavigationViewController: UINavigationController {
+
+    var activityIndicator = UIActivityIndicatorView(style: .medium)
+
     private var currentRoom: Room?
 
     private var roomBarView: RoomBar?
 
     private let createRoomButton: CreateRoomButton
 
-    private var webRTCClient: WebRTCClient?
     private var client: APIClient
 
     override init(rootViewController: UIViewController) {
@@ -51,16 +53,35 @@ class NavigationViewController: UINavigationController {
         roomBarView?.isHidden = true
         roomBarView?.delegate = self
         view.addSubview(roomBarView!)
+
+        activityIndicator.isHidden = true
+        activityIndicator.hidesWhenStopped = true
+
+        activityIndicator.center = view.center
+
+        view.addSubview(activityIndicator)
     }
 
     @objc func createRoom() {
-        // @todo call API And all that
-
         func execute() {
-            currentRoom = Room()
-            currentRoom?.isOwner = true
+            activityIndicator.startAnimating()
+            activityIndicator.isHidden = false
 
-            presentCurrentRoom()
+            currentRoom = newRoom()
+            currentRoom?.create { error in
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                    self.activityIndicator.isHidden = true
+                }
+
+                if error != nil {
+                    return
+                }
+
+                DispatchQueue.main.async {
+                    self.presentCurrentRoom()
+                }
+            }
         }
 
         func showWarning() {
@@ -111,7 +132,6 @@ class NavigationViewController: UINavigationController {
         roomBarView?.isHidden = true
         currentRoom = nil
         createRoomButton.isHidden = false
-        webRTCClient = nil
     }
 
     func presentCurrentRoom() {
@@ -119,6 +139,18 @@ class NavigationViewController: UINavigationController {
             self.createRoomButton.isHidden = true
             self.roomBarView!.isHidden = false
         }
+    }
+
+    private func newRoom() -> Room {
+        let webRTCClient = WebRTCClient(iceServers: [
+            "stun:stun.l.google.com:19302",
+            "stun:stun1.l.google.com:19302",
+            "stun:stun2.l.google.com:19302",
+            "stun:stun3.l.google.com:19302",
+            "stun:stun4.l.google.com:19302"
+        ])
+
+        return Room(rtc: webRTCClient, client: client)
     }
 }
 
@@ -139,31 +171,30 @@ extension NavigationViewController: RoomBarDelegate {
 
 extension NavigationViewController: RoomListViewDelegate {
     func didSelectRoom(room: RoomData) {
-        currentRoom = Room()
-
-        // @todo, check if selected room is current room
-        
-        webRTCClient = WebRTCClient(iceServers: [
-            "stun:stun.l.google.com:19302",
-            "stun:stun1.l.google.com:19302",
-            "stun:stun2.l.google.com:19302",
-            "stun:stun3.l.google.com:19302",
-            "stun:stun4.l.google.com:19302"
-        ])
-
-        webRTCClient?.offer { (sdp) in
-            self.client.join(room: room.id, sdp: sdp) { answer in
-                guard let remote = answer else {
-                    // @todo error
-                    return
-                }
-                
-                self.webRTCClient?.set(remoteSdp: remote, completion: { error in
-                    // @todo check error
-                })
-            }
+        if currentRoom != nil, let id = currentRoom?.id, room.id == id {
+            self.presentCurrentRoom()
+            return
         }
 
-        presentCurrentRoom()
+        activityIndicator.startAnimating()
+        activityIndicator.isHidden = false
+
+        currentRoom = newRoom()
+
+        currentRoom?.join(id: room.id) { error in
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
+                self.activityIndicator.isHidden = true
+            }
+
+            if error != nil {
+                // @todo indicate there was some error.
+                return
+            }
+
+            DispatchQueue.main.async {
+                self.presentCurrentRoom()
+            }
+        }
     }
 }

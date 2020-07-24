@@ -48,7 +48,7 @@ class RoomBar: UIView {
             frame: CGRect(x: frame.size.width - 30, y: frame.size.height / 2 - 15, width: 30, height: 30)
         )
 
-        exitButton.setTitle("🔇", for: .normal)
+        exitButton.setTitle("👉", for: .normal)
         exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         addSubview(exitButton)
     }
