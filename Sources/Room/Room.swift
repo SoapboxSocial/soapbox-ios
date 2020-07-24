@@ -15,8 +15,8 @@ class Room {
 
     let isOwner = false
 
-    private var webRTCClient: WebRTCClient
-    private var client: APIClient
+    private let webRTCClient: WebRTCClient
+    private let client: APIClient
 
     init(rtc: WebRTCClient, client: APIClient) {
         self.webRTCClient = rtc
