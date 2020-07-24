@@ -60,7 +60,7 @@ class APIClient {
 
                 guard let data = result.data else {
                     // @todo error handling
-                    return
+                    return callback(nil)
                 }
 
                 do {
@@ -71,7 +71,7 @@ class APIClient {
                 }
                 catch {
                     debugPrint("Warning: Could not decode incoming message: \(error)")
-                    return
+                    return callback(nil)
                 }
             }
     }

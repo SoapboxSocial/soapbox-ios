@@ -33,12 +33,13 @@ class Room {
         rtc.offer { (sdp) in
             self.client.createRoom(sdp: sdp) { answer in
                 guard let remote = answer else {
-                    completion(nil)
-                    // @todo
-                    return
+                    return completion(RoomError())
                 }
 
                 self.rtc.set(remoteSdp: remote, completion: { error in
+                    if error != nil {
+                        return completion(RoomError())
+                    }
                     // @todo check error
                     // @todo so this is a bit too late, it makes it really slow.
                     // Maybe we should complete before this and throw errors in case with a delegat?
