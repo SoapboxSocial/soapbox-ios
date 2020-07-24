@@ -9,8 +9,11 @@ protocol RoomListViewDelegate {
 }
 
 class RoomListViewController: UIViewController {
-    let cellId = "room"
-    let emptyCellId = "empty"
+
+    enum CellIdentifier: String {
+        case room = "room"
+        case empty = "empty"
+    }
 
     var delegate: RoomListViewDelegate?
 
@@ -38,13 +41,11 @@ class RoomListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let layout = UICollectionViewFlowLayout()
-
-        rooms = UICollectionView(frame: view.frame, collectionViewLayout: layout)
+        rooms = UICollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout())
         rooms.dataSource = self
         rooms.alwaysBounceVertical = true
-        rooms.register(RoomCell.self, forCellWithReuseIdentifier: cellId)
-        rooms.register(RoomListEmptyCell.self, forCellWithReuseIdentifier: "empty")
+        rooms.register(RoomCell.self, forCellWithReuseIdentifier: CellIdentifier.room.rawValue)
+        rooms.register(RoomListEmptyCell.self, forCellWithReuseIdentifier: CellIdentifier.empty.rawValue)
         rooms.delegate = self
         rooms.backgroundColor = .clear
 
@@ -96,11 +97,10 @@ extension RoomListViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if roomsData.count == 0 {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: emptyCellId, for: indexPath) as! RoomListEmptyCell
-            return cell
+            return collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.empty.rawValue, for: indexPath)
         }
 
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! RoomCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.room.rawValue, for: indexPath) as! RoomCell
         return cell
     }
 }
