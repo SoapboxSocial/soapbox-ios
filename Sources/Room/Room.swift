@@ -15,16 +15,16 @@ class Room {
 
     let isOwner = false
 
-    private let webRTCClient: WebRTCClient
+    private let rtc: WebRTCClient
     private let client: APIClient
 
     init(rtc: WebRTCClient, client: APIClient) {
-        self.webRTCClient = rtc
+        self.rtc = rtc
         self.client = client
     }
 
     func create(completion: @escaping (Error?) -> Void) {
-        webRTCClient.offer { (sdp) in
+        rtc.offer { (sdp) in
             self.client.createRoom(sdp: sdp) { answer in
                 guard let remote = answer else {
                     completion(nil)
@@ -32,7 +32,7 @@ class Room {
                     return
                 }
 
-                self.webRTCClient.set(remoteSdp: remote, completion: { error in
+                self.rtc.set(remoteSdp: remote, completion: { error in
                     // @todo check error
                     completion(nil)
                 })
@@ -41,7 +41,7 @@ class Room {
     }
 
     func join(id: Int, completion: @escaping (Error?) -> Void) {
-        webRTCClient.offer { (sdp) in
+        rtc.offer { (sdp) in
             self.client.join(room: id, sdp: sdp) { answer in
                 guard let remote = answer else {
                     completion(nil)
@@ -49,7 +49,7 @@ class Room {
                     return
                 }
 
-                self.webRTCClient.set(remoteSdp: remote, completion: { error in
+                self.rtc.set(remoteSdp: remote, completion: { error in
                     // @todo check error
                     completion(nil)
                 })
