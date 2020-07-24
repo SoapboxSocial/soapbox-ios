@@ -65,9 +65,7 @@ class APIClient {
 
                 do {
                     let payload = try self.decoder.decode(SDPPayload.self, from: data)
-                    let description = RTCSessionDescription(type: self.type(type: payload.type), sdp: payload.sdp)
-
-                    callback(description)
+                    callback(RTCSessionDescription(type: self.type(type: payload.type), sdp: payload.sdp))
                 }
                 catch {
                     debugPrint("Warning: Could not decode incoming message: \(error)")
