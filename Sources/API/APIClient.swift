@@ -6,13 +6,13 @@ import Foundation
 import Alamofire
 import WebRTC
 
-struct SDPPayload: Decodable {
-    let sdp: String
-    let type: String
-}
-
 class APIClient {
-    
+
+    struct SDPPayload: Decodable {
+        let sdp: String
+        let type: String
+    }
+
     let decoder = JSONDecoder()
 
     func join(room: Int, sdp: RTCSessionDescription, callback: @escaping (RTCSessionDescription?) -> Void) {
@@ -33,9 +33,7 @@ class APIClient {
                     // @todo error handling
                     return
                 }
-                
-                debugPrint(data)
-                                
+
                 do {
                     let payload = try self.decoder.decode(SDPPayload.self, from: data)
                     let description = RTCSessionDescription(type: self.type(type: payload.type), sdp: payload.sdp)
