@@ -129,11 +129,11 @@ extension RoomListViewController: UICollectionViewDelegateFlowLayout {
     }
 
     private func getEmptyHeight() -> CGFloat {
-        var verticalSafeAreaInset = CGFloat(0.0)
+        var inset = CGFloat(0.0)
         if #available(iOS 11.0, *) {
-            verticalSafeAreaInset = view.safeAreaInsets.bottom + view.safeAreaInsets.top
+            inset = view.safeAreaInsets.bottom + view.safeAreaInsets.top
         }
 
-        return view.frame.height - verticalSafeAreaInset
+        return view.frame.height - inset
     }
 }
