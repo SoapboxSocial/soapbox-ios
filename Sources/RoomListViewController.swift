@@ -5,7 +5,7 @@
 import UIKit
 
 protocol RoomListViewDelegate {
-    func didSelectRoom(_: RoomData?)
+    func didSelectRoom(room: RoomData)
 }
 
 class RoomListViewController: UIViewController {
@@ -14,6 +14,20 @@ class RoomListViewController: UIViewController {
     var delegate: RoomListViewDelegate?
 
     var rooms: UICollectionView!
+
+    var api: APIClient
+
+    var roomsData: Array<Int>
+
+    init(api: APIClient) {
+        self.api = api
+        self.roomsData = Array<Int>()
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,22 +47,37 @@ class RoomListViewController: UIViewController {
         rooms.refreshControl = refresh
         refresh.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
 
+        rooms.refreshControl?.beginRefreshing()
+        loadData()
+
         view.addSubview(rooms)
     }
 
     @objc
-    private func didPullToRefresh(sender: UIRefreshControl) {
-        // Do you your api calls in here, and then asynchronously remember to stop the
-        // refreshing when you've got a result (either positive or negative)
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4), execute: {
-            sender.endRefreshing()
-        })
+    private func didPullToRefresh() {
+        self.loadData()
+    }
+
+    private func loadData() {
+        api.rooms { array in
+            guard let data = array else {
+                // @todo
+                return
+            }
+
+            self.roomsData = data
+
+            DispatchQueue.main.async {
+                self.rooms.reloadData()
+                self.rooms.refreshControl?.endRefreshing()
+            }
+        }
     }
 }
 
 extension RoomListViewController: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        10
+        return roomsData.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -58,8 +87,8 @@ extension RoomListViewController: UICollectionViewDataSource {
 }
 
 extension RoomListViewController: UICollectionViewDelegate {
-    public func collectionView(_: UICollectionView, didSelectItemAt _: IndexPath) {
-        delegate?.didSelectRoom(nil)
+    public func collectionView(_: UICollectionView, didSelectItemAt index: IndexPath) {
+        delegate?.didSelectRoom(RoomData(id: index.item, title: "", members: [Member]()))
     }
 }
 

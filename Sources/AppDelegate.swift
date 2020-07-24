@@ -18,7 +18,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
 
-        let viewController = RoomListViewController()
+        // @todo we will probably want one api client
+
+        let viewController = RoomListViewController(api: APIClient())
 
         let navigation = NavigationViewController(rootViewController: viewController)
         viewController.delegate = navigation

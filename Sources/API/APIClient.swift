@@ -16,7 +16,6 @@ class APIClient {
     let decoder = JSONDecoder()
 
     func join(room: Int, sdp: RTCSessionDescription, callback: @escaping (RTCSessionDescription?) -> Void) {
-
         let parameters: [String: AnyObject] = [
             "sdp": sdp.sdp as AnyObject,
             "type": "offer" as AnyObject
@@ -39,6 +38,55 @@ class APIClient {
                     let description = RTCSessionDescription(type: self.type(type: payload.type), sdp: payload.sdp)
 
                     callback(description)
+                }
+                catch {
+                    debugPrint("Warning: Could not decode incoming message: \(error)")
+                    return
+                }
+            }
+    }
+
+    func createRoom(sdp: RTCSessionDescription, callback: @escaping (RTCSessionDescription?) -> Void) {
+        let parameters: [String: AnyObject] = [
+            "sdp": sdp.sdp as AnyObject,
+            "type": "offer" as AnyObject
+        ]
+
+        Alamofire.request("http://127.0.0.1:8080/v1/rooms/create", method: .post, parameters: parameters, encoding: JSONEncoding())
+            .response { result in
+
+                // @todo actual handling
+
+                guard let data = result.data else {
+                    // @todo error handling
+                    return
+                }
+
+                do {
+                    let payload = try self.decoder.decode(SDPPayload.self, from: data)
+                    let description = RTCSessionDescription(type: self.type(type: payload.type), sdp: payload.sdp)
+
+                    callback(description)
+                }
+                catch {
+                    debugPrint("Warning: Could not decode incoming message: \(error)")
+                    return
+                }
+            }
+    }
+
+    func rooms(callback: @escaping (Array<Int>?) -> Void) {
+        Alamofire.request("http://127.0.0.1:8080/v1/rooms", method: .get)
+            .response { result in
+
+                guard let data = result.data else {
+                    // @todo error handling
+                    return
+                }
+
+                do {
+                    let rooms = try self.decoder.decode(Array<Int>.self, from: data)
+                    callback(rooms)
                 }
                 catch {
                     debugPrint("Warning: Could not decode incoming message: \(error)")
