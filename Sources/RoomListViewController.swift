@@ -30,6 +30,11 @@ class RoomListViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        // @todo we probably want to move up buttons and other stuff due to iphone x insets
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -113,7 +118,7 @@ extension RoomListViewController: UICollectionViewDelegate {
 extension RoomListViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
         if roomsData.count == 0 {
-            return collectionView.frame.size
+            return CGSize(width: collectionView.frame.width, height: getEmptyHeight())
         }
 
         return CGSize(width: collectionView.frame.width, height: 300)
@@ -121,5 +126,14 @@ extension RoomListViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, minimumLineSpacingForSectionAt _: Int) -> CGFloat {
         return 0
+    }
+
+    private func getEmptyHeight() -> CGFloat {
+        var verticalSafeAreaInset = CGFloat(0.0)
+        if #available(iOS 11.0, *) {
+            verticalSafeAreaInset = view.safeAreaInsets.bottom + view.safeAreaInsets.top
+        }
+
+        return view.frame.height - verticalSafeAreaInset
     }
 }
