@@ -33,7 +33,7 @@ final class WebRTCClient: NSObject {
     private var remoteDataChannel: RTCDataChannel?
 
     private var inbound: RTCMediaStream?
-    
+
     @available(*, unavailable)
     override init() {
         fatalError("WebRTCClient:init is unavailable")
@@ -60,6 +60,7 @@ final class WebRTCClient: NSObject {
     }
 
     // MARK: Signaling
+
     func close() {
         // @todo remove audio track? peerConnection.removeTrack()
         peerConnection.close()

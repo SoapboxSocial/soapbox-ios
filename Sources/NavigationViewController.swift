@@ -92,10 +92,16 @@ class NavigationViewController: UINavigationController {
         func showWarning() {
             let alert = UIAlertController(
                 title: NSLocalizedString("microphone_permission_denied", comment: ""),
-                message: NSLocalizedString("enable_microphone_to_start_room", comment: ""), preferredStyle: .alert
+                message: nil, preferredStyle: .alert
             )
 
             alert.addAction(UIAlertAction(title: NSLocalizedString("ok", comment: ""), style: .default, handler: nil))
+            alert.addAction(UIAlertAction(title: NSLocalizedString("to_settings", comment: ""), style: .default, handler: { _ in
+                DispatchQueue.main.async {
+                    UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                }
+            }))
+
             present(alert, animated: true)
         }
 

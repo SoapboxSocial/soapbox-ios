@@ -25,12 +25,12 @@ class Room {
     }
 
     func close() {
-        self.rtc.close()
+        rtc.close()
     }
-    
+
     func create(completion: @escaping (Error?) -> Void) {
         isOwner = true
-        
+
         // @todo set id
 
         rtc.offer { sdp in
