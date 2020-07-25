@@ -91,11 +91,11 @@ class NavigationViewController: UINavigationController {
 
         func showWarning() {
             let alert = UIAlertController(
-                title: "Microphone permissions denied",
-                message: "Please enable microphone for this app to start a room", preferredStyle: .alert
+                title: NSLocalizedString("microphone_permission_denied", comment: ""),
+                message: NSLocalizedString("enable_microphone_to_start_room", comment: ""), preferredStyle: .alert
             )
 
-            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+            alert.addAction(UIAlertAction(title: NSLocalizedString("ok", comment: ""), style: .default, handler: nil))
             present(alert, animated: true)
         }
 
@@ -121,13 +121,13 @@ class NavigationViewController: UINavigationController {
 
     func showOwnerAlert() {
         let alert = UIAlertController(
-            title: "Are you sure?",
-            message: "You are then owner of this room, if you exit it will be closed.",
+            title: NSLocalizedString("are_you_sure", comment: ""),
+            message: NSLocalizedString("exit_will_close_room", comment: ""),
             preferredStyle: .alert
         )
 
-        alert.addAction(UIAlertAction(title: "No", style: .default, handler: nil))
-        alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { _ in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .destructive, handler: { _ in
             self.exitCurrentRoom()
         }))
 

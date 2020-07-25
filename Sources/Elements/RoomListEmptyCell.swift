@@ -23,8 +23,8 @@ class RoomListEmptyCell: UICollectionViewCell {
         messageLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20).isActive = true
         messageLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 20).isActive = true
         messageLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -20).isActive = true
-        titleLabel.text = "There are currently no active rooms."
-        messageLabel.text = "Why not start one?\n\n👇"
+        titleLabel.text = NSLocalizedString("no_active_rooms", comment: "")
+        messageLabel.text = NSLocalizedString("start_room_tip", comment: "")
         messageLabel.numberOfLines = 3
         messageLabel.textAlignment = .center
     }
