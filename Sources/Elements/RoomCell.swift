@@ -5,17 +5,11 @@
 import UIKit
 
 class RoomCell: UICollectionViewCell {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
-        setup()
+    enum RoomCellStyle {
+        case normal
     }
 
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setup() {
+    public func setup(style: RoomCellStyle, isCurrent: Bool) {
         backgroundColor = .clear
 
         let content = UIView(frame: CGRect(x: 15, y: 15, width: frame.size.width - 30, height: frame.size.height - 30))
@@ -24,8 +18,12 @@ class RoomCell: UICollectionViewCell {
         content.layer.masksToBounds = true
         addSubview(content)
         
-        let emoji = UILabel(frame: CGRect(x: 15, y: 15, width: contentView.frame.size.width - 30, height: 30))
-        emoji.text = "💬"
-        content.addSubview(emoji)
+        let titleLabel = UILabel(frame: CGRect(x: 15, y: 15, width: contentView.frame.size.width - 30, height: 30))
+        titleLabel.text = title(style: style, isCurrent: isCurrent)
+        content.addSubview(titleLabel)
+    }
+
+    private func title(style: RoomCellStyle, isCurrent: Bool) -> String {
+        return "💬 " + NSLocalizedString("current_room", comment: "")
     }
 }

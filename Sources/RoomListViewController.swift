@@ -100,6 +100,7 @@ extension RoomListViewController: UICollectionViewDataSource {
         }
 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.room.rawValue, for: indexPath) as! RoomCell
+        cell.setup(style: .normal, isCurrent: false) // @todo needs a real check
         return cell
     }
 }
