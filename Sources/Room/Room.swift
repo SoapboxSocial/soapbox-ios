@@ -14,7 +14,7 @@ class RoomError: Error {}
 
 class Room {
     var id: Int?
-    let isOwner = false
+    var isOwner = false
 
     private let rtc: WebRTCClient
     private let client: APIClient
@@ -25,6 +25,8 @@ class Room {
     }
 
     func create(completion: @escaping (Error?) -> Void) {
+        isOwner = true
+
         rtc.offer { sdp in
             self.client.createRoom(sdp: sdp) { answer in
                 guard let remote = answer else {

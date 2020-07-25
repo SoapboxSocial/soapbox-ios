@@ -22,7 +22,7 @@ class RoomViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = UIColor(red: 250 / 255, green: 250 / 255, blue: 250 / 255, alpha: 1)
+        view.backgroundColor = .white
         // Do any additional setup after loading the view.
     }
 }

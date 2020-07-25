@@ -37,16 +37,21 @@ class NavigationViewController: UINavigationController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
 
         view.backgroundColor = UIColor(red: 250 / 255, green: 250 / 255, blue: 250 / 255, alpha: 1)
 
         createRoomButton.addTarget(self, action: #selector(createRoom), for: .touchUpInside)
         view.addSubview(createRoomButton)
 
+        var inset = CGFloat(0.0)
+        if #available(iOS 11.0, *) {
+            inset = view.safeAreaInsets.bottom
+        }
+
         roomBarView = RoomBar(
-            frame: CGRect(x: 0, y: view.frame.size.height - 60, width: view.frame.size.width, height: 60)
+            frame: CGRect(x: 0, y: view.frame.size.height - (60 + inset), width: view.frame.size.width, height: 60 + inset)
         )
 
         roomBarView?.isHidden = true

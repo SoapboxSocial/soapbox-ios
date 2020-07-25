@@ -26,7 +26,7 @@ class RoomBar: UIView {
     }
 
     private func setupView() {
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height))
+        let label = UILabel(frame: CGRect(x: 15, y: 0, width: frame.size.width, height: frame.size.height))
         label.text = "Yay room"
 
         backgroundColor = .white
@@ -45,7 +45,7 @@ class RoomBar: UIView {
         addSubview(recognizerView)
 
         let exitButton = UIButton(
-            frame: CGRect(x: frame.size.width - 30, y: frame.size.height / 2 - 15, width: 30, height: 30)
+            frame: CGRect(x: frame.size.width - (30 + 15), y: frame.size.height / 2 - 15, width: 30, height: 30)
         )
 
         exitButton.setTitle("👉", for: .normal)
