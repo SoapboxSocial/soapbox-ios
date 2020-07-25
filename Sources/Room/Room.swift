@@ -24,8 +24,14 @@ class Room {
         self.client = client
     }
 
+    func close() {
+        self.rtc.close()
+    }
+    
     func create(completion: @escaping (Error?) -> Void) {
         isOwner = true
+        
+        // @todo set id
 
         rtc.offer { sdp in
             self.client.createRoom(sdp: sdp) { answer in

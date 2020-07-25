@@ -32,6 +32,8 @@ final class WebRTCClient: NSObject {
     private var localDataChannel: RTCDataChannel?
     private var remoteDataChannel: RTCDataChannel?
 
+    private var inbound: RTCMediaStream?
+    
     @available(*, unavailable)
     override init() {
         fatalError("WebRTCClient:init is unavailable")
@@ -58,6 +60,10 @@ final class WebRTCClient: NSObject {
     }
 
     // MARK: Signaling
+    func close() {
+        // @todo remove audio track? peerConnection.removeTrack()
+        peerConnection.close()
+    }
 
     func offer(completion: @escaping (_ sdp: RTCSessionDescription) -> Void) {
         let constrains = RTCMediaConstraints(mandatoryConstraints: mediaConstrains,
@@ -123,8 +129,7 @@ final class WebRTCClient: NSObject {
     private func createAudioTrack() -> RTCAudioTrack {
         let audioConstrains = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
         let audioSource = WebRTCClient.factory.audioSource(with: audioConstrains)
-        let audioTrack = WebRTCClient.factory.audioTrack(with: audioSource, trackId: "audio0")
-        return audioTrack
+        return WebRTCClient.factory.audioTrack(with: audioSource, trackId: "audio0")
     }
 
     // MARK: Data Channels
@@ -149,7 +154,8 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
         debugPrint("peerConnection new signaling state: \(stateChanged)")
     }
 
-    func peerConnection(_: RTCPeerConnection, didAdd _: RTCMediaStream) {
+    func peerConnection(_: RTCPeerConnection, didAdd stream: RTCMediaStream) {
+        inbound = stream
         debugPrint("peerConnection did add stream")
     }
 

@@ -136,6 +136,7 @@ class NavigationViewController: UINavigationController {
 
     func exitCurrentRoom() {
         roomBarView?.isHidden = true
+        currentRoom?.close()
         currentRoom = nil
         createRoomButton.isHidden = false
     }
