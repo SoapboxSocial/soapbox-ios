@@ -51,7 +51,8 @@ class NavigationViewController: UINavigationController {
         }
 
         roomBarView = RoomBar(
-            frame: CGRect(x: 0, y: view.frame.size.height - (60 + inset), width: view.frame.size.width, height: 60 + inset)
+            frame: CGRect(x: 0, y: view.frame.size.height - (60 + inset), width: view.frame.size.width, height: 60 + inset),
+            inset: inset
         )
 
         roomBarView?.isHidden = true
