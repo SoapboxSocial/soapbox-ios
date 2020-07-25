@@ -13,6 +13,8 @@ struct Member {
 }
 
 struct RoomData {
+    let id: Int
+
     let title: String
 
     let members: [Member]

@@ -23,5 +23,9 @@ class RoomCell: UICollectionViewCell {
         content.layer.cornerRadius = 8
         content.layer.masksToBounds = true
         addSubview(content)
+        
+        let emoji = UILabel(frame: CGRect(x: 15, y: 15, width: contentView.frame.size.width - 30, height: 30))
+        emoji.text = "💬"
+        content.addSubview(emoji)
     }
 }

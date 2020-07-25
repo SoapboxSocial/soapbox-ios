@@ -15,7 +15,10 @@ protocol RoomBarDelegate {
 class RoomBar: UIView {
     var delegate: RoomBarDelegate?
 
-    override init(frame: CGRect) {
+    let inset: CGFloat
+
+    init(frame: CGRect, inset: CGFloat) {
+        self.inset = inset
         super.init(frame: frame)
 
         setupView()
@@ -26,7 +29,7 @@ class RoomBar: UIView {
     }
 
     private func setupView() {
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height))
+        let label = UILabel(frame: CGRect(x: 15, y: 0, width: frame.size.width, height: frame.size.height - inset))
         label.text = "Yay room"
 
         backgroundColor = .white
@@ -45,10 +48,10 @@ class RoomBar: UIView {
         addSubview(recognizerView)
 
         let exitButton = UIButton(
-            frame: CGRect(x: frame.size.width - 30, y: frame.size.height / 2 - 15, width: 30, height: 30)
+            frame: CGRect(x: frame.size.width - (30 + 15), y: (frame.size.height - inset) / 2 - 15, width: 30, height: 30)
         )
 
-        exitButton.setTitle("🔇", for: .normal)
+        exitButton.setTitle("👉", for: .normal)
         exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         addSubview(exitButton)
     }
