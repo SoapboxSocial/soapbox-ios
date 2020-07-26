@@ -10,7 +10,7 @@ let project = Project(
             bundleId: "io.voicely.voicely",
             infoPlist: "Info.plist",
             sources: ["Sources/**"],
-            resources: [],
+            resources: ["Assets.xcassets", "Localization/**/*.strings"],
             dependencies: [
                 .cocoapods(path: "."),
             ]
