@@ -60,7 +60,7 @@ class APIClient {
                     // @todo error handling
                     return callback(nil, nil)
                 }
-                
+
                 guard let data = result.data else {
                     // @todo error handling
                     return callback(nil, nil)
