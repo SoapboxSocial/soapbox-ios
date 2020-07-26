@@ -111,7 +111,7 @@ extension RoomListViewController: UICollectionViewDelegate {
             return
         }
 
-        delegate?.didSelectRoom(room: RoomData(id: index.item, title: "", members: [Member]()))
+        delegate?.didSelectRoom(room: RoomData(id: roomsData[index.item], title: "", members: [Member]()))
     }
 }
 
