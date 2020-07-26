@@ -25,19 +25,19 @@ class Room {
     }
 
     func close() {
-        self.rtc.close()
+        rtc.close()
     }
-    
+
     func create(completion: @escaping (Error?) -> Void) {
         isOwner = true
-        
-        // @todo set id
 
         rtc.offer { sdp in
-            self.client.createRoom(sdp: sdp) { answer in
+            self.client.createRoom(sdp: sdp) { id, answer in
                 guard let remote = answer else {
                     return completion(RoomError())
                 }
+
+                self.id = id
 
                 self.rtc.set(remoteSdp: remote, completion: { error in
                     if error != nil {

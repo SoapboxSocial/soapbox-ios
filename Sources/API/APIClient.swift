@@ -8,6 +8,7 @@ import WebRTC
 
 class APIClient {
     struct SDPPayload: Decodable {
+        let id: Int?
         let sdp: String
         let type: String
     }
@@ -45,7 +46,7 @@ class APIClient {
             }
     }
 
-    func createRoom(sdp: RTCSessionDescription, callback: @escaping (RTCSessionDescription?) -> Void) {
+    func createRoom(sdp: RTCSessionDescription, callback: @escaping (Int?, RTCSessionDescription?) -> Void) {
         let parameters: [String: AnyObject] = [
             "sdp": sdp.sdp as AnyObject,
             "type": "offer" as AnyObject,
@@ -57,20 +58,20 @@ class APIClient {
                 // @todo actual handling
                 if result.error != nil {
                     // @todo error handling
-                    return callback(nil)
+                    return callback(nil, nil)
                 }
 
                 guard let data = result.data else {
                     // @todo error handling
-                    return callback(nil)
+                    return callback(nil, nil)
                 }
 
                 do {
                     let payload = try self.decoder.decode(SDPPayload.self, from: data)
-                    callback(RTCSessionDescription(type: self.type(type: payload.type), sdp: payload.sdp))
+                    callback(payload.id, RTCSessionDescription(type: self.type(type: payload.type), sdp: payload.sdp))
                 } catch {
                     debugPrint("Warning: Could not decode incoming message: \(error)")
-                    return callback(nil)
+                    return callback(nil, nil)
                 }
             }
     }
