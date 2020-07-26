@@ -5,7 +5,8 @@
 import UIKit
 
 protocol RoomListViewDelegate {
-    func didSelectRoom(room: RoomData)
+    func currentRoom() -> Int?
+    func didSelectRoom(room: RoomData);
 }
 
 class RoomListViewController: UIViewController {
@@ -21,6 +22,8 @@ class RoomListViewController: UIViewController {
     var api: APIClient
 
     var roomsData: [Int]
+
+    var currentRoom: Int?
 
     init(api: APIClient) {
         self.api = api
@@ -66,6 +69,8 @@ class RoomListViewController: UIViewController {
     }
 
     private func loadData() {
+        currentRoom = delegate?.currentRoom()
+
         api.rooms { data in
             DispatchQueue.main.async {
                 self.rooms.refreshControl?.endRefreshing()
@@ -101,7 +106,13 @@ extension RoomListViewController: UICollectionViewDataSource {
         }
 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.room.rawValue, for: indexPath) as! RoomCell
-        cell.setup(style: .normal, isCurrent: false) // @todo needs a real check
+
+        if roomsData[indexPath.item] == currentRoom {
+            cell.setup(style: .current)
+        } else {
+            cell.setup(style: .normal) // @todo needs a real check
+        }
+        
         return cell
     }
 }
@@ -112,7 +123,7 @@ extension RoomListViewController: UICollectionViewDelegate {
             return
         }
 
-        delegate?.didSelectRoom(room: RoomData(id: index.item, title: "", members: [Member]()))
+        delegate?.didSelectRoom(room: RoomData(id: roomsData[index.item], title: "", members: [Member]()))
     }
 }
 
