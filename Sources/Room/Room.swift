@@ -34,11 +34,13 @@ class Room {
         // @todo set id
 
         rtc.offer { sdp in
-            self.client.createRoom(sdp: sdp) { answer in
+            self.client.createRoom(sdp: sdp) { id, answer  in
                 guard let remote = answer else {
                     return completion(RoomError())
                 }
-
+                
+                self.id = id
+                
                 self.rtc.set(remoteSdp: remote, completion: { error in
                     if error != nil {
                         return completion(RoomError())
