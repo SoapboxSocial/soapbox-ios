@@ -31,8 +31,6 @@ class Room {
     func create(completion: @escaping (Error?) -> Void) {
         isOwner = true
         
-        // @todo set id
-
         rtc.offer { sdp in
             self.client.createRoom(sdp: sdp) { id, answer  in
                 guard let remote = answer else {
