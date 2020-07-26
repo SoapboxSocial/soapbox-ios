@@ -14,3 +14,6 @@
 
 "microphone_permission_denied" = "You'll need to turn on your microphone for that!";
 "to_settings" = "To settings";
+
+"participants" = "Participants";
+"participant" = "Participant";
