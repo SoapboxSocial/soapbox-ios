@@ -9,7 +9,6 @@
 "yes" = "Yes";
 "ok" = "Ok";
 
-"microphone_permission_denied" = "Microphone permissions denied";
-"enable_microphone_to_start_room" = "Please enable microphone for this app to start a room";
-
 "current_room" = "Current Room";
+"microphone_permission_denied" = "You'll need to turn on your microphone for that!";
+"to_settings" = "To settings";
