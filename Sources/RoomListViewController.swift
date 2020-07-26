@@ -72,6 +72,7 @@ class RoomListViewController: UIViewController {
             }
 
             guard let rooms = data else {
+                self.roomsData = []
                 // @todo
                 return
             }
