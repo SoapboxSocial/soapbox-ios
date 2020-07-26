@@ -134,7 +134,7 @@ extension RoomListViewController: UICollectionViewDelegateFlowLayout {
             return CGSize(width: collectionView.frame.width, height: getEmptyHeight())
         }
 
-        return CGSize(width: collectionView.frame.width, height: 120)
+        return CGSize(width: collectionView.frame.width, height: 105)
     }
 
     func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, minimumLineSpacingForSectionAt _: Int) -> CGFloat {
