@@ -15,6 +15,9 @@ class RoomError: Error {}
 class Room {
     var id: Int?
     var isOwner = false
+    
+    // @todo think about this for when users join and are muted by default
+    private(set) var isMuted = false
 
     private let rtc: WebRTCClient
     private let client: APIClient
@@ -26,6 +29,14 @@ class Room {
 
     func close() {
         rtc.close()
+    }
+    
+    func mute() {
+        rtc.muteAudio()
+    }
+    
+    func unmute() {
+        rtc.unmuteAudio()
     }
 
     func create(completion: @escaping (Error?) -> Void) {

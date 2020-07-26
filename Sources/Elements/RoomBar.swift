@@ -10,6 +10,7 @@ import UIKit
 protocol RoomBarDelegate {
     func didTapBar()
     func didTapExit()
+    func didTapMute()
 }
 
 class RoomBar: UIView {
@@ -54,8 +55,17 @@ class RoomBar: UIView {
         exitButton.setTitle("👉", for: .normal)
         exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         addSubview(exitButton)
+        
+        let muteButton = UIButton(frame: CGRect(x: frame.size.width - (60 + 30), y: (frame.size.height - inset) / 2 - 15, width: 30, height: 30))
+        muteButton.setTitle("🔇", for: .normal)
+        muteButton.setTitle("🔈", for: .selected)
+        addSubview(muteButton)
     }
 
+    @objc private func muteTapped(sender: UIButton) {
+        delegate?.didTapMute()
+    }
+    
     @objc private func barTapped() {
         delegate?.didTapBar()
     }

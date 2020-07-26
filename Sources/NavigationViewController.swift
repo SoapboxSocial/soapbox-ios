@@ -180,6 +180,14 @@ extension NavigationViewController: RoomBarDelegate {
     func didTapBar() {
         presentCurrentRoom()
     }
+    
+    func didTapMute() {
+        if currentRoom!.isMuted {
+            currentRoom?.unmute()
+        } else {
+            currentRoom?.mute()
+        }
+    }
 }
 
 extension NavigationViewController: RoomListViewDelegate {
