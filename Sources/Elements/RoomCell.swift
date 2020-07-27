@@ -14,7 +14,7 @@ class RoomCell: UICollectionViewCell {
         backgroundColor = .clear
 
         let content = UIView(frame: CGRect(x: 15, y: 15, width: frame.size.width - 30, height: frame.size.height - 15))
-        content.backgroundColor = .white
+        content.backgroundColor = UIColor.elementBackground
         content.layer.cornerRadius = 8
         content.layer.masksToBounds = true
         addSubview(content)
@@ -39,4 +39,5 @@ class RoomCell: UICollectionViewCell {
         }
 
     }
+
 }

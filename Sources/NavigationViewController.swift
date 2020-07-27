@@ -40,7 +40,7 @@ class NavigationViewController: UINavigationController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        view.backgroundColor = UIColor(red: 250 / 255, green: 250 / 255, blue: 250 / 255, alpha: 1)
+        view.backgroundColor = .background
 
         createRoomButton.addTarget(self, action: #selector(createRoom), for: .touchUpInside)
         view.addSubview(createRoomButton)
@@ -145,12 +145,14 @@ class NavigationViewController: UINavigationController {
         room?.close()
         room = nil
         createRoomButton.isHidden = false
+        UIApplication.shared.isIdleTimerDisabled = false
     }
 
     func presentCurrentRoom() {
         present(RoomViewController(room: room!), animated: true) {
             self.createRoomButton.isHidden = true
             self.roomBarView!.isHidden = false
+            UIApplication.shared.isIdleTimerDisabled = true
         }
     }
 
