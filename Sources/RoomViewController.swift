@@ -22,7 +22,7 @@ class RoomViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = UIColor.elementBackground
+        view.backgroundColor = .elementBackground
 
         // @todo insent
         // @todo attach to bottom
