@@ -57,19 +57,22 @@ class RoomBar: UIView {
         addSubview(exitButton)
         
         let muteButton = UIButton(frame: CGRect(x: frame.size.width - (60 + 30), y: (frame.size.height - inset) / 2 - 15, width: 30, height: 30))
-        muteButton.setTitle("🔇", for: .normal)
+        setMuteButtonTitle(muteButton)
         muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
         addSubview(muteButton)
     }
 
     @objc private func muteTapped(sender: UIButton) {
-        if sender.currentTitle == "🔇" {
-            sender.setTitle("🔈", for: .normal)
-        } else {
-            sender.setTitle("🔇", for: .normal)
-        }
-        
+        setMuteButtonTitle(sender)
         delegate?.didTapMute()
+    }
+    
+    private func setMuteButtonTitle(_ button: UIButton) {
+        if button.currentTitle == "🔇" {
+            button.setTitle("🔈", for: .normal)
+        } else {
+            button.setTitle("🔇", for: .normal)
+        }
     }
     
     @objc private func barTapped() {

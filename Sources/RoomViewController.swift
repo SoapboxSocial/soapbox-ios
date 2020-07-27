@@ -30,15 +30,36 @@ class RoomViewController: UIViewController {
         let exitButton = UIButton(
             frame: CGRect(x: view.frame.size.width - (30 + 15), y: view.frame.size.height - 100, width: 30, height: 30)
         )
-
         exitButton.setTitle("👉", for: .normal)
         exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         view.addSubview(exitButton)
         
-        // Do any additional setup after loading the view.
+        
+        // @TODO WE NEED TO PERSIST THE MUTE BUTTON ICON
+        
+        let muteButton = UIButton(frame: CGRect(x: view.frame.size.width - (60 + 30), y:  view.frame.size.height - 100, width: 30, height: 30))
+        
+        muteButton.setTitle("🔇", for: .normal)
+        setMuteButtonTitle(muteButton)
+        muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
+        view.addSubview(muteButton)
     }
     
     @objc private func exitTapped() {
         // delegate?.didTapExit()
+    }
+    
+    private func setMuteButtonTitle(_ button: UIButton) {
+        if room.isMuted {
+            button.setTitle("🔈", for: .normal)
+        } else {
+            button.setTitle("🔇", for: .normal)
+        }
+    }
+    
+    @objc private func muteTapped(sender: UIButton) {
+        setMuteButtonTitle(sender)
+        
+        // delegate?.didMute()
     }
 }

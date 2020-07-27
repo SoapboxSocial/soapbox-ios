@@ -7,7 +7,9 @@
 
 import Foundation
 
-protocol RoomDelegate {}
+protocol RoomDelegate {
+    func didChangeAudioState(enabled: Bool)
+}
 
 // @todo
 class RoomError: Error {}
@@ -21,6 +23,8 @@ class Room {
 
     private let rtc: WebRTCClient
     private let client: APIClient
+    
+    var delegate: RoomDelegate?
 
     init(rtc: WebRTCClient, client: APIClient) {
         self.rtc = rtc
@@ -32,10 +36,12 @@ class Room {
     }
     
     func mute() {
+        delegate?.didChangeAudioState(enabled: false)
         rtc.muteAudio()
     }
     
     func unmute() {
+        delegate?.didChangeAudioState(enabled: true)
         rtc.unmuteAudio()
     }
 
