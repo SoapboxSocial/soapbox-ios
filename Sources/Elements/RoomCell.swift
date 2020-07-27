@@ -21,6 +21,7 @@ class RoomCell: UICollectionViewCell {
 
         let titleLabel = UILabel(frame: CGRect(x: 15, y: 15, width: contentView.frame.size.width - 30, height: 30))
         titleLabel.text = title(style: style)
+        titleLabel.font = UIFont(name: "HelveticaNeue-Bold", size: titleLabel.font.pointSize)
         content.addSubview(titleLabel)
 
         let countLabel = UILabel(frame: CGRect(x: 15, y: 45, width: contentView.frame.size.width - 30, height: 30))
