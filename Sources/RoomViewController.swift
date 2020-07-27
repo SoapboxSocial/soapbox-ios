@@ -26,8 +26,8 @@ class RoomViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
 
         view.backgroundColor = .elementBackground
         
