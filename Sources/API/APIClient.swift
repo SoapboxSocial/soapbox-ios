@@ -14,7 +14,7 @@ class APIClient {
     }
 
     let decoder = JSONDecoder()
-    
+
     let baseUrl = "http://139.59.152.91"
 
     func join(room: Int, sdp: RTCSessionDescription, callback: @escaping (RTCSessionDescription?) -> Void) {
@@ -25,7 +25,7 @@ class APIClient {
 
         let path = String(format: "/v1/rooms/%d/join", room)
 
-        Alamofire.request(baseUrl + path, method: .post, parameters: parameters, encoding: JSONEncoding())
+        AF.request(baseUrl + path, method: .post, parameters: parameters, encoding: JSONEncoding())
             .response { result in
 
                 // @todo actual handling
@@ -54,7 +54,7 @@ class APIClient {
             "type": "offer" as AnyObject,
         ]
 
-        Alamofire.request(baseUrl + "/v1/rooms/create", method: .post, parameters: parameters, encoding: JSONEncoding())
+        AF.request(baseUrl + "/v1/rooms/create", method: .post, parameters: parameters, encoding: JSONEncoding())
             .response { result in
 
                 // @todo actual handling
@@ -79,7 +79,7 @@ class APIClient {
     }
 
     func rooms(callback: @escaping ([Int]?) -> Void) {
-        Alamofire.request(baseUrl + "/v1/rooms", method: .get)
+        AF.request(baseUrl + "/v1/rooms", method: .get)
             .response { result in
 
                 guard let data = result.data else {

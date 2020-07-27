@@ -23,7 +23,7 @@ class RoomViewController: UIViewController {
         super.viewDidLoad()
 
         view.backgroundColor = .white
-        
+
         // @todo insent
         // @todo attach to bottom
         // @todo animations
@@ -34,10 +34,10 @@ class RoomViewController: UIViewController {
         exitButton.setTitle("👉", for: .normal)
         exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         view.addSubview(exitButton)
-        
+
         // Do any additional setup after loading the view.
     }
-    
+
     @objc private func exitTapped() {
         // delegate?.didTapExit()
     }
