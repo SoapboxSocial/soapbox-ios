@@ -8,7 +8,6 @@
 import UIKit
 
 extension UIColor {
-    
     static var background: UIColor {
         return UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
             if UITraitCollection.userInterfaceStyle == .dark {
@@ -18,7 +17,7 @@ extension UIColor {
             }
         }
     }
-    
+
     static var elementBackground: UIColor {
         return UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
             if UITraitCollection.userInterfaceStyle == .dark {
@@ -28,5 +27,4 @@ extension UIColor {
             }
         }
     }
-
 }

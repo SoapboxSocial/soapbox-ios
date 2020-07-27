@@ -6,7 +6,7 @@ import UIKit
 
 protocol RoomListViewDelegate {
     func currentRoom() -> Int?
-    func didSelectRoom(room: RoomData);
+    func didSelectRoom(room: RoomData)
 }
 
 class RoomListViewController: UIViewController {
@@ -81,15 +81,15 @@ class RoomListViewController: UIViewController {
                 // @todo
                 return
             }
-            
+
             self.roomsData = rooms.filter {
                 if let current = self.currentRoom, $0 == current {
                     return false
                 }
-                
+
                 return true
             }
-            
+
             if let current = self.currentRoom {
                 self.roomsData.insert(current, at: 0)
             }
@@ -122,7 +122,7 @@ extension RoomListViewController: UICollectionViewDataSource {
         } else {
             cell.setup(style: .normal) // @todo needs a real check
         }
-        
+
         return cell
     }
 }

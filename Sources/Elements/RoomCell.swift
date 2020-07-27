@@ -38,7 +38,5 @@ class RoomCell: UICollectionViewCell {
         case .current:
             return "💬 " + NSLocalizedString("current_room", comment: "")
         }
-
     }
-
 }

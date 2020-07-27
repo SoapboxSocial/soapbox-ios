@@ -7,8 +7,15 @@
 
 import UIKit
 
+protocol RoomViewDelegate {
+    func roomViewDidTapExit()
+    func roomViewDidTapMute()
+}
+
 class RoomViewController: UIViewController {
     private let room: Room
+    
+    var delegate: RoomViewDelegate?
 
     init(room: Room) {
         self.room = room
@@ -19,26 +26,45 @@ class RoomViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
 
         view.backgroundColor = .elementBackground
-
-        // @todo insent
-        // @todo attach to bottom
+        
+        let inset = view.safeAreaInsets.bottom
+        
         // @todo animations
         let exitButton = UIButton(
-            frame: CGRect(x: view.frame.size.width - (30 + 15), y: view.frame.size.height - 100, width: 30, height: 30)
+            frame: CGRect(x: view.frame.size.width - (30 + 15), y: (view.frame.size.height - inset) - 45, width: 30, height: 30)
         )
-
         exitButton.setTitle("👉", for: .normal)
         exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         view.addSubview(exitButton)
 
-        // Do any additional setup after loading the view.
+        // @TODO WE NEED TO PERSIST THE MUTE BUTTON ICON
+
+        let muteButton = UIButton(frame: CGRect(x: view.frame.size.width - (60 + 30), y: (view.frame.size.height - inset) - 45, width: 30, height: 30))
+
+        muteButton.setTitle("🔇", for: .normal)
+        setMuteButtonTitle(muteButton)
+        muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
+        view.addSubview(muteButton)
     }
 
     @objc private func exitTapped() {
-        // delegate?.didTapExit()
+        delegate?.roomViewDidTapExit()
+    }
+
+    private func setMuteButtonTitle(_ button: UIButton) {
+        if room.isMuted {
+            button.setTitle("🔈", for: .normal)
+        } else {
+            button.setTitle("🔇", for: .normal)
+        }
+    }
+
+    @objc private func muteTapped(sender: UIButton) {
+        delegate?.roomViewDidTapMute()
+        setMuteButtonTitle(sender)
     }
 }
