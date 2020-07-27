@@ -8,6 +8,7 @@ let project = Project(
             platform: .iOS,
             product: .app,
             bundleId: "com.voicely.voicely",
+            deploymentTarget: .iOS(targetVersion: "9.0", devices: .iphone),
             infoPlist: "Info.plist",
             sources: ["Sources/**"],
             resources: ["Assets.xcassets", "Localization/**/*.strings"],
