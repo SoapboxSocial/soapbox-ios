@@ -82,6 +82,7 @@ class RoomListViewController: UIViewController {
                 return
             }
 
+            // @todo do this with sort
             self.roomsData = rooms.filter {
                 if let current = self.currentRoom, $0 == current {
                     return false
