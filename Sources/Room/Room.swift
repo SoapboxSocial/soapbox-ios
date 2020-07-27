@@ -17,13 +17,13 @@ class RoomError: Error {}
 class Room {
     var id: Int?
     var isOwner = false
-    
+
     // @todo think about this for when users join and are muted by default
     private(set) var isMuted = false
 
     private let rtc: WebRTCClient
     private let client: APIClient
-    
+
     var delegate: RoomDelegate?
 
     init(rtc: WebRTCClient, client: APIClient) {
@@ -34,13 +34,13 @@ class Room {
     func close() {
         rtc.close()
     }
-    
+
     func mute() {
         delegate?.didChangeAudioState(enabled: false)
         rtc.muteAudio()
         isMuted = true
     }
-    
+
     func unmute() {
         delegate?.didChangeAudioState(enabled: true)
         rtc.unmuteAudio()

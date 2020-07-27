@@ -17,6 +17,8 @@ class RoomBar: UIView {
     var delegate: RoomBarDelegate?
 
     let inset: CGFloat
+    var muteButton: UIButton? = nil
+    
 
     init(frame: CGRect, inset: CGFloat) {
         self.inset = inset
@@ -55,26 +57,25 @@ class RoomBar: UIView {
         exitButton.setTitle("👉", for: .normal)
         exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         addSubview(exitButton)
-        
-        let muteButton = UIButton(frame: CGRect(x: frame.size.width - (60 + 30), y: (frame.size.height - inset) / 2 - 15, width: 30, height: 30))
-        setMuteButtonTitle(muteButton)
-        muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
-        addSubview(muteButton)
+
+        muteButton = UIButton(frame: CGRect(x: frame.size.width - (60 + 30), y: (frame.size.height - inset) / 2 - 15, width: 30, height: 30))
+        muteButton!.setTitle("🔇", for: .normal)
+        muteButton!.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
+        addSubview(muteButton!)
     }
 
+    func setMuted() {
+        muteButton!.setTitle("🔈", for: .normal)
+    }
+    
+    func setUnmuted() {
+        muteButton!.setTitle("🔇", for: .normal)
+    }
+    
     @objc private func muteTapped(sender: UIButton) {
-        setMuteButtonTitle(sender)
         delegate?.didTapMute()
     }
-    
-    private func setMuteButtonTitle(_ button: UIButton) {
-        if button.currentTitle == "🔇" {
-            button.setTitle("🔈", for: .normal)
-        } else {
-            button.setTitle("🔇", for: .normal)
-        }
-    }
-    
+
     @objc private func barTapped() {
         delegate?.didTapBar()
     }

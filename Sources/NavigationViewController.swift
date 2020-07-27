@@ -45,10 +45,7 @@ class NavigationViewController: UINavigationController {
         createRoomButton.addTarget(self, action: #selector(createRoom), for: .touchUpInside)
         view.addSubview(createRoomButton)
 
-        var inset = CGFloat(0.0)
-        if #available(iOS 11.0, *) {
-            inset = view.safeAreaInsets.bottom
-        }
+        let inset = view.safeAreaInsets.bottom
 
         roomBarView = RoomBar(
             frame: CGRect(x: 0, y: view.frame.size.height - (60 + inset), width: view.frame.size.width, height: 60 + inset),
@@ -149,7 +146,9 @@ class NavigationViewController: UINavigationController {
     }
 
     func presentCurrentRoom() {
-        present(RoomViewController(room: room!), animated: true) {
+        let roomViewController = RoomViewController(room: room!)
+        roomViewController.delegate = self
+        present(roomViewController, animated: true) {
             self.createRoomButton.isHidden = true
             self.roomBarView!.isHidden = false
             UIApplication.shared.isIdleTimerDisabled = true
@@ -182,13 +181,26 @@ extension NavigationViewController: RoomBarDelegate {
     func didTapBar() {
         presentCurrentRoom()
     }
-    
+
     func didTapMute() {
-        if currentRoom!.isMuted {
-            currentRoom?.unmute()
+        if room!.isMuted {
+            roomBarView?.setUnmuted()
+            room?.unmute()
         } else {
-            currentRoom?.mute()
+            roomBarView?.setMuted()
+            room?.mute()
         }
+    }
+}
+
+extension NavigationViewController: RoomViewDelegate {
+    func roomViewDidTapExit() {
+        exitCurrentRoom()
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func roomViewDidTapMute() {
+        didTapMute()
     }
 }
 
