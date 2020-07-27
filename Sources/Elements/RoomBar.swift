@@ -32,7 +32,7 @@ class RoomBar: UIView {
         let label = UILabel(frame: CGRect(x: 15, y: 0, width: frame.size.width, height: frame.size.height - inset))
         label.text = "Yay room"
 
-        backgroundColor = .white
+        backgroundColor = backgroundColor()
 
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOpacity = 0.5
@@ -63,4 +63,14 @@ class RoomBar: UIView {
     @objc private func exitTapped() {
         delegate?.didTapExit()
     }
+    
+    private func backgroundColor() -> UIColor {
+        switch traitCollection.userInterfaceStyle {
+        case .dark:
+            return .black
+        case .light, .unspecified:
+            return .white
+        }
+    }
+
 }

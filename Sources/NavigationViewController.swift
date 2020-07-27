@@ -40,7 +40,7 @@ class NavigationViewController: UINavigationController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        view.backgroundColor = UIColor(red: 250 / 255, green: 250 / 255, blue: 250 / 255, alpha: 1)
+        view.backgroundColor = backgroundColor()
 
         createRoomButton.addTarget(self, action: #selector(createRoom), for: .touchUpInside)
         view.addSubview(createRoomButton)
@@ -164,6 +164,15 @@ class NavigationViewController: UINavigationController {
         ])
 
         return Room(rtc: webRTCClient, client: client)
+    }
+
+    private func backgroundColor() -> UIColor {
+        switch traitCollection.userInterfaceStyle {
+        case .dark:
+            return UIColor(red: 14 / 255, green: 14 / 255, blue: 15 / 255, alpha: 1)
+        case .light, .unspecified:
+            return UIColor(red: 250 / 255, green: 250 / 255, blue: 250 / 255, alpha: 1)
+        }
     }
 }
 

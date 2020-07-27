@@ -19,7 +19,7 @@ class RoomCell: UICollectionViewCell {
         backgroundColor = .clear
 
         let content = UIView(frame: CGRect(x: 15, y: 15, width: frame.size.width - 30, height: frame.size.height - 30))
-        content.backgroundColor = .white
+        content.backgroundColor = backgroundColor()
         content.layer.cornerRadius = 8
         content.layer.masksToBounds = true
         addSubview(content)
@@ -28,4 +28,14 @@ class RoomCell: UICollectionViewCell {
         emoji.text = "💬"
         content.addSubview(emoji)
     }
+
+    private func backgroundColor() -> UIColor {
+        switch traitCollection.userInterfaceStyle {
+        case .dark:
+            return .black
+        case .light, .unspecified:
+            return .white
+        }
+    }
+
 }
