@@ -7,7 +7,8 @@ let project = Project(
             name: "Voicely",
             platform: .iOS,
             product: .app,
-            bundleId: "io.voicely.voicely",
+            bundleId: "com.voicely.voicely",
+            deploymentTarget: .iOS(targetVersion: "13.0", devices: .iphone),
             infoPlist: "Info.plist",
             sources: ["Sources/**"],
             resources: ["Assets.xcassets", "Localization/**/*.strings"],
@@ -19,7 +20,7 @@ let project = Project(
             name: "VoicelyTests",
             platform: .iOS,
             product: .unitTests,
-            bundleId: "io.voicely.voicelyTests",
+            bundleId: "com.voicely.voicelyTests",
             infoPlist: "Tests.plist",
             sources: "Tests/**",
             dependencies: [
@@ -30,7 +31,7 @@ let project = Project(
             name: "VoicelyUITests",
             platform: .iOS,
             product: .uiTests,
-            bundleId: "io.voicely.voicelyUITests",
+            bundleId: "com.voicely.voicelyUITests",
             infoPlist: "UITests.plist",
             sources: "UITests/**",
             dependencies: [

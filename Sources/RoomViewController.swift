@@ -22,8 +22,8 @@ class RoomViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .white
-        
+        view.backgroundColor = .elementBackground
+
         // @todo insent
         // @todo attach to bottom
         // @todo animations
@@ -33,8 +33,7 @@ class RoomViewController: UIViewController {
         exitButton.setTitle("👉", for: .normal)
         exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         view.addSubview(exitButton)
-        
-        
+
         // @TODO WE NEED TO PERSIST THE MUTE BUTTON ICON
         
         let muteButton = UIButton(frame: CGRect(x: view.frame.size.width - (60 + 30), y:  view.frame.size.height - 100, width: 30, height: 30))
@@ -44,7 +43,7 @@ class RoomViewController: UIViewController {
         muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
         view.addSubview(muteButton)
     }
-    
+
     @objc private func exitTapped() {
         // delegate?.didTapExit()
     }

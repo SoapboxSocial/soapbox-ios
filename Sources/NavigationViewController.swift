@@ -11,7 +11,7 @@ import UIKit
 class NavigationViewController: UINavigationController {
     var activityIndicator = UIActivityIndicatorView(style: .medium)
 
-    private var currentRoom: Room?
+    private var room: Room?
 
     private var roomBarView: RoomBar?
 
@@ -40,7 +40,7 @@ class NavigationViewController: UINavigationController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        view.backgroundColor = UIColor(red: 250 / 255, green: 250 / 255, blue: 250 / 255, alpha: 1)
+        view.backgroundColor = .background
 
         createRoomButton.addTarget(self, action: #selector(createRoom), for: .touchUpInside)
         view.addSubview(createRoomButton)
@@ -72,8 +72,8 @@ class NavigationViewController: UINavigationController {
             activityIndicator.startAnimating()
             activityIndicator.isHidden = false
 
-            currentRoom = newRoom()
-            currentRoom?.create { error in
+            room = newRoom()
+            room?.create { error in
                 DispatchQueue.main.async {
                     self.activityIndicator.stopAnimating()
                     self.activityIndicator.isHidden = true
@@ -142,15 +142,17 @@ class NavigationViewController: UINavigationController {
 
     func exitCurrentRoom() {
         roomBarView?.isHidden = true
-        currentRoom?.close()
-        currentRoom = nil
+        room?.close()
+        room = nil
         createRoomButton.isHidden = false
+        UIApplication.shared.isIdleTimerDisabled = false
     }
 
     func presentCurrentRoom() {
-        present(RoomViewController(room: currentRoom!), animated: true) {
+        present(RoomViewController(room: room!), animated: true) {
             self.createRoomButton.isHidden = true
             self.roomBarView!.isHidden = false
+            UIApplication.shared.isIdleTimerDisabled = true
         }
     }
 
@@ -169,7 +171,7 @@ class NavigationViewController: UINavigationController {
 
 extension NavigationViewController: RoomBarDelegate {
     func didTapExit() {
-        if currentRoom!.isOwner {
+        if room!.isOwner {
             showOwnerAlert()
             return
         }
@@ -191,8 +193,12 @@ extension NavigationViewController: RoomBarDelegate {
 }
 
 extension NavigationViewController: RoomListViewDelegate {
-    func didSelectRoom(room: RoomData) {
-        if currentRoom != nil, let id = currentRoom?.id, room.id == id {
+    func currentRoom() -> Int? {
+        return room?.id
+    }
+
+    func didSelectRoom(room data: RoomData) {
+        if room != nil, let id = room?.id, data.id == id {
             presentCurrentRoom()
             return
         }
@@ -200,9 +206,9 @@ extension NavigationViewController: RoomListViewDelegate {
         activityIndicator.startAnimating()
         activityIndicator.isHidden = false
 
-        currentRoom = newRoom()
+        room = newRoom()
 
-        currentRoom?.join(id: room.id) { error in
+        room?.join(id: data.id) { error in
             DispatchQueue.main.async {
                 self.activityIndicator.stopAnimating()
                 self.activityIndicator.isHidden = true
