@@ -65,7 +65,7 @@ class RoomBar: UIView {
     }
 
     func setMuted() {
-        muteButton!.setTitle("🔈", for: .normal)
+        muteButton!.setTitle("🔊", for: .normal)
     }
     
     func setUnmuted() {

@@ -57,7 +57,7 @@ class RoomViewController: UIViewController {
 
     private func setMuteButtonTitle(_ button: UIButton) {
         if room.isMuted {
-            button.setTitle("🔈", for: .normal)
+            button.setTitle("🔊", for: .normal)
         } else {
             button.setTitle("🔇", for: .normal)
         }
