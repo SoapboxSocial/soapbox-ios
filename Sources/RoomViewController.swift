@@ -45,7 +45,7 @@ class RoomViewController: UIViewController {
 
         let muteButton = UIButton(frame: CGRect(x: view.frame.size.width - (60 + 30), y: (view.frame.size.height - inset) - 45, width: 30, height: 30))
 
-        muteButton.setTitle("🔇", for: .normal)
+        muteButton.setTitle("🔊", for: .normal)
         setMuteButtonTitle(muteButton)
         muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
         view.addSubview(muteButton)
@@ -57,9 +57,9 @@ class RoomViewController: UIViewController {
 
     private func setMuteButtonTitle(_ button: UIButton) {
         if room.isMuted {
-            button.setTitle("🔊", for: .normal)
-        } else {
             button.setTitle("🔇", for: .normal)
+        } else {
+            button.setTitle("🔊", for: .normal)
         }
     }
 
