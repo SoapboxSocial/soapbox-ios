@@ -81,16 +81,18 @@ class RoomListViewController: UIViewController {
                 // @todo
                 return
             }
-
-            // @todo this does not seem to work upon refreshing
-            self.roomsData = rooms.sorted {
+            
+            self.roomsData = rooms.filter {
                 if let current = self.currentRoom, $0 == current {
-                    return true
+                    return false
                 }
-
-                return $0 > $1
+                
+                return true
             }
-
+            
+            if let current = self.currentRoom {
+                self.roomsData.insert(current, at: 0)
+            }
 
             DispatchQueue.main.async {
                 self.rooms.reloadData()
