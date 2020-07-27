@@ -54,7 +54,7 @@ class APIClient {
             "type": "offer" as AnyObject,
         ]
 
-        Alamofire.request(baseUrl + "/rooms/create", method: .post, parameters: parameters, encoding: JSONEncoding())
+        Alamofire.request(baseUrl + "/v1/rooms/create", method: .post, parameters: parameters, encoding: JSONEncoding())
             .response { result in
 
                 // @todo actual handling
