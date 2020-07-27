@@ -5,7 +5,8 @@
 import UIKit
 
 protocol RoomListViewDelegate {
-    func didSelectRoom(room: RoomData)
+    func currentRoom() -> Int?
+    func didSelectRoom(room: RoomData);
 }
 
 class RoomListViewController: UIViewController {
@@ -21,6 +22,8 @@ class RoomListViewController: UIViewController {
     var api: APIClient
 
     var roomsData: [Int]
+
+    var currentRoom: Int?
 
     init(api: APIClient) {
         self.api = api
@@ -66,6 +69,8 @@ class RoomListViewController: UIViewController {
     }
 
     private func loadData() {
+        currentRoom = delegate?.currentRoom()
+
         api.rooms { data in
             DispatchQueue.main.async {
                 self.rooms.refreshControl?.endRefreshing()
@@ -76,8 +81,18 @@ class RoomListViewController: UIViewController {
                 // @todo
                 return
             }
-
-            self.roomsData = rooms
+            
+            self.roomsData = rooms.filter {
+                if let current = self.currentRoom, $0 == current {
+                    return false
+                }
+                
+                return true
+            }
+            
+            if let current = self.currentRoom {
+                self.roomsData.insert(current, at: 0)
+            }
 
             DispatchQueue.main.async {
                 self.rooms.reloadData()
@@ -101,6 +116,13 @@ extension RoomListViewController: UICollectionViewDataSource {
         }
 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.room.rawValue, for: indexPath) as! RoomCell
+
+        if roomsData[indexPath.item] == currentRoom {
+            cell.setup(style: .current)
+        } else {
+            cell.setup(style: .normal) // @todo needs a real check
+        }
+        
         return cell
     }
 }
@@ -112,6 +134,7 @@ extension RoomListViewController: UICollectionViewDelegate {
         }
 
         delegate?.didSelectRoom(room: RoomData(id: roomsData[index.item], title: "", members: [Member]()))
+        // @todo probably reload?
     }
 }
 
@@ -121,7 +144,7 @@ extension RoomListViewController: UICollectionViewDelegateFlowLayout {
             return CGSize(width: collectionView.frame.width, height: getEmptyHeight())
         }
 
-        return CGSize(width: collectionView.frame.width, height: 300)
+        return CGSize(width: collectionView.frame.width, height: 105)
     }
 
     func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, minimumLineSpacingForSectionAt _: Int) -> CGFloat {

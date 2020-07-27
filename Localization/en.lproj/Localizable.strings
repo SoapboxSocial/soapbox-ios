@@ -9,5 +9,11 @@
 "yes" = "Yes";
 "ok" = "Ok";
 
+"current_room" = "Current Room";
+"listen_in" = "Listen in";
+
 "microphone_permission_denied" = "You'll need to turn on your microphone for that!";
 "to_settings" = "To settings";
+
+"participants" = "Participants";
+"participant" = "Participant";
