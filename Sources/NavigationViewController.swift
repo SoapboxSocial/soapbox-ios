@@ -145,12 +145,14 @@ class NavigationViewController: UINavigationController {
         currentRoom?.close()
         currentRoom = nil
         createRoomButton.isHidden = false
+        UIApplication.shared.isIdleTimerDisabled = false
     }
 
     func presentCurrentRoom() {
         present(RoomViewController(room: currentRoom!), animated: true) {
             self.createRoomButton.isHidden = true
             self.roomBarView!.isHidden = false
+            UIApplication.shared.isIdleTimerDisabled = true
         }
     }
 
