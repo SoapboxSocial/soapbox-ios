@@ -22,7 +22,7 @@ class RoomViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = backgroundColor()
+        view.backgroundColor = UIColor.elementBackground
 
         // @todo insent
         // @todo attach to bottom
@@ -40,14 +40,5 @@ class RoomViewController: UIViewController {
 
     @objc private func exitTapped() {
         // delegate?.didTapExit()
-    }
-    
-    private func backgroundColor() -> UIColor {
-        switch traitCollection.userInterfaceStyle {
-        case .dark:
-            return .black
-        case .light, .unspecified:
-            return .white
-        }
     }
 }
