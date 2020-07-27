@@ -38,11 +38,13 @@ class Room {
     func mute() {
         delegate?.didChangeAudioState(enabled: false)
         rtc.muteAudio()
+        isMuted = true
     }
     
     func unmute() {
         delegate?.didChangeAudioState(enabled: true)
         rtc.unmuteAudio()
+        isMuted = false
     }
 
     func create(completion: @escaping (Error?) -> Void) {
