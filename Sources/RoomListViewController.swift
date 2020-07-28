@@ -6,7 +6,7 @@ import UIKit
 
 protocol RoomListViewDelegate {
     func currentRoom() -> Int?
-    func didSelectRoom(room: RoomData)
+    func didSelectRoom(id: Int)
 }
 
 class RoomListViewController: UIViewController {
@@ -134,7 +134,7 @@ extension RoomListViewController: UICollectionViewDelegate {
             return
         }
 
-        delegate?.didSelectRoom(room: RoomData(id: roomsData[index.item], title: "", members: [Member]()))
+        delegate?.didSelectRoom(id: roomsData[index.item])
         // @todo probably reload?
     }
 }

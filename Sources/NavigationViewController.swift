@@ -209,8 +209,8 @@ extension NavigationViewController: RoomListViewDelegate {
         return room?.id
     }
 
-    func didSelectRoom(room data: RoomData) {
-        if room != nil, let id = room?.id, data.id == id {
+    func didSelectRoom(id: Int) {
+        if room != nil, let roomid = room?.id, id == roomid {
             presentCurrentRoom()
             return
         }
@@ -220,7 +220,7 @@ extension NavigationViewController: RoomListViewDelegate {
 
         room = newRoom()
 
-        room?.join(id: data.id) { error in
+        room?.join(id: id) { error in
             DispatchQueue.main.async {
                 self.activityIndicator.stopAnimating()
                 self.activityIndicator.isHidden = true
