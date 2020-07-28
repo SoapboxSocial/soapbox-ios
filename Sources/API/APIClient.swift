@@ -81,7 +81,7 @@ class APIClient {
                 }
 
                 do {
-                    let payload = try self.decoder.decode(SDPPayload.self, from: result.data!)
+                    let payload = try self.decoder.decode(SDPPayload.self, from: data)
                     let room = RoomData(
                         id: payload.id!,
                         sessionDescription: RTCSessionDescription(type: self.type(type: payload.type), sdp: payload.sdp)
