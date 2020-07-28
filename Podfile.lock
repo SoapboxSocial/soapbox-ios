@@ -1,20 +1,24 @@
 PODS:
   - Alamofire (5.2.2)
   - GoogleWebRTC (1.1.29400)
+  - SwiftProtobuf (1.8.0)
 
 DEPENDENCIES:
   - Alamofire
   - GoogleWebRTC
+  - SwiftProtobuf
 
 SPEC REPOS:
   trunk:
     - Alamofire
     - GoogleWebRTC
+    - SwiftProtobuf
 
 SPEC CHECKSUMS:
   Alamofire: 814429acc853c6c54ff123fc3d2ef66803823ce0
   GoogleWebRTC: cfb83bc346435a17fe06bb05f04ad826b858a7fb
+  SwiftProtobuf: 2cbd9409689b7df170d82a92a33443c8e3e14a70
 
-PODFILE CHECKSUM: 5502de1781495ef8ef0cd5607a52267a1a277033
+PODFILE CHECKSUM: bdcf43de0d1bd482fb7ca6d6d1e88302acfac784
 
 COCOAPODS: 1.9.1

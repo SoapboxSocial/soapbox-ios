@@ -78,11 +78,11 @@ class RoomListViewController: UIViewController {
 
             guard let rooms = data else {
                 self.roomsData = []
-                
+
                 DispatchQueue.main.async {
                     self.rooms.reloadData()
                 }
-                
+
                 return
             }
 

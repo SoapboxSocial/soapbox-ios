@@ -15,7 +15,7 @@ class APIClient {
 
     let decoder = JSONDecoder()
 
-    let baseUrl = "http://139.59.152.91"
+    let baseUrl = "http:/127.0.0.1:8080"
 
     func join(room: Int, sdp: RTCSessionDescription, callback: @escaping (RTCSessionDescription?) -> Void) {
         let parameters: [String: AnyObject] = [
@@ -36,6 +36,7 @@ class APIClient {
                 }
 
                 do {
+                    // @TODO, THIS SHOULD ALSO RETURN ALL THE MEMBERS
                     let payload = try self.decoder.decode(SDPPayload.self, from: data)
                     let description = RTCSessionDescription(type: self.type(type: payload.type), sdp: payload.sdp)
 

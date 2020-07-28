@@ -17,8 +17,7 @@ class RoomBar: UIView {
     var delegate: RoomBarDelegate?
 
     let inset: CGFloat
-    var muteButton: UIButton? = nil
-    
+    var muteButton: UIButton?
 
     init(frame: CGRect, inset: CGFloat) {
         self.inset = inset
@@ -67,12 +66,12 @@ class RoomBar: UIView {
     func setMuted() {
         muteButton!.setTitle("🔇", for: .normal)
     }
-    
+
     func setUnmuted() {
         muteButton!.setTitle("🔊", for: .normal)
     }
-    
-    @objc private func muteTapped(sender: UIButton) {
+
+    @objc private func muteTapped(sender _: UIButton) {
         delegate?.didTapMute()
     }
 
