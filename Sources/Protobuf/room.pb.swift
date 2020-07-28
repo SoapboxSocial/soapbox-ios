@@ -14,104 +14,196 @@ import SwiftProtobuf
 // incompatible with the version of SwiftProtobuf to which you are linking.
 // Please ensure that your are building against the same version of the API
 // that was used to generate this file.
-private struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAPIVersionCheck {
-    struct _2: SwiftProtobuf.ProtobufAPIVersion_2 {}
-    typealias Version = _2
+fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAPIVersionCheck {
+  struct _2: SwiftProtobuf.ProtobufAPIVersion_2 {}
+  typealias Version = _2
 }
 
 struct RoomEvent {
-    // SwiftProtobuf.Message conformance is added in an extension below. See the
-    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-    // methods supported on all messages.
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
 
-    var type: RoomEvent.TypeEnum = .joined
+  var type: RoomEvent.TypeEnum = .joined
 
-    var from: String = String()
+  var from: String = String()
 
-    var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-    enum TypeEnum: SwiftProtobuf.Enum {
-        typealias RawValue = Int
-        case joined // = 0
-        case left // = 1
-        case UNRECOGNIZED(Int)
+  enum TypeEnum: SwiftProtobuf.Enum {
+    typealias RawValue = Int
+    case joined // = 0
+    case left // = 1
+    case UNRECOGNIZED(Int)
 
-        init() {
-            self = .joined
-        }
-
-        init?(rawValue: Int) {
-            switch rawValue {
-            case 0: self = .joined
-            case 1: self = .left
-            default: self = .UNRECOGNIZED(rawValue)
-            }
-        }
-
-        var rawValue: Int {
-            switch self {
-            case .joined: return 0
-            case .left: return 1
-            case let .UNRECOGNIZED(i): return i
-            }
-        }
+    init() {
+      self = .joined
     }
 
-    init() {}
+    init?(rawValue: Int) {
+      switch rawValue {
+      case 0: self = .joined
+      case 1: self = .left
+      default: self = .UNRECOGNIZED(rawValue)
+      }
+    }
+
+    var rawValue: Int {
+      switch self {
+      case .joined: return 0
+      case .left: return 1
+      case .UNRECOGNIZED(let i): return i
+      }
+    }
+
+  }
+
+  init() {}
 }
 
 #if swift(>=4.2)
 
-    extension RoomEvent.TypeEnum: CaseIterable {
-        // The compiler won't synthesize support with the UNRECOGNIZED case.
-        static var allCases: [RoomEvent.TypeEnum] = [
-            .joined,
-            .left,
-        ]
+extension RoomEvent.TypeEnum: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  static var allCases: [RoomEvent.TypeEnum] = [
+    .joined,
+    .left,
+  ]
+}
+
+#endif  // swift(>=4.2)
+
+struct RoomCommand {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var type: RoomCommand.TypeEnum = .exit
+
+  var data: Data = SwiftProtobuf.Internal.emptyData
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  enum TypeEnum: SwiftProtobuf.Enum {
+    typealias RawValue = Int
+    case exit // = 0
+    case UNRECOGNIZED(Int)
+
+    init() {
+      self = .exit
     }
 
-#endif // swift(>=4.2)
+    init?(rawValue: Int) {
+      switch rawValue {
+      case 0: self = .exit
+      default: self = .UNRECOGNIZED(rawValue)
+      }
+    }
+
+    var rawValue: Int {
+      switch self {
+      case .exit: return 0
+      case .UNRECOGNIZED(let i): return i
+      }
+    }
+
+  }
+
+  init() {}
+}
+
+#if swift(>=4.2)
+
+extension RoomCommand.TypeEnum: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  static var allCases: [RoomCommand.TypeEnum] = [
+    .exit,
+  ]
+}
+
+#endif  // swift(>=4.2)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension RoomEvent: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-    static let protoMessageName: String = "RoomEvent"
-    static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-        1: .same(proto: "type"),
-        2: .same(proto: "from"),
-    ]
+  static let protoMessageName: String = "RoomEvent"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "type"),
+    2: .same(proto: "from"),
+  ]
 
-    mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-        while let fieldNumber = try decoder.nextFieldNumber() {
-            switch fieldNumber {
-            case 1: try decoder.decodeSingularEnumField(value: &type)
-            case 2: try decoder.decodeSingularStringField(value: &from)
-            default: break
-            }
-        }
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularEnumField(value: &self.type)
+      case 2: try decoder.decodeSingularStringField(value: &self.from)
+      default: break
+      }
     }
+  }
 
-    func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-        if type != .joined {
-            try visitor.visitSingularEnumField(value: type, fieldNumber: 1)
-        }
-        if !from.isEmpty {
-            try visitor.visitSingularStringField(value: from, fieldNumber: 2)
-        }
-        try unknownFields.traverse(visitor: &visitor)
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.type != .joined {
+      try visitor.visitSingularEnumField(value: self.type, fieldNumber: 1)
     }
+    if !self.from.isEmpty {
+      try visitor.visitSingularStringField(value: self.from, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
 
-    static func == (lhs: RoomEvent, rhs: RoomEvent) -> Bool {
-        if lhs.type != rhs.type { return false }
-        if lhs.from != rhs.from { return false }
-        if lhs.unknownFields != rhs.unknownFields { return false }
-        return true
-    }
+  static func ==(lhs: RoomEvent, rhs: RoomEvent) -> Bool {
+    if lhs.type != rhs.type {return false}
+    if lhs.from != rhs.from {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
 }
 
 extension RoomEvent.TypeEnum: SwiftProtobuf._ProtoNameProviding {
-    static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-        0: .same(proto: "JOINED"),
-        1: .same(proto: "LEFT"),
-    ]
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "JOINED"),
+    1: .same(proto: "LEFT"),
+  ]
+}
+
+extension RoomCommand: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "RoomCommand"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "type"),
+    2: .same(proto: "data"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularEnumField(value: &self.type)
+      case 2: try decoder.decodeSingularBytesField(value: &self.data)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.type != .exit {
+      try visitor.visitSingularEnumField(value: self.type, fieldNumber: 1)
+    }
+    if !self.data.isEmpty {
+      try visitor.visitSingularBytesField(value: self.data, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: RoomCommand, rhs: RoomCommand) -> Bool {
+    if lhs.type != rhs.type {return false}
+    if lhs.data != rhs.data {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension RoomCommand.TypeEnum: SwiftProtobuf._ProtoNameProviding {
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "EXIT"),
+  ]
 }
