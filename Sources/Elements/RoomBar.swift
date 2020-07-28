@@ -71,7 +71,7 @@ class RoomBar: UIView {
         muteButton!.setTitle("🔊", for: .normal)
     }
 
-    @objc private func muteTapped(sender: UIButton) {
+    @objc private func muteTapped(sender _: UIButton) {
         delegate?.didTapMute()
     }
 

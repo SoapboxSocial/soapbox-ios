@@ -11,7 +11,7 @@ class CreateRoomButton: UIButton {
     init() {
         super.init(frame: CGRect(x: 0, y: 0, width: 70, height: 70))
 
-        backgroundColor = UIColor(red: 213 / 255, green: 94 / 255, blue: 163 / 255, alpha: 1)
+        backgroundColor = .highlight
         layer.cornerRadius = frame.size.height / 2
 
         layer.masksToBounds = false

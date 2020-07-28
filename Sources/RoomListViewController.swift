@@ -78,7 +78,6 @@ class RoomListViewController: UIViewController {
             switch result {
             case .failure:
                 self.roomsData = []
-                break
             case .success(let rooms):
                 // @todo do this with sort
                 self.roomsData = rooms.filter {
