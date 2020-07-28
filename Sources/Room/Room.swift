@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import WebRTC
 
 protocol RoomDelegate {
-    func didChangeAudioState(enabled: Bool)
+    func userDidJoinRoom(user: String)
 }
 
 // @todo
@@ -29,6 +30,7 @@ class Room {
     init(rtc: WebRTCClient, client: APIClient) {
         self.rtc = rtc
         self.client = client
+        rtc.delegate = self
     }
 
     func close() {
@@ -36,13 +38,11 @@ class Room {
     }
 
     func mute() {
-        delegate?.didChangeAudioState(enabled: false)
         rtc.muteAudio()
         isMuted = true
     }
 
     func unmute() {
-        delegate?.didChangeAudioState(enabled: true)
         rtc.unmuteAudio()
         isMuted = false
     }
@@ -87,6 +87,30 @@ class Room {
                     self.id = id
                 })
             }
+        }
+    }
+}
+
+extension Room: WebRTCClientDelegate {
+    func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate) {
+        
+    }
+    
+    func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
+        
+    }
+    
+    func webRTCClient(_ client: WebRTCClient, didReceiveData data: Data) {
+        do {
+            let event = try RoomEvent(serializedData: data)
+            
+            if event.type == .joined {
+                delegate?.userDidJoinRoom(user: event.from)
+            }
+            
+            // @todo keep track of all users
+        } catch {
+            debugPrint("failed to decode \(error.localizedDescription)")
         }
     }
 }

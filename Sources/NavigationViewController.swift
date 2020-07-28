@@ -237,3 +237,9 @@ extension NavigationViewController: RoomListViewDelegate {
         }
     }
 }
+
+extension NavigationViewController: RoomDelegate {
+    func userDidJoinRoom(user: String) {
+        // @todo add to UI
+    }
+}
