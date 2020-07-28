@@ -6,6 +6,11 @@ import Alamofire
 import Foundation
 import WebRTC
 
+enum APIError: Error {
+    case requestFailed
+    case decode
+}
+
 class APIClient {
     struct SDPPayload: Decodable {
         let id: Int?
@@ -17,7 +22,11 @@ class APIClient {
 
     let baseUrl = "http://139.59.152.91"
 
-    func join(room: Int, sdp: RTCSessionDescription, callback: @escaping (RTCSessionDescription?) -> Void) {
+    func join(
+        room: Int,
+        sdp: RTCSessionDescription,
+        callback: @escaping (Result<RTCSessionDescription, APIError>) -> Void
+    ) {
         let parameters: [String: AnyObject] = [
             "sdp": sdp.sdp as AnyObject,
             "type": "offer" as AnyObject,
@@ -27,23 +36,17 @@ class APIClient {
 
         AF.request(baseUrl + path, method: .post, parameters: parameters, encoding: JSONEncoding())
             .response { result in
-
-                // @todo actual handling
-
                 guard let data = result.data else {
-                    // @todo error handling
-                    return
+                    return callback(.failure(.requestFailed))
                 }
 
                 do {
                     let payload = try self.decoder.decode(SDPPayload.self, from: data)
                     let description = RTCSessionDescription(type: self.type(type: payload.type), sdp: payload.sdp)
 
-                    callback(description)
+                    callback(.success(description))
                 } catch {
-                    callback(nil)
-                    debugPrint("Warning: Could not decode incoming message: \(error)")
-                    return
+                    callback(.failure(.decode))
                 }
             }
     }
@@ -78,26 +81,25 @@ class APIClient {
             }
     }
 
-    func rooms(callback: @escaping ([Int]?) -> Void) {
+    func rooms(callback: @escaping (Result<[Int], APIError>) -> Void) {
         AF.request(baseUrl + "/v1/rooms", method: .get)
             .response { result in
 
                 guard let data = result.data else {
-                    // @todo error handling
-                    return callback(nil)
+                    return callback(.failure(.requestFailed))
                 }
 
                 do {
                     let rooms = try self.decoder.decode([Int].self, from: data)
-                    callback(rooms)
+                    callback(.success(rooms))
                 } catch {
                     // @todo error handling
-                    return callback(nil)
+                    return callback(.failure(.decode))
                 }
             }
     }
 
-    func type(type: String) -> RTCSdpType {
+    private func type(type: String) -> RTCSdpType {
         switch type {
         case "offer":
             return .offer

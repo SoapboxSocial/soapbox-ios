@@ -73,19 +73,20 @@ class Room {
 
     func join(id: Int, completion: @escaping (Error?) -> Void) {
         rtc.offer { sdp in
-            self.client.join(room: id, sdp: sdp) { answer in
-                guard let remote = answer else {
+            self.client.join(room: id, sdp: sdp) { result in
+                switch result {
+                case .failure:
                     return completion(RoomError())
+                case .success(let remote):
+                    self.rtc.set(remoteSdp: remote, completion: { error in
+                        if error != nil {
+                            return completion(error)
+                        }
+                        // @todo check error
+                        completion(nil)
+                        self.id = id
+                    })
                 }
-
-                self.rtc.set(remoteSdp: remote, completion: { error in
-                    if error != nil {
-                        return completion(error)
-                    }
-                    // @todo check error
-                    completion(nil)
-                    self.id = id
-                })
             }
         }
     }

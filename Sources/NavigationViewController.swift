@@ -198,7 +198,7 @@ extension NavigationViewController: RoomViewDelegate {
         exitCurrentRoom()
         dismiss(animated: true, completion: nil)
     }
-    
+
     func roomViewDidTapMute() {
         didTapMute()
     }

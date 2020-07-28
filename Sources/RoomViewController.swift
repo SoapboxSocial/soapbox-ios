@@ -14,7 +14,7 @@ protocol RoomViewDelegate {
 
 class RoomViewController: UIViewController {
     private let room: Room
-    
+
     var delegate: RoomViewDelegate?
 
     init(room: Room) {
@@ -30,9 +30,9 @@ class RoomViewController: UIViewController {
         super.viewWillLayoutSubviews()
 
         view.backgroundColor = .elementBackground
-        
+
         let inset = view.safeAreaInsets.bottom
-        
+
         // @todo animations
         let exitButton = UIButton(
             frame: CGRect(x: view.frame.size.width - (30 + 15), y: (view.frame.size.height - inset) - 45, width: 30, height: 30)
