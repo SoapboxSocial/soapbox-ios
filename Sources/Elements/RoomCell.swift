@@ -27,7 +27,7 @@ class RoomCell: UICollectionViewCell {
         let countLabel = UILabel(frame: CGRect(x: 15, y: 45, width: contentView.frame.size.width - 30, height: 30))
         // @todo change depending on amount, Participant / Participants
         countLabel.text = String(Int.random(in: 0 ..< 200)) + " " + NSLocalizedString("participants", comment: "")
-        countLabel.textColor = UIColor(red: 213 / 255, green: 94 / 255, blue: 163 / 255, alpha: 1)
+        countLabel.textColor = .highlight
         content.addSubview(countLabel)
     }
 
