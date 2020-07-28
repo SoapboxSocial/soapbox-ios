@@ -10,6 +10,7 @@ import WebRTC
 
 protocol RoomDelegate {
     func userDidJoinRoom(user: String)
+    func userDidLeaveRoom(user: String)
 }
 
 // @todo
@@ -102,13 +103,16 @@ extension Room: WebRTCClientDelegate {
         do {
             let event = try RoomEvent(serializedData: data)
 
-            if event.type == .joined {
-                // @todo ensure doens't exist yet
+            switch event.type {
+            case .joined:
                 members.append(event.from)
                 delegate?.userDidJoinRoom(user: event.from)
+            case .left:
+                members.removeAll(where: { $0 == event.from })
+                delegate?.userDidLeaveRoom(user: event.from)
+            case .UNRECOGNIZED(_):
+                return
             }
-
-            // @todo keep track of all users
         } catch {
             debugPrint("failed to decode \(error.localizedDescription)")
         }

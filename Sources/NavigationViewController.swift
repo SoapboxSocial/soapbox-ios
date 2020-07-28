@@ -150,7 +150,6 @@ class NavigationViewController: UINavigationController {
     func presentCurrentRoom() {
         roomViewController = RoomViewController(room: room!)
         roomViewController!.delegate = self
-        debugPrint(roomViewController)
         present(roomViewController!, animated: true) {
             self.createRoomButton.isHidden = true
             self.roomBarView!.isHidden = false
@@ -210,7 +209,6 @@ extension NavigationViewController: RoomViewDelegate {
     }
 
     func roomViewWasClosed() {
-        debugPrint("fuck")
         roomViewController = nil
     }
 }
@@ -250,8 +248,11 @@ extension NavigationViewController: RoomListViewDelegate {
 }
 
 extension NavigationViewController: RoomDelegate {
+    func userDidLeaveRoom(user: String) {
+        roomViewController?.updateData()
+    }
+
     func userDidJoinRoom(user _: String) {
         roomViewController?.updateData()
-        // @todo add to UI
     }
 }
