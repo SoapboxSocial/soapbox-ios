@@ -41,8 +41,6 @@ class RoomViewController: UIViewController {
         exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         view.addSubview(exitButton)
 
-        // @TODO WE NEED TO PERSIST THE MUTE BUTTON ICON
-
         let muteButton = UIButton(frame: CGRect(x: view.frame.size.width - (60 + 30), y: (view.frame.size.height - inset) - 45, width: 30, height: 30))
 
         muteButton.setTitle("🔊", for: .normal)
