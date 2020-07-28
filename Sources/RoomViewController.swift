@@ -14,11 +14,15 @@ protocol RoomViewDelegate {
 }
 
 class RoomViewController: UIViewController {
+    private let reuseIdentifier = "profileCell"
+    
     private let room: Room
 
     var delegate: RoomViewDelegate?
 
     var members: UICollectionView!
+    
+    var memberList = [String]()
 
     init(room: Room) {
         self.room = room
@@ -43,9 +47,11 @@ class RoomViewController: UIViewController {
         members = UICollectionView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height - (inset + 45 + 30)), collectionViewLayout: layout)
         members!.dataSource = self
         members!.delegate = self
-        members!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "test")
+        members!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         members!.backgroundColor = .clear
         view.addSubview(members)
+
+        updateData()
 
         // @todo animations
         let exitButton = UIButton(
@@ -71,6 +77,7 @@ class RoomViewController: UIViewController {
 
     func updateData() {
         DispatchQueue.main.async {
+            self.memberList = self.room.members
             self.members.reloadData()
         }
     }
@@ -98,11 +105,11 @@ extension RoomViewController: UICollectionViewDelegate {}
 extension RoomViewController: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         // Adds the plus 1 for self.
-        return room.members.count + 1
+        return self.memberList.count + 1
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "test", for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
         if indexPath.item == 0 {
             let label = UILabel(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
             label.text = "You"

@@ -67,6 +67,8 @@ final class WebRTCClient: NSObject {
 
     func close() {
         // @todo remove audio track? peerConnection.removeTrack()
+        remoteDataChannel?.close()
+        localDataChannel?.close()
         peerConnection.close()
     }
 
@@ -141,7 +143,7 @@ final class WebRTCClient: NSObject {
 
     private func createDataChannel() -> RTCDataChannel? {
         let config = RTCDataChannelConfiguration()
-        guard let dataChannel = self.peerConnection.dataChannel(forLabel: "WebRTCData", configuration: config) else {
+        guard let dataChannel = self.peerConnection.dataChannel(forLabel: "data", configuration: config) else {
             debugPrint("Warning: Couldn't create data channel.")
             return nil
         }

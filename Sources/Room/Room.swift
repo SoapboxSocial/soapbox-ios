@@ -111,6 +111,7 @@ extension Room: WebRTCClientDelegate {
                 members.append(event.from)
                 delegate?.userDidJoinRoom(user: event.from)
             case .left:
+                debugPrint("received left")
                 members.removeAll(where: { $0 == event.from })
                 delegate?.userDidLeaveRoom(user: event.from)
             case .UNRECOGNIZED:
