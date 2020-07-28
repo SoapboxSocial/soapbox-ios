@@ -21,13 +21,12 @@ class RoomListViewController: UIViewController {
 
     var api: APIClient
 
-    var roomsData: [Int]
+    var roomsData = [Int]()
 
     var currentRoom: Int?
 
     init(api: APIClient) {
         self.api = api
-        roomsData = [Int]()
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -71,32 +70,27 @@ class RoomListViewController: UIViewController {
     private func loadData() {
         currentRoom = delegate?.currentRoom()
 
-        api.rooms { data in
+        api.rooms { result in
             DispatchQueue.main.async {
                 self.rooms.refreshControl?.endRefreshing()
             }
 
-            guard let rooms = data else {
+            switch result {
+            case .failure:
                 self.roomsData = []
+            case .success(let rooms):
+                // @todo do this with sort
+                self.roomsData = rooms.filter {
+                    if let current = self.currentRoom, $0 == current {
+                        return false
+                    }
 
-                DispatchQueue.main.async {
-                    self.rooms.reloadData()
+                    return true
                 }
 
-                return
-            }
-
-            // @todo do this with sort
-            self.roomsData = rooms.filter {
-                if let current = self.currentRoom, $0 == current {
-                    return false
+                if let current = self.currentRoom {
+                    self.roomsData.insert(current, at: 0)
                 }
-
-                return true
-            }
-
-            if let current = self.currentRoom {
-                self.roomsData.insert(current, at: 0)
             }
 
             DispatchQueue.main.async {
