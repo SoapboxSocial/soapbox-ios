@@ -21,7 +21,7 @@ class RoomListViewController: UIViewController {
 
     var api: APIClient
 
-    var roomsData = [Int]()
+    var roomsData = [APIClient.RoomListItem]()
 
     var currentRoom: Int?
 
@@ -78,18 +78,13 @@ class RoomListViewController: UIViewController {
             switch result {
             case .failure:
                 self.roomsData = []
-            case .success(let rooms):
-                // @todo do this with sort
-                self.roomsData = rooms.filter {
-                    if let current = self.currentRoom, $0 == current {
-                        return false
-                    }
-
-                    return true
-                }
+            case let .success(rooms):
+                self.roomsData = rooms
 
                 if let current = self.currentRoom {
-                    self.roomsData.insert(current, at: 0)
+                    self.roomsData.sort {
+                        ($0.id == current) && !($1.id == current)
+                    }
                 }
             }
 
@@ -116,10 +111,12 @@ extension RoomListViewController: UICollectionViewDataSource {
 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.room.rawValue, for: indexPath) as! RoomCell
 
-        if roomsData[indexPath.item] == currentRoom {
-            cell.setup(style: .current)
+        let item = roomsData[indexPath.item]
+
+        if item.id == currentRoom {
+            cell.setup(style: .current, data: item)
         } else {
-            cell.setup(style: .normal) // @todo needs a real check
+            cell.setup(style: .normal, data: item) // @todo needs a real check
         }
 
         return cell
@@ -132,7 +129,7 @@ extension RoomListViewController: UICollectionViewDelegate {
             return
         }
 
-        delegate?.didSelectRoom(id: roomsData[index.item])
+        delegate?.didSelectRoom(id: roomsData[index.item].id)
         // @todo probably reload?
     }
 }

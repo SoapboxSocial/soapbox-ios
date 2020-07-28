@@ -97,11 +97,20 @@ extension RoomViewController: UICollectionViewDelegate {}
 
 extension RoomViewController: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        return room.members.count
+        // Adds the plus 1 for self.
+        return room.members.count + 1
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "test", for: indexPath)
+        if indexPath.item == 0 {
+            let label = UILabel(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
+            label.text = "You"
+            label.textAlignment = .center
+            label.textColor = .elementBackground
+            cell.contentView.addSubview(label)
+        }
+
         cell.contentView.layer.cornerRadius = 30
         cell.contentView.clipsToBounds = true
         cell.contentView.backgroundColor = .highlight
