@@ -10,7 +10,7 @@ class RoomCell: UICollectionViewCell {
         case current
     }
 
-    public func setup(style: RoomCellStyle) {
+    public func setup(style: RoomCellStyle, data: APIClient.RoomListItem) {
         backgroundColor = .clear
 
         let content = UIView(frame: CGRect(x: 15, y: 15, width: frame.size.width - 30, height: frame.size.height - 15))
@@ -26,7 +26,7 @@ class RoomCell: UICollectionViewCell {
 
         let countLabel = UILabel(frame: CGRect(x: 15, y: 45, width: contentView.frame.size.width - 30, height: 30))
         // @todo change depending on amount, Participant / Participants
-        countLabel.text = String(Int.random(in: 0 ..< 200)) + " " + NSLocalizedString("participants", comment: "")
+        countLabel.text = String(data.members.count) + " " + NSLocalizedString("participants", comment: "")
         countLabel.textColor = .highlight
         content.addSubview(countLabel)
     }

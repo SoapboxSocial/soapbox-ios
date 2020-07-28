@@ -248,7 +248,7 @@ extension NavigationViewController: RoomListViewDelegate {
 }
 
 extension NavigationViewController: RoomDelegate {
-    func userDidLeaveRoom(user: String) {
+    func userDidLeaveRoom(user _: String) {
         roomViewController?.updateData()
     }
 

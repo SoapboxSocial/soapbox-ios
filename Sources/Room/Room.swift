@@ -58,7 +58,7 @@ class Room {
                 switch result {
                 case .failure:
                     return completion(RoomError())
-                case .success(let data):
+                case let .success(data):
                     self.id = data.id
 
                     self.rtc.set(remoteSdp: data.sessionDescription, completion: { error in
@@ -81,8 +81,9 @@ class Room {
                 switch result {
                 case .failure:
                     return completion(RoomError())
-                case .success(let remote):
-                    self.rtc.set(remoteSdp: remote, completion: { error in
+                case let .success(data):
+                    self.members = data.1
+                    self.rtc.set(remoteSdp: data.0, completion: { error in
                         if error != nil {
                             return completion(error)
                         }
@@ -112,7 +113,7 @@ extension Room: WebRTCClientDelegate {
             case .left:
                 members.removeAll(where: { $0 == event.from })
                 delegate?.userDidLeaveRoom(user: event.from)
-            case .UNRECOGNIZED(_):
+            case .UNRECOGNIZED:
                 return
             }
         } catch {
