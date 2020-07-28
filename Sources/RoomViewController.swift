@@ -10,12 +10,15 @@ import UIKit
 protocol RoomViewDelegate {
     func roomViewDidTapExit()
     func roomViewDidTapMute()
+    func roomViewWasClosed()
 }
 
 class RoomViewController: UIViewController {
     private let room: Room
-    
+
     var delegate: RoomViewDelegate?
+
+    var members: UICollectionView!
 
     init(room: Room) {
         self.room = room
@@ -30,9 +33,20 @@ class RoomViewController: UIViewController {
         super.viewWillLayoutSubviews()
 
         view.backgroundColor = .elementBackground
-        
+
         let inset = view.safeAreaInsets.bottom
-        
+
+        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 0, right: 10)
+        layout.itemSize = CGSize(width: 60, height: 60)
+
+        members = UICollectionView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height - (inset + 45 + 30)), collectionViewLayout: layout)
+        members!.dataSource = self
+        members!.delegate = self
+        members!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "test")
+        members!.backgroundColor = .clear
+        view.addSubview(members)
+
         // @todo animations
         let exitButton = UIButton(
             frame: CGRect(x: view.frame.size.width - (30 + 15), y: (view.frame.size.height - inset) - 45, width: 30, height: 30)
@@ -47,6 +61,18 @@ class RoomViewController: UIViewController {
         setMuteButtonTitle(muteButton)
         muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
         view.addSubview(muteButton)
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
+        delegate?.roomViewWasClosed()
+    }
+
+    func updateData() {
+        DispatchQueue.main.async {
+            self.members.reloadData()
+        }
     }
 
     @objc private func exitTapped() {
@@ -64,5 +90,21 @@ class RoomViewController: UIViewController {
     @objc private func muteTapped(sender: UIButton) {
         delegate?.roomViewDidTapMute()
         setMuteButtonTitle(sender)
+    }
+}
+
+extension RoomViewController: UICollectionViewDelegate {}
+
+extension RoomViewController: UICollectionViewDataSource {
+    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
+        return room.members.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "test", for: indexPath)
+        cell.contentView.layer.cornerRadius = 30
+        cell.contentView.clipsToBounds = true
+        cell.contentView.backgroundColor = .highlight
+        return cell
     }
 }

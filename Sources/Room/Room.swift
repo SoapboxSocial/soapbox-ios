@@ -22,6 +22,8 @@ class Room {
     // @todo think about this for when users join and are muted by default
     private(set) var isMuted = false
 
+    private(set) var members = [String]()
+
     private let rtc: WebRTCClient
     private let client: APIClient
 
@@ -92,22 +94,20 @@ class Room {
 }
 
 extension Room: WebRTCClientDelegate {
-    func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate) {
-        
-    }
-    
-    func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
-        
-    }
-    
-    func webRTCClient(_ client: WebRTCClient, didReceiveData data: Data) {
+    func webRTCClient(_: WebRTCClient, didDiscoverLocalCandidate _: RTCIceCandidate) {}
+
+    func webRTCClient(_: WebRTCClient, didChangeConnectionState _: RTCIceConnectionState) {}
+
+    func webRTCClient(_: WebRTCClient, didReceiveData data: Data) {
         do {
             let event = try RoomEvent(serializedData: data)
-            
+
             if event.type == .joined {
+                // @todo ensure doens't exist yet
+                members.append(event.from)
                 delegate?.userDidJoinRoom(user: event.from)
             }
-            
+
             // @todo keep track of all users
         } catch {
             debugPrint("failed to decode \(error.localizedDescription)")

@@ -19,6 +19,8 @@ class NavigationViewController: UINavigationController {
 
     private var client: APIClient
 
+    private var roomViewController: RoomViewController?
+
     override init(rootViewController: UIViewController) {
         createRoomButton = CreateRoomButton()
         client = APIClient()
@@ -146,9 +148,10 @@ class NavigationViewController: UINavigationController {
     }
 
     func presentCurrentRoom() {
-        let roomViewController = RoomViewController(room: room!)
-        roomViewController.delegate = self
-        present(roomViewController, animated: true) {
+        roomViewController = RoomViewController(room: room!)
+        roomViewController!.delegate = self
+        debugPrint(roomViewController)
+        present(roomViewController!, animated: true) {
             self.createRoomButton.isHidden = true
             self.roomBarView!.isHidden = false
             UIApplication.shared.isIdleTimerDisabled = true
@@ -164,7 +167,9 @@ class NavigationViewController: UINavigationController {
             "stun:stun4.l.google.com:19302",
         ])
 
-        return Room(rtc: webRTCClient, client: client)
+        let r = Room(rtc: webRTCClient, client: client)
+        r.delegate = self
+        return r
     }
 }
 
@@ -197,10 +202,16 @@ extension NavigationViewController: RoomViewDelegate {
     func roomViewDidTapExit() {
         exitCurrentRoom()
         dismiss(animated: true, completion: nil)
+        roomViewController = nil
     }
-    
+
     func roomViewDidTapMute() {
         didTapMute()
+    }
+
+    func roomViewWasClosed() {
+        debugPrint("fuck")
+        roomViewController = nil
     }
 }
 
@@ -239,7 +250,8 @@ extension NavigationViewController: RoomListViewDelegate {
 }
 
 extension NavigationViewController: RoomDelegate {
-    func userDidJoinRoom(user: String) {
+    func userDidJoinRoom(user _: String) {
+        roomViewController?.updateData()
         // @todo add to UI
     }
 }

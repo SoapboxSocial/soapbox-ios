@@ -36,6 +36,7 @@ class APIClient {
                 }
 
                 do {
+                    // @TODO, THIS SHOULD ALSO RETURN ALL THE MEMBERS
                     let payload = try self.decoder.decode(SDPPayload.self, from: data)
                     let description = RTCSessionDescription(type: self.type(type: payload.type), sdp: payload.sdp)
 

@@ -8,6 +8,10 @@
 import UIKit
 
 extension UIColor {
+    static var highlight: UIColor = {
+        UIColor(red: 213 / 255, green: 94 / 255, blue: 163 / 255, alpha: 1)
+    }
+
     static var background: UIColor {
         return UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
             if UITraitCollection.userInterfaceStyle == .dark {
