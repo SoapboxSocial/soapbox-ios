@@ -51,22 +51,23 @@ class Room {
         isOwner = true
 
         rtc.offer { sdp in
-            self.client.createRoom(sdp: sdp) { id, answer in
-                guard let remote = answer else {
+            self.client.createRoom(sdp: sdp) { result in
+                switch result {
+                case .failure:
                     return completion(RoomError())
+                case .success(let data):
+                    self.id = data.id
+
+                    self.rtc.set(remoteSdp: data.sessionDescription, completion: { error in
+                        if error != nil {
+                            return completion(RoomError())
+                        }
+                        // @todo check error
+                        // @todo so this is a bit too late, it makes it really slow.
+                        // Maybe we should complete before this and throw errors in case with a delegat?
+                        completion(nil)
+                    })
                 }
-
-                self.id = id
-
-                self.rtc.set(remoteSdp: remote, completion: { error in
-                    if error != nil {
-                        return completion(RoomError())
-                    }
-                    // @todo check error
-                    // @todo so this is a bit too late, it makes it really slow.
-                    // Maybe we should complete before this and throw errors in case with a delegat?
-                    completion(nil)
-                })
             }
         }
     }

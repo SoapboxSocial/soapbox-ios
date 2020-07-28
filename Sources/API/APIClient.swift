@@ -12,6 +12,11 @@ enum APIError: Error {
 }
 
 class APIClient {
+    struct RoomData {
+        let id: Int
+        let sessionDescription: RTCSessionDescription
+    }
+
     struct SDPPayload: Decodable {
         let id: Int?
         let sdp: String
@@ -51,7 +56,7 @@ class APIClient {
             }
     }
 
-    func createRoom(sdp: RTCSessionDescription, callback: @escaping (Int?, RTCSessionDescription?) -> Void) {
+    func createRoom(sdp: RTCSessionDescription, callback: @escaping (Result<RoomData, APIError>) -> Void) {
         let parameters: [String: AnyObject] = [
             "sdp": sdp.sdp as AnyObject,
             "type": "offer" as AnyObject,
@@ -59,24 +64,20 @@ class APIClient {
 
         AF.request(baseUrl + "/v1/rooms/create", method: .post, parameters: parameters, encoding: JSONEncoding())
             .response { result in
-
-                // @todo actual handling
-                if result.error != nil {
-                    // @todo error handling
-                    return callback(nil, nil)
-                }
-
                 guard let data = result.data else {
-                    // @todo error handling
-                    return callback(nil, nil)
+                    return callback(.failure(.requestFailed))
                 }
 
                 do {
-                    let payload = try self.decoder.decode(SDPPayload.self, from: data)
-                    callback(payload.id, RTCSessionDescription(type: self.type(type: payload.type), sdp: payload.sdp))
+                    let payload = try self.decoder.decode(SDPPayload.self, from: result.data!)
+                    let room = RoomData(
+                        id: payload.id!,
+                        sessionDescription: RTCSessionDescription(type: self.type(type: payload.type), sdp: payload.sdp)
+                    )
+
+                    callback(.success(room))
                 } catch {
-                    debugPrint("Warning: Could not decode incoming message: \(error)")
-                    return callback(nil, nil)
+                    return callback(.failure(.decode))
                 }
             }
     }
