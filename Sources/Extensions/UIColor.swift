@@ -8,7 +8,7 @@
 import UIKit
 
 extension UIColor {
-    static var highlight: UIColor = {
+    static var highlight: UIColor {
         UIColor(red: 213 / 255, green: 94 / 255, blue: 163 / 255, alpha: 1)
     }
 
