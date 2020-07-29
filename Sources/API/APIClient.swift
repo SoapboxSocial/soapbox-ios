@@ -18,14 +18,26 @@ class APIClient {
         let sessionDescription: RTCSessionDescription
     }
 
+    enum MemberRole: String, Decodable {
+        case owner = "owner"
+        case audience = "audience"
+        case speaker = "speaker"
+    }
+
+    struct Member: Decodable {
+        let id: String
+        var role: MemberRole
+    }
+
     struct Room: Decodable {
         let id: Int
-        let members: [String]
+        let members: [Member]
     }
 
     struct JoinResponse: Decodable {
-        let members: [String]
+        let members: [Member]
         let sdp: SDPPayload
+        let role: MemberRole
     }
 
     struct SDPPayload: Decodable {
@@ -36,12 +48,12 @@ class APIClient {
 
     let decoder = JSONDecoder()
 
-    let baseUrl = "http://139.59.152.91"
+    let baseUrl = "http://127.0.0.1:8080"
 
     func join(
         room: Int,
         sdp: RTCSessionDescription,
-        callback: @escaping (Result<(RTCSessionDescription, [String]), APIError>) -> Void
+        callback: @escaping (Result<(RTCSessionDescription, [Member], MemberRole), APIError>) -> Void
     ) {
         let parameters: [String: AnyObject] = [
             "sdp": sdp.sdp as AnyObject,
@@ -59,7 +71,7 @@ class APIClient {
                 do {
                     let payload = try self.decoder.decode(JoinResponse.self, from: data)
                     let description = RTCSessionDescription(type: self.type(type: payload.sdp.type), sdp: payload.sdp.sdp)
-                    callback(.success((description, payload.members)))
+                    callback(.success((description, payload.members, payload.role)))
                 } catch {
                     callback(.failure(.decode))
                 }

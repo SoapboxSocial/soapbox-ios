@@ -11,6 +11,7 @@ import WebRTC
 protocol RoomDelegate {
     func userDidJoinRoom(user: String)
     func userDidLeaveRoom(user: String)
+    func didChangeUserRole(user: String, role: APIClient.MemberRole)
 }
 
 // @todo
@@ -18,12 +19,15 @@ class RoomError: Error {}
 
 class Room {
     var id: Int?
-    var isOwner = false
+
+    private(set) var role = APIClient.MemberRole.audience
 
     // @todo think about this for when users join and are muted by default
     private(set) var isMuted = false
 
-    private(set) var members = [String]()
+    private(set) var members = [APIClient.Member]()
+
+    private let decoder = JSONDecoder()
 
     private let rtc: WebRTCClient
     private let client: APIClient
@@ -50,8 +54,44 @@ class Room {
         isMuted = false
     }
 
+    func remove(speaker: String) {
+        do {
+            guard let data = speaker.data(using: .utf8) else {
+                return
+            }
+
+            let command = RoomCommand.with {
+                $0.type = RoomCommand.TypeEnum.removeSpeaker
+                $0.data = data
+            }
+
+            try rtc.sendData(command.serializedData())
+            self.updateMemberRole(user: speaker, role: .audience)
+        } catch {
+            debugPrint("\(error.localizedDescription)")
+        }
+    }
+
+    func add(speaker: String) {
+        do {
+            guard let data = speaker.data(using: .utf8) else {
+                return
+            }
+
+            let command = RoomCommand.with {
+                $0.type = RoomCommand.TypeEnum.addSpeaker
+                $0.data = data
+            }
+
+            try rtc.sendData(command.serializedData())
+            self.updateMemberRole(user: speaker, role: .speaker)
+        } catch {
+            debugPrint("\(error.localizedDescription)")
+        }
+    }
+
     func create(completion: @escaping (Error?) -> Void) {
-        isOwner = true
+        role = .owner
 
         rtc.offer { sdp in
             self.client.createRoom(sdp: sdp) { result in
@@ -82,6 +122,7 @@ class Room {
                 case .failure:
                     return completion(RoomError())
                 case let .success(data):
+                    self.role = data.2
                     self.members = data.1
                     self.rtc.set(remoteSdp: data.0, completion: { error in
                         if error != nil {
@@ -106,19 +147,53 @@ extension Room: WebRTCClientDelegate {
         do {
             let event = try RoomEvent(serializedData: data)
 
+            debugPrint(event)
             switch event.type {
             case .joined:
-                members.append(event.from)
+                let member = try self.decoder.decode(APIClient.Member.self, from: event.data)
+                members.append(member)
                 delegate?.userDidJoinRoom(user: event.from)
             case .left:
-                debugPrint("received left")
-                members.removeAll(where: { $0 == event.from })
+                members.removeAll(where: { $0.id == event.from })
                 delegate?.userDidLeaveRoom(user: event.from)
+            case .addedSpeaker:
+                guard let id = String(data: event.data, encoding: .utf8) else {
+                    return
+                }
+
+                updateMemberRole(user: id, role: .speaker)
+                delegate?.didChangeUserRole(user: id, role: .speaker)
+            case .removedSpeaker:
+                guard let id = String(data: event.data, encoding: .utf8) else {
+                    return
+                }
+
+                updateMemberRole(user: id, role: .audience)
+                delegate?.didChangeUserRole(user: id, role: .audience)
+            case .changedOwner:
+                guard let id = String(data: event.data, encoding: .utf8) else {
+                    return
+                }
+
+                updateMemberRole(user: id, role: .owner)
+                delegate?.didChangeUserRole(user: id, role: .owner)
             case .UNRECOGNIZED:
                 return
             }
         } catch {
             debugPrint("failed to decode \(error.localizedDescription)")
+        }
+    }
+
+    private func updateMemberRole(user: String, role: APIClient.MemberRole) {
+        DispatchQueue.main.async {
+            let index = self.members.firstIndex(where: { $0.id == user })
+            if index != nil {
+                self.members[index!].role = role
+                return
+            }
+
+            self.role = role
         }
     }
 }
