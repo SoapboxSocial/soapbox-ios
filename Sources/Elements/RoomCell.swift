@@ -10,7 +10,7 @@ class RoomCell: UICollectionViewCell {
         case current
     }
 
-    public func setup(style: RoomCellStyle, data: APIClient.RoomListItem) {
+    public func setup(style: RoomCellStyle, data: APIClient.Room) {
         backgroundColor = .clear
 
         let content = UIView(frame: CGRect(x: 15, y: 15, width: frame.size.width - 30, height: frame.size.height - 15))

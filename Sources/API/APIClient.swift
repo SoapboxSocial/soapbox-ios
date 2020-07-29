@@ -13,12 +13,12 @@ enum APIError: Error {
 
 class APIClient {
     // @todo these all need better names
-    struct RoomData {
+    struct RoomConnection {
         let id: Int
         let sessionDescription: RTCSessionDescription
     }
 
-    struct RoomListItem: Decodable {
+    struct Room: Decodable {
         let id: Int
         let members: [String]
     }
@@ -57,10 +57,8 @@ class APIClient {
                 }
 
                 do {
-                    // @TODO, THIS SHOULD ALSO RETURN ALL THE MEMBERS
                     let payload = try self.decoder.decode(JoinResponse.self, from: data)
                     let description = RTCSessionDescription(type: self.type(type: payload.sdp.type), sdp: payload.sdp.sdp)
-
                     callback(.success((description, payload.members)))
                 } catch {
                     callback(.failure(.decode))
@@ -68,7 +66,7 @@ class APIClient {
             }
     }
 
-    func createRoom(sdp: RTCSessionDescription, callback: @escaping (Result<RoomData, APIError>) -> Void) {
+    func createRoom(sdp: RTCSessionDescription, callback: @escaping (Result<RoomConnection, APIError>) -> Void) {
         let parameters: [String: AnyObject] = [
             "sdp": sdp.sdp as AnyObject,
             "type": "offer" as AnyObject,
@@ -82,7 +80,7 @@ class APIClient {
 
                 do {
                     let payload = try self.decoder.decode(SDPPayload.self, from: data)
-                    let room = RoomData(
+                    let room = RoomConnection(
                         id: payload.id!,
                         sessionDescription: RTCSessionDescription(type: self.type(type: payload.type), sdp: payload.sdp)
                     )
@@ -94,7 +92,7 @@ class APIClient {
             }
     }
 
-    func rooms(callback: @escaping (Result<[RoomListItem], APIError>) -> Void) {
+    func rooms(callback: @escaping (Result<[Room], APIError>) -> Void) {
         AF.request(baseUrl + "/v1/rooms", method: .get)
             .response { result in
 
@@ -103,7 +101,7 @@ class APIClient {
                 }
 
                 do {
-                    let rooms = try self.decoder.decode([RoomListItem].self, from: data)
+                    let rooms = try self.decoder.decode([Room].self, from: data)
                     callback(.success(rooms))
                 } catch {
                     // @todo error handling
