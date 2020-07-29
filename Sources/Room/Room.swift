@@ -18,7 +18,8 @@ class RoomError: Error {}
 
 class Room {
     var id: Int?
-    var isOwner = false
+    
+    private(set) var role = APIClient.MemberRole.audience
 
     // @todo think about this for when users join and are muted by default
     private(set) var isMuted = false
@@ -53,7 +54,7 @@ class Room {
     }
 
     func create(completion: @escaping (Error?) -> Void) {
-        isOwner = true
+        role = .owner
 
         rtc.offer { sdp in
             self.client.createRoom(sdp: sdp) { result in
