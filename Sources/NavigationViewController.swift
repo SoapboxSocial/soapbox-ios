@@ -252,7 +252,7 @@ extension NavigationViewController: RoomDelegate {
         // @todo if self, notification
         roomViewController?.updateData()
     }
-    
+
     func userDidLeaveRoom(user _: String) {
         roomViewController?.updateData()
     }
