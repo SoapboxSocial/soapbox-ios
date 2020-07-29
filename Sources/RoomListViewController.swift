@@ -21,7 +21,7 @@ class RoomListViewController: UIViewController {
 
     var api: APIClient
 
-    var roomsData = [APIClient.RoomListItem]()
+    var roomsData = [APIClient.Room]()
 
     var currentRoom: Int?
 
