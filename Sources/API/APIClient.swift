@@ -57,10 +57,8 @@ class APIClient {
                 }
 
                 do {
-                    // @TODO, THIS SHOULD ALSO RETURN ALL THE MEMBERS
                     let payload = try self.decoder.decode(JoinResponse.self, from: data)
                     let description = RTCSessionDescription(type: self.type(type: payload.sdp.type), sdp: payload.sdp.sdp)
-
                     callback(.success((description, payload.members)))
                 } catch {
                     callback(.failure(.decode))
