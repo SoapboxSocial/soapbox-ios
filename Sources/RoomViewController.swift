@@ -98,9 +98,51 @@ class RoomViewController: UIViewController {
         delegate?.roomViewDidTapMute()
         setMuteButtonTitle(sender)
     }
+    
+    fileprivate func showRoleAction(for member: APIClient.Member) {
+        let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        if member.role == .speaker {
+            let action = UIAlertAction(title: "Move to audience", style: .default, handler: { _ in
+                self.room.remove(speaker: member.id)
+                
+                DispatchQueue.main.async {
+                    self.updateData()
+                }
+                
+            })
+            optionMenu.addAction(action)
+        } else {
+            let action = UIAlertAction(title: "Make a speaker", style: .default, handler: { _ in
+                self.room.add(speaker: member.id)
+                
+                DispatchQueue.main.async {
+                    self.updateData()
+                }
+                
+            })
+            optionMenu.addAction(action)
+        }
+        
+        let action = UIAlertAction(title: "Cancel", style: .cancel)
+        optionMenu.addAction(action)
+
+        self.present(optionMenu, animated: true, completion: nil)
+    }
 }
 
-extension RoomViewController: UICollectionViewDelegate {}
+extension RoomViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.item == 0 {
+            return
+        }
+        
+        if self.room.role != .owner {
+            return
+        }
+        
+        showRoleAction(for: memberList[indexPath.item - 1])
+    }
+}
 
 extension RoomViewController: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {

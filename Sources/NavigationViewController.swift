@@ -248,6 +248,11 @@ extension NavigationViewController: RoomListViewDelegate {
 }
 
 extension NavigationViewController: RoomDelegate {
+    func didChangeUserRole(user: String, role: APIClient.MemberRole) {
+        // @todo if self, notification
+        roomViewController?.updateData()
+    }
+    
     func userDidLeaveRoom(user _: String) {
         roomViewController?.updateData()
     }
