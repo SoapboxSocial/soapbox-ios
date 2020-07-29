@@ -115,14 +115,19 @@ extension Room: WebRTCClientDelegate {
                 members.append(member)
                 delegate?.userDidJoinRoom(user: event.from)
             case .left:
-                debugPrint("received left")
                 members.removeAll(where: { $0.id == event.from })
                 delegate?.userDidLeaveRoom(user: event.from)
             case .addedSpeaker: break
                 // @todo
             case .removedSpeaker: break
-            case .changedOwner: break
-                // @todo set if self, kind of hacky how we would do it without user ids
+            case .changedOwner:
+                let index = members.firstIndex(where: { $0.id == String(data: event.data, encoding: .utf8)})
+                if index != nil {
+                    self.members[index!].role = .owner
+                    return
+                }
+
+                role = .owner
                 // @todo delegate
             case .UNRECOGNIZED:
                 return

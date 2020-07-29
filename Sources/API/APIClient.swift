@@ -26,7 +26,7 @@ class APIClient {
 
     struct Member: Decodable {
         let id: String
-        let role: MemberRole
+        var role: MemberRole
     }
 
     struct Room: Decodable {
