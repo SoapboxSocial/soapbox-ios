@@ -18,13 +18,24 @@ class APIClient {
         let sessionDescription: RTCSessionDescription
     }
 
+    enum MemberRole: String, Decodable {
+        case owner = "owner"
+        case audience = "audience"
+        case speaker = "speaker"
+    }
+
+    struct Member: Decodable {
+        let id: Int
+        let role: MemberRole
+    }
+
     struct Room: Decodable {
         let id: Int
-        let members: [String]
+        let members: [Member]
     }
 
     struct JoinResponse: Decodable {
-        let members: [String]
+        let members: [Member]
         let sdp: SDPPayload
     }
 
@@ -41,7 +52,7 @@ class APIClient {
     func join(
         room: Int,
         sdp: RTCSessionDescription,
-        callback: @escaping (Result<(RTCSessionDescription, [String]), APIError>) -> Void
+        callback: @escaping (Result<(RTCSessionDescription, [Member]), APIError>) -> Void
     ) {
         let parameters: [String: AnyObject] = [
             "sdp": sdp.sdp as AnyObject,

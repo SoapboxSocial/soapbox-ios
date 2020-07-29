@@ -23,7 +23,9 @@ class Room {
     // @todo think about this for when users join and are muted by default
     private(set) var isMuted = false
 
-    private(set) var members = [String]()
+    private(set) var members = [APIClient.Member]()
+
+    private let decoder = JSONDecoder()
 
     private let rtc: WebRTCClient
     private let client: APIClient
@@ -108,12 +110,17 @@ extension Room: WebRTCClientDelegate {
 
             switch event.type {
             case .joined:
-                members.append(event.from)
+                let member = try self.decoder.decode(APIClient.Member, from: event.data)
+                members.append(member)
                 delegate?.userDidJoinRoom(user: event.from)
             case .left:
                 debugPrint("received left")
-                members.removeAll(where: { $0 == event.from })
+                members.removeAll(where: { $0.id == event.from })
                 delegate?.userDidLeaveRoom(user: event.from)
+            case .addedSpeaker: break
+                // @todo
+            case .removedSpeaker: break
+                // @todo
             case .UNRECOGNIZED:
                 return
             }

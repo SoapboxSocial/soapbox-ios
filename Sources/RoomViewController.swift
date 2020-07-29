@@ -15,13 +15,13 @@ protocol RoomViewDelegate {
 
 class RoomViewController: UIViewController {
     private let reuseIdentifier = "profileCell"
-    
+
     private let room: Room
 
     var delegate: RoomViewDelegate?
 
     var members: UICollectionView!
-    
+
     var memberList = [String]()
 
     init(room: Room) {
