@@ -17,3 +17,7 @@
 
 "participants" = "Participants";
 "participant" = "Participant";
+
+"make_speaker" = "Make a speaker";
+"move_to_audience" = "Move to audience";
+"cancel" = "Cancel";
