@@ -162,21 +162,18 @@ extension Room: WebRTCClientDelegate {
                 }
 
                 updateMemberRole(user: id, role: .speaker)
-                delegate?.didChangeUserRole(user: id, role: .speaker)
             case .removedSpeaker:
                 guard let id = String(data: event.data, encoding: .utf8) else {
                     return
                 }
 
                 updateMemberRole(user: id, role: .audience)
-                delegate?.didChangeUserRole(user: id, role: .audience)
             case .changedOwner:
                 guard let id = String(data: event.data, encoding: .utf8) else {
                     return
                 }
 
                 updateMemberRole(user: id, role: .owner)
-                delegate?.didChangeUserRole(user: id, role: .owner)
             case .UNRECOGNIZED:
                 return
             }
@@ -195,5 +192,7 @@ extension Room: WebRTCClientDelegate {
 
             self.role = role
         }
+
+        delegate?.didChangeUserRole(user: user, role: role)
     }
 }

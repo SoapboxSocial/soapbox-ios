@@ -101,30 +101,24 @@ class RoomViewController: UIViewController {
 
     fileprivate func showRoleAction(for member: APIClient.Member) {
         let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+        var action: UIAlertAction
+
         if member.role == .speaker {
-            let action = UIAlertAction(title: NSLocalizedString("move_to_audience", comment: ""), style: .default, handler: { _ in
+            action = UIAlertAction(title: NSLocalizedString("move_to_audience", comment: ""), style: .default, handler: { _ in
                 self.room.remove(speaker: member.id)
 
-                DispatchQueue.main.async {
-                    self.updateData()
-                }
-
             })
-            optionMenu.addAction(action)
         } else {
-            let action = UIAlertAction(title: NSLocalizedString("make_speaker", comment: ""), style: .default, handler: { _ in
+            action = UIAlertAction(title: NSLocalizedString("make_speaker", comment: ""), style: .default, handler: { _ in
                 self.room.add(speaker: member.id)
-
-                DispatchQueue.main.async {
-                    self.updateData()
-                }
-
             })
-            optionMenu.addAction(action)
         }
 
-        let action = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
         optionMenu.addAction(action)
+
+        let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
+        optionMenu.addAction(cancel)
 
         self.present(optionMenu, animated: true, completion: nil)
     }
