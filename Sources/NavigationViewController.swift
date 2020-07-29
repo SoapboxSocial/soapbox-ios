@@ -174,7 +174,7 @@ class NavigationViewController: UINavigationController {
 
 extension NavigationViewController: RoomBarDelegate {
     func didTapExit() {
-        if room!.isOwner {
+        if room!.role == .owner {
             showOwnerAlert()
             return
         }

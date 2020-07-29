@@ -121,7 +121,9 @@ extension Room: WebRTCClientDelegate {
             case .addedSpeaker: break
                 // @todo
             case .removedSpeaker: break
-                // @todo
+            case .changedOwner: break
+                // @todo set if self, kind of hacky how we would do it without user ids
+                // @todo delegate
             case .UNRECOGNIZED:
                 return
             }

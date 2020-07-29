@@ -38,6 +38,7 @@ struct RoomEvent {
     case left // = 1
     case addedSpeaker // = 2
     case removedSpeaker // = 3
+    case changedOwner // = 4
     case UNRECOGNIZED(Int)
 
     init() {
@@ -50,6 +51,7 @@ struct RoomEvent {
       case 1: self = .left
       case 2: self = .addedSpeaker
       case 3: self = .removedSpeaker
+      case 4: self = .changedOwner
       default: self = .UNRECOGNIZED(rawValue)
       }
     }
@@ -60,6 +62,7 @@ struct RoomEvent {
       case .left: return 1
       case .addedSpeaker: return 2
       case .removedSpeaker: return 3
+      case .changedOwner: return 4
       case .UNRECOGNIZED(let i): return i
       }
     }
@@ -78,6 +81,7 @@ extension RoomEvent.TypeEnum: CaseIterable {
     .left,
     .addedSpeaker,
     .removedSpeaker,
+    .changedOwner,
   ]
 }
 
@@ -186,6 +190,7 @@ extension RoomEvent.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     1: .same(proto: "LEFT"),
     2: .same(proto: "ADDED_SPEAKER"),
     3: .same(proto: "REMOVED_SPEAKER"),
+    4: .same(proto: "CHANGED_OWNER"),
   ]
 }
 
