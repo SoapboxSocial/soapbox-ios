@@ -9,7 +9,7 @@ protocol RoomListViewDelegate {
     func didSelectRoom(id: Int)
 }
 
-class RoomListViewController: UIViewController {
+class RoomListViewControllerOld: UIViewController {
     enum CellIdentifier: String {
         case room
         case empty
@@ -95,7 +95,7 @@ class RoomListViewController: UIViewController {
     }
 }
 
-extension RoomListViewController: UICollectionViewDataSource {
+extension RoomListViewControllerOld: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         if roomsData.count == 0 {
             return 1
@@ -123,7 +123,7 @@ extension RoomListViewController: UICollectionViewDataSource {
     }
 }
 
-extension RoomListViewController: UICollectionViewDelegate {
+extension RoomListViewControllerOld: UICollectionViewDelegate {
     public func collectionView(_: UICollectionView, didSelectItemAt index: IndexPath) {
         if roomsData.count == 0 {
             return
@@ -134,7 +134,7 @@ extension RoomListViewController: UICollectionViewDelegate {
     }
 }
 
-extension RoomListViewController: UICollectionViewDelegateFlowLayout {
+extension RoomListViewControllerOld: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
         if roomsData.count == 0 {
             return CGSize(width: collectionView.frame.width, height: getEmptyHeight())

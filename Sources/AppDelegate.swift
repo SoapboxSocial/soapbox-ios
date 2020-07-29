@@ -20,10 +20,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // @todo we will probably want one api client
 
-        let viewController = RoomListViewController(api: APIClient())
+        // let viewController = RoomListViewControllerOld(api: APIClient())
+
+        let viewController = RoomListViewController()
+        let presenter = RoomListPresenter(output: viewController)
+        let interactor = RoomListInteractor(output: presenter, api: APIClient())
+        viewController.output = interactor
 
         let navigation = NavigationViewController(rootViewController: viewController)
-        viewController.delegate = navigation
+        // viewController.delegate = navigation
 
         window!.rootViewController = navigation
         window?.makeKeyAndVisible()
