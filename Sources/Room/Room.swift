@@ -85,6 +85,7 @@ class Room {
                 case .failure:
                     return completion(RoomError())
                 case let .success(data):
+                    self.role = data.2
                     self.members = data.1
                     self.rtc.set(remoteSdp: data.0, completion: { error in
                         if error != nil {

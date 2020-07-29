@@ -47,7 +47,7 @@ class RoomViewController: UIViewController {
         members = UICollectionView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height - (inset + 45 + 30)), collectionViewLayout: layout)
         members!.dataSource = self
         members!.delegate = self
-        members!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        members!.register(RoomMemberCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         members!.backgroundColor = .clear
         view.addSubview(members)
 
@@ -109,18 +109,13 @@ extension RoomViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! RoomMemberCell
         if indexPath.item == 0 {
-            let label = UILabel(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
-            label.text = "You"
-            label.textAlignment = .center
-            label.textColor = .elementBackground
-            cell.contentView.addSubview(label)
+            cell.setup(isSelf: true, role: self.room.role)
+        } else {
+            cell.setup(isSelf: false, role: self.memberList[indexPath.item - 1].role)
         }
-
-        cell.contentView.layer.cornerRadius = 30
-        cell.contentView.clipsToBounds = true
-        cell.contentView.backgroundColor = .highlight
+        
         return cell
     }
 }

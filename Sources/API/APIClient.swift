@@ -37,6 +37,7 @@ class APIClient {
     struct JoinResponse: Decodable {
         let members: [Member]
         let sdp: SDPPayload
+        let role: MemberRole
     }
 
     struct SDPPayload: Decodable {
@@ -52,7 +53,7 @@ class APIClient {
     func join(
         room: Int,
         sdp: RTCSessionDescription,
-        callback: @escaping (Result<(RTCSessionDescription, [Member]), APIError>) -> Void
+        callback: @escaping (Result<(RTCSessionDescription, [Member], MemberRole), APIError>) -> Void
     ) {
         let parameters: [String: AnyObject] = [
             "sdp": sdp.sdp as AnyObject,
@@ -70,7 +71,7 @@ class APIClient {
                 do {
                     let payload = try self.decoder.decode(JoinResponse.self, from: data)
                     let description = RTCSessionDescription(type: self.type(type: payload.sdp.type), sdp: payload.sdp.sdp)
-                    callback(.success((description, payload.members)))
+                    callback(.success((description, payload.members, payload.role)))
                 } catch {
                     callback(.failure(.decode))
                 }
