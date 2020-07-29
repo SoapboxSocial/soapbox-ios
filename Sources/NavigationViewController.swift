@@ -7,6 +7,7 @@
 
 import AVFoundation
 import UIKit
+import DrawerView
 
 class NavigationViewController: UINavigationController {
     var activityIndicator = UIActivityIndicatorView(style: .medium)
@@ -64,6 +65,12 @@ class NavigationViewController: UINavigationController {
         activityIndicator.center = view.center
 
         view.addSubview(activityIndicator)
+        
+        let drawerView = DrawerView()
+        drawerView.attachTo(view: view)
+        drawerView.snapPositions = [.collapsed, .open]
+        drawerView.setPosition(.closed, animated: false)
+        view.addSubview(drawerView)
     }
 
     @objc func createRoom() {
