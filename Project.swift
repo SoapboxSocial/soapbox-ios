@@ -14,7 +14,8 @@ let project = Project(
             resources: ["Assets.xcassets", "Localization/**/*.strings"],
             dependencies: [
                 .cocoapods(path: "."),
-            ]
+            ],
+            settings: Settings(base: ["ENABLE_BITCODE": "NO"])
         ),
         Target(
             name: "VoicelyTests",
