@@ -22,7 +22,7 @@ class RoomViewController: UIViewController {
 
     var members: UICollectionView!
 
-    var memberList = [String]()
+    var memberList = [APIClient.Member]()
 
     init(room: Room) {
         self.room = room

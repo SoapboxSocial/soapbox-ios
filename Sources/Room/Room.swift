@@ -110,7 +110,7 @@ extension Room: WebRTCClientDelegate {
 
             switch event.type {
             case .joined:
-                let member = try self.decoder.decode(APIClient.Member, from: event.data)
+                let member = try self.decoder.decode(APIClient.Member.self, from: event.data)
                 members.append(member)
                 delegate?.userDidJoinRoom(user: event.from)
             case .left:
