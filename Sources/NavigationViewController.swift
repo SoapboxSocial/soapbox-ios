@@ -119,6 +119,11 @@ class NavigationViewController: UINavigationController {
     }
 
     func presentCurrentRoom() {
+        if let drawer = roomDrawer, drawer.position == .collapsed {
+            roomDrawer?.setPosition(.open, animated: true)
+            return
+        }
+
         roomDrawer = DrawerView()
         roomDrawer!.attachTo(view: view)
         roomDrawer!.backgroundEffect = nil
@@ -172,6 +177,7 @@ extension NavigationViewController: RoomViewDelegate {
                 self.roomDrawer = nil
                 self.room = nil
                 self.createRoomButton.isHidden = false
+                UIApplication.shared.isIdleTimerDisabled = false
             }
         }
     }
