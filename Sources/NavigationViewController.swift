@@ -129,7 +129,7 @@ class NavigationViewController: UINavigationController {
         roomView.autoPinEdgesToSuperview()
         roomView.delegate = self
 
-        roomDrawer!.setPosition(.collapsed, animated: true) { _ in
+        roomDrawer!.setPosition(.open, animated: true) { _ in
             self.createRoomButton.isHidden = true
             UIApplication.shared.isIdleTimerDisabled = true
         }
