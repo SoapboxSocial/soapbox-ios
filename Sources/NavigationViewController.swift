@@ -92,11 +92,34 @@ class NavigationViewController: UINavigationController {
 
             present(alert, animated: true)
         }
+        
+        func showCreationDrawer() {
+            let creationDrawer = DrawerView()
+            creationDrawer.attachTo(view: self.view)
+            creationDrawer.backgroundEffect = nil
+            creationDrawer.snapPositions = [.open]
+            creationDrawer.backgroundColor = .elementBackground
+            creationDrawer.setPosition(.closed, animated: false)
+            self.view.addSubview(creationDrawer)
+
+            creationDrawer.contentVisibilityBehavior = .allowPartial
+
+            let roomView = RoomCreationView()
+            roomView.translatesAutoresizingMaskIntoConstraints = false
+            creationDrawer.addSubview(roomView)
+            roomView.autoPinEdgesToSuperview()
+            //roomView.delegate = self
+            
+            creationDrawer.setPosition(.open, animated: true) { _ in
+                self.createRoomButton.isHidden = true
+                UIApplication.shared.isIdleTimerDisabled = true
+            }
+        }
 
         // @todo this should be requested on app launch.
         switch AVAudioSession.sharedInstance().recordPermission {
         case .granted:
-            execute()
+            showCreationDrawer()
         case .denied:
             showWarning()
             return
@@ -104,7 +127,7 @@ class NavigationViewController: UINavigationController {
             AVAudioSession.sharedInstance().requestRecordPermission { granted in
                 DispatchQueue.main.async {
                     if granted {
-                        execute()
+                        showCreationDrawer()
                     } else {
                         showWarning()
                     }
