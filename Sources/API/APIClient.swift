@@ -30,11 +30,13 @@ class APIClient {
     }
 
     struct Room: Decodable {
+        let name: String?
         let id: Int
         let members: [Member]
     }
 
     struct JoinResponse: Decodable {
+        let name: String?
         let members: [Member]
         let sdp: SDPPayload
         let role: MemberRole
@@ -53,7 +55,7 @@ class APIClient {
     func join(
         room: Int,
         sdp: RTCSessionDescription,
-        callback: @escaping (Result<(RTCSessionDescription, [Member], MemberRole), APIError>) -> Void
+        callback: @escaping (Result<(RTCSessionDescription, [Member], MemberRole, String?), APIError>) -> Void
     ) {
         let parameters: [String: AnyObject] = [
             "sdp": sdp.sdp as AnyObject,
@@ -71,18 +73,22 @@ class APIClient {
                 do {
                     let payload = try self.decoder.decode(JoinResponse.self, from: data)
                     let description = RTCSessionDescription(type: self.type(type: payload.sdp.type), sdp: payload.sdp.sdp)
-                    callback(.success((description, payload.members, payload.role)))
+                    callback(.success((description, payload.members, payload.role, payload.name)))
                 } catch {
                     callback(.failure(.decode))
                 }
             }
     }
 
-    func createRoom(sdp: RTCSessionDescription, callback: @escaping (Result<RoomConnection, APIError>) -> Void) {
-        let parameters: [String: AnyObject] = [
+    func createRoom(sdp: RTCSessionDescription, name: String?, callback: @escaping (Result<RoomConnection, APIError>) -> Void) {
+        var parameters: [String: AnyObject] = [
             "sdp": sdp.sdp as AnyObject,
             "type": "offer" as AnyObject,
         ]
+
+        if name != nil {
+            parameters["name"] = name! as AnyObject
+        }
 
         AF.request(baseUrl + "/v1/rooms/create", method: .post, parameters: parameters, encoding: JSONEncoding())
             .response { result in
