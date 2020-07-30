@@ -128,7 +128,7 @@ class Room {
                         if error != nil {
                             return completion(error)
                         }
-                        // @todo check error
+
                         completion(nil)
                         self.id = id
                     })

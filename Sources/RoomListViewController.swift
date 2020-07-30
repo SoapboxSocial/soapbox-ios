@@ -34,11 +34,6 @@ class RoomListViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewSafeAreaInsetsDidChange() {
-        super.viewSafeAreaInsetsDidChange()
-        // @todo we probably want to move up buttons and other stuff due to iphone x insets
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -116,7 +111,7 @@ extension RoomListViewController: UICollectionViewDataSource {
         if item.id == currentRoom {
             cell.setup(style: .current, data: item)
         } else {
-            cell.setup(style: .normal, data: item) // @todo needs a real check
+            cell.setup(style: .normal, data: item)
         }
 
         return cell

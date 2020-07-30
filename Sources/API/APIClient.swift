@@ -116,7 +116,6 @@ class APIClient {
                     let rooms = try self.decoder.decode([Room].self, from: data)
                     callback(.success(rooms))
                 } catch {
-                    // @todo error handling
                     return callback(.failure(.decode))
                 }
             }
