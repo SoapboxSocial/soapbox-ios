@@ -39,7 +39,6 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         textField = UITextField(frame: CGRect(x: 0, y: titleLabel.frame.size.height + titleLabel.frame.origin.y + 30, width: frame.size.width / 2, height: 40))
         textField.borderStyle = .roundedRect
         textField.center = CGPoint(x: center.x, y: textField.center.y)
-        textField.returnKeyType = .go
         textField.clearButtonMode = .always
         textField.textColor = .highlight
         textField.placeholder = NSLocalizedString("enter_name", comment: "")
@@ -78,15 +77,9 @@ class RoomCreationView: UIView, UITextFieldDelegate {
 
     @objc private func skipPressed() {
         delegate?.didEnterWithName(nil)
-        endEditing(true)
     }
 
     @objc private func createPressed() {
-        delegate?.didEnterWithName(textField.text)
-        endEditing(true)
-    }
-
-    func textFieldDidEndEditing(_ textField: UITextField) {
         delegate?.didEnterWithName(textField.text)
     }
 

@@ -253,6 +253,7 @@ extension NavigationViewController: DrawerViewDelegate {
         if position == .closed {
             drawerView.removeFromSuperview(animated: false)
             createRoomButton.isHidden = false
+            view.endEditing(true)
         }
     }
 }
