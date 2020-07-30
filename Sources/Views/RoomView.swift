@@ -67,10 +67,10 @@ class RoomView: UIView {
         addSubview(exitButton)
 
         muteButton = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
-        muteButton!.setTitle("🔊", for: .normal)
+        muteButton.setTitle("🔊", for: .normal)
         muteButton.center = CGPoint(x: exitButton.center.x - (15 + exitButton.frame.size.width), y: exitButton.center.y)
-        muteButton!.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
-        addSubview(muteButton!)
+        muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
+        addSubview(muteButton)
 
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 0, right: 10)
