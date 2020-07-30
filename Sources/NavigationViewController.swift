@@ -148,7 +148,7 @@ class NavigationViewController: UINavigationController {
         let r = Room(rtc: webRTCClient, client: client)
         return r
     }
-    
+
     private func showNetworkError() {
         let banner = FloatingNotificationBanner(
             title: NSLocalizedString("something_went_wrong", comment: ""),

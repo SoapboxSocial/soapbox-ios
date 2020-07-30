@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import DrawerView
 
 protocol RoomViewDelegate {
     func roomDidExit()
@@ -50,6 +51,12 @@ class RoomView: UIView {
         topBar.roundCorners(corners: [.topLeft, .topRight], radius: 9.0)
         addSubview(topBar)
 
+        let recognizer = UITapGestureRecognizer(target: self, action: #selector(openBar))
+        recognizer.numberOfTapsRequired = 1
+        let recognizerView = UIView(frame: CGRect(x: 0, y: 0, width: topBar.frame.size.width, height: topBar.frame.size.height))
+        recognizerView.addGestureRecognizer(recognizer)
+        topBar.addSubview(recognizerView)
+
         let label = UILabel(frame: CGRect(x: safeAreaInsets.left + 15, y: 0, width: frame.size.width, height: 0))
         label.text = "Yay room"
         label.sizeToFit()
@@ -59,9 +66,7 @@ class RoomView: UIView {
         let exitButton = UIButton(
             frame: CGRect(x: frame.size.width - (30 + 15 + safeAreaInsets.left), y: (frame.size.height - inset) / 2 - 15, width: 30, height: 30)
         )
-
         exitButton.center = CGPoint(x: exitButton.center.x, y: topBar.center.y - (inset / 2))
-
         exitButton.setTitle("👉", for: .normal)
         exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         addSubview(exitButton)
@@ -126,6 +131,16 @@ class RoomView: UIView {
         room.close()
         UIApplication.shared.isIdleTimerDisabled = false
         delegate?.roomDidExit()
+    }
+
+    @objc private func openBar() {
+        guard let parent = superview as? DrawerView else {
+            return
+        }
+
+        if parent.position == .collapsed {
+            parent.setPosition(.open, animated: true)
+        }
     }
 }
 
