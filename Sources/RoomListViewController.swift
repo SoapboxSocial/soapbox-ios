@@ -3,6 +3,7 @@
 //
 
 import UIKit
+import NotificationBannerSwift
 
 protocol RoomListViewDelegate {
     func currentRoom() -> Int?
@@ -78,6 +79,14 @@ class RoomListViewController: UIViewController {
             switch result {
             case .failure:
                 self.roomsData = []
+                
+                let banner = NotificationBanner(
+                    title: NSLocalizedString("failed_to_load_rooms", comment: ""),
+                    subtitle: NSLocalizedString("please_try_again_later", comment: ""),
+                    style: .danger
+                )
+                banner.show()
+                
             case let .success(rooms):
                 self.roomsData = rooms
 
