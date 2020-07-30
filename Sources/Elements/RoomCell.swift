@@ -20,7 +20,7 @@ class RoomCell: UICollectionViewCell {
         addSubview(content)
 
         let titleLabel = UILabel(frame: CGRect(x: 15, y: 15, width: contentView.frame.size.width - 30, height: 30))
-        titleLabel.text = title(style: style)
+        titleLabel.text = title(room: data, style: style)
         titleLabel.font = UIFont(name: "HelveticaNeue-Bold", size: titleLabel.font.pointSize)
         content.addSubview(titleLabel)
 
@@ -35,9 +35,13 @@ class RoomCell: UICollectionViewCell {
         content.addSubview(countLabel)
     }
 
-    private func title(style: RoomCellStyle) -> String {
+    private func title(room: APIClient.Room, style: RoomCellStyle) -> String {
         switch style {
         case .normal:
+            if let name = room.name {
+                return "👂 " + name
+            }
+
             return "👂 " + NSLocalizedString("listen_in", comment: "")
         case .current:
             return "💬 " + NSLocalizedString("current_room", comment: "")

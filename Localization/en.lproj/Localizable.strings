@@ -26,3 +26,10 @@
 "please_try_again_later" = "Please try again later";
 
 "failed_to_load_rooms" = "Failed to load rooms!";
+
+"name_room" = "Name your room";
+"enter_name" = "Enter a name";
+"skip" = "Skip";
+"create" = "Create";
+
+"your_room" = "Your room";

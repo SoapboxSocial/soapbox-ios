@@ -20,6 +20,7 @@ class NavigationViewController: UINavigationController {
     private var client: APIClient
 
     private var roomDrawer: DrawerView?
+    private var creationDrawer: DrawerView?
 
     override init(rootViewController: UIViewController) {
         createRoomButton = CreateRoomButton()
@@ -44,7 +45,7 @@ class NavigationViewController: UINavigationController {
 
         view.backgroundColor = .background
 
-        createRoomButton.addTarget(self, action: #selector(createRoom), for: .touchUpInside)
+        createRoomButton.addTarget(self, action: #selector(didTapCreateRoom), for: .touchUpInside)
         view.addSubview(createRoomButton)
 
         activityIndicator.isHidden = true
@@ -55,28 +56,7 @@ class NavigationViewController: UINavigationController {
         view.addSubview(activityIndicator)
     }
 
-    @objc func createRoom() {
-        func execute() {
-            activityIndicator.startAnimating()
-            activityIndicator.isHidden = false
-
-            room = newRoom()
-            room?.create { error in
-                DispatchQueue.main.async {
-                    self.activityIndicator.stopAnimating()
-                    self.activityIndicator.isHidden = true
-                }
-
-                if error != nil {
-                    return self.showNetworkError()
-                }
-
-                DispatchQueue.main.async {
-                    self.presentCurrentRoom()
-                }
-            }
-        }
-
+    @objc func didTapCreateRoom() {
         func showWarning() {
             let alert = UIAlertController(
                 title: NSLocalizedString("microphone_permission_denied", comment: ""),
@@ -92,25 +72,27 @@ class NavigationViewController: UINavigationController {
 
             present(alert, animated: true)
         }
-        
-        func showCreationDrawer() {
-            let creationDrawer = DrawerView()
-            creationDrawer.attachTo(view: self.view)
-            creationDrawer.backgroundEffect = nil
-            creationDrawer.snapPositions = [.open]
-            creationDrawer.backgroundColor = .elementBackground
-            creationDrawer.setPosition(.closed, animated: false)
-            self.view.addSubview(creationDrawer)
 
-            creationDrawer.contentVisibilityBehavior = .allowPartial
+        func showCreationDrawer() {
+            creationDrawer = DrawerView()
+            creationDrawer!.delegate = self
+            creationDrawer!.attachTo(view: self.view)
+            creationDrawer!.backgroundEffect = nil
+            creationDrawer!.snapPositions = [.open, .closed]
+            creationDrawer!.backgroundColor = .elementBackground
+            creationDrawer!.setPosition(.closed, animated: false)
+            self.view.addSubview(creationDrawer!)
+
+            creationDrawer!.contentVisibilityBehavior = .allowPartial
 
             let roomView = RoomCreationView()
+            roomView.delegate = self
             roomView.translatesAutoresizingMaskIntoConstraints = false
-            creationDrawer.addSubview(roomView)
+            creationDrawer!.addSubview(roomView)
             roomView.autoPinEdgesToSuperview()
             //roomView.delegate = self
-            
-            creationDrawer.setPosition(.open, animated: true) { _ in
+
+            creationDrawer!.setPosition(.open, animated: true) { _ in
                 self.createRoomButton.isHidden = true
                 UIApplication.shared.isIdleTimerDisabled = true
             }
@@ -187,6 +169,7 @@ extension NavigationViewController: RoomViewDelegate {
         roomDrawer?.setPosition(.closed, animated: true) { _ in
             DispatchQueue.main.async {
                 self.roomDrawer?.removeFromSuperview()
+                self.roomDrawer = nil
                 self.room = nil
                 self.createRoomButton.isHidden = false
             }
@@ -223,6 +206,53 @@ extension NavigationViewController: RoomListViewDelegate {
             DispatchQueue.main.async {
                 self.presentCurrentRoom()
             }
+        }
+    }
+}
+
+extension NavigationViewController: RoomCreationDelegate {
+    func createRoom(name: String?) {
+        DispatchQueue.main.async {
+            self.createRoomButton.isHidden = true
+            self.activityIndicator.startAnimating()
+            self.activityIndicator.isHidden = false
+        }
+
+        room = newRoom()
+        room?.create(name: name) { error in
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
+                self.activityIndicator.isHidden = true
+            }
+
+            if error != nil {
+                DispatchQueue.main.async {
+                    self.createRoomButton.isHidden = false
+                }
+
+                return self.showNetworkError()
+            }
+
+            DispatchQueue.main.async {
+                self.presentCurrentRoom()
+            }
+        }
+    }
+
+    func didEnterWithName(_ name: String?) {
+        DispatchQueue.main.async {
+            self.creationDrawer?.setPosition(.closed, animated: true) { _ in
+                self.createRoom(name: name)
+            }
+        }
+    }
+}
+
+extension NavigationViewController: DrawerViewDelegate {
+    func drawer(_ drawerView: DrawerView, didTransitionTo position: DrawerPosition) {
+        if position == .closed {
+            drawerView.removeFromSuperview(animated: false)
+            createRoomButton.isHidden = false
         }
     }
 }

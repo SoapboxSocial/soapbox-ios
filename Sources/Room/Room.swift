@@ -18,6 +18,9 @@ protocol RoomDelegate {
 class RoomError: Error {}
 
 class Room {
+
+    private(set) var name: String!
+
     var id: Int?
 
     private(set) var role = APIClient.MemberRole.audience
@@ -90,11 +93,17 @@ class Room {
         }
     }
 
-    func create(completion: @escaping (Error?) -> Void) {
+    func create(name: String?, completion: @escaping (Error?) -> Void) {
         role = .owner
 
+        if let roomName = name, roomName != "" {
+            self.name = name
+        } else {
+            self.name = NSLocalizedString("your_room", comment: "")
+        }
+
         rtc.offer { sdp in
-            self.client.createRoom(sdp: sdp) { result in
+            self.client.createRoom(sdp: sdp, name: name) { result in
                 switch result {
                 case .failure:
                     return completion(RoomError())
@@ -116,6 +125,10 @@ class Room {
     }
 
     func join(id: Int, completion: @escaping (Error?) -> Void) {
+
+        // @todo This should either be the rooms name, or Person's room
+        self.name = NSLocalizedString("your_room", comment: "")
+
         rtc.offer { sdp in
             self.client.join(room: id, sdp: sdp) { result in
                 switch result {

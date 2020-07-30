@@ -57,8 +57,8 @@ class RoomView: UIView {
         recognizerView.addGestureRecognizer(recognizer)
         topBar.addSubview(recognizerView)
 
-        let label = UILabel(frame: CGRect(x: safeAreaInsets.left + 15, y: 0, width: frame.size.width, height: 0))
-        label.text = "Yay room"
+        let label = UILabel(frame: CGRect(x: safeAreaInsets.left + 15, y: 0, width: frame.size.width / 2, height: 0))
+        label.text = self.room.name!
         label.sizeToFit()
         label.center = CGPoint(x: label.center.x, y: topBar.center.y - (inset / 2))
         topBar.addSubview(label)

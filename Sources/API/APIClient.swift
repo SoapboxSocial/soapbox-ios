@@ -30,6 +30,7 @@ class APIClient {
     }
 
     struct Room: Decodable {
+        let name: String?
         let id: Int
         let members: [Member]
     }
@@ -78,11 +79,15 @@ class APIClient {
             }
     }
 
-    func createRoom(sdp: RTCSessionDescription, callback: @escaping (Result<RoomConnection, APIError>) -> Void) {
-        let parameters: [String: AnyObject] = [
+    func createRoom(sdp: RTCSessionDescription, name: String?, callback: @escaping (Result<RoomConnection, APIError>) -> Void) {
+        var parameters: [String: AnyObject] = [
             "sdp": sdp.sdp as AnyObject,
             "type": "offer" as AnyObject,
         ]
+
+        if name != nil {
+            parameters["name"] = name! as AnyObject
+        }
 
         AF.request(baseUrl + "/v1/rooms/create", method: .post, parameters: parameters, encoding: JSONEncoding())
             .response { result in
