@@ -150,12 +150,12 @@ class NavigationViewController: UINavigationController {
     }
     
     private func showNetworkError() {
-        let banner = NotificationBanner(
+        let banner = FloatingNotificationBanner(
             title: NSLocalizedString("something_went_wrong", comment: ""),
             subtitle: NSLocalizedString("please_try_again_later", comment: ""),
             style: .danger
         )
-        banner.show()
+        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
     }
 }
 

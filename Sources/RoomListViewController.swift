@@ -80,12 +80,12 @@ class RoomListViewController: UIViewController {
             case .failure:
                 self.roomsData = []
                 
-                let banner = NotificationBanner(
+                let banner = FloatingNotificationBanner(
                     title: NSLocalizedString("failed_to_load_rooms", comment: ""),
                     subtitle: NSLocalizedString("please_try_again_later", comment: ""),
                     style: .danger
                 )
-                banner.show()
+                banner.show(cornerRadius: 10, shadowBlurRadius: 15)
                 
             case let .success(rooms):
                 self.roomsData = rooms
