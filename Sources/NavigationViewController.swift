@@ -7,19 +7,18 @@
 
 import AVFoundation
 import UIKit
+import DrawerView
 
 class NavigationViewController: UINavigationController {
     var activityIndicator = UIActivityIndicatorView(style: .medium)
 
     private var room: Room?
 
-    private var roomBarView: RoomBar?
-
     private let createRoomButton: CreateRoomButton
 
     private var client: APIClient
 
-    private var roomViewController: RoomViewController?
+    private var roomDrawer: DrawerView?
 
     override init(rootViewController: UIViewController) {
         createRoomButton = CreateRoomButton()
@@ -46,17 +45,6 @@ class NavigationViewController: UINavigationController {
 
         createRoomButton.addTarget(self, action: #selector(createRoom), for: .touchUpInside)
         view.addSubview(createRoomButton)
-
-        let inset = view.safeAreaInsets.bottom
-
-        roomBarView = RoomBar(
-            frame: CGRect(x: 0, y: view.frame.size.height - (60 + inset), width: view.frame.size.width, height: 60 + inset),
-            inset: inset
-        )
-
-        roomBarView?.isHidden = true
-        roomBarView?.delegate = self
-        view.addSubview(roomBarView!)
 
         activityIndicator.isHidden = true
         activityIndicator.hidesWhenStopped = true
@@ -124,35 +112,25 @@ class NavigationViewController: UINavigationController {
         }
     }
 
-    func showOwnerAlert() {
-        let alert = UIAlertController(
-            title: NSLocalizedString("are_you_sure", comment: ""),
-            message: NSLocalizedString("exit_will_close_room", comment: ""),
-            preferredStyle: .alert
-        )
-
-        alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .default, handler: nil))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .destructive, handler: { _ in
-            self.exitCurrentRoom()
-        }))
-
-        present(alert, animated: true)
-    }
-
-    func exitCurrentRoom() {
-        roomBarView?.isHidden = true
-        room?.close()
-        room = nil
-        createRoomButton.isHidden = false
-        UIApplication.shared.isIdleTimerDisabled = false
-    }
-
     func presentCurrentRoom() {
-        roomViewController = RoomViewController(room: room!)
-        roomViewController!.delegate = self
-        present(roomViewController!, animated: true) {
+        roomDrawer = DrawerView()
+        roomDrawer!.attachTo(view: view)
+        roomDrawer!.backgroundEffect = nil
+        roomDrawer!.snapPositions = [.collapsed, .open]
+        roomDrawer!.backgroundColor = .elementBackground
+        roomDrawer!.setPosition(.closed, animated: false)
+        view.addSubview(roomDrawer!)
+
+        roomDrawer!.contentVisibilityBehavior = .allowPartial
+
+        let roomView = RoomView(frame: roomDrawer!.bounds, room: room!, topBarHeight: roomDrawer!.collapsedHeight)
+        roomView.translatesAutoresizingMaskIntoConstraints = false
+        roomDrawer!.addSubview(roomView)
+        roomView.autoPinEdgesToSuperview()
+        roomView.delegate = self
+
+        roomDrawer!.setPosition(.open, animated: true) { _ in
             self.createRoomButton.isHidden = true
-            self.roomBarView!.isHidden = false
             UIApplication.shared.isIdleTimerDisabled = true
         }
     }
@@ -167,49 +145,19 @@ class NavigationViewController: UINavigationController {
         ])
 
         let r = Room(rtc: webRTCClient, client: client)
-        r.delegate = self
         return r
     }
 }
 
-extension NavigationViewController: RoomBarDelegate {
-    func didTapExit() {
-        if room!.role == .owner {
-            showOwnerAlert()
-            return
-        }
-
-        exitCurrentRoom()
-    }
-
-    func didTapBar() {
-        presentCurrentRoom()
-    }
-
-    func didTapMute() {
-        if room!.isMuted {
-            roomBarView?.setUnmuted()
-            room?.unmute()
-        } else {
-            roomBarView?.setMuted()
-            room?.mute()
-        }
-    }
-}
-
 extension NavigationViewController: RoomViewDelegate {
-    func roomViewDidTapExit() {
-        exitCurrentRoom()
-        dismiss(animated: true, completion: nil)
-        roomViewController = nil
-    }
-
-    func roomViewDidTapMute() {
-        didTapMute()
-    }
-
-    func roomViewWasClosed() {
-        roomViewController = nil
+    func roomDidExit() {
+        roomDrawer?.setPosition(.closed, animated: true) { _ in
+            DispatchQueue.main.async {
+                self.roomDrawer?.removeFromSuperview()
+                self.room = nil
+                self.createRoomButton.isHidden = false
+            }
+        }
     }
 }
 
@@ -244,20 +192,5 @@ extension NavigationViewController: RoomListViewDelegate {
                 self.presentCurrentRoom()
             }
         }
-    }
-}
-
-extension NavigationViewController: RoomDelegate {
-    func didChangeUserRole(user: String, role: APIClient.MemberRole) {
-        // @todo if self, notification
-        roomViewController?.updateData()
-    }
-
-    func userDidLeaveRoom(user _: String) {
-        roomViewController?.updateData()
-    }
-
-    func userDidJoinRoom(user _: String) {
-        roomViewController?.updateData()
     }
 }

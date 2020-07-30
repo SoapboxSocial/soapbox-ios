@@ -10,6 +10,7 @@ target 'Voicely' do
   pod 'GoogleWebRTC'
   pod 'Alamofire'
   pod 'SwiftProtobuf'
+  pod "DrawerView"
 
   target 'VoicelyTests' do
     inherit! :search_paths
