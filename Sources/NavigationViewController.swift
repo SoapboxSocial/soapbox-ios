@@ -8,6 +8,7 @@
 import AVFoundation
 import UIKit
 import DrawerView
+import NotificationBannerSwift
 
 class NavigationViewController: UINavigationController {
     var activityIndicator = UIActivityIndicatorView(style: .medium)
@@ -67,7 +68,7 @@ class NavigationViewController: UINavigationController {
                 }
 
                 if error != nil {
-                    return
+                    return self.showNetworkError()
                 }
 
                 DispatchQueue.main.async {
@@ -147,6 +148,15 @@ class NavigationViewController: UINavigationController {
         let r = Room(rtc: webRTCClient, client: client)
         return r
     }
+    
+    private func showNetworkError() {
+        let banner = FloatingNotificationBanner(
+            title: NSLocalizedString("something_went_wrong", comment: ""),
+            subtitle: NSLocalizedString("please_try_again_later", comment: ""),
+            style: .danger
+        )
+        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+    }
 }
 
 extension NavigationViewController: RoomViewDelegate {
@@ -184,8 +194,7 @@ extension NavigationViewController: RoomListViewDelegate {
             }
 
             if error != nil {
-                // @todo indicate there was some error.
-                return
+                return self.showNetworkError()
             }
 
             DispatchQueue.main.async {
