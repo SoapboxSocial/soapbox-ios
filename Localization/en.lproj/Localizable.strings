@@ -3,7 +3,7 @@
 "start_room_tip" = "Why not start one?\n\n👇";
 
 "are_you_sure" = "Are you sure?";
-"exit_will_close_room" = "You are then owner of this room, if you exit it will be closed.";
+"exit_will_close_room" = "You are the only person in the room, leaving will close it.";
 
 "no" = "No";
 "yes" = "Yes";
