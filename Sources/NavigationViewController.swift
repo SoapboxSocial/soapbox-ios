@@ -17,10 +17,8 @@ class NavigationViewController: UINavigationController {
     private let createRoomButton: CreateRoomButton
 
     private var client: APIClient
-
-    private var roomViewController: RoomViewController?
     
-    private var drawerView: DrawerView?
+    private var roomDrawer: DrawerView?
 
     override init(rootViewController: UIViewController) {
         createRoomButton = CreateRoomButton()
@@ -115,23 +113,23 @@ class NavigationViewController: UINavigationController {
     }
 
     func presentCurrentRoom() {
-        drawerView = DrawerView()
-        drawerView!.attachTo(view: view)
-        drawerView!.backgroundEffect = nil
-        drawerView!.snapPositions = [.collapsed, .open]
-        drawerView!.backgroundColor = .elementBackground
-        drawerView!.setPosition(.closed, animated: false)
-        view.addSubview(drawerView!)
+        roomDrawer = DrawerView()
+        roomDrawer!.attachTo(view: view)
+        roomDrawer!.backgroundEffect = nil
+        roomDrawer!.snapPositions = [.collapsed, .open]
+        roomDrawer!.backgroundColor = .elementBackground
+        roomDrawer!.setPosition(.closed, animated: false)
+        view.addSubview(roomDrawer!)
 
-        drawerView!.contentVisibilityBehavior = .allowPartial
+        roomDrawer!.contentVisibilityBehavior = .allowPartial
 
-        let roomView = RoomView(frame: drawerView!.bounds, room: room!, topBarHeight: drawerView!.collapsedHeight)
+        let roomView = RoomView(frame: roomDrawer!.bounds, room: room!, topBarHeight: roomDrawer!.collapsedHeight)
         roomView.translatesAutoresizingMaskIntoConstraints = false
-        drawerView!.addSubview(roomView)
+        roomDrawer!.addSubview(roomView)
         roomView.autoPinEdgesToSuperview()
         roomView.delegate = self
         
-        drawerView!.setPosition(.collapsed, animated: true) { _ in
+        roomDrawer!.setPosition(.collapsed, animated: true) { _ in
             self.createRoomButton.isHidden = true
             UIApplication.shared.isIdleTimerDisabled = true
         }
@@ -147,36 +145,19 @@ class NavigationViewController: UINavigationController {
         ])
 
         let r = Room(rtc: webRTCClient, client: client)
-        r.delegate = self
         return r
     }
 }
 
 extension NavigationViewController: NewRoomViewDelegate {
     func roomDidExit() {
-        drawerView?.setPosition(.closed, animated: true) { _ in
+        roomDrawer?.setPosition(.closed, animated: true) { _ in
             DispatchQueue.main.async {
-                self.drawerView?.removeFromSuperview()
+                self.roomDrawer?.removeFromSuperview()
                 self.room = nil
                 self.createRoomButton.isHidden = false
             }
         }
-    }
-}
-
-extension NavigationViewController: RoomViewDelegate {
-    func roomViewDidTapExit() {
-//        exitCurrentRoom()
-//        dismiss(animated: true, completion: nil)
-//        roomViewController = nil
-    }
-//
-    func roomViewDidTapMute() {
-//        didTapMute()
-    }
-//
-    func roomViewWasClosed() {
-//        roomViewController = nil
     }
 }
 
@@ -211,20 +192,5 @@ extension NavigationViewController: RoomListViewDelegate {
                 self.presentCurrentRoom()
             }
         }
-    }
-}
-
-extension NavigationViewController: RoomDelegate {
-    func didChangeUserRole(user: String, role: APIClient.MemberRole) {
-        // @todo if self, notification
-        roomViewController?.updateData()
-    }
-
-    func userDidLeaveRoom(user _: String) {
-        roomViewController?.updateData()
-    }
-
-    func userDidJoinRoom(user _: String) {
-        roomViewController?.updateData()
     }
 }
