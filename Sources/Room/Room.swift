@@ -137,6 +137,13 @@ class Room {
                 case let .success(data):
                     self.role = data.2
                     self.members = data.1
+
+                    DispatchQueue.main.async {
+                        if let name = data.3, name != "" {
+                            self.name = name
+                        }
+                    }
+
                     self.rtc.set(remoteSdp: data.0, completion: { error in
                         if error != nil {
                             return completion(error)
