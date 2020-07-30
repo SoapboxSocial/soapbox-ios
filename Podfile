@@ -6,11 +6,11 @@ target 'Voicely' do
   use_frameworks!
 
   # Pods for trollbox
-
   pod 'GoogleWebRTC'
   pod 'Alamofire'
   pod 'SwiftProtobuf'
   pod "DrawerView"
+  pod 'NotificationBannerSwift'
 
   target 'VoicelyTests' do
     inherit! :search_paths
