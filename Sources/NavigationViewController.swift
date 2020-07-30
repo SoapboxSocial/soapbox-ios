@@ -17,7 +17,7 @@ class NavigationViewController: UINavigationController {
     private let createRoomButton: CreateRoomButton
 
     private var client: APIClient
-    
+
     private var roomDrawer: DrawerView?
 
     override init(rootViewController: UIViewController) {
@@ -128,7 +128,7 @@ class NavigationViewController: UINavigationController {
         roomDrawer!.addSubview(roomView)
         roomView.autoPinEdgesToSuperview()
         roomView.delegate = self
-        
+
         roomDrawer!.setPosition(.collapsed, animated: true) { _ in
             self.createRoomButton.isHidden = true
             UIApplication.shared.isIdleTimerDisabled = true
@@ -149,7 +149,7 @@ class NavigationViewController: UINavigationController {
     }
 }
 
-extension NavigationViewController: NewRoomViewDelegate {
+extension NavigationViewController: RoomViewDelegate {
     func roomDidExit() {
         roomDrawer?.setPosition(.closed, animated: true) { _ in
             DispatchQueue.main.async {

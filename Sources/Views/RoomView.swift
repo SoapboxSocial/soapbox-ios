@@ -7,19 +7,19 @@
 
 import UIKit
 
-protocol NewRoomViewDelegate {
+protocol RoomViewDelegate {
     func roomDidExit()
 }
 
 class RoomView: UIView {
     private let reuseIdentifier = "profileCell"
 
-    var delegate: NewRoomViewDelegate?
+    var delegate: RoomViewDelegate?
 
     let room: Room
-    
+
     private let topBarHeight: CGFloat
-    
+
     private var muteButton: UIButton!
     private var members: UICollectionView!
 
@@ -36,12 +36,12 @@ class RoomView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        
+
         // @todo this is ugly but for a lack of a better place to put set up right now we put it here.
         if muteButton != nil {
             return
         }
-        
+
         layer.cornerRadius = 10.0
 
         let inset = safeAreaInsets.bottom
@@ -49,29 +49,29 @@ class RoomView: UIView {
         let topBar = UIView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: topBarHeight + inset))
         topBar.roundCorners(corners: [.topLeft, .topRight], radius: 9.0)
         addSubview(topBar)
-        
+
         let label = UILabel(frame: CGRect(x: safeAreaInsets.left + 15, y: 0, width: frame.size.width, height: 0))
         label.text = "Yay room"
         label.sizeToFit()
         label.center = CGPoint(x: label.center.x, y: topBar.center.y - (inset / 2))
         topBar.addSubview(label)
-        
+
         let exitButton = UIButton(
             frame: CGRect(x: frame.size.width - (30 + 15 + safeAreaInsets.left), y: (frame.size.height - inset) / 2 - 15, width: 30, height: 30)
         )
-        
+
         exitButton.center = CGPoint(x: exitButton.center.x, y: topBar.center.y - (inset / 2))
 
         exitButton.setTitle("👉", for: .normal)
         exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         addSubview(exitButton)
-        
+
         muteButton = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
         muteButton!.setTitle("🔊", for: .normal)
         muteButton.center = CGPoint(x: exitButton.center.x - (15 + exitButton.frame.size.width), y: exitButton.center.y)
         muteButton!.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
         addSubview(muteButton!)
-        
+
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 0, right: 10)
         layout.itemSize = CGSize(width: 60, height: 60)
@@ -87,7 +87,7 @@ class RoomView: UIView {
             self.members.reloadData()
         }
     }
-    
+
     @objc private func exitTapped() {
         if room.members.count == 0 {
             showExitAlert()
@@ -96,7 +96,7 @@ class RoomView: UIView {
 
         exitRoom()
     }
-    
+
     @objc private func muteTapped() {
         if room.isMuted {
             muteButton!.setTitle("🔊", for: .normal)
@@ -106,7 +106,7 @@ class RoomView: UIView {
             room.mute()
         }
     }
-    
+
     private func showExitAlert() {
         let alert = UIAlertController(
             title: NSLocalizedString("are_you_sure", comment: ""),
@@ -121,7 +121,7 @@ class RoomView: UIView {
 
         UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
     }
-    
+
     private func exitRoom() {
         room.close()
         UIApplication.shared.isIdleTimerDisabled = false
@@ -136,13 +136,13 @@ extension RoomView: RoomDelegate {
             self.members.reloadData()
         }
     }
-    
+
     func userDidLeaveRoom(user: String) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
     }
-    
+
     func didChangeUserRole(user: String, role: APIClient.MemberRole) {
         DispatchQueue.main.async {
             self.members.reloadData()
@@ -162,7 +162,7 @@ extension RoomView: UICollectionViewDelegate {
 
         showRoleAction(for: self.room.members[indexPath.item - 1])
     }
-    
+
     private func showRoleAction(for member: APIClient.Member) {
         let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
