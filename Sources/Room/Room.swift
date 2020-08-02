@@ -12,6 +12,7 @@ protocol RoomDelegate {
     func userDidJoinRoom(user: String)
     func userDidLeaveRoom(user: String)
     func didChangeUserRole(user: String, role: APIClient.MemberRole)
+    func didChangeMemberMuteState(user: String, isMuted: Bool)
 }
 
 // @todo
@@ -215,13 +216,33 @@ extension Room: WebRTCClientDelegate {
             case .UNRECOGNIZED:
                 return
             case .mutedSpeaker:
-                mute()
+                if event.from == "" {
+                    return
+                }
+                
+                updateMemberMuteState(user: event.from, isMuted: true)
             case .unmutedSpeaker:
-                unmute()
+                if event.from == "" {
+                    return
+                }
+                
+                updateMemberMuteState(user: event.from, isMuted: false)
             }
         } catch {
             debugPrint("failed to decode \(error.localizedDescription)")
         }
+    }
+    
+    private func updateMemberMuteState(user: String, isMuted: Bool) {
+        DispatchQueue.main.async {
+            let index = self.members.firstIndex(where: { $0.id == user })
+            if index != nil {
+                self.members[index!].isMuted = isMuted
+                return
+            }
+        }
+
+        delegate?.didChangeMemberMuteState(user: user, isMuted: isMuted)
     }
 
     private func updateMemberRole(user: String, role: APIClient.MemberRole) {

@@ -28,6 +28,7 @@ class APIClient {
     struct Member: Decodable {
         let id: String
         var role: MemberRole
+        var isMuted: Bool
     }
 
     struct Room: Decodable {

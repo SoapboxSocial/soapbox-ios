@@ -146,6 +146,12 @@ class RoomView: UIView {
 }
 
 extension RoomView: RoomDelegate {
+    func didChangeMemberMuteState(user: String, isMuted: Bool) {
+        DispatchQueue.main.async {
+            self.members.reloadData()
+        }
+    }
+    
     //  @todo for efficiency these should all only update the user that was changed
     func userDidJoinRoom(user: String) {
         DispatchQueue.main.async {
@@ -215,7 +221,7 @@ extension RoomView: UICollectionViewDataSource {
         if indexPath.item == 0 {
             cell.setup(isSelf: true, role: self.room.role)
         } else {
-            cell.setup(isSelf: false, role: self.room.members[indexPath.item - 1].role)
+            cell.setup(isSelf: false, member: self.room.members[indexPath.item - 1])
         }
 
         return cell
