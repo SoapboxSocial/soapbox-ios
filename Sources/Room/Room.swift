@@ -50,6 +50,16 @@ class Room {
     func mute() {
         rtc.muteAudio()
         isMuted = true
+        
+        do {
+            let command = RoomCommand.with {
+                $0.type = RoomCommand.TypeEnum.muteSpeaker
+                // @todo I feel like mute should at least have access to some data about the speaker so that it can be sent in the command? or how does that work?
+            }
+            try rtc.sendData(command.serializedData())
+        } catch {
+            debugPrint("\(error.localizedDescription)")
+        }
     }
 
     func unmute() {
