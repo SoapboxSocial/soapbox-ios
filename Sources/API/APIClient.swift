@@ -142,6 +142,44 @@ class APIClient {
             }
     }
 
+    private func type(type: String) -> RTCSdpType {
+        switch type {
+        case "offer":
+            return .offer
+        case "answer":
+            return .answer
+        case "pranswer":
+            return .prAnswer
+        default:
+            // @todo error
+            return .offer
+        }
+    }
+}
+
+extension APIClient {
+
+    enum LoginState: String, Decodable {
+        case register = "register"
+        case success = "success"
+    }
+
+    struct User: Decodable {
+        let id: Int
+        let displayName: String
+        let username: String
+        let email: String
+
+        private enum CodingKeys: String, CodingKey {
+            case id, displayName = "display_name", username, email
+        }
+    }
+
+    private struct PinEntryResponse: Decodable {
+        let state: LoginState
+        let user: User?
+    }
+
     func login(email: String, callback: @escaping (Result<String, APIError>) -> Void) {
         AF.request(baseUrl + "/v1/login/start", method: .post, parameters: ["email": email], encoding: URLEncoding.default, headers: ["Content-Type": "application/x-www-form-urlencoded"])
             .response { result in
@@ -157,54 +195,30 @@ class APIClient {
                         return callback(.failure(.decode)) // @todo
                     }
 
-                    callback(.success(token)) // @TODOvagrant r
+                    callback(.success(token))
                 } catch {
                     return callback(.failure(.decode))
                 }
             }
     }
 
-    func submitPin(token: String, pin: String, callback: @escaping (Result<String, APIError>) -> Void) {
+    func submitPin(token: String, pin: String, callback: @escaping (Result<(LoginState, User?), APIError>) -> Void) {
         AF.request(baseUrl + "/v1/login/pin", method: .post)
             .response { result in
-                
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
                 }
-                
-                callback(.success("yay"))
-                
-//                guard let data = result.data else {
-//                    return callback(.failure(.requestFailed))
-//                }
 
-                //debugPrint(String(data: data, encoding: .utf8))
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
+                }
 
-//                do {
-//                    let resp = try self.decoder.decode([String: String].self, from: data)
-//
-//                    guard let token = resp["token"] else {
-//                        return callback(.failure(.decode)) // @todo
-//                    }
-//
-//                    callback(.success(token)) // @TODO
-//                } catch {
-//                    return callback(.failure(.decode))
-//                }
+                do {
+                    let resp = try self.decoder.decode(PinEntryResponse.self, from: data)
+                    callback(.success((resp.state, resp.user)))
+                } catch {
+                    return callback(.failure(.decode))
+                }
             }
-    }
-
-    private func type(type: String) -> RTCSdpType {
-        switch type {
-        case "offer":
-            return .offer
-        case "answer":
-            return .answer
-        case "pranswer":
-            return .prAnswer
-        default:
-            // @todo error
-            return .offer
-        }
     }
 }

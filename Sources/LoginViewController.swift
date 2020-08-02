@@ -57,7 +57,7 @@ class LoginViewController: UIViewController {
                     style: .danger
                 )
                 banner.show(cornerRadius: 10, shadowBlurRadius: 15)
-                
+
             case .success(let token):
                 DispatchQueue.main.async {
                     self.navigationController?.pushViewController(PinEntryViewController(token: token), animated: true)

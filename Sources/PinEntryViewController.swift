@@ -10,18 +10,18 @@ import UIKit
 class PinEntryViewController: UIViewController {
 
     let token: String
-    
+
     var textField: UITextField!
-    
+
     init(token: String) {
         self.token = token
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -61,17 +61,23 @@ class PinEntryViewController: UIViewController {
             switch result {
             case .failure:
                 debugPrint(result)
-            case .success:
-                
-                let viewController = RoomListViewController(api: APIClient())
-                let nav = NavigationViewController(rootViewController: viewController)
-                viewController.delegate = nav
-                
-                DispatchQueue.main.async {
-                    UIApplication.shared.keyWindow?.rootViewController = nav
+            case .success(let state, let user):
+
+                switch state {
+                case .success:
+                    print(user)
+                    let viewController = RoomListViewController(api: APIClient())
+                    let nav = NavigationViewController(rootViewController: viewController)
+                    viewController.delegate = nav
+
+                    DispatchQueue.main.async {
+                        UIApplication.shared.keyWindow?.rootViewController = nav
+                    }
+                case .register:
+                    // @todo push to registartion view controller
                 }
             }
-            
+
         }
     }
 }
