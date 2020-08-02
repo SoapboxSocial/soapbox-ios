@@ -54,7 +54,6 @@ class Room {
         do {
             let command = RoomCommand.with {
                 $0.type = RoomCommand.TypeEnum.muteSpeaker
-                // @todo I feel like mute should at least have access to some data about the speaker so that it can be sent in the command? or how does that work?
             }
             try rtc.sendData(command.serializedData())
         } catch {
@@ -65,6 +64,15 @@ class Room {
     func unmute() {
         rtc.unmuteAudio()
         isMuted = false
+        
+        do {
+            let command = RoomCommand.with {
+                $0.type = RoomCommand.TypeEnum.unmuteSpeaker
+            }
+            try rtc.sendData(command.serializedData())
+        } catch {
+            debugPrint("\(error.localizedDescription)")
+        }
     }
 
     func remove(speaker: String) {
@@ -206,6 +214,10 @@ extension Room: WebRTCClientDelegate {
                 updateMemberRole(user: id, role: .owner)
             case .UNRECOGNIZED:
                 return
+            case .mutedSpeaker:
+                mute()
+            case .unmutedSpeaker:
+                unmute()
             }
         } catch {
             debugPrint("failed to decode \(error.localizedDescription)")
