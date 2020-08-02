@@ -7,6 +7,7 @@ import Foundation
 import WebRTC
 
 enum APIError: Error {
+    case noData
     case requestFailed
     case decode
 }
@@ -66,8 +67,13 @@ class APIClient {
 
         AF.request(baseUrl + path, method: .post, parameters: parameters, encoding: JSONEncoding())
             .response { result in
-                guard let data = result.data else {
+                if result.error != nil {
                     return callback(.failure(.requestFailed))
+
+                }
+
+                guard let data = result.data else {
+                    return callback(.failure(.noData))
                 }
 
                 do {
@@ -92,6 +98,11 @@ class APIClient {
 
         AF.request(baseUrl + "/v1/rooms/create", method: .post, parameters: parameters, encoding: JSONEncoding())
             .response { result in
+                if result.error != nil {
+                    return callback(.failure(.requestFailed))
+
+                }
+
                 guard let data = result.data else {
                     return callback(.failure(.requestFailed))
                 }
@@ -113,6 +124,10 @@ class APIClient {
     func rooms(callback: @escaping (Result<[Room], APIError>) -> Void) {
         AF.request(baseUrl + "/v1/rooms", method: .get)
             .response { result in
+                if result.error != nil {
+                    return callback(.failure(.requestFailed))
+
+                }
 
                 guard let data = result.data else {
                     return callback(.failure(.requestFailed))
