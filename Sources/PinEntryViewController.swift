@@ -1,17 +1,27 @@
 //
-//  LoginViewController.swift
+//  PinEntryViewController.swift
 //  Voicely
 //
-//  Created by Dean Eigenmann on 27.07.20.
+//  Created by Dean Eigenmann on 02.08.20.
 //
 
 import UIKit
-import NotificationBannerSwift
 
-class LoginViewController: UIViewController {
+class PinEntryViewController: UIViewController {
 
+    let token: String
+    
     var textField: UITextField!
-
+    
+    init(token: String) {
+        self.token = token
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -20,16 +30,16 @@ class LoginViewController: UIViewController {
         textField = UITextField(frame: CGRect(x: 0, y: 0, width: view.frame.size.width / 2, height: 40))
         textField.borderStyle = .roundedRect
         textField.center = view.center
-        textField.keyboardType = .emailAddress
+        textField.keyboardType = .numberPad
         textField.returnKeyType = .next
-        textField.placeholder = "Email"
-        //textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.placeholder = "Pin"
+        textField.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(textField)
         textField.frame.size.width = view.frame.size.width / 2
-        textField.addTarget(self, action: #selector(login), for: .editingDidEndOnExit)
+        textField.addTarget(self, action: #selector(submitPin), for: .editingDidEndOnExit)
 
         let label = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 40))
-        label.text = NSLocalizedString("email_login", comment: "")
+        label.text = NSLocalizedString("enter_your_pin", comment: "")
         label.textAlignment = .center
         label.textColor = .white
         view.addSubview(label)
@@ -43,26 +53,25 @@ class LoginViewController: UIViewController {
         view.addSubview(logo)
     }
 
-    @objc func login() {
+    @objc func submitPin() {
         textField.resignFirstResponder()
         view.endEditing(true)
 
-        APIClient().login(email: textField.text!) { result in
+        APIClient().submitPin(token: token, pin: textField.text!) { result in
             switch result {
             case .failure:
-                // @todo handle error nicer
-                let banner = FloatingNotificationBanner(
-                    title: NSLocalizedString("something_went_wrong", comment: ""),
-                    subtitle: NSLocalizedString("please_try_again_later", comment: ""),
-                    style: .danger
-                )
-                banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+                debugPrint(result)
+            case .success:
                 
-            case .success(let token):
+                let viewController = RoomListViewController(api: APIClient())
+                let nav = NavigationViewController(rootViewController: viewController)
+                viewController.delegate = nav
+                
                 DispatchQueue.main.async {
-                    self.navigationController?.pushViewController(PinEntryViewController(token: token), animated: true)
+                    UIApplication.shared.keyWindow?.rootViewController = nav
                 }
             }
+            
         }
     }
 }

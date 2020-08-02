@@ -19,15 +19,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
 
         // @todo we will probably want one api client
-        
+
         // @todo check if logged in
 
         let viewController = RoomListViewController(api: APIClient())
 
-        let navigation = NavigationViewController(rootViewController: viewController)
-        viewController.delegate = navigation
+        let navigation = UINavigationController(rootViewController: LoginViewController())
+        navigation.navigationBar.isHidden = true
 
-        window!.rootViewController = LoginViewController()
+        window!.rootViewController = navigation
         window?.makeKeyAndVisible()
 
         return true

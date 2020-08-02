@@ -50,7 +50,7 @@ class APIClient {
 
     let decoder = JSONDecoder()
 
-    let baseUrl = "http://139.59.152.91"
+    let baseUrl = "http://192.168.33.16"
 
     func join(
         room: Int,
@@ -124,6 +124,58 @@ class APIClient {
                 } catch {
                     return callback(.failure(.decode))
                 }
+            }
+    }
+
+    func login(email: String, callback: @escaping (Result<String, APIError>) -> Void) {
+        AF.request(baseUrl + "/v1/login/start", method: .post, parameters: ["email": email], encoding: URLEncoding.default, headers: ["Content-Type": "application/x-www-form-urlencoded"])
+            .response { result in
+
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                do {
+                    let resp = try self.decoder.decode([String: String].self, from: data)
+
+                    guard let token = resp["token"] else {
+                        return callback(.failure(.decode)) // @todo
+                    }
+
+                    callback(.success(token)) // @TODOvagrant r
+                } catch {
+                    return callback(.failure(.decode))
+                }
+            }
+    }
+
+    func submitPin(token: String, pin: String, callback: @escaping (Result<String, APIError>) -> Void) {
+        AF.request(baseUrl + "/v1/login/pin", method: .post)
+            .response { result in
+                
+                if result.error != nil {
+                    return callback(.failure(.requestFailed))
+                }
+                
+                callback(.success("yay"))
+                
+//                guard let data = result.data else {
+//                    return callback(.failure(.requestFailed))
+//                }
+
+                //debugPrint(String(data: data, encoding: .utf8))
+
+//                do {
+//                    let resp = try self.decoder.decode([String: String].self, from: data)
+//
+//                    guard let token = resp["token"] else {
+//                        return callback(.failure(.decode)) // @todo
+//                    }
+//
+//                    callback(.success(token)) // @TODO
+//                } catch {
+//                    return callback(.failure(.decode))
+//                }
             }
     }
 
