@@ -1,4 +1,4 @@
-.PHONY: setup format test lint autocorrect clean build
+.PHONY: protobuf setup format test lint autocorrect clean build
 
 APP="Trollbox"
 
@@ -43,3 +43,5 @@ linuxmain:
 format:
 	swiftformat .
 
+protobuf:
+	 protoc --proto_path=$(PROTO_PATH) --swift_out=./Sources/Protobuf room.proto
