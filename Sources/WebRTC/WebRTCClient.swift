@@ -27,8 +27,10 @@ final class WebRTCClient: NSObject {
     private let peerConnection: RTCPeerConnection
     private let rtcAudioSession = RTCAudioSession.sharedInstance()
     private let audioQueue = DispatchQueue(label: "audio")
-    private let mediaConstrains = [kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue,
-                                   kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueFalse]
+    private let mediaConstrains = [
+        kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue,
+        kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueFalse,
+    ]
     private var localDataChannel: RTCDataChannel?
     private var remoteDataChannel: RTCDataChannel?
 
@@ -49,8 +51,10 @@ final class WebRTCClient: NSObject {
         // gatherContinually will let WebRTC to listen to any network changes and send any new candidates to the other client
         config.continualGatheringPolicy = .gatherContinually
 
-        let constraints = RTCMediaConstraints(mandatoryConstraints: nil,
-                                              optionalConstraints: ["DtlsSrtpKeyAgreement": kRTCMediaConstraintsValueTrue])
+        let constraints = RTCMediaConstraints(
+            mandatoryConstraints: nil,
+            optionalConstraints: ["DtlsSrtpKeyAgreement": kRTCMediaConstraintsValueTrue]
+        )
         peerConnection = WebRTCClient.factory.peerConnection(with: config, constraints: constraints, delegate: nil)
 
         super.init()
@@ -63,6 +67,8 @@ final class WebRTCClient: NSObject {
 
     func close() {
         // @todo remove audio track? peerConnection.removeTrack()
+        remoteDataChannel?.close()
+        localDataChannel?.close()
         peerConnection.close()
     }
 
@@ -137,7 +143,7 @@ final class WebRTCClient: NSObject {
 
     private func createDataChannel() -> RTCDataChannel? {
         let config = RTCDataChannelConfiguration()
-        guard let dataChannel = self.peerConnection.dataChannel(forLabel: "WebRTCData", configuration: config) else {
+        guard let dataChannel = self.peerConnection.dataChannel(forLabel: "data", configuration: config) else {
             debugPrint("Warning: Couldn't create data channel.")
             return nil
         }
@@ -169,7 +175,10 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     }
 
     func peerConnection(_: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
-        debugPrint("peerConnection new connection state: \(newState)")
+        if newState == .connected {
+            speakerOn()
+        }
+
         delegate?.webRTCClient(self, didChangeConnectionState: newState)
     }
 
@@ -191,8 +200,6 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     }
 }
 
-// MARK: - Audio control
-
 extension WebRTCClient {
     func muteAudio() {
         setAudioEnabled(false)
@@ -202,25 +209,6 @@ extension WebRTCClient {
         setAudioEnabled(true)
     }
 
-    // Fallback to the default playing device: headphones/bluetooth/ear speaker
-    func speakerOff() {
-        audioQueue.async { [weak self] in
-            guard let self = self else {
-                return
-            }
-
-            self.rtcAudioSession.lockForConfiguration()
-            do {
-                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
-                try self.rtcAudioSession.overrideOutputAudioPort(.none)
-            } catch {
-                debugPrint("Error setting AVAudioSession category: \(error)")
-            }
-            self.rtcAudioSession.unlockForConfiguration()
-        }
-    }
-
-    // Force speaker
     func speakerOn() {
         audioQueue.async { [weak self] in
             guard let self = self else {

@@ -12,9 +12,9 @@ class RoomListEmptyCell: UICollectionViewCell {
         let messageLabel = UILabel()
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.textColor = UIColor.black
+        titleLabel.textColor = .label
         titleLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 18)
-        messageLabel.textColor = UIColor.lightGray
+        messageLabel.textColor = .lightGray
         messageLabel.font = UIFont(name: "HelveticaNeue-Regular", size: 17)
         addSubview(titleLabel)
         addSubview(messageLabel)

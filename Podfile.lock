@@ -1,20 +1,40 @@
 PODS:
-  - Alamofire (4.9.1)
-  - GoogleWebRTC (1.1.27828)
+  - Alamofire (5.2.2)
+  - DrawerView (1.3.1)
+  - GoogleWebRTC (1.1.29400)
+  - MarqueeLabel (4.0.2)
+  - NotificationBannerSwift (3.0.2):
+    - MarqueeLabel (~> 4.0.0)
+    - SnapKit (~> 5.0.0)
+  - SnapKit (5.0.1)
+  - SwiftProtobuf (1.8.0)
 
 DEPENDENCIES:
   - Alamofire
+  - DrawerView
   - GoogleWebRTC
+  - NotificationBannerSwift
+  - SwiftProtobuf
 
 SPEC REPOS:
   trunk:
     - Alamofire
+    - DrawerView
     - GoogleWebRTC
+    - MarqueeLabel
+    - NotificationBannerSwift
+    - SnapKit
+    - SwiftProtobuf
 
 SPEC CHECKSUMS:
-  Alamofire: 85e8a02c69d6020a0d734f6054870d7ecb75cf18
-  GoogleWebRTC: 55e46bee9ac2a4961542e9571bea589b64493f45
+  Alamofire: 814429acc853c6c54ff123fc3d2ef66803823ce0
+  DrawerView: 0c7e6c40e5076b2fb64c394fa5fc8166ff917eff
+  GoogleWebRTC: cfb83bc346435a17fe06bb05f04ad826b858a7fb
+  MarqueeLabel: f762aa681ae201f66c1d511858b171f75d83013a
+  NotificationBannerSwift: 713e20f21b6105f4a36a00e5d9fa414a930d3d8e
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
+  SwiftProtobuf: 2cbd9409689b7df170d82a92a33443c8e3e14a70
 
-PODFILE CHECKSUM: 5ae3cd92af9522c0bf306a65851a94534603886a
+PODFILE CHECKSUM: aba7fe2a19e3f82d9b7552bab2b23432179a7b95
 
 COCOAPODS: 1.9.1

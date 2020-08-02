@@ -3,9 +3,11 @@
 //
 
 import UIKit
+import NotificationBannerSwift
 
 protocol RoomListViewDelegate {
-    func didSelectRoom(room: RoomData)
+    func currentRoom() -> Int?
+    func didSelectRoom(id: Int)
 }
 
 class RoomListViewController: UIViewController {
@@ -20,21 +22,17 @@ class RoomListViewController: UIViewController {
 
     var api: APIClient
 
-    var roomsData: [Int]
+    var roomsData = [APIClient.Room]()
+
+    var currentRoom: Int?
 
     init(api: APIClient) {
         self.api = api
-        roomsData = [Int]()
         super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewSafeAreaInsetsDidChange() {
-        super.viewSafeAreaInsetsDidChange()
-        // @todo we probably want to move up buttons and other stuff due to iphone x insets
     }
 
     override func viewDidLoad() {
@@ -66,18 +64,33 @@ class RoomListViewController: UIViewController {
     }
 
     private func loadData() {
-        api.rooms { data in
+        currentRoom = delegate?.currentRoom()
+
+        api.rooms { result in
             DispatchQueue.main.async {
                 self.rooms.refreshControl?.endRefreshing()
             }
 
-            guard let rooms = data else {
+            switch result {
+            case .failure:
                 self.roomsData = []
-                // @todo
-                return
-            }
 
-            self.roomsData = rooms
+                let banner = FloatingNotificationBanner(
+                    title: NSLocalizedString("failed_to_load_rooms", comment: ""),
+                    subtitle: NSLocalizedString("please_try_again_later", comment: ""),
+                    style: .danger
+                )
+                banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+
+            case let .success(rooms):
+                self.roomsData = rooms
+
+                if let current = self.currentRoom {
+                    self.roomsData.sort {
+                        ($0.id == current) && !($1.id == current)
+                    }
+                }
+            }
 
             DispatchQueue.main.async {
                 self.rooms.reloadData()
@@ -101,6 +114,15 @@ extension RoomListViewController: UICollectionViewDataSource {
         }
 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.room.rawValue, for: indexPath) as! RoomCell
+
+        let item = roomsData[indexPath.item]
+
+        if item.id == currentRoom {
+            cell.setup(style: .current, data: item)
+        } else {
+            cell.setup(style: .normal, data: item)
+        }
+
         return cell
     }
 }
@@ -111,7 +133,8 @@ extension RoomListViewController: UICollectionViewDelegate {
             return
         }
 
-        delegate?.didSelectRoom(room: RoomData(id: roomsData[index.item], title: "", members: [Member]()))
+        delegate?.didSelectRoom(id: roomsData[index.item].id)
+        // @todo probably reload?
     }
 }
 
@@ -121,7 +144,7 @@ extension RoomListViewController: UICollectionViewDelegateFlowLayout {
             return CGSize(width: collectionView.frame.width, height: getEmptyHeight())
         }
 
-        return CGSize(width: collectionView.frame.width, height: 300)
+        return CGSize(width: collectionView.frame.width, height: 105)
     }
 
     func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, minimumLineSpacingForSectionAt _: Int) -> CGFloat {

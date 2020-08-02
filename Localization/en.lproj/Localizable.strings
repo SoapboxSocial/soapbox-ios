@@ -1,0 +1,37 @@
+/* These labels should be more encouraging and positive */
+"no_active_rooms" = "There are currently no active rooms.";
+"start_room_tip" = "Why not start one?\n\n👇";
+
+"are_you_sure" = "Are you sure?";
+"exit_will_close_room" = "You are the only person in the room, leaving will close it.";
+
+"no" = "No";
+"yes" = "Yes";
+"ok" = "Ok";
+
+"current_room" = "Current Room";
+"listen_in" = "Listen in";
+
+"microphone_permission_denied" = "You'll need to turn on your microphone for that!";
+"to_settings" = "To settings";
+
+"participants" = "Participants";
+"participant" = "Participant";
+
+"make_speaker" = "Make a speaker";
+"move_to_audience" = "Move to audience";
+"cancel" = "Cancel";
+
+"something_went_wrong" = "oops, something went wrong!";
+"please_try_again_later" = "Please try again later";
+
+"failed_to_load_rooms" = "Failed to load rooms!";
+
+"name_room" = "Name your room";
+"enter_name" = "Enter a name";
+"skip" = "Skip";
+"create" = "Create";
+
+"your_room" = "Your room";
+
+"email_login" = "Enter email to login";
