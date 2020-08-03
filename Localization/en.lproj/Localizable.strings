@@ -31,11 +31,12 @@
 "enter_name" = "Enter a name";
 "skip" = "Skip";
 "create" = "Create";
+"submit" = "Submit";
 
 "your_room" = "Your room";
 
-"email_login" = "Enter email to login";
-"enter_your_pin_received_by_mail" = "We sent you a pin by email";
+"email_login" = "Enter email";
+"enter_your_pin_received_by_mail" = "Enter pin sent to email";
 "pin" = "Pin";
 
 "invalid_email" = "Please enter a valid email";

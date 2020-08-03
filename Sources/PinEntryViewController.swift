@@ -11,7 +11,7 @@ import UIKit
 class PinEntryViewController: UIViewController {
     let token: String
 
-    var textField: UITextField!
+    var textField: TextField!
 
     init(token: String) {
         self.token = token
@@ -27,19 +27,16 @@ class PinEntryViewController: UIViewController {
 
         view.backgroundColor = UIColor(red: 213 / 255, green: 94 / 255, blue: 163 / 255, alpha: 1)
 
-        textField = UITextField(frame: CGRect(x: 0, y: 0, width: view.frame.size.width / 2, height: 40))
-        textField.borderStyle = .roundedRect
+        textField = TextField(frame: CGRect(x: 0, y: 0, width: 330, height: 40))
         textField.center = view.center
         textField.keyboardType = .numberPad
         textField.returnKeyType = .next
         textField.placeholder = NSLocalizedString("pin", comment: "")
-        textField.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(textField)
-        textField.frame.size.width = view.frame.size.width / 2
-        textField.addTarget(self, action: #selector(submitPin), for: .editingDidEndOnExit)
 
         let label = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 40))
         label.text = NSLocalizedString("enter_your_pin_received_by_mail", comment: "")
+        label.font = label.font.withSize(20)
         label.textAlignment = .center
         label.textColor = .white
         view.addSubview(label)
@@ -51,6 +48,14 @@ class PinEntryViewController: UIViewController {
         logo.center = CGPoint(x: view.center.x, y: view.frame.size.height / 4)
         logo.textAlignment = .center
         view.addSubview(logo)
+        
+        let createButton = UIButton(frame: CGRect(x: 0, y: textField.frame.size.height + textField.frame.origin.y + 30, width: view.frame.size.width / 2, height: 40))
+        createButton.setTitle(NSLocalizedString("submit", comment: ""), for: .normal)
+        createButton.center = CGPoint(x: view.center.x, y: createButton.center.y)
+        createButton.layer.cornerRadius = 5
+        createButton.layer.borderWidth = 1
+        createButton.addTarget(self, action: #selector(submitPin), for: .touchUpInside)
+        view.addSubview(createButton)
     }
 
     @objc func submitPin() {
