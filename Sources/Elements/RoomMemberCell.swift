@@ -71,7 +71,7 @@ class RoomMemberCell: UICollectionViewCell {
     func setup(isSelf: Bool, member: APIClient.Member) {
         setup(isSelf: isSelf, role: member.role)
         
-        if member.isMuted {
+        if member.role != APIClient.MemberRole.audience, member.isMuted {
             muteView.isHidden = false
         } else {
             muteView.isHidden = true
