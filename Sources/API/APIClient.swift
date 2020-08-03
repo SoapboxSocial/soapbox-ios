@@ -5,6 +5,7 @@
 import Alamofire
 import Foundation
 import WebRTC
+import KeychainAccess
 
 enum APIError: Error {
     case noData
@@ -72,7 +73,7 @@ class APIClient {
 
     let decoder = JSONDecoder()
 
-    let baseUrl = "https://spksy.app"
+    let baseUrl = "http://192.168.33.16"
 
     // @todo auth header
     
@@ -86,9 +87,14 @@ class APIClient {
             "type": "offer" as AnyObject,
         ]
 
+        // @todo
+        
+        let keychain = Keychain(service: "com.voicely.voicely")
+        let token = keychain[string: "token"]
+        
         let path = String(format: "/v1/rooms/%d/join", room)
 
-        AF.request(baseUrl + path, method: .post, parameters: parameters, encoding: JSONEncoding())
+        AF.request(baseUrl + path, method: .post, parameters: parameters, encoding: JSONEncoding(), headers: ["Authorization": token!])
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
@@ -119,8 +125,11 @@ class APIClient {
         if name != nil {
             parameters["name"] = name! as AnyObject
         }
+        
+        let keychain = Keychain(service: "com.voicely.voicely")
+        let token = keychain[string: "token"]
 
-        AF.request(baseUrl + "/v1/rooms/create", method: .post, parameters: parameters, encoding: JSONEncoding())
+        AF.request(baseUrl + "/v1/rooms/create", method: .post, parameters: parameters, encoding: JSONEncoding(), headers: ["Authorization": token!])
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
