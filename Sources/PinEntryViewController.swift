@@ -72,8 +72,10 @@ class PinEntryViewController: UIViewController {
                     DispatchQueue.main.async {
                         UIApplication.shared.keyWindow?.rootViewController = nav
                     }
-                case .register: break
-                    // @todo push to registartion view controller
+                case .register:
+                    DispatchQueue.main.async {
+                        self.navigationController?.pushViewController(RegistrationViewController(token: self.token), animated: true)
+                    }
                 }
             }
 

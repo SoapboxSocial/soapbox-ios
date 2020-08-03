@@ -181,7 +181,7 @@ extension APIClient {
     }
 
     func login(email: String, callback: @escaping (Result<String, APIError>) -> Void) {
-        AF.request(baseUrl + "/v1/login/start", method: .post, parameters: ["email": email], encoding: URLEncoding.default, headers: ["Content-Type": "application/x-www-form-urlencoded"])
+        AF.request(baseUrl + "/v1/login/start", method: .post, parameters: ["email": email], encoding: URLEncoding.default)
             .response { result in
 
                 guard let data = result.data else {
@@ -203,7 +203,7 @@ extension APIClient {
     }
 
     func submitPin(token: String, pin: String, callback: @escaping (Result<(LoginState, User?), APIError>) -> Void) {
-        AF.request(baseUrl + "/v1/login/pin", method: .post)
+        AF.request(baseUrl + "/v1/login/pin", method: .post, parameters: ["token": token, "pin": pin], encoding: URLEncoding.default)
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
@@ -221,4 +221,8 @@ extension APIClient {
                 }
             }
     }
+    
+//    func register(token: String, username: String, displayName: String, callback: @escaping (Result<User, APIError>) -> Void) {
+//        AF.request(baseUrl + "/v1/login/register", method: .post)
+//    }
 }
