@@ -31,5 +31,15 @@
 "enter_name" = "Enter a name";
 "skip" = "Skip";
 "create" = "Create";
+"submit" = "Submit";
 
 "your_room" = "Your room";
+
+"email_login" = "Enter email";
+"enter_your_pin_received_by_mail" = "Enter pin sent to email";
+"pin" = "Pin";
+
+"invalid_email" = "Please enter a valid email";
+"username_already_exists" = "Username already exists";
+"invalid_username" = "Valid username required";
+"incorrect_pin" = "The entered pin was incorrect";
