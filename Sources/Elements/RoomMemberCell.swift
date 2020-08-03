@@ -8,9 +8,7 @@
 import UIKit
 
 class RoomMemberCell: UICollectionViewCell {
-
     func setup(isSelf: Bool, role: APIClient.MemberRole) {
-
         let circle = UIView(frame: contentView.frame)
         circle.layer.cornerRadius = 30
         circle.clipsToBounds = true
@@ -37,7 +35,6 @@ class RoomMemberCell: UICollectionViewCell {
         label.textAlignment = .center
         label.font = label.font.withSize(10)
         roleView.addSubview(label)
-
     }
 
     private func emoji(for role: APIClient.MemberRole) -> String {

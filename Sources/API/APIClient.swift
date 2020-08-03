@@ -20,9 +20,9 @@ class APIClient {
     }
 
     enum MemberRole: String, Decodable {
-        case owner = "owner"
-        case audience = "audience"
-        case speaker = "speaker"
+        case owner
+        case audience
+        case speaker
     }
 
     struct Member: Decodable {
@@ -69,7 +69,6 @@ class APIClient {
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
-
                 }
 
                 guard let data = result.data else {
@@ -100,7 +99,6 @@ class APIClient {
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
-
                 }
 
                 guard let data = result.data else {
@@ -126,7 +124,6 @@ class APIClient {
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
-
                 }
 
                 guard let data = result.data else {

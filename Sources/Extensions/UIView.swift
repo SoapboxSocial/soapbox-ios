@@ -19,21 +19,20 @@ enum UIViewEdge {
 extension UIViewEdge: Equatable {}
 
 extension UIView {
-
     func roundCorners(corners: UIRectCorner, radius: CGFloat) {
-         let path = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
-         let mask = CAShapeLayer()
-         mask.path = path.cgPath
-         layer.mask = mask
-     }
+        let path = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        let mask = CAShapeLayer()
+        mask.path = path.cgPath
+        layer.mask = mask
+    }
 
     func autoPinEdgesToSuperview(margin: CGFloat = 0) {
         autoPinToSuperview(edges: [
             .top(margin: margin),
             .bottom(margin: margin),
             .leading(margin: margin),
-            .trailing(margin: margin)
-            ])
+            .trailing(margin: margin),
+        ])
     }
 
     func autoPinToSuperview(edges: [UIViewEdge]) {
@@ -44,21 +43,21 @@ extension UIView {
         var constraints: [NSLayoutConstraint] = []
         for edge in edges {
             switch edge {
-            case .top(let margin):
+            case let .top(margin):
                 constraints.append(
-                    superview.topAnchor.constraint(equalTo: self.topAnchor, constant: -margin)
+                    superview.topAnchor.constraint(equalTo: topAnchor, constant: -margin)
                 )
-            case .bottom(let margin):
+            case let .bottom(margin):
                 constraints.append(
-                    superview.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: margin)
+                    superview.bottomAnchor.constraint(equalTo: bottomAnchor, constant: margin)
                 )
-            case .leading(let margin):
+            case let .leading(margin):
                 constraints.append(
-                    superview.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: -margin)
+                    superview.leadingAnchor.constraint(equalTo: leadingAnchor, constant: -margin)
                 )
-            case .trailing(let margin):
+            case let .trailing(margin):
                 constraints.append(
-                    superview.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: margin)
+                    superview.trailingAnchor.constraint(equalTo: trailingAnchor, constant: margin)
                 )
             }
         }

@@ -6,9 +6,9 @@
 //
 
 import AVFoundation
-import UIKit
 import DrawerView
 import NotificationBannerSwift
+import UIKit
 
 class NavigationViewController: UINavigationController {
     var activityIndicator = UIActivityIndicatorView(style: .medium)
@@ -76,12 +76,12 @@ class NavigationViewController: UINavigationController {
         func showCreationDrawer() {
             creationDrawer = DrawerView()
             creationDrawer!.delegate = self
-            creationDrawer!.attachTo(view: self.view)
+            creationDrawer!.attachTo(view: view)
             creationDrawer!.backgroundEffect = nil
             creationDrawer!.snapPositions = [.open, .closed]
             creationDrawer!.backgroundColor = .elementBackground
             creationDrawer!.setPosition(.closed, animated: false)
-            self.view.addSubview(creationDrawer!)
+            view.addSubview(creationDrawer!)
 
             creationDrawer!.contentVisibilityBehavior = .allowPartial
 
@@ -90,7 +90,7 @@ class NavigationViewController: UINavigationController {
             roomView.translatesAutoresizingMaskIntoConstraints = false
             creationDrawer!.addSubview(roomView)
             roomView.autoPinEdgesToSuperview()
-            //roomView.delegate = self
+            // roomView.delegate = self
 
             creationDrawer!.setPosition(.open, animated: true) { _ in
                 self.createRoomButton.isHidden = true

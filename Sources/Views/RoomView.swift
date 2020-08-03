@@ -5,8 +5,8 @@
 //  Created by Dean Eigenmann on 30.07.20.
 //
 
-import UIKit
 import DrawerView
+import UIKit
 
 protocol RoomViewDelegate {
     func roomDidExit()
@@ -31,7 +31,7 @@ class RoomView: UIView {
         room.delegate = self
     }
 
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -58,7 +58,7 @@ class RoomView: UIView {
         topBar.addSubview(recognizerView)
 
         let label = UILabel(frame: CGRect(x: safeAreaInsets.left + 15, y: 0, width: frame.size.width / 2, height: 0))
-        label.text = self.room.name!
+        label.text = room.name!
         label.font = UIFont(name: "HelveticaNeue-Bold", size: label.font.pointSize)
         label.sizeToFit()
         label.center = CGPoint(x: label.center.x, y: topBar.center.y - (inset / 2))
@@ -147,19 +147,19 @@ class RoomView: UIView {
 
 extension RoomView: RoomDelegate {
     //  @todo for efficiency these should all only update the user that was changed
-    func userDidJoinRoom(user: String) {
+    func userDidJoinRoom(user _: String) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
     }
 
-    func userDidLeaveRoom(user: String) {
+    func userDidLeaveRoom(user _: String) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
     }
 
-    func didChangeUserRole(user: String, role: APIClient.MemberRole) {
+    func didChangeUserRole(user _: String, role _: APIClient.MemberRole) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
@@ -167,16 +167,16 @@ extension RoomView: RoomDelegate {
 }
 
 extension RoomView: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if indexPath.item == 0 {
             return
         }
 
-        if self.room.role != .owner {
+        if room.role != .owner {
             return
         }
 
-        showRoleAction(for: self.room.members[indexPath.item - 1])
+        showRoleAction(for: room.members[indexPath.item - 1])
     }
 
     private func showRoleAction(for member: APIClient.Member) {
@@ -207,15 +207,15 @@ extension RoomView: UICollectionViewDelegate {
 extension RoomView: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         // Adds the plus 1 for self.
-        return self.room.members.count + 1
+        return room.members.count + 1
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! RoomMemberCell
         if indexPath.item == 0 {
-            cell.setup(isSelf: true, role: self.room.role)
+            cell.setup(isSelf: true, role: room.role)
         } else {
-            cell.setup(isSelf: false, role: self.room.members[indexPath.item - 1].role)
+            cell.setup(isSelf: false, role: room.members[indexPath.item - 1].role)
         }
 
         return cell
