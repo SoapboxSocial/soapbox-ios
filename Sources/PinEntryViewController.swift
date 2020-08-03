@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import NotificationBannerSwift
 
 class PinEntryViewController: UIViewController {
 
@@ -60,7 +61,12 @@ class PinEntryViewController: UIViewController {
         APIClient().submitPin(token: token, pin: textField.text!) { result in
             switch result {
             case .failure:
-                debugPrint(result)
+                let banner = FloatingNotificationBanner(
+                    title: NSLocalizedString("something_went_wrong", comment: ""),
+                    subtitle: NSLocalizedString("please_try_again_later", comment: ""),
+                    style: .danger
+                )
+                banner.show(cornerRadius: 10, shadowBlurRadius: 15)
             case .success((let state, let user)):
                 switch state {
                 case .success:
