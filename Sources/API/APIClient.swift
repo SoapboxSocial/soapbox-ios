@@ -28,7 +28,7 @@ class APIClient {
     }
 
     struct Member: Decodable {
-        let id: String
+        let id: Int
         var role: MemberRole
     }
 
@@ -74,6 +74,8 @@ class APIClient {
 
     let baseUrl = "https://spksy.app"
 
+    // @todo auth header
+    
     func join(
         room: Int,
         sdp: RTCSessionDescription,
@@ -105,6 +107,8 @@ class APIClient {
                 }
             }
     }
+    
+    // @todo auth header
 
     func createRoom(sdp: RTCSessionDescription, name: String?, callback: @escaping (Result<RoomConnection, APIError>) -> Void) {
         var parameters: [String: AnyObject] = [

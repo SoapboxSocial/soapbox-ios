@@ -26,7 +26,7 @@ struct RoomEvent {
 
   var type: RoomEvent.TypeEnum = .joined
 
-  var from: String = String()
+  var from: Int64 = 0
 
   var data: Data = SwiftProtobuf.Internal.emptyData
 
@@ -39,6 +39,8 @@ struct RoomEvent {
     case addedSpeaker // = 2
     case removedSpeaker // = 3
     case changedOwner // = 4
+    case mutedSpeaker // = 5
+    case unmutedSpeaker // = 6
     case UNRECOGNIZED(Int)
 
     init() {
@@ -52,6 +54,8 @@ struct RoomEvent {
       case 2: self = .addedSpeaker
       case 3: self = .removedSpeaker
       case 4: self = .changedOwner
+      case 5: self = .mutedSpeaker
+      case 6: self = .unmutedSpeaker
       default: self = .UNRECOGNIZED(rawValue)
       }
     }
@@ -63,6 +67,8 @@ struct RoomEvent {
       case .addedSpeaker: return 2
       case .removedSpeaker: return 3
       case .changedOwner: return 4
+      case .mutedSpeaker: return 5
+      case .unmutedSpeaker: return 6
       case .UNRECOGNIZED(let i): return i
       }
     }
@@ -82,6 +88,8 @@ extension RoomEvent.TypeEnum: CaseIterable {
     .addedSpeaker,
     .removedSpeaker,
     .changedOwner,
+    .mutedSpeaker,
+    .unmutedSpeaker,
   ]
 }
 
@@ -102,6 +110,8 @@ struct RoomCommand {
     typealias RawValue = Int
     case addSpeaker // = 0
     case removeSpeaker // = 1
+    case muteSpeaker // = 2
+    case unmuteSpeaker // = 3
     case UNRECOGNIZED(Int)
 
     init() {
@@ -112,6 +122,8 @@ struct RoomCommand {
       switch rawValue {
       case 0: self = .addSpeaker
       case 1: self = .removeSpeaker
+      case 2: self = .muteSpeaker
+      case 3: self = .unmuteSpeaker
       default: self = .UNRECOGNIZED(rawValue)
       }
     }
@@ -120,6 +132,8 @@ struct RoomCommand {
       switch self {
       case .addSpeaker: return 0
       case .removeSpeaker: return 1
+      case .muteSpeaker: return 2
+      case .unmuteSpeaker: return 3
       case .UNRECOGNIZED(let i): return i
       }
     }
@@ -136,6 +150,8 @@ extension RoomCommand.TypeEnum: CaseIterable {
   static var allCases: [RoomCommand.TypeEnum] = [
     .addSpeaker,
     .removeSpeaker,
+    .muteSpeaker,
+    .unmuteSpeaker,
   ]
 }
 
@@ -155,7 +171,7 @@ extension RoomEvent: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularEnumField(value: &self.type)
-      case 2: try decoder.decodeSingularStringField(value: &self.from)
+      case 2: try decoder.decodeSingularInt64Field(value: &self.from)
       case 3: try decoder.decodeSingularBytesField(value: &self.data)
       default: break
       }
@@ -166,8 +182,8 @@ extension RoomEvent: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     if self.type != .joined {
       try visitor.visitSingularEnumField(value: self.type, fieldNumber: 1)
     }
-    if !self.from.isEmpty {
-      try visitor.visitSingularStringField(value: self.from, fieldNumber: 2)
+    if self.from != 0 {
+      try visitor.visitSingularInt64Field(value: self.from, fieldNumber: 2)
     }
     if !self.data.isEmpty {
       try visitor.visitSingularBytesField(value: self.data, fieldNumber: 3)
@@ -191,6 +207,8 @@ extension RoomEvent.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     2: .same(proto: "ADDED_SPEAKER"),
     3: .same(proto: "REMOVED_SPEAKER"),
     4: .same(proto: "CHANGED_OWNER"),
+    5: .same(proto: "MUTED_SPEAKER"),
+    6: .same(proto: "UNMUTED_SPEAKER"),
   ]
 }
 
@@ -233,5 +251,7 @@ extension RoomCommand.TypeEnum: SwiftProtobuf._ProtoNameProviding {
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "ADD_SPEAKER"),
     1: .same(proto: "REMOVE_SPEAKER"),
+    2: .same(proto: "MUTE_SPEAKER"),
+    3: .same(proto: "UNMUTE_SPEAKER"),
   ]
 }

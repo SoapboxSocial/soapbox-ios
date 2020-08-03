@@ -147,19 +147,19 @@ class RoomView: UIView {
 
 extension RoomView: RoomDelegate {
     //  @todo for efficiency these should all only update the user that was changed
-    func userDidJoinRoom(user _: String) {
+    func userDidJoinRoom(user _: Int) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
     }
 
-    func userDidLeaveRoom(user _: String) {
+    func userDidLeaveRoom(user _: Int) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
     }
 
-    func didChangeUserRole(user _: String, role _: APIClient.MemberRole) {
+    func didChangeUserRole(user _: Int, role _: APIClient.MemberRole) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
