@@ -36,3 +36,7 @@
 
 "email_login" = "Enter email to login";
 "enter_your_pin" = "Enter your pin";
+
+"invalid_email" = "Please enter a valid email";
+"username_already_exists" = "Username already exists";
+"invalid_username" = "Valid username required";

@@ -10,6 +10,7 @@ enum APIError: Error {
     case noData
     case requestFailed
     case decode
+    case usernameAlreadyExists
 }
 
 class APIClient {
@@ -47,6 +48,24 @@ class APIClient {
         let id: Int?
         let sdp: String
         let type: String
+    }
+
+    enum ErrorCode: Int, Decodable {
+        case roomNotFound = 1
+        case roomFailedToJoin             = 2
+        case invalidRequestBody           = 3
+        case failedToCreateRoom           = 4
+        case missingParameter             = 5
+        case failedToRegister             = 6
+        case invalidEmail                 = 7
+        case invalidUsername              = 8
+        case usernameAlreadyExists        = 9
+        case failedToLogin = 10
+    }
+
+    struct ErrorResponse: Decodable {
+        let code: ErrorCode
+        let message: String
     }
 
     let decoder = JSONDecoder()
@@ -229,19 +248,30 @@ extension APIClient {
         AF.request(baseUrl + "/v1/login/register", method: .post, parameters: ["username": username, "display_name": displayName, "token": token], encoding: URLEncoding.default)
             .validate()
             .response { result in
-                // @todo check error type
-                if result.error != nil {
+                guard let data = result.data else {
                     return callback(.failure(.requestFailed))
                 }
 
-                guard let data = result.data else {
-                    return callback(.failure(.requestFailed))
+                if result.error != nil {
+                    do {
+                        let resp = try self.decoder.decode(ErrorResponse.self, from: data)
+                        if resp.code == .usernameAlreadyExists {
+                            debugPrint("yay")
+                            return callback(.failure(.usernameAlreadyExists))
+                        }
+
+                        return callback(.failure(.requestFailed))
+                    } catch {
+                        debugPrint("\(error.localizedDescription)")
+                        return callback(.failure(.decode))
+                    }
                 }
 
                 do {
                     let resp = try self.decoder.decode(User.self, from: data)
                     callback(.success(resp))
                 } catch {
+                    debugPrint("\(error.localizedDescription)")
                     return callback(.failure(.decode))
                 }
             }

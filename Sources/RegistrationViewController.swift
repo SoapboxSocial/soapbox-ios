@@ -6,11 +6,13 @@
 //
 
 import UIKit
+import NotificationBannerSwift
 
 class RegistrationViewController: UIViewController {
     let token: String
 
-    var username: UITextField!
+    var usernameTextField: UITextField!
+    var usernameError: UILabel!
     var displayName: UITextField!
 
     init(token: String) {
@@ -27,23 +29,27 @@ class RegistrationViewController: UIViewController {
 
         view.backgroundColor = UIColor(red: 213 / 255, green: 94 / 255, blue: 163 / 255, alpha: 1)
 
-        username = UITextField(frame: CGRect(x: 0, y: 100, width: view.frame.size.width / 2, height: 40))
-        username.borderStyle = .roundedRect
-        username.center = CGPoint(x: view.center.x, y: username.center.y)
-        username.keyboardType = .numberPad
-        username.returnKeyType = .next
-        username.placeholder = "Username"
-        username.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(username)
+        usernameTextField = UITextField(frame: CGRect(x: 0, y: 100, width: view.frame.size.width / 2, height: 40))
+        usernameTextField.borderStyle = .roundedRect
+        usernameTextField.center = CGPoint(x: view.center.x, y: usernameTextField.center.y)
+        usernameTextField.keyboardType = .numberPad
+        usernameTextField.returnKeyType = .next
+        usernameTextField.placeholder = "Username"
+        usernameTextField.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(usernameTextField)
+
+        usernameError = UILabel(frame: CGRect(x: usernameTextField.frame.origin.x, y: usernameTextField.frame.origin.y + usernameTextField.frame.size.height, width: usernameTextField.frame.size.width, height: 40))
+        usernameError.font = usernameError.font?.withSize(15)
+        view.addSubview(usernameError)
 
         let label = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 40))
         label.text = "Username"
         label.textAlignment = .center
         label.textColor = .white
         view.addSubview(label)
-        label.center = CGPoint(x: view.center.x, y: username.frame.origin.y - 20)
+        label.center = CGPoint(x: view.center.x, y: usernameTextField.frame.origin.y - 20)
 
-        displayName = UITextField(frame: CGRect(x: 0, y: username.frame.origin.y + username.frame.size.height + 30, width: view.frame.size.width / 2, height: 40))
+        displayName = UITextField(frame: CGRect(x: 0, y: usernameError.frame.origin.y + usernameError.frame.size.height, width: view.frame.size.width / 2, height: 40))
         displayName.borderStyle = .roundedRect
         displayName.center = CGPoint(x: view.center.x, y: displayName.center.y)
         displayName.keyboardType = .numberPad
@@ -62,7 +68,49 @@ class RegistrationViewController: UIViewController {
     }
 
     @objc private func submit() {
-        APIClient().register(token: token, username: username.text!, displayName: displayName.text!) { _ in
+        usernameError.text = ""
+
+        // @todo validate username
+        guard let username = usernameTextField.text, isValidUsername(username) else {
+            return self.usernameError.text = NSLocalizedString("invalid_username", comment: "")
         }
+
+        APIClient().register(token: token, username: username, displayName: displayName.text ?? username) { result in
+            switch result {
+            case .failure(let error):
+                if error == .usernameAlreadyExists {
+                    self.usernameError.text = NSLocalizedString("username_already_exists", comment: "")
+                    return
+                }
+
+                // @todo handle error nicer
+                let banner = FloatingNotificationBanner(
+                    title: NSLocalizedString("something_went_wrong", comment: ""),
+                    subtitle: NSLocalizedString("please_try_again_later", comment: ""),
+                    style: .danger
+                )
+                banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+            case .success(let user):
+                print(user)
+                let viewController = RoomListViewController(api: APIClient())
+                let nav = NavigationViewController(rootViewController: viewController)
+                viewController.delegate = nav
+
+                DispatchQueue.main.async {
+                    UIApplication.shared.keyWindow?.rootViewController = nav
+                }
+            }
+        }
+    }
+
+    private func isValidUsername(_ username: String) -> Bool {
+        if username.count >= 100 || username.count < 3 {
+            return false
+        }
+
+        let usernameRegexEx = "^([A-Za-z0-9_]+)*$"
+
+        let usernamePred = NSPredicate(format: "SELF MATCHES %@", usernameRegexEx)
+        return usernamePred.evaluate(with: username)
     }
 }
