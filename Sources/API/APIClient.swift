@@ -29,6 +29,10 @@ class APIClient {
         let id: String
         var role: MemberRole
         var isMuted: Bool
+        
+        private enum CodingKeys : String, CodingKey {
+            case id, role, isMuted = "is_muted"
+        }
     }
 
     struct Room: Decodable {
