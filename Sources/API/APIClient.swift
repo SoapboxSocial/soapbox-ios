@@ -11,6 +11,7 @@ enum APIError: Error {
     case requestFailed
     case decode
     case usernameAlreadyExists
+    case incorrectPin
 }
 
 class APIClient {
@@ -61,6 +62,7 @@ class APIClient {
         case invalidUsername = 7
         case usernameAlreadyExists = 8
         case failedToLogin = 9
+        case incorrectPin = 10
     }
 
     struct ErrorResponse: Decodable {
@@ -232,12 +234,22 @@ extension APIClient {
         AF.request(baseUrl + "/v1/login/pin", method: .post, parameters: ["token": token, "pin": pin], encoding: URLEncoding.default)
             .validate()
             .response { result in
-                if result.error != nil {
+                guard let data = result.data else {
                     return callback(.failure(.requestFailed))
                 }
 
-                guard let data = result.data else {
-                    return callback(.failure(.requestFailed))
+                if result.error != nil {
+                    do {
+                        let resp = try self.decoder.decode(ErrorResponse.self, from: data)
+                        debugPrint(data)
+                        if resp.code == .incorrectPin {
+                            return callback(.failure(.incorrectPin))
+                        }
+
+                        return callback(.failure(.requestFailed))
+                    } catch {
+                        return callback(.failure(.decode))
+                    }
                 }
 
                 do {
@@ -255,7 +267,6 @@ extension APIClient {
         AF.request(baseUrl + "/v1/login/register", method: .post, parameters: ["username": username, "display_name": displayName, "token": token], encoding: URLEncoding.default)
             .validate()
             .response { result in
-
                 guard let data = result.data else {
                     return callback(.failure(.requestFailed))
                 }

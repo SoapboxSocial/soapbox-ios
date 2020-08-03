@@ -64,7 +64,11 @@ class PinEntryViewController: UIViewController {
 
         APIClient().submitPin(token: token, pin: textField.text!) { result in
             switch result {
-            case .failure:
+            case .failure(let error):
+                if error == .incorrectPin {
+                    return self.displayIncorrectPinBanner()
+                }
+                
                 return self.displayErrorBanner()
             case .success(let response):
                 switch response.0 {
@@ -85,6 +89,11 @@ class PinEntryViewController: UIViewController {
         }
     }
 
+    private func displayIncorrectPinBanner() {
+        let banner = NotificationBanner(title: NSLocalizedString("incorrect_pin", comment: ""), style: .danger)
+        banner.show()
+    }
+    
     private func displayErrorBanner() {
         let banner = FloatingNotificationBanner(
             title: NSLocalizedString("something_went_wrong", comment: ""),

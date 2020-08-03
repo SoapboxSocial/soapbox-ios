@@ -42,3 +42,4 @@
 "invalid_email" = "Please enter a valid email";
 "username_already_exists" = "Username already exists";
 "invalid_username" = "Valid username required";
+"incorrect_pin" = "The entered pin was incorrect";
