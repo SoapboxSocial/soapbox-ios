@@ -32,14 +32,14 @@ class PinEntryViewController: UIViewController {
         textField.center = view.center
         textField.keyboardType = .numberPad
         textField.returnKeyType = .next
-        textField.placeholder = "Pin"
+        textField.placeholder = NSLocalizedString("pin", comment: "")
         textField.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(textField)
         textField.frame.size.width = view.frame.size.width / 2
         textField.addTarget(self, action: #selector(submitPin), for: .editingDidEndOnExit)
 
         let label = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 40))
-        label.text = NSLocalizedString("enter_your_pin", comment: "")
+        label.text = NSLocalizedString("enter_your_pin_received_by_mail", comment: "")
         label.textAlignment = .center
         label.textColor = .white
         view.addSubview(label)

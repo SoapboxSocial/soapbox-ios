@@ -54,7 +54,7 @@ class RegistrationViewController: UIViewController {
         displayName.center = CGPoint(x: view.center.x, y: displayName.center.y)
         displayName.keyboardType = .numberPad
         displayName.returnKeyType = .next
-        displayName.placeholder = "Username"
+        displayName.placeholder = "Display Name"
         displayName.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(displayName)
 

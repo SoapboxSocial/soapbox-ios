@@ -256,8 +256,6 @@ extension APIClient {
             .validate()
             .response { result in
 
-                debugPrint(result)
-
                 guard let data = result.data else {
                     return callback(.failure(.requestFailed))
                 }
@@ -266,13 +264,11 @@ extension APIClient {
                     do {
                         let resp = try self.decoder.decode(ErrorResponse.self, from: data)
                         if resp.code == .usernameAlreadyExists {
-                            debugPrint("yay")
                             return callback(.failure(.usernameAlreadyExists))
                         }
 
                         return callback(.failure(.requestFailed))
                     } catch {
-                        debugPrint("\(error.localizedDescription)")
                         return callback(.failure(.decode))
                     }
                 }
@@ -281,7 +277,6 @@ extension APIClient {
                     let resp = try self.decoder.decode(PinEntryResponse.self, from: data)
                     callback(.success(resp.user!))
                 } catch {
-                    debugPrint("\(error.localizedDescription)")
                     return callback(.failure(.decode))
                 }
             }
