@@ -90,14 +90,9 @@ class RegistrationViewController: UIViewController {
                     style: .danger
                 )
                 banner.show(cornerRadius: 10, shadowBlurRadius: 15)
-            case .success(let user):
-                print(user)
-                let viewController = RoomListViewController(api: APIClient())
-                let nav = NavigationViewController(rootViewController: viewController)
-                viewController.delegate = nav
-
+            case .success(let user, let expires):
                 DispatchQueue.main.async {
-                    UIApplication.shared.keyWindow?.rootViewController = nav
+                    (UIApplication.shared.delegate as! AppDelegate).transitionToLoggedInState(token: self.token, user: user, expires: expires)
                 }
             }
         }

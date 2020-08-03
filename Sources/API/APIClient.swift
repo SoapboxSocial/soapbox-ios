@@ -228,7 +228,7 @@ extension APIClient {
             }
     }
 
-    func submitPin(token: String, pin: String, callback: @escaping (Result<(LoginState, User?), APIError>) -> Void) {
+    func submitPin(token: String, pin: String, callback: @escaping (Result<(LoginState, User?, Int?), APIError>) -> Void) {
         AF.request(baseUrl + "/v1/login/pin", method: .post, parameters: ["token": token, "pin": pin], encoding: URLEncoding.default)
             .validate()
             .response { result in
@@ -242,7 +242,7 @@ extension APIClient {
 
                 do {
                     let resp = try self.decoder.decode(PinEntryResponse.self, from: data)
-                    callback(.success((resp.state, resp.user)))
+                    callback(.success((resp.state, resp.user, resp.expiresIn)))
                 } catch {
                     return callback(.failure(.decode))
                 }
@@ -251,7 +251,7 @@ extension APIClient {
 
     // @todo return expires in and store it somewhere
 
-    func register(token: String, username: String, displayName: String, callback: @escaping (Result<User, APIError>) -> Void) {
+    func register(token: String, username: String, displayName: String, callback: @escaping (Result<(User, Int), APIError>) -> Void) {
         AF.request(baseUrl + "/v1/login/register", method: .post, parameters: ["username": username, "display_name": displayName, "token": token], encoding: URLEncoding.default)
             .validate()
             .response { result in
@@ -275,7 +275,11 @@ extension APIClient {
 
                 do {
                     let resp = try self.decoder.decode(PinEntryResponse.self, from: data)
-                    callback(.success(resp.user!))
+                    guard let user = resp.user, let expires = resp.expiresIn else {
+                        return callback(.failure(.decode))
+                    }
+
+                    callback(.success((user, expires)))
                 } catch {
                     return callback(.failure(.decode))
                 }

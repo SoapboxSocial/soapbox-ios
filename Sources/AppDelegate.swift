@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import KeychainAccess
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -18,12 +19,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
 
-        // @todo we will probably want one api client
-
-        // @todo check if logged in
-
-        let viewController = RoomListViewController(api: APIClient())
-
+        let keychain = Keychain(service: "com.voiely.voicely")
+        if let token = keychain[string: "token"], let expiry = keychain[string: "expiry"], (Int(expiry) ?? 0) > Int(Date().timeIntervalSince1970) {
+            openLoggedInState()
+            window?.makeKeyAndVisible()
+            return true
+        }
+        
         let navigation = UINavigationController(rootViewController: LoginViewController())
         navigation.navigationBar.isHidden = true
 
@@ -31,5 +33,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
 
         return true
+    }
+    
+    func transitionToLoggedInState(token: String, user: APIClient.User?, expires: Int) {
+        let keychain = Keychain(service: "com.voiely.voicely")
+        try? keychain.set(token, key: "token")
+        try? keychain.set(String(Int(Date().timeIntervalSince1970) + expires), key: "expiry")
+        
+        openLoggedInState()
+    }
+    
+    func openLoggedInState() {
+        let viewController = RoomListViewController(api: APIClient())
+        let nav = NavigationViewController(rootViewController: viewController)
+        viewController.delegate = nav
+
+        window!.rootViewController = nav
     }
 }

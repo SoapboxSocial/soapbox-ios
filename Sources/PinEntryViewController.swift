@@ -60,22 +60,16 @@ class PinEntryViewController: UIViewController {
         APIClient().submitPin(token: token, pin: textField.text!) { result in
             switch result {
             case .failure:
-                let banner = FloatingNotificationBanner(
-                    title: NSLocalizedString("something_went_wrong", comment: ""),
-                    subtitle: NSLocalizedString("please_try_again_later", comment: ""),
-                    style: .danger
-                )
-                banner.show(cornerRadius: 10, shadowBlurRadius: 15)
-            case let .success((state, user)):
-                switch state {
+                return self.displayErrorBanner()
+            case .success(let response):
+                switch response.0 {
                 case .success:
-                    print(user)
-                    let viewController = RoomListViewController(api: APIClient())
-                    let nav = NavigationViewController(rootViewController: viewController)
-                    viewController.delegate = nav
-
+                    guard let user = response.1, let expires = response.2 else {
+                        return self.displayErrorBanner()
+                    }
+                    
                     DispatchQueue.main.async {
-                        UIApplication.shared.keyWindow?.rootViewController = nav
+                        (UIApplication.shared.delegate as! AppDelegate).transitionToLoggedInState(token: self.token, user: user, expires: expires)
                     }
                 case .register:
                     DispatchQueue.main.async {
@@ -84,5 +78,14 @@ class PinEntryViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    private func displayErrorBanner() {
+        let banner = FloatingNotificationBanner(
+            title: NSLocalizedString("something_went_wrong", comment: ""),
+            subtitle: NSLocalizedString("please_try_again_later", comment: ""),
+            style: .danger
+        )
+        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
     }
 }
