@@ -72,7 +72,7 @@ class APIClient {
 
     let decoder = JSONDecoder()
 
-    let baseUrl = "http://192.168.33.16"
+    let baseUrl = "https://spksy.app"
 
     func join(
         room: Int,
