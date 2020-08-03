@@ -67,7 +67,7 @@ class PinEntryViewController: UIViewController {
                     guard let user = response.1, let expires = response.2 else {
                         return self.displayErrorBanner()
                     }
-                    
+
                     DispatchQueue.main.async {
                         (UIApplication.shared.delegate as! AppDelegate).transitionToLoggedInState(token: self.token, user: user, expires: expires)
                     }
@@ -79,7 +79,7 @@ class PinEntryViewController: UIViewController {
             }
         }
     }
-    
+
     private func displayErrorBanner() {
         let banner = FloatingNotificationBanner(
             title: NSLocalizedString("something_went_wrong", comment: ""),
