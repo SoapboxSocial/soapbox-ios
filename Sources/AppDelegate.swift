@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
 
-        let keychain = Keychain(service: "com.voiely.voicely")
+        let keychain = Keychain(service: "com.voicely.voicely")
         if let token = keychain[string: "token"], let expiry = keychain[string: "expiry"], (Int(expiry) ?? 0) > Int(Date().timeIntervalSince1970) {
             openLoggedInState()
             window?.makeKeyAndVisible()
@@ -36,7 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func transitionToLoggedInState(token: String, user: APIClient.User, expires: Int) {
-        let keychain = Keychain(service: "com.voiely.voicely")
+        let keychain = Keychain(service: "com.voicely.voicely")
         try? keychain.set(token, key: "token")
         try? keychain.set(String(Int(Date().timeIntervalSince1970) + expires), key: "expiry")
         
