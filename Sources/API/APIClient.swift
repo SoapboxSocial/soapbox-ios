@@ -51,16 +51,16 @@ class APIClient {
     }
 
     enum ErrorCode: Int, Decodable {
-        case roomNotFound = 1
-        case roomFailedToJoin             = 2
-        case invalidRequestBody           = 3
-        case failedToCreateRoom           = 4
-        case missingParameter             = 5
-        case failedToRegister             = 6
-        case invalidEmail                 = 7
-        case invalidUsername              = 8
-        case usernameAlreadyExists        = 9
-        case failedToLogin = 10
+        case roomNotFound = 0
+        case roomFailedToJoin = 1
+        case invalidRequestBody = 2
+        case failedToCreateRoom = 3
+        case missingParameter = 4
+        case failedToRegister = 5
+        case invalidEmail = 6
+        case invalidUsername = 7
+        case usernameAlreadyExists = 8
+        case failedToLogin = 9
     }
 
     struct ErrorResponse: Decodable {
@@ -70,7 +70,7 @@ class APIClient {
 
     let decoder = JSONDecoder()
 
-    let baseUrl = "https://spksy.app"
+    let baseUrl = "http://192.168.33.16"
 
     func join(
         room: Int,
@@ -194,7 +194,7 @@ extension APIClient {
         let state: LoginState
         let expiresIn: Int?
         let user: User?
-        
+
         private enum CodingKeys: String, CodingKey {
             case state, expiresIn = "expires_in", user
         }
@@ -207,7 +207,7 @@ extension APIClient {
 
                 if result.error != nil {
                     // @todo
-                    callback(.failure(.requestFailed))
+                    return callback(.failure(.requestFailed))
                 }
 
                 guard let data = result.data else {
@@ -255,6 +255,9 @@ extension APIClient {
         AF.request(baseUrl + "/v1/login/register", method: .post, parameters: ["username": username, "display_name": displayName, "token": token], encoding: URLEncoding.default)
             .validate()
             .response { result in
+
+                debugPrint(result)
+
                 guard let data = result.data else {
                     return callback(.failure(.requestFailed))
                 }
