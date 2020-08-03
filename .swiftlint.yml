@@ -4,6 +4,7 @@ included:
   - UITests
 excluded:
   - Pods/
+  - Sources/Protobuf/
 
 identifier_name:
   excluded:

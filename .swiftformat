@@ -1,4 +1,4 @@
 # file options
 
---exclude Pods,Snapshots
+--exclude Sources/Protobuf,Pods,Snapshots
 
