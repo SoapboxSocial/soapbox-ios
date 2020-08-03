@@ -61,8 +61,7 @@ class PinEntryViewController: UIViewController {
             switch result {
             case .failure:
                 debugPrint(result)
-            case .success(let state, let user):
-
+            case .success((let state, let user)):
                 switch state {
                 case .success:
                     print(user)
@@ -73,7 +72,7 @@ class PinEntryViewController: UIViewController {
                     DispatchQueue.main.async {
                         UIApplication.shared.keyWindow?.rootViewController = nav
                     }
-                case .register:
+                case .register: break
                     // @todo push to registartion view controller
                 }
             }
