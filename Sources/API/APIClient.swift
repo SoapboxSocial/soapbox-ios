@@ -192,7 +192,12 @@ extension APIClient {
 
     private struct PinEntryResponse: Decodable {
         let state: LoginState
+        let expiresIn: Int?
         let user: User?
+        
+        private enum CodingKeys: String, CodingKey {
+            case state, expiresIn = "expires_in", user
+        }
     }
 
     func login(email: String, callback: @escaping (Result<String, APIError>) -> Void) {
@@ -244,6 +249,8 @@ extension APIClient {
             }
     }
 
+    // @todo return expires in and store it somewhere
+
     func register(token: String, username: String, displayName: String, callback: @escaping (Result<User, APIError>) -> Void) {
         AF.request(baseUrl + "/v1/login/register", method: .post, parameters: ["username": username, "display_name": displayName, "token": token], encoding: URLEncoding.default)
             .validate()
@@ -268,8 +275,8 @@ extension APIClient {
                 }
 
                 do {
-                    let resp = try self.decoder.decode(User.self, from: data)
-                    callback(.success(resp))
+                    let resp = try self.decoder.decode(PinEntryResponse.self, from: data)
+                    callback(.success(resp.user!))
                 } catch {
                     debugPrint("\(error.localizedDescription)")
                     return callback(.failure(.decode))
