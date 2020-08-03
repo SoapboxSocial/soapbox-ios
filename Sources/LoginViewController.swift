@@ -5,11 +5,10 @@
 //  Created by Dean Eigenmann on 27.07.20.
 //
 
-import UIKit
 import NotificationBannerSwift
+import UIKit
 
 class LoginViewController: UIViewController {
-
     var textField: UITextField!
 
     override func viewDidLoad() {
@@ -58,7 +57,7 @@ class LoginViewController: UIViewController {
                 )
                 banner.show(cornerRadius: 10, shadowBlurRadius: 15)
 
-            case .success(let token):
+            case let .success(token):
                 DispatchQueue.main.async {
                     self.navigationController?.pushViewController(PinEntryViewController(token: token), animated: true)
                 }

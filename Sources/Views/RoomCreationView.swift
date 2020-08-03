@@ -12,7 +12,6 @@ protocol RoomCreationDelegate {
 }
 
 class RoomCreationView: UIView, UITextFieldDelegate {
-
     var textField: UITextField!
 
     var delegate: RoomCreationDelegate?
@@ -88,8 +87,8 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         return true
     }
 
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {   //delegate method
-       textField.resignFirstResponder()
-       return true
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool { // delegate method
+        textField.resignFirstResponder()
+        return true
     }
 }

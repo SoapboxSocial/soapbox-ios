@@ -20,9 +20,9 @@ class APIClient {
     }
 
     enum MemberRole: String, Decodable {
-        case owner = "owner"
-        case audience = "audience"
-        case speaker = "speaker"
+        case owner
+        case audience
+        case speaker
     }
 
     struct Member: Decodable {
@@ -69,7 +69,6 @@ class APIClient {
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
-
                 }
 
                 guard let data = result.data else {
@@ -100,7 +99,6 @@ class APIClient {
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
-
                 }
 
                 guard let data = result.data else {
@@ -126,7 +124,6 @@ class APIClient {
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
-
                 }
 
                 guard let data = result.data else {
@@ -158,10 +155,9 @@ class APIClient {
 }
 
 extension APIClient {
-
     enum LoginState: String, Decodable {
-        case register = "register"
-        case success = "success"
+        case register
+        case success
     }
 
     struct User: Decodable {
@@ -182,7 +178,13 @@ extension APIClient {
 
     func login(email: String, callback: @escaping (Result<String, APIError>) -> Void) {
         AF.request(baseUrl + "/v1/login/start", method: .post, parameters: ["email": email], encoding: URLEncoding.default)
+            .validate()
             .response { result in
+
+                if result.error != nil {
+                    // @todo
+                    callback(.failure(.requestFailed))
+                }
 
                 guard let data = result.data else {
                     return callback(.failure(.requestFailed))
@@ -204,6 +206,7 @@ extension APIClient {
 
     func submitPin(token: String, pin: String, callback: @escaping (Result<(LoginState, User?), APIError>) -> Void) {
         AF.request(baseUrl + "/v1/login/pin", method: .post, parameters: ["token": token, "pin": pin], encoding: URLEncoding.default)
+            .validate()
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
@@ -221,8 +224,26 @@ extension APIClient {
                 }
             }
     }
-    
-//    func register(token: String, username: String, displayName: String, callback: @escaping (Result<User, APIError>) -> Void) {
-//        AF.request(baseUrl + "/v1/login/register", method: .post)
-//    }
+
+    func register(token: String, username: String, displayName: String, callback: @escaping (Result<User, APIError>) -> Void) {
+        AF.request(baseUrl + "/v1/login/register", method: .post, parameters: ["username": username, "display_name": displayName, "token": token], encoding: URLEncoding.default)
+            .validate()
+            .response { result in
+                // @todo check error type
+                if result.error != nil {
+                    return callback(.failure(.requestFailed))
+                }
+
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                do {
+                    let resp = try self.decoder.decode(User.self, from: data)
+                    callback(.success(resp))
+                } catch {
+                    return callback(.failure(.decode))
+                }
+            }
+    }
 }

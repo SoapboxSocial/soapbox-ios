@@ -5,11 +5,10 @@
 //  Created by Dean Eigenmann on 02.08.20.
 //
 
-import UIKit
 import NotificationBannerSwift
+import UIKit
 
 class PinEntryViewController: UIViewController {
-
     let token: String
 
     var textField: UITextField!
@@ -19,7 +18,7 @@ class PinEntryViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -67,7 +66,7 @@ class PinEntryViewController: UIViewController {
                     style: .danger
                 )
                 banner.show(cornerRadius: 10, shadowBlurRadius: 15)
-            case .success((let state, let user)):
+            case let .success((state, user)):
                 switch state {
                 case .success:
                     print(user)
@@ -84,7 +83,6 @@ class PinEntryViewController: UIViewController {
                     }
                 }
             }
-
         }
     }
 }
