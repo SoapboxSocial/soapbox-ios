@@ -35,10 +35,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    func transitionToLoggedInState(token: String, user: APIClient.User?, expires: Int) {
+    func transitionToLoggedInState(token: String, user: APIClient.User, expires: Int) {
         let keychain = Keychain(service: "com.voiely.voicely")
         try? keychain.set(token, key: "token")
         try? keychain.set(String(Int(Date().timeIntervalSince1970) + expires), key: "expiry")
+        
+        UserStore.store(user: user)
         
         openLoggedInState()
     }
