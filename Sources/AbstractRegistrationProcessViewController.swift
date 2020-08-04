@@ -52,8 +52,14 @@ class AbstractRegistrationProcessViewController: UIViewController {
         guard let userInfo = notification.userInfo else { return }
         guard let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
 
+        let newOrigin = self.view.frame.height - (keyboardFrame.size.height + self.contentView.frame.size.height)
+
+        if newOrigin >= self.contentView.frame.origin.y {
+            return
+        }
+
         UIView.animate(withDuration: 0.3) {
-            self.contentView.frame.origin.y = (self.view.frame.height - (keyboardFrame.size.height + self.contentView.frame.size.height))
+            self.contentView.frame.origin.y = newOrigin
         }
     }
 
