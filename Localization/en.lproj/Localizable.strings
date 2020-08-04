@@ -36,6 +36,9 @@
 
 "your_room" = "Your room";
 
+"username" = "Username";
+"display_name" = "Display Name";
+
 "email_login" = "Enter email";
 "enter_your_pin_received_by_mail" = "Enter pin sent to email";
 "pin" = "Pin";

@@ -23,6 +23,7 @@ class LoginViewController: AbstractRegistrationProcessViewController {
         textField = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: label.frame.size.height + 20, width: 330, height: 40))
         textField.keyboardType = .emailAddress
         textField.placeholder = "Email"
+        textField.delegate = self
         view.addSubview(textField)
     }
 

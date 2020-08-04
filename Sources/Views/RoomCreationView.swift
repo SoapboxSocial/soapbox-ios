@@ -16,7 +16,6 @@ class RoomCreationView: UIView, UITextFieldDelegate {
     var delegate: RoomCreationDelegate?
 
     private var textField: UITextField!
-
     private var contentView: UIView!
 
     override func layoutSubviews() {

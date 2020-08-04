@@ -9,7 +9,7 @@ import UIKit
 
 // @todo probably can find a better name
 
-class AbstractRegistrationProcessViewController: UIViewController {
+class AbstractRegistrationProcessViewController: UIViewController, UITextFieldDelegate {
 
     private var contentView: UIView!
 
@@ -36,6 +36,16 @@ class AbstractRegistrationProcessViewController: UIViewController {
         submitButton.setTitle(NSLocalizedString("submit", comment: ""), for: .normal)
         submitButton.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
         contentView.addSubview(submitButton)
+    }
+
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool { // delegate method
+        textField.resignFirstResponder()
+        return true
     }
 
     func setupContentView(_ view: UIView) {}

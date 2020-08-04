@@ -32,11 +32,13 @@ class RegistrationViewController: AbstractRegistrationProcessViewController {
         view.addSubview(label)
 
         usernameTextField = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: label.frame.size.height + 20, width: 330, height: 40))
-        usernameTextField.placeholder = "Username"
+        usernameTextField.placeholder = NSLocalizedString("username", comment: "")
+        usernameTextField.delegate = self
         view.addSubview(usernameTextField)
 
         displayName = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: usernameTextField.frame.height + usernameTextField.frame.origin.y + 10, width: 330, height: 40))
-        displayName.placeholder = "Display Name"
+        displayName.placeholder = NSLocalizedString("display_name", comment: "")
+        displayName.delegate = self
         view.addSubview(displayName)
     }
 
