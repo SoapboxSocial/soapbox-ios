@@ -76,7 +76,6 @@ class RoomMemberCell: UICollectionViewCell {
         } else {
             muteView.isHidden = true
         }
-
     }
 
     private func emoji(for role: APIClient.MemberRole) -> String {

@@ -10,6 +10,8 @@ enum APIError: Error {
     case noData
     case requestFailed
     case decode
+    case usernameAlreadyExists
+    case incorrectPin
 }
 
 class APIClient {
@@ -20,9 +22,9 @@ class APIClient {
     }
 
     enum MemberRole: String, Decodable {
-        case owner = "owner"
-        case audience = "audience"
-        case speaker = "speaker"
+        case owner
+        case audience
+        case speaker
     }
 
     struct Member: Decodable {
@@ -54,9 +56,28 @@ class APIClient {
         let type: String
     }
 
+    enum ErrorCode: Int, Decodable {
+        case roomNotFound = 0
+        case roomFailedToJoin = 1
+        case invalidRequestBody = 2
+        case failedToCreateRoom = 3
+        case missingParameter = 4
+        case failedToRegister = 5
+        case invalidEmail = 6
+        case invalidUsername = 7
+        case usernameAlreadyExists = 8
+        case failedToLogin = 9
+        case incorrectPin = 10
+    }
+
+    struct ErrorResponse: Decodable {
+        let code: ErrorCode
+        let message: String
+    }
+
     let decoder = JSONDecoder()
 
-    let baseUrl = "http://139.59.152.91"
+    let baseUrl = "https://spksy.app"
 
     func join(
         room: Int,
@@ -74,7 +95,6 @@ class APIClient {
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
-
                 }
 
                 guard let data = result.data else {
@@ -105,7 +125,6 @@ class APIClient {
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
-
                 }
 
                 guard let data = result.data else {
@@ -131,7 +150,6 @@ class APIClient {
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
-
                 }
 
                 guard let data = result.data else {
@@ -159,5 +177,128 @@ class APIClient {
             // @todo error
             return .offer
         }
+    }
+}
+
+extension APIClient {
+    enum LoginState: String, Decodable {
+        case register
+        case success
+    }
+
+    struct User: Decodable {
+        let id: Int
+        let displayName: String
+        let username: String
+        let email: String
+
+        private enum CodingKeys: String, CodingKey {
+            case id, displayName = "display_name", username, email
+        }
+    }
+
+    private struct PinEntryResponse: Decodable {
+        let state: LoginState
+        let expiresIn: Int?
+        let user: User?
+
+        private enum CodingKeys: String, CodingKey {
+            case state, expiresIn = "expires_in", user
+        }
+    }
+
+    func login(email: String, callback: @escaping (Result<String, APIError>) -> Void) {
+        AF.request(baseUrl + "/v1/login/start", method: .post, parameters: ["email": email], encoding: URLEncoding.default)
+            .validate()
+            .response { result in
+
+                if result.error != nil {
+                    // @todo
+                    return callback(.failure(.requestFailed))
+                }
+
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                do {
+                    let resp = try self.decoder.decode([String: String].self, from: data)
+
+                    guard let token = resp["token"] else {
+                        return callback(.failure(.decode)) // @todo
+                    }
+
+                    callback(.success(token))
+                } catch {
+                    return callback(.failure(.decode))
+                }
+            }
+    }
+
+    func submitPin(token: String, pin: String, callback: @escaping (Result<(LoginState, User?, Int?), APIError>) -> Void) {
+        AF.request(baseUrl + "/v1/login/pin", method: .post, parameters: ["token": token, "pin": pin], encoding: URLEncoding.default)
+            .validate()
+            .response { result in
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                if result.error != nil {
+                    do {
+                        let resp = try self.decoder.decode(ErrorResponse.self, from: data)
+                        debugPrint(data)
+                        if resp.code == .incorrectPin {
+                            return callback(.failure(.incorrectPin))
+                        }
+
+                        return callback(.failure(.requestFailed))
+                    } catch {
+                        return callback(.failure(.decode))
+                    }
+                }
+
+                do {
+                    let resp = try self.decoder.decode(PinEntryResponse.self, from: data)
+                    callback(.success((resp.state, resp.user, resp.expiresIn)))
+                } catch {
+                    return callback(.failure(.decode))
+                }
+            }
+    }
+
+    // @todo return expires in and store it somewhere
+
+    func register(token: String, username: String, displayName: String, callback: @escaping (Result<(User, Int), APIError>) -> Void) {
+        AF.request(baseUrl + "/v1/login/register", method: .post, parameters: ["username": username, "display_name": displayName, "token": token], encoding: URLEncoding.default)
+            .validate()
+            .response { result in
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                if result.error != nil {
+                    do {
+                        let resp = try self.decoder.decode(ErrorResponse.self, from: data)
+                        if resp.code == .usernameAlreadyExists {
+                            return callback(.failure(.usernameAlreadyExists))
+                        }
+
+                        return callback(.failure(.requestFailed))
+                    } catch {
+                        return callback(.failure(.decode))
+                    }
+                }
+
+                do {
+                    let resp = try self.decoder.decode(PinEntryResponse.self, from: data)
+                    guard let user = resp.user, let expires = resp.expiresIn else {
+                        return callback(.failure(.decode))
+                    }
+
+                    callback(.success((user, expires)))
+                } catch {
+                    return callback(.failure(.decode))
+                }
+            }
     }
 }

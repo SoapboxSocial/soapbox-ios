@@ -19,7 +19,6 @@ protocol RoomDelegate {
 class RoomError: Error {}
 
 class Room {
-
     private(set) var name: String!
 
     var id: Int?
@@ -88,7 +87,7 @@ class Room {
             }
 
             try rtc.sendData(command.serializedData())
-            self.updateMemberRole(user: speaker, role: .audience)
+            updateMemberRole(user: speaker, role: .audience)
         } catch {
             debugPrint("\(error.localizedDescription)")
         }
@@ -106,7 +105,7 @@ class Room {
             }
 
             try rtc.sendData(command.serializedData())
-            self.updateMemberRole(user: speaker, role: .speaker)
+            updateMemberRole(user: speaker, role: .speaker)
         } catch {
             debugPrint("\(error.localizedDescription)")
         }
@@ -144,9 +143,8 @@ class Room {
     }
 
     func join(id: Int, completion: @escaping (Error?) -> Void) {
-
         // @todo This should either be the rooms name, or Person's room
-        self.name = NSLocalizedString("your_room", comment: "")
+        name = NSLocalizedString("your_room", comment: "")
 
         rtc.offer { sdp in
             self.client.join(room: id, sdp: sdp) { result in
@@ -189,7 +187,7 @@ extension Room: WebRTCClientDelegate {
             debugPrint(event)
             switch event.type {
             case .joined:
-                let member = try self.decoder.decode(APIClient.Member.self, from: event.data)
+                let member = try decoder.decode(APIClient.Member.self, from: event.data)
                 members.append(member)
                 delegate?.userDidJoinRoom(user: event.from)
             case .left:

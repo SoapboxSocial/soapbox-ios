@@ -2,8 +2,8 @@
 // Created by Dean Eigenmann on 22.07.20.
 //
 
-import UIKit
 import NotificationBannerSwift
+import UIKit
 
 protocol RoomListViewDelegate {
     func currentRoom() -> Int?
