@@ -91,7 +91,6 @@ class NavigationViewController: UINavigationController {
             roomView.translatesAutoresizingMaskIntoConstraints = false
             creationDrawer!.addSubview(roomView)
             roomView.autoPinEdgesToSuperview()
-            // roomView.delegate = self
 
             creationDrawer!.setPosition(.open, animated: true) { _ in
                 self.createRoomButton.isHidden = true
