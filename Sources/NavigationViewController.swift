@@ -75,6 +75,7 @@ class NavigationViewController: UINavigationController {
 
         func showCreationDrawer() {
             creationDrawer = DrawerView()
+            creationDrawer!.cornerRadius = 25.0
             creationDrawer!.delegate = self
             creationDrawer!.attachTo(view: view)
             creationDrawer!.backgroundEffect = nil
@@ -126,6 +127,7 @@ class NavigationViewController: UINavigationController {
         }
 
         roomDrawer = DrawerView()
+        roomDrawer!.cornerRadius = 25.0
         roomDrawer!.attachTo(view: view)
         roomDrawer!.backgroundEffect = nil
         roomDrawer!.snapPositions = [.collapsed, .open]
