@@ -24,7 +24,8 @@ class RegistrationViewController: AbstractRegistrationProcessViewController {
     }
 
     override func setupContentView(_ view: UIView) {
-        let label = UILabel(frame: CGRect(x: view.frame.size.width, y: 0, width: view.frame.size.width, height: 20))
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 20))
+        label.textAlignment = .center
         label.text = NSLocalizedString("create_account", comment: "")
         label.textColor = .white
         label.font = label.font.withSize(20)
