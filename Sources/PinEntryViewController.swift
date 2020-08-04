@@ -48,7 +48,7 @@ class PinEntryViewController: UIViewController {
         logo.center = CGPoint(x: view.center.x, y: view.frame.size.height / 4)
         logo.textAlignment = .center
         view.addSubview(logo)
-        
+
         let createButton = UIButton(frame: CGRect(x: 0, y: textField.frame.size.height + textField.frame.origin.y + 30, width: view.frame.size.width / 2, height: 40))
         createButton.setTitle(NSLocalizedString("submit", comment: ""), for: .normal)
         createButton.center = CGPoint(x: view.center.x, y: createButton.center.y)
@@ -68,7 +68,7 @@ class PinEntryViewController: UIViewController {
                 if error == .incorrectPin {
                     return self.displayIncorrectPinBanner()
                 }
-                
+
                 return self.displayErrorBanner()
             case .success(let response):
                 switch response.0 {
@@ -93,7 +93,7 @@ class PinEntryViewController: UIViewController {
         let banner = NotificationBanner(title: NSLocalizedString("incorrect_pin", comment: ""), style: .danger)
         banner.show()
     }
-    
+
     private func displayErrorBanner() {
         let banner = FloatingNotificationBanner(
             title: NSLocalizedString("something_went_wrong", comment: ""),

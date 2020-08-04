@@ -5,6 +5,7 @@
 import Alamofire
 import Foundation
 import WebRTC
+import KeychainAccess
 
 enum APIError: Error {
     case noData
@@ -28,12 +29,13 @@ class APIClient {
     }
 
     struct Member: Decodable {
-        let id: String
+        let id: Int
+        let displayName: String
         var role: MemberRole
         var isMuted: Bool
         
         private enum CodingKeys : String, CodingKey {
-            case id, role, isMuted = "is_muted"
+            case id, role, displayName = "display_name", isMuted = "is_muted"
         }
     }
 
@@ -77,7 +79,9 @@ class APIClient {
 
     let decoder = JSONDecoder()
 
-    let baseUrl = "https://spksy.app"
+    let baseUrl = "http://192.168.33.16"
+
+    // @todo auth header
 
     func join(
         room: Int,
@@ -89,9 +93,14 @@ class APIClient {
             "type": "offer" as AnyObject,
         ]
 
+        // @todo
+
+        let keychain = Keychain(service: "com.voicely.voicely")
+        let token = keychain[string: "token"]
+
         let path = String(format: "/v1/rooms/%d/join", room)
 
-        AF.request(baseUrl + path, method: .post, parameters: parameters, encoding: JSONEncoding())
+        AF.request(baseUrl + path, method: .post, parameters: parameters, encoding: JSONEncoding(), headers: ["Authorization": token!])
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
@@ -111,6 +120,8 @@ class APIClient {
             }
     }
 
+    // @todo auth header
+
     func createRoom(sdp: RTCSessionDescription, name: String?, callback: @escaping (Result<RoomConnection, APIError>) -> Void) {
         var parameters: [String: AnyObject] = [
             "sdp": sdp.sdp as AnyObject,
@@ -121,7 +132,10 @@ class APIClient {
             parameters["name"] = name! as AnyObject
         }
 
-        AF.request(baseUrl + "/v1/rooms/create", method: .post, parameters: parameters, encoding: JSONEncoding())
+        let keychain = Keychain(service: "com.voicely.voicely")
+        let token = keychain[string: "token"]
+
+        AF.request(baseUrl + "/v1/rooms/create", method: .post, parameters: parameters, encoding: JSONEncoding(), headers: ["Authorization": token!])
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))

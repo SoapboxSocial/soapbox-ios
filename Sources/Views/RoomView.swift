@@ -80,7 +80,7 @@ class RoomView: UIView {
 
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 0, right: 10)
-        layout.itemSize = CGSize(width: 60, height: 60)
+        layout.itemSize = CGSize(width: 66, height: 90)
 
         members = UICollectionView(frame: CGRect(x: 0, y: topBar.frame.size.height, width: frame.size.width, height: frame.size.height - topBar.frame.size.height), collectionViewLayout: layout)
         members!.dataSource = self
@@ -146,26 +146,26 @@ class RoomView: UIView {
 }
 
 extension RoomView: RoomDelegate {
-    func didChangeMemberMuteState(user: String, isMuted: Bool) {
+    func didChangeMemberMuteState(user _: Int, isMuted: Bool) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
     }
     
     //  @todo for efficiency these should all only update the user that was changed
-    func userDidJoinRoom(user _: String) {
+    func userDidJoinRoom(user _: Int) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
     }
 
-    func userDidLeaveRoom(user _: String) {
+    func userDidLeaveRoom(user _: Int) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
     }
 
-    func didChangeUserRole(user _: String, role _: APIClient.MemberRole) {
+    func didChangeUserRole(user _: Int, role _: APIClient.MemberRole) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
@@ -219,7 +219,8 @@ extension RoomView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! RoomMemberCell
         if indexPath.item == 0 {
-            cell.setup(isSelf: true, role: room.role)
+            // @todo this is a bit ugly
+            cell.setup(isSelf: true, name: UserDefaults.standard.string(forKey: "display") ?? "", role: room.role)
         } else {
             cell.setup(isSelf: false, member: self.room.members[indexPath.item - 1])
         }

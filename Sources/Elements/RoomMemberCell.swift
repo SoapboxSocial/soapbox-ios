@@ -8,27 +8,33 @@
 import UIKit
 
 class RoomMemberCell: UICollectionViewCell {
-    
+
     private var isSelfLabel: UILabel!
     private var roleLabel: UILabel!
+    private var nameLabel: UILabel!
     private var muteView: UIView!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        let circle = UIView(frame: contentView.frame)
-        circle.layer.cornerRadius = 30
+        let circle = UIView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.width))
+        circle.layer.cornerRadius = frame.size.width / 2
         circle.clipsToBounds = true
         circle.backgroundColor = .highlight
         
-        isSelfLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
+        nameLabel = UILabel(frame: CGRect(x: 0, y: 66, width: 66, height: frame.size.height - 66))
+        nameLabel.textAlignment = .center
+        addSubview(nameLabel)
+        
+        isSelfLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 66, height: 66))
         isSelfLabel.text = "You"
         isSelfLabel.textAlignment = .center
         isSelfLabel.textColor = .elementBackground
         circle.addSubview(isSelfLabel)
         
         contentView.addSubview(circle)
-        let roleView = UIView(frame: CGRect(x: 60 - 20, y: 0, width: 20, height: 20))
+        
+        let roleView = UIView(frame: CGRect(x: 66 - 20, y: 0, width: 20, height: 20))
         roleView.backgroundColor = .background
         roleView.layer.cornerRadius = 10
         roleView.clipsToBounds = true
@@ -57,18 +63,19 @@ class RoomMemberCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setup(isSelf: Bool, role: APIClient.MemberRole) {
+    func setup(isSelf: Bool, name: String, role: APIClient.MemberRole) {
         if isSelf {
             isSelfLabel.isHidden = false
         } else {
             isSelfLabel.isHidden = true
         }
         
+        nameLabel.text = first(name)
         roleLabel.text = emoji(for: role)
     }
 
     func setup(isSelf: Bool, member: APIClient.Member) {
-        setup(isSelf: isSelf, role: member.role)
+        setup(isSelf: isSelf, name: member.displayName, role: member.role)
         
         if member.role != APIClient.MemberRole.audience, member.isMuted {
             muteView.isHidden = false
@@ -86,5 +93,9 @@ class RoomMemberCell: UICollectionViewCell {
         case .speaker:
             return "🎙️"
         }
+    }
+
+    private func first(_ name: String) -> String {
+        return name.components(separatedBy: " ")[0]
     }
 }
