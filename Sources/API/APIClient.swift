@@ -32,7 +32,7 @@ class APIClient {
         let id: Int
         let displayName: String
         var role: MemberRole
-        
+
         private enum CodingKeys: String, CodingKey {
             case id, displayName = "display_name", role
         }
@@ -81,7 +81,7 @@ class APIClient {
     let baseUrl = "http://192.168.33.16"
 
     // @todo auth header
-    
+
     func join(
         room: Int,
         sdp: RTCSessionDescription,
@@ -93,10 +93,10 @@ class APIClient {
         ]
 
         // @todo
-        
+
         let keychain = Keychain(service: "com.voicely.voicely")
         let token = keychain[string: "token"]
-        
+
         let path = String(format: "/v1/rooms/%d/join", room)
 
         AF.request(baseUrl + path, method: .post, parameters: parameters, encoding: JSONEncoding(), headers: ["Authorization": token!])
@@ -118,7 +118,7 @@ class APIClient {
                 }
             }
     }
-    
+
     // @todo auth header
 
     func createRoom(sdp: RTCSessionDescription, name: String?, callback: @escaping (Result<RoomConnection, APIError>) -> Void) {
@@ -130,7 +130,7 @@ class APIClient {
         if name != nil {
             parameters["name"] = name! as AnyObject
         }
-        
+
         let keychain = Keychain(service: "com.voicely.voicely")
         let token = keychain[string: "token"]
 

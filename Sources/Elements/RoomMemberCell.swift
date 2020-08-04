@@ -8,11 +8,16 @@
 import UIKit
 
 class RoomMemberCell: UICollectionViewCell {
-    func setup(isSelf: Bool, role: APIClient.MemberRole) {
-        let circle = UIView(frame: contentView.frame)
-        circle.layer.cornerRadius = 30
+    func setup(isSelf: Bool, name: String, role: APIClient.MemberRole) {
+        let circle = UIView(frame: CGRect(x: 0, y: 0, width: 66, height: 66))
+        circle.layer.cornerRadius = 33
         circle.clipsToBounds = true
         circle.backgroundColor = .highlight
+
+        let nameLabel = UILabel(frame: CGRect(x: 0, y: 66, width: 66, height: frame.size.height - 66))
+        nameLabel.text = first(name)
+        nameLabel.textAlignment = .center
+        addSubview(nameLabel)
 
         if isSelf {
             let label = UILabel(frame: CGRect(x: 0, y: 0, width: 60, height: 60))
@@ -46,5 +51,9 @@ class RoomMemberCell: UICollectionViewCell {
         case .speaker:
             return "🎙️"
         }
+    }
+
+    private func first(_ name: String) -> String {
+        return name.components(separatedBy: " ")[0]
     }
 }

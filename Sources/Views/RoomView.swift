@@ -80,7 +80,7 @@ class RoomView: UIView {
 
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 0, right: 10)
-        layout.itemSize = CGSize(width: 60, height: 60)
+        layout.itemSize = CGSize(width: 66, height: 90)
 
         members = UICollectionView(frame: CGRect(x: 0, y: topBar.frame.size.height, width: frame.size.width, height: frame.size.height - topBar.frame.size.height), collectionViewLayout: layout)
         members!.dataSource = self
@@ -213,9 +213,11 @@ extension RoomView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! RoomMemberCell
         if indexPath.item == 0 {
-            cell.setup(isSelf: true, role: room.role)
+            // @todo this is a bit ugly
+            cell.setup(isSelf: true, name: UserDefaults.standard.string(forKey: "display") ?? "", role: room.role)
         } else {
-            cell.setup(isSelf: false, role: room.members[indexPath.item - 1].role)
+            let member = room.members[indexPath.item - 1]
+            cell.setup(isSelf: false, name: member.displayName, role: member.role)
         }
 
         return cell

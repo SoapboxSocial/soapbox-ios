@@ -13,17 +13,17 @@ class TextField: UITextField {
         super.init(frame: frame)
         setup()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private func setup() {
         borderStyle = .none
         backgroundColor = .white
-        
+
         layer.cornerRadius = frame.size.height / 2
-        
+
         layer.borderWidth = 2.0
         layer.borderColor = UIColor.clear.cgColor
 
@@ -35,9 +35,9 @@ class TextField: UITextField {
     }
 
     override func textRect(forBounds bounds: CGRect) -> CGRect {
-        return bounds.insetBy(dx: frame.size.height / 2, dy: 0);
+        return bounds.insetBy(dx: frame.size.height / 2, dy: 0)
     }
-    
+
     override func editingRect(forBounds bounds: CGRect) -> CGRect {
         return bounds.insetBy(dx: frame.size.height / 2, dy: 0)
     }

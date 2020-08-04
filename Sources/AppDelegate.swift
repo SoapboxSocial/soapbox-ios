@@ -19,8 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
 
-        let keychain = Keychain(service: "com.voicely.voicely")
-        if let token = keychain[string: "token"], let expiry = keychain[string: "expiry"], (Int(expiry) ?? 0) > Int(Date().timeIntervalSince1970) {
+        if isLoggedIn() {
             openLoggedInState()
             window?.makeKeyAndVisible()
             return true
@@ -51,5 +50,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         viewController.delegate = nav
 
         window!.rootViewController = nav
+    }
+
+    private func isLoggedIn() -> Bool {
+        let keychain = Keychain(service: "com.voicely.voicely")
+        guard let _ = keychain[string: "token"] else {
+            return false
+        }
+
+        guard let expiry = keychain[string: "expiry"] else {
+            return false
+        }
+
+        if (Int(expiry) ?? 0) <= Int(Date().timeIntervalSince1970) {
+            return false
+        }
+
+        return UserDefaults.standard.string(forKey: "display") != nil
     }
 }

@@ -34,11 +34,11 @@ class RegistrationViewController: UIViewController {
         view.addSubview(usernameTextField)
 
         displayName = TextField(frame: CGRect(x: 0, y: 0, width: 330, height: 40))
-        
+
         displayName.center = CGPoint(x: view.center.x, y: view.center.y)
         displayName.placeholder = "Display Name"
         view.addSubview(displayName)
-        
+
         usernameTextField.frame = CGRect(origin: CGPoint(x: usernameTextField.frame.origin.x, y: displayName.frame.origin.y - (displayName.frame.size.height + 30)), size: usernameTextField.frame.size)
 
         let createButton = UIButton(frame: CGRect(x: 0, y: displayName.frame.size.height + displayName.frame.origin.y + 30, width: view.frame.size.width / 2, height: 40))
@@ -77,7 +77,7 @@ class RegistrationViewController: UIViewController {
             }
         }
     }
-    
+
     private func isValidUsername(_ username: String) -> Bool {
         if username.count >= 100 || username.count < 3 {
             return false
@@ -88,7 +88,7 @@ class RegistrationViewController: UIViewController {
         let usernamePred = NSPredicate(format: "SELF MATCHES %@", usernameRegexEx)
         return usernamePred.evaluate(with: username)
     }
-    
+
     private func showError(text: String) {
         let banner = NotificationBanner(title: text, style: .danger)
         banner.show()
