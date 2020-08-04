@@ -12,7 +12,7 @@ extension UIColor {
         UIColor(red: 213 / 255, green: 94 / 255, blue: 163 / 255, alpha: 1)
     }
 
-    static var darkPurple: UIColor {
+    static var secondaryBackground: UIColor {
         UIColor(red: 133 / 255, green: 90 / 255, blue: 255 / 255, alpha: 1)
     }
 
@@ -26,6 +26,15 @@ extension UIColor {
 //                return UIColor(red: 250 / 255, green: 250 / 255, blue: 250 / 255, alpha: 1)
 //            }
 //        }
+    }
+
+    // @todo there are probably better names for the following 2
+    static var buttonBackground: UIColor {
+        UIColor(red: 170 / 255, green: 139 / 255, blue: 255 / 255, alpha: 1)
+    }
+
+    static var lightButtonBackground: UIColor {
+        UIColor(red: 193 / 255, green: 171 / 255, blue: 255 / 255, alpha: 1.0)
     }
 
     static var elementBackground: UIColor {

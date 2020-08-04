@@ -79,7 +79,7 @@ class NavigationViewController: UINavigationController {
             creationDrawer!.attachTo(view: view)
             creationDrawer!.backgroundEffect = nil
             creationDrawer!.snapPositions = [.open, .closed]
-            creationDrawer!.backgroundColor = .elementBackground
+            creationDrawer!.backgroundColor = .clear
             creationDrawer!.setPosition(.closed, animated: false)
             view.addSubview(creationDrawer!)
 
