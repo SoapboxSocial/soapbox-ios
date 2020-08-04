@@ -8,60 +8,24 @@
 import NotificationBannerSwift
 import UIKit
 
-class LoginViewController: UIViewController {
+class LoginViewController: AbstractRegistrationProcessViewController {
 
-    private var contentView: UIView!
     private var textField: TextField!
-    private var submitButton: Button!
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func setupContentView(_ view: UIView) {
+        let label = UILabel(frame: CGRect(x: view.frame.size.width, y: 0, width: view.frame.size.width, height: 20))
+        label.text = NSLocalizedString("email_login", comment: "")
+        label.textColor = .white
+        label.font = label.font.withSize(20)
+        view.addSubview(label)
 
-        view.backgroundColor = UIColor(red: 133 / 255, green: 90 / 255, blue: 255 / 255, alpha: 1)
-
-        let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
-
-        contentView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height / 3))
-        contentView.center = view.center
-        view.addSubview(contentView)
-
-        textField = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: 40, width: 330, height: 40))
+        textField = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: label.frame.size.height + 20, width: 330, height: 40))
         textField.keyboardType = .emailAddress
         textField.placeholder = "Email"
-        contentView.addSubview(textField)
-
-        submitButton = Button(frame: CGRect(x: (view.frame.size.width - 282) / 2, y: contentView.frame.size.height - 80, width: 282, height: 60))
-        submitButton.setTitle("Sign Up", for: .normal)
-        submitButton.addTarget(self, action: #selector(login), for: .touchUpInside)
-        contentView.addSubview(submitButton)
+        view.addSubview(textField)
     }
 
-    @objc private func keyboardWillHide() {
-        UIView.animate(withDuration: 0.3) {
-            self.contentView.center = self.view.center
-        }
-    }
-
-    @objc private func keyboardWillShow(notification: Notification) {
-        guard let userInfo = notification.userInfo else { return }
-        guard let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-
-        UIView.animate(withDuration: 0.3) {
-            self.contentView.frame.origin.y = (self.view.frame.height - (keyboardFrame.size.height + self.contentView.frame.size.height))
-        }
-    }
-
-    @objc private func dismissKeyboard() {
-        view.endEditing(true)
-    }
-
-    @objc private func login() {
+    @objc override func didSubmit() {
         textField.resignFirstResponder()
         view.endEditing(true)
 

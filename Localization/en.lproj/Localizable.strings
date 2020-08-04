@@ -30,8 +30,8 @@
 "name_room" = "Name your room";
 "enter_name" = "Enter a name";
 "skip" = "Skip";
-"create" = "Create";
 "submit" = "Submit";
+"create_account" = "Create Account";
 
 "your_room" = "Your room";
 
