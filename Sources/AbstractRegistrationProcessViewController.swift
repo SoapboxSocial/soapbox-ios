@@ -16,7 +16,7 @@ class AbstractRegistrationProcessViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = UIColor(red: 133 / 255, green: 90 / 255, blue: 255 / 255, alpha: 1)
+        view.backgroundColor = .darkPurple
 
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
