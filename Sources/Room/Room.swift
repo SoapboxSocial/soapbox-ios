@@ -12,6 +12,7 @@ protocol RoomDelegate {
     func userDidJoinRoom(user: String)
     func userDidLeaveRoom(user: String)
     func didChangeUserRole(user: String, role: APIClient.MemberRole)
+    func didChangeMemberMuteState(user: String, isMuted: Bool)
 }
 
 // @todo
@@ -49,11 +50,29 @@ class Room {
     func mute() {
         rtc.muteAudio()
         isMuted = true
+        
+        do {
+            let command = RoomCommand.with {
+                $0.type = RoomCommand.TypeEnum.muteSpeaker
+            }
+            try rtc.sendData(command.serializedData())
+        } catch {
+            debugPrint("\(error.localizedDescription)")
+        }
     }
 
     func unmute() {
         rtc.unmuteAudio()
         isMuted = false
+        
+        do {
+            let command = RoomCommand.with {
+                $0.type = RoomCommand.TypeEnum.unmuteSpeaker
+            }
+            try rtc.sendData(command.serializedData())
+        } catch {
+            debugPrint("\(error.localizedDescription)")
+        }
     }
 
     func remove(speaker: String) {
@@ -194,10 +213,34 @@ extension Room: WebRTCClientDelegate {
                 updateMemberRole(user: id, role: .owner)
             case .UNRECOGNIZED:
                 return
+            case .mutedSpeaker:
+                if event.from == "" {
+                    return
+                }
+                
+                updateMemberMuteState(user: event.from, isMuted: true)
+            case .unmutedSpeaker:
+                if event.from == "" {
+                    return
+                }
+                
+                updateMemberMuteState(user: event.from, isMuted: false)
             }
         } catch {
             debugPrint("failed to decode \(error.localizedDescription)")
         }
+    }
+    
+    private func updateMemberMuteState(user: String, isMuted: Bool) {
+        DispatchQueue.main.async {
+            let index = self.members.firstIndex(where: { $0.id == user })
+            if index != nil {
+                self.members[index!].isMuted = isMuted
+                return
+            }
+        }
+
+        delegate?.didChangeMemberMuteState(user: user, isMuted: isMuted)
     }
 
     private func updateMemberRole(user: String, role: APIClient.MemberRole) {
