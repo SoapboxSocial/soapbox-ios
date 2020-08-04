@@ -11,7 +11,7 @@ extension UIColor {
     static var highlight: UIColor {
         UIColor(red: 213 / 255, green: 94 / 255, blue: 163 / 255, alpha: 1)
     }
-    
+
     static var darkPurple: UIColor {
         UIColor(red: 133 / 255, green: 90 / 255, blue: 255 / 255, alpha: 1)
     }
