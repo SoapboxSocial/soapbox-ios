@@ -30,7 +30,12 @@ class APIClient {
 
     struct Member: Decodable {
         let id: Int
+        let displayName: String
         var role: MemberRole
+        
+        private enum CodingKeys: String, CodingKey {
+            case id, displayName = "display_name", role
+        }
     }
 
     struct Room: Decodable {
