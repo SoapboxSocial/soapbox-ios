@@ -9,35 +9,57 @@ import NotificationBannerSwift
 import UIKit
 
 class LoginViewController: UIViewController {
-    var textField: TextField!
+
+    private var contentView: UIView!
+    private var textField: TextField!
+    private var submitButton: Button!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = UIColor(red: 213 / 255, green: 94 / 255, blue: 163 / 255, alpha: 1)
+        view.backgroundColor = UIColor(red: 133 / 255, green: 90 / 255, blue: 255 / 255, alpha: 1)
 
-        textField = TextField(frame: CGRect(x: 0, y: 0, width: 330, height: 40))
-        textField.center = view.center
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+
+        contentView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height / 3))
+        contentView.center = view.center
+        view.addSubview(contentView)
+
+        textField = TextField(frame: CGRect(x: 20, y: 40, width: view.frame.size.width - 40, height: 40))
         textField.keyboardType = .emailAddress
-        textField.returnKeyType = .next
         textField.placeholder = "Email"
-        view.addSubview(textField)
-        textField.addTarget(self, action: #selector(login), for: .editingDidEndOnExit)
+        contentView.addSubview(textField)
 
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 40))
-        label.text = NSLocalizedString("email_login", comment: "")
-        label.font = label.font.withSize(20)
-        label.textAlignment = .center
-        label.textColor = .white
-        view.addSubview(label)
-        label.center = CGPoint(x: view.center.x, y: textField.frame.origin.y - 20)
+        submitButton = Button(frame: CGRect(x: 30, y: contentView.frame.size.height - 80, width: view.frame.size.width - 60, height: 60))
+        submitButton.setTitle("Sign Up", for: .normal)
+        submitButton.addTarget(self, action: #selector(login), for: .touchUpInside)
+        contentView.addSubview(submitButton)
+    }
 
-        let logo = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 40))
-        logo.text = "🎙️"
-        logo.font = logo.font.withSize(64)
-        logo.center = CGPoint(x: view.center.x, y: view.frame.size.height / 4)
-        logo.textAlignment = .center
-        view.addSubview(logo)
+    @objc private func keyboardWillHide() {
+        UIView.animate(withDuration: 0.3) {
+            self.contentView.center = self.view.center
+        }
+    }
+
+    @objc private func keyboardWillShow(notification: Notification) {
+        let userInfo = notification.userInfo!
+
+        let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+
+        UIView.animate(withDuration: 0.3) {
+            self.contentView.frame.origin.y = (self.view.frame.height - (keyboardFrame.size.height + self.contentView.frame.size.height))
+        }
+    }
+
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 
     @objc private func login() {
