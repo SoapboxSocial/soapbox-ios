@@ -20,6 +20,8 @@ class RoomCreationView: UIView, UITextFieldDelegate {
 
     override func layoutSubviews() {
         super.layoutSubviews()
+        
+        if textField != nil { return }
 
         backgroundColor = .secondaryBackground
         roundCorners(corners: [.topLeft, .topRight], radius: 25.0)
