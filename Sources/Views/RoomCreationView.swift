@@ -22,7 +22,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         super.layoutSubviews()
 
         backgroundColor = .secondaryBackground
-        layer.cornerRadius = 25.0
+        roundCorners(corners: [.topLeft, .topRight], radius: 25.0)
 
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)

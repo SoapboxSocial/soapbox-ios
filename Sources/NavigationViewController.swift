@@ -75,12 +75,12 @@ class NavigationViewController: UINavigationController {
 
         func showCreationDrawer() {
             creationDrawer = DrawerView()
-            creationDrawer!.cornerRadius = 25.0
             creationDrawer!.delegate = self
             creationDrawer!.attachTo(view: view)
             creationDrawer!.backgroundEffect = nil
             creationDrawer!.snapPositions = [.open, .closed]
-            creationDrawer!.backgroundColor = .clear
+            creationDrawer!.cornerRadius = 25
+            creationDrawer!.backgroundColor = .secondaryBackground
             creationDrawer!.setPosition(.closed, animated: false)
             view.addSubview(creationDrawer!)
 
