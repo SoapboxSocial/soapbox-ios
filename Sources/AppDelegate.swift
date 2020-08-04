@@ -66,6 +66,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return false
         }
 
-        return UserDefaults.standard.string(forKey: "display") != nil
+        guard let name = UserDefaults.standard.string(forKey: "display") else {
+            return false
+        }
+
+        return name != ""
     }
 }
