@@ -31,12 +31,12 @@ class LoginViewController: UIViewController {
         contentView.center = view.center
         view.addSubview(contentView)
 
-        textField = TextField(frame: CGRect(x: 20, y: 40, width: view.frame.size.width - 40, height: 40))
+        textField = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: 40, width: 330, height: 40))
         textField.keyboardType = .emailAddress
         textField.placeholder = "Email"
         contentView.addSubview(textField)
 
-        submitButton = Button(frame: CGRect(x: 30, y: contentView.frame.size.height - 80, width: view.frame.size.width - 60, height: 60))
+        submitButton = Button(frame: CGRect(x: (view.frame.size.width - 282) / 2, y: contentView.frame.size.height - 80, width: 282, height: 60))
         submitButton.setTitle("Sign Up", for: .normal)
         submitButton.addTarget(self, action: #selector(login), for: .touchUpInside)
         contentView.addSubview(submitButton)
