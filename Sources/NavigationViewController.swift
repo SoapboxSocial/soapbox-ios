@@ -99,6 +99,7 @@ class NavigationViewController: UINavigationController {
         }
 
         // @todo this should be requested on app launch.
+        // @todo we also need to ask on joining
         switch AVAudioSession.sharedInstance().recordPermission {
         case .granted:
             showCreationDrawer()
