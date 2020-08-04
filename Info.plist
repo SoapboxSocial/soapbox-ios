@@ -22,15 +22,13 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>We don't use this, must investigate further</string>
+	<string>We don&apos;t use this, must investigate further</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone is required</string>
 	<key>UIBackgroundModes</key>
