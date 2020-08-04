@@ -63,6 +63,8 @@ class RoomMemberCell: UICollectionViewCell {
     }
 
     func setup(isSelf: Bool, name: String, role: APIClient.MemberRole) {
+        muteView.isHidden = true
+
         if isSelf {
             isSelfLabel.isHidden = false
         } else {
