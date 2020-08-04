@@ -8,23 +8,22 @@
 import UIKit
 
 class TextField: UITextField {
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
     }
 
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     private func setup() {
         borderStyle = .none
-        
+
         // @todo theme
         backgroundColor = .white
         textColor = .black
-        
+
         layer.cornerRadius = frame.size.height / 2
 
         layer.borderWidth = 2.0

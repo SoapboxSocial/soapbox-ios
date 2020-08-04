@@ -4,8 +4,8 @@
 
 import Alamofire
 import Foundation
-import WebRTC
 import KeychainAccess
+import WebRTC
 
 enum APIError: Error {
     case noData
@@ -33,8 +33,8 @@ class APIClient {
         let displayName: String
         var role: MemberRole
         var isMuted: Bool
-        
-        private enum CodingKeys : String, CodingKey {
+
+        private enum CodingKeys: String, CodingKey {
             case id, role, displayName = "display_name", isMuted = "is_muted"
         }
     }

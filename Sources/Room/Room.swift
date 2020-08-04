@@ -50,7 +50,7 @@ class Room {
     func mute() {
         rtc.muteAudio()
         isMuted = true
-        
+
         do {
             let command = RoomCommand.with {
                 $0.type = RoomCommand.TypeEnum.muteSpeaker
@@ -64,7 +64,7 @@ class Room {
     func unmute() {
         rtc.unmuteAudio()
         isMuted = false
-        
+
         do {
             let command = RoomCommand.with {
                 $0.type = RoomCommand.TypeEnum.unmuteSpeaker
@@ -205,7 +205,7 @@ extension Room: WebRTCClientDelegate {
             debugPrint("failed to decode \(error.localizedDescription)")
         }
     }
-    
+
     private func updateMemberMuteState(user: Int, isMuted: Bool) {
         DispatchQueue.main.async {
             let index = self.members.firstIndex(where: { $0.id == user })

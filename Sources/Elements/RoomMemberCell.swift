@@ -8,32 +8,31 @@
 import UIKit
 
 class RoomMemberCell: UICollectionViewCell {
-
     private var isSelfLabel: UILabel!
     private var roleLabel: UILabel!
     private var nameLabel: UILabel!
     private var muteView: UIView!
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+
         let circle = UIView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.width))
         circle.layer.cornerRadius = frame.size.width / 2
         circle.clipsToBounds = true
         circle.backgroundColor = .highlight
-        
+
         nameLabel = UILabel(frame: CGRect(x: 0, y: 66, width: 66, height: frame.size.height - 66))
         nameLabel.textAlignment = .center
         addSubview(nameLabel)
-        
+
         isSelfLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 66, height: 66))
         isSelfLabel.text = "You"
         isSelfLabel.textAlignment = .center
         isSelfLabel.textColor = .elementBackground
         circle.addSubview(isSelfLabel)
-        
+
         contentView.addSubview(circle)
-        
+
         let roleView = UIView(frame: CGRect(x: 66 - 20, y: 0, width: 20, height: 20))
         roleView.backgroundColor = .background
         roleView.layer.cornerRadius = 10
@@ -44,7 +43,7 @@ class RoomMemberCell: UICollectionViewCell {
         roleLabel.textAlignment = .center
         roleLabel.font = roleLabel.font.withSize(10)
         roleView.addSubview(roleLabel)
-        
+
         muteView = UIView(frame: CGRect(x: 60 - 20, y: 60 - 20, width: 20, height: 20))
         muteView.backgroundColor = .background
         muteView.layer.cornerRadius = 10
@@ -58,25 +57,25 @@ class RoomMemberCell: UICollectionViewCell {
         muteLabel.font = muteLabel.font.withSize(10)
         muteView.addSubview(muteLabel)
     }
-    
-    required init?(coder: NSCoder) {
+
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     func setup(isSelf: Bool, name: String, role: APIClient.MemberRole) {
         if isSelf {
             isSelfLabel.isHidden = false
         } else {
             isSelfLabel.isHidden = true
         }
-        
+
         nameLabel.text = first(name)
         roleLabel.text = emoji(for: role)
     }
 
     func setup(isSelf: Bool, member: APIClient.Member) {
         setup(isSelf: isSelf, name: member.displayName, role: member.role)
-        
+
         if member.role != APIClient.MemberRole.audience, member.isMuted {
             muteView.isHidden = false
         } else {

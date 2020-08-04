@@ -64,13 +64,13 @@ class PinEntryViewController: UIViewController {
 
         APIClient().submitPin(token: token, pin: textField.text!) { result in
             switch result {
-            case .failure(let error):
+            case let .failure(error):
                 if error == .incorrectPin {
                     return self.displayIncorrectPinBanner()
                 }
 
                 return self.displayErrorBanner()
-            case .success(let response):
+            case let .success(response):
                 switch response.0 {
                 case .success:
                     guard let user = response.1, let expires = response.2 else {

@@ -151,7 +151,7 @@ extension RoomView: RoomDelegate {
             self.members.reloadData()
         }
     }
-    
+
     //  @todo for efficiency these should all only update the user that was changed
     func userDidJoinRoom(user _: Int) {
         DispatchQueue.main.async {
@@ -222,7 +222,7 @@ extension RoomView: UICollectionViewDataSource {
             // @todo this is a bit ugly
             cell.setup(isSelf: true, name: UserDefaults.standard.string(forKey: "display") ?? "", role: room.role)
         } else {
-            cell.setup(isSelf: false, member: self.room.members[indexPath.item - 1])
+            cell.setup(isSelf: false, member: room.members[indexPath.item - 1])
         }
 
         return cell

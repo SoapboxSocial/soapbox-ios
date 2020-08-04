@@ -5,8 +5,8 @@
 //  Created by Dean Eigenmann on 03.08.20.
 //
 
-import UIKit
 import NotificationBannerSwift
+import UIKit
 
 class RegistrationViewController: UIViewController {
     let token: String
@@ -51,14 +51,13 @@ class RegistrationViewController: UIViewController {
     }
 
     @objc private func submit() {
-
         guard let username = usernameTextField.text, isValidUsername(username) else {
             return showError(text: NSLocalizedString("invalid_username", comment: ""))
         }
 
         APIClient().register(token: token, username: username, displayName: displayName.text ?? username) { result in
             switch result {
-            case .failure(let error):
+            case let .failure(error):
                 if error == .usernameAlreadyExists {
                     return self.showError(text: NSLocalizedString("username_already_exists", comment: ""))
                 }
@@ -70,7 +69,7 @@ class RegistrationViewController: UIViewController {
                     style: .danger
                 )
                 banner.show(cornerRadius: 10, shadowBlurRadius: 15)
-            case .success(let user, let expires):
+            case let .success(user, expires):
                 DispatchQueue.main.async {
                     (UIApplication.shared.delegate as! AppDelegate).transitionToLoggedInState(token: self.token, user: user, expires: expires)
                 }
