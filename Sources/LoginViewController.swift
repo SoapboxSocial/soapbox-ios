@@ -15,8 +15,8 @@ class LoginViewController: AbstractRegistrationProcessViewController {
     override func setupContentView(_ view: UIView) {
         let label = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 20))
         label.textAlignment = .center
-        label.text = NSLocalizedString("email_login", comment: "")
         label.textColor = .white
+        label.text = NSLocalizedString("email_login", comment: "")
         label.font = label.font.withSize(20)
         view.addSubview(label)
 
