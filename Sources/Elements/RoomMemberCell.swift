@@ -28,7 +28,6 @@ class RoomMemberCell: UICollectionViewCell {
         circle.addSubview(isSelfLabel)
         
         contentView.addSubview(circle)
-        
         let roleView = UIView(frame: CGRect(x: 60 - 20, y: 0, width: 20, height: 20))
         roleView.backgroundColor = .background
         roleView.layer.cornerRadius = 10
