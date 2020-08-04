@@ -49,9 +49,8 @@ class LoginViewController: UIViewController {
     }
 
     @objc private func keyboardWillShow(notification: Notification) {
-        let userInfo = notification.userInfo!
-
-        let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+        guard let userInfo = notification.userInfo else { return }
+        guard let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
 
         UIView.animate(withDuration: 0.3) {
             self.contentView.frame.origin.y = (self.view.frame.height - (keyboardFrame.size.height + self.contentView.frame.size.height))
