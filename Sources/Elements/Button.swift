@@ -13,14 +13,14 @@ class Button: UIButton {
         super.init(frame: frame)
         setup()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private func setup() {
         backgroundColor = UIColor(red: 170 / 255, green: 139 / 255, blue: 255 / 255, alpha: 1)
-        
+
         tintColor = .white
         layer.cornerRadius = frame.size.height / 2
         clipsToBounds = true
