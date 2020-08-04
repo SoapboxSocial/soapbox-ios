@@ -12,6 +12,7 @@ protocol RoomDelegate {
     func userDidJoinRoom(user: Int)
     func userDidLeaveRoom(user: Int)
     func didChangeUserRole(user: Int, role: APIClient.MemberRole)
+    func didChangeMemberMuteState(user: Int, isMuted: Bool)
 }
 
 // @todo
@@ -49,11 +50,29 @@ class Room {
     func mute() {
         rtc.muteAudio()
         isMuted = true
+        
+        do {
+            let command = RoomCommand.with {
+                $0.type = RoomCommand.TypeEnum.muteSpeaker
+            }
+            try rtc.sendData(command.serializedData())
+        } catch {
+            debugPrint("\(error.localizedDescription)")
+        }
     }
 
     func unmute() {
         rtc.unmuteAudio()
         isMuted = false
+        
+        do {
+            let command = RoomCommand.with {
+                $0.type = RoomCommand.TypeEnum.unmuteSpeaker
+            }
+            try rtc.sendData(command.serializedData())
+        } catch {
+            debugPrint("\(error.localizedDescription)")
+        }
     }
 
     func remove(speaker: Int) {
@@ -178,13 +197,25 @@ extension Room: WebRTCClientDelegate {
             case .UNRECOGNIZED:
                 return
             case .mutedSpeaker:
-                break
+                updateMemberMuteState(user: Int(event.from), isMuted: true)
             case .unmutedSpeaker:
-                break
+                updateMemberMuteState(user: Int(event.from), isMuted: false)
             }
         } catch {
             debugPrint("failed to decode \(error.localizedDescription)")
         }
+    }
+    
+    private func updateMemberMuteState(user: Int, isMuted: Bool) {
+        DispatchQueue.main.async {
+            let index = self.members.firstIndex(where: { $0.id == user })
+            if index != nil {
+                self.members[index!].isMuted = isMuted
+                return
+            }
+        }
+
+        delegate?.didChangeMemberMuteState(user: user, isMuted: isMuted)
     }
 
     private func updateMemberRole(user: Int, role: APIClient.MemberRole) {

@@ -20,8 +20,11 @@ class TextField: UITextField {
 
     private func setup() {
         borderStyle = .none
+        
+        // @todo theme
         backgroundColor = .white
-
+        textColor = .black
+        
         layer.cornerRadius = frame.size.height / 2
 
         layer.borderWidth = 2.0

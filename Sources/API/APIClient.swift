@@ -32,9 +32,10 @@ class APIClient {
         let id: Int
         let displayName: String
         var role: MemberRole
-
-        private enum CodingKeys: String, CodingKey {
-            case id, displayName = "display_name", role
+        var isMuted: Bool
+        
+        private enum CodingKeys : String, CodingKey {
+            case id, role, displayName = "display_name", isMuted = "is_muted"
         }
     }
 
