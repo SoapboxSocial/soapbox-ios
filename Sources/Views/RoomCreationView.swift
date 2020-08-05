@@ -20,7 +20,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        
+
         if textField != nil { return }
 
         backgroundColor = .secondaryBackground
@@ -48,7 +48,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         let margin = (frame.size.width - 330) / 2
 
         textField = TextField(frame: CGRect(x: margin, y: titleLabel.frame.size.height + 20, width: 330, height: 40))
-        textField.placeholder = "Email"
+        textField.placeholder = NSLocalizedString("enter_name", comment: "")
         textField.delegate = self
         contentView.addSubview(textField)
 
@@ -68,6 +68,16 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         contentView.addSubview(create)
     }
 
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+
     @objc private func dismissKeyboard() {
         endEditing(true)
     }
@@ -78,16 +88,6 @@ class RoomCreationView: UIView, UITextFieldDelegate {
 
     @objc private func createPressed() {
         delegate?.didEnterWithName(textField.text)
-    }
-
-    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
-
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool { // delegate method
-        textField.resignFirstResponder()
-        return true
     }
 
     @objc private func keyboardWillHide() {
