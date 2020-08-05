@@ -9,14 +9,14 @@ import UIKit
 
 // @todo probably can find a better name
 
-class AbstractRegistrationProcessViewController: UIViewController {
+class AbstractRegistrationProcessViewController: UIViewController, UITextFieldDelegate {
 
     private var contentView: UIView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = UIColor(red: 133 / 255, green: 90 / 255, blue: 255 / 255, alpha: 1)
+        view.backgroundColor = .secondaryBackground
 
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -36,6 +36,16 @@ class AbstractRegistrationProcessViewController: UIViewController {
         submitButton.setTitle(NSLocalizedString("submit", comment: ""), for: .normal)
         submitButton.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
         contentView.addSubview(submitButton)
+    }
+
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool { // delegate method
+        textField.resignFirstResponder()
+        return true
     }
 
     func setupContentView(_ view: UIView) {}

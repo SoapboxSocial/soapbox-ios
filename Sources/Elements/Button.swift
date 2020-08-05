@@ -9,17 +9,30 @@ import UIKit
 
 class Button: UIButton {
 
+    enum Style {
+        case regular, light
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setup()
+        setup(style: .regular)
+    }
+
+    init(frame: CGRect, style: Style) {
+        super.init(frame: frame)
+        setup(style: style)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setup() {
-        backgroundColor = UIColor(red: 170 / 255, green: 139 / 255, blue: 255 / 255, alpha: 1)
+    private func setup(style: Style) {
+        if style == .light {
+            backgroundColor = .lightButtonBackground
+        } else {
+            backgroundColor = .buttonBackground
+        }
 
         tintColor = .white
         layer.cornerRadius = frame.size.height / 2
