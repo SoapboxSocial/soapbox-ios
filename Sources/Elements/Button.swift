@@ -8,7 +8,6 @@
 import UIKit
 
 class Button: UIButton {
-
     enum Style {
         case regular, light
     }
@@ -23,7 +22,7 @@ class Button: UIButton {
         setup(style: style)
     }
 
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 

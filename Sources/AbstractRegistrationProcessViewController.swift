@@ -10,7 +10,6 @@ import UIKit
 // @todo probably can find a better name
 
 class AbstractRegistrationProcessViewController: UIViewController, UITextFieldDelegate {
-
     private var contentView: UIView!
 
     override func viewDidLoad() {
@@ -48,7 +47,7 @@ class AbstractRegistrationProcessViewController: UIViewController, UITextFieldDe
         return true
     }
 
-    func setupContentView(_ view: UIView) {}
+    func setupContentView(_: UIView) {}
 
     @objc func didSubmit() {}
 
@@ -62,9 +61,9 @@ class AbstractRegistrationProcessViewController: UIViewController, UITextFieldDe
         guard let userInfo = notification.userInfo else { return }
         guard let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
 
-        let newOrigin = self.view.frame.height - (keyboardFrame.size.height + self.contentView.frame.size.height)
+        let newOrigin = view.frame.height - (keyboardFrame.size.height + contentView.frame.size.height)
 
-        if newOrigin >= self.contentView.frame.origin.y {
+        if newOrigin >= contentView.frame.origin.y {
             return
         }
 

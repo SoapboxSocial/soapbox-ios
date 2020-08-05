@@ -12,7 +12,6 @@ protocol RoomCreationDelegate {
 }
 
 class RoomCreationView: UIView, UITextFieldDelegate {
-
     var delegate: RoomCreationDelegate?
 
     private var textField: UITextField!
@@ -100,9 +99,9 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         guard let userInfo = notification.userInfo else { return }
         guard let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
 
-        let newOrigin = frame.height - (keyboardFrame.size.height + self.contentView.frame.size.height)
+        let newOrigin = frame.height - (keyboardFrame.size.height + contentView.frame.size.height)
 
-        if newOrigin >= self.contentView.frame.origin.y {
+        if newOrigin >= contentView.frame.origin.y {
             return
         }
 

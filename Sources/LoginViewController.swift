@@ -9,7 +9,6 @@ import NotificationBannerSwift
 import UIKit
 
 class LoginViewController: AbstractRegistrationProcessViewController {
-
     private var textField: TextField!
 
     override func setupContentView(_ view: UIView) {

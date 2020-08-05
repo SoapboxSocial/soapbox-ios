@@ -8,7 +8,6 @@
 import UIKit
 
 class TextField: UITextField {
-
     override var placeholder: String? {
         willSet(value) {
             guard let text = value else { return }
