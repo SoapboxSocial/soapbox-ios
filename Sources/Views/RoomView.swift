@@ -43,12 +43,14 @@ class RoomView: UIView {
             return
         }
 
-        layer.cornerRadius = 10.0
+        backgroundColor = .elementBackground
+
+        roundCorners(corners: [.topLeft, .topRight], radius: 25.0)
 
         let inset = safeAreaInsets.bottom
 
         let topBar = UIView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: topBarHeight + inset))
-        topBar.roundCorners(corners: [.topLeft, .topRight], radius: 9.0)
+        topBar.roundCorners(corners: [.topLeft, .topRight], radius: 25.0)
         addSubview(topBar)
 
         let recognizer = UITapGestureRecognizer(target: self, action: #selector(openBar))
