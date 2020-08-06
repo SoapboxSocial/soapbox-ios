@@ -111,8 +111,8 @@ final class WebRTCClient: NSObject {
     private func configureAudioSession() {
         rtcAudioSession.lockForConfiguration()
         do {
-            try rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
-            try rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
+            try rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.defaultToSpeaker])
+//            try rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
         } catch {
             debugPrint("Error changeing AVAudioSession category: \(error)")
         }
@@ -217,8 +217,8 @@ extension WebRTCClient {
 
             self.rtcAudioSession.lockForConfiguration()
             do {
-                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
-                try self.rtcAudioSession.overrideOutputAudioPort(.speaker)
+                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.defaultToSpeaker])
+                //try self.rtcAudioSession.overrideOutputAudioPort(.speaker)
                 try self.rtcAudioSession.setActive(true)
             } catch {
                 debugPrint("Couldn't force audio to speaker: \(error)")
