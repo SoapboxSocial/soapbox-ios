@@ -60,7 +60,7 @@ class RoomListViewController: UIViewController {
         let item = UIBarButtonItem(title: "@" + UserDefaults.standard.string(forKey: "username")!, style: .plain, target: nil, action: nil)
         item.tintColor = .black
         navigationItem.leftBarButtonItem = item
-        navigationController?.hidesBarsOnSwipe = true
+        navigationController?.hidesBarsOnSwipe = true // @todo this seems a little unstable
     }
 
     @objc private func didPullToRefresh() {
