@@ -175,10 +175,6 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     }
 
     func peerConnection(_: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
-        if newState == .connected {
-            //speakerOn()
-        }
-
         delegate?.webRTCClient(self, didChangeConnectionState: newState)
     }
 
@@ -207,24 +203,6 @@ extension WebRTCClient {
 
     func unmuteAudio() {
         setAudioEnabled(true)
-    }
-
-    func speakerOn() {
-        audioQueue.async { [weak self] in
-            guard let self = self else {
-                return
-            }
-
-            self.rtcAudioSession.lockForConfiguration()
-            do {
-                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.defaultToSpeaker])
-                //try self.rtcAudioSession.overrideOutputAudioPort(.speaker)
-                try self.rtcAudioSession.setActive(true)
-            } catch {
-                debugPrint("Couldn't force audio to speaker: \(error)")
-            }
-            self.rtcAudioSession.unlockForConfiguration()
-        }
     }
 
     private func setAudioEnabled(_ isEnabled: Bool) {
