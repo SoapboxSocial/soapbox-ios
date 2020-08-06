@@ -58,8 +58,7 @@ class RoomListViewController: UIViewController {
         view.addSubview(rooms)
     }
 
-    @objc
-    private func didPullToRefresh() {
+    @objc private func didPullToRefresh() {
         loadData()
     }
 

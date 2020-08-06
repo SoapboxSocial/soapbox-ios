@@ -8,6 +8,16 @@
 import UIKit
 
 class TextField: UITextField {
+    override var placeholder: String? {
+        willSet(value) {
+            guard let text = value else { return }
+            attributedPlaceholder = NSAttributedString(
+                string: text,
+                attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray]
+            )
+        }
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()

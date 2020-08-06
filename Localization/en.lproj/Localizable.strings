@@ -30,10 +30,14 @@
 "name_room" = "Name your room";
 "enter_name" = "Enter a name";
 "skip" = "Skip";
-"create" = "Create";
 "submit" = "Submit";
+"create" = "Create";
+"create_account" = "Create Account";
 
 "your_room" = "Your room";
+
+"username" = "Username";
+"display_name" = "Display Name";
 
 "email_login" = "Enter email";
 "enter_your_pin_received_by_mail" = "Enter pin sent to email";

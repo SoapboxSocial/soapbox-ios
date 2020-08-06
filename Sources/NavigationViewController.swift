@@ -79,7 +79,8 @@ class NavigationViewController: UINavigationController {
             creationDrawer!.attachTo(view: view)
             creationDrawer!.backgroundEffect = nil
             creationDrawer!.snapPositions = [.open, .closed]
-            creationDrawer!.backgroundColor = .elementBackground
+            creationDrawer!.cornerRadius = 25
+            creationDrawer!.backgroundColor = .secondaryBackground
             creationDrawer!.setPosition(.closed, animated: false)
             view.addSubview(creationDrawer!)
 
@@ -90,7 +91,6 @@ class NavigationViewController: UINavigationController {
             roomView.translatesAutoresizingMaskIntoConstraints = false
             creationDrawer!.addSubview(roomView)
             roomView.autoPinEdgesToSuperview()
-            // roomView.delegate = self
 
             creationDrawer!.setPosition(.open, animated: true) { _ in
                 self.createRoomButton.isHidden = true
@@ -126,6 +126,7 @@ class NavigationViewController: UINavigationController {
         }
 
         roomDrawer = DrawerView()
+        roomDrawer!.cornerRadius = 25.0
         roomDrawer!.attachTo(view: view)
         roomDrawer!.backgroundEffect = nil
         roomDrawer!.snapPositions = [.collapsed, .open]
