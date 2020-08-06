@@ -176,7 +176,7 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
 
     func peerConnection(_: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
         if newState == .connected {
-            speakerOn()
+            //speakerOn()
         }
 
         delegate?.webRTCClient(self, didChangeConnectionState: newState)
