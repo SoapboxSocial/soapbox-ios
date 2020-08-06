@@ -56,6 +56,10 @@ class RoomListViewController: UIViewController {
         loadData()
 
         view.addSubview(rooms)
+
+        let item = UIBarButtonItem(title: "@" + UserDefaults.standard.string(forKey: "username")!, style: .plain, target: nil, action: nil)
+        item.tintColor = .black
+        navigationItem.leftBarButtonItem = item
     }
 
     @objc private func didPullToRefresh() {
