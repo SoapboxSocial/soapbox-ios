@@ -112,7 +112,6 @@ final class WebRTCClient: NSObject {
         rtcAudioSession.lockForConfiguration()
         do {
             try rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.defaultToSpeaker])
-//            try rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
         } catch {
             debugPrint("Error changeing AVAudioSession category: \(error)")
         }
