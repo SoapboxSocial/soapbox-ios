@@ -44,7 +44,7 @@ class RoomMemberCell: UICollectionViewCell {
         roleLabel.font = roleLabel.font.withSize(10)
         roleView.addSubview(roleLabel)
 
-        muteView = UIView(frame: CGRect(x: 60 - 20, y: 60 - 20, width: 20, height: 20))
+        muteView = UIView(frame: CGRect(x: 66 - 20, y: 66 - 20, width: 20, height: 20))
         muteView.backgroundColor = .background
         muteView.layer.cornerRadius = 10
         muteView.clipsToBounds = true
@@ -63,6 +63,8 @@ class RoomMemberCell: UICollectionViewCell {
     }
 
     func setup(isSelf: Bool, name: String, role: APIClient.MemberRole) {
+        muteView.isHidden = true
+
         if isSelf {
             isSelfLabel.isHidden = false
         } else {
