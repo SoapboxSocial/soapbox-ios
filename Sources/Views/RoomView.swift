@@ -180,30 +180,31 @@ extension RoomView: UICollectionViewDelegate {
             return
         }
 
-        if room.role != .owner {
-            return
-        }
-
-        showRoleAction(for: room.members[indexPath.item - 1])
+        showMemberAction(for: room.members[indexPath.item - 1])
     }
 
-    private func showRoleAction(for member: APIClient.Member) {
+    private func showMemberAction(for member: APIClient.Member) {
         let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-        var action: UIAlertAction
+        if room.role == .owner {
+            var action: UIAlertAction
 
-        if member.role == .speaker {
-            action = UIAlertAction(title: NSLocalizedString("move_to_audience", comment: ""), style: .default, handler: { _ in
-                self.room.remove(speaker: member.id)
+            if member.role == .speaker {
+                action = UIAlertAction(title: NSLocalizedString("move_to_audience", comment: ""), style: .default, handler: { _ in
+                    self.room.remove(speaker: member.id)
 
-            })
-        } else {
-            action = UIAlertAction(title: NSLocalizedString("make_speaker", comment: ""), style: .default, handler: { _ in
-                self.room.add(speaker: member.id)
-            })
+                })
+            } else {
+                action = UIAlertAction(title: NSLocalizedString("make_speaker", comment: ""), style: .default, handler: { _ in
+                    self.room.add(speaker: member.id)
+                })
+            }
+
+            optionMenu.addAction(action)
         }
 
-        optionMenu.addAction(action)
+        let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: nil)
+        optionMenu.addAction(profileAction)
 
         let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
         optionMenu.addAction(cancel)
