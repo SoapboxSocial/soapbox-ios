@@ -137,6 +137,7 @@ class NavigationViewController: UINavigationController {
         roomDrawer!.snapPositions = [.collapsed, .open]
         roomDrawer!.backgroundColor = .elementBackground
         roomDrawer!.setPosition(.closed, animated: false)
+        roomDrawer!.delegate = self
         view.addSubview(roomDrawer!)
 
         roomDrawer!.contentVisibilityBehavior = .allowPartial
@@ -268,15 +269,19 @@ extension NavigationViewController: DrawerViewDelegate {
             createRoomButton.isHidden = false
             view.endEditing(true)
         }
+    }
+    
+    func drawer(_ drawerView: DrawerView, willTransitionFrom startPosition: DrawerPosition, to targetPosition: DrawerPosition) {
+        if drawerView != roomDrawer {
+            return
+        }
 
-        if drawerView == roomDrawer {
-            if position == .collapsed {
-                navigationBar.isHidden = false
-            }
+        if targetPosition == .collapsed {
+            setNavigationBarHidden(false, animated: true)
+        }
 
-            if position == .open {
-                navigationBar.isHidden = true
-            }
+        if targetPosition == .open {
+            setNavigationBarHidden(true, animated: true)
         }
     }
 }
