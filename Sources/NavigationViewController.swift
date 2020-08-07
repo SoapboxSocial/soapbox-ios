@@ -181,10 +181,10 @@ extension NavigationViewController: RoomViewDelegate {
     }
 
     func shutdownRoom() {
-        self.roomDrawer?.removeFromSuperview()
-        self.roomDrawer = nil
-        self.room = nil
-        self.createRoomButton.isHidden = false
+        roomDrawer?.removeFromSuperview()
+        roomDrawer = nil
+        room = nil
+        createRoomButton.isHidden = false
         UIApplication.shared.isIdleTimerDisabled = false
     }
 }
