@@ -9,17 +9,34 @@ import UIKit
 
 class ProfileViewController: UIViewController {
 
+    private let api = APIClient()
+    private let id: Int
+
     init(id: Int) {
+        self.id = id
+        debugPrint(id)
         super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        api.user(id: id) { result in
+            switch result {
+            case .failure: break
+            case .success(let user):
+                DispatchQueue.main.async {
+                    self.setupView(user: user)
+                }
+            }
+        }
+    }
+
+    private func setupView(user: APIClient.User) {
+
     }
 }

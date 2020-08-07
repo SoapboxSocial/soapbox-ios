@@ -79,7 +79,7 @@ class APIClient {
 
     let decoder = JSONDecoder()
 
-    let baseUrl = "https://spksy.app"
+    let baseUrl = "http://192.168.33.16"
 
     // @todo auth header
 
@@ -204,7 +204,7 @@ extension APIClient {
         let id: Int
         let displayName: String
         let username: String
-        let email: String
+        let email: String?
 
         private enum CodingKeys: String, CodingKey {
             case id, displayName = "display_name", username, email
@@ -310,6 +310,28 @@ extension APIClient {
                     }
 
                     callback(.success((user, expires)))
+                } catch {
+                    return callback(.failure(.decode))
+                }
+            }
+    }
+}
+
+extension APIClient {
+    // @todo add token
+    func user(id: Int, callback: @escaping (Result<User, APIError>) -> Void) {
+        AF.request(baseUrl + "/v1/users/" + String(id), method: .get)
+            .validate()
+            .response { result in
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                // @todo test if error
+
+                do {
+                    let resp = try self.decoder.decode(User.self, from: data)
+                    callback(.success(resp))
                 } catch {
                     return callback(.failure(.decode))
                 }
