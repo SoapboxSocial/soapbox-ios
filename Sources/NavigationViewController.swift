@@ -268,5 +268,15 @@ extension NavigationViewController: DrawerViewDelegate {
             createRoomButton.isHidden = false
             view.endEditing(true)
         }
+
+        if drawerView == roomDrawer {
+            if position == .collapsed {
+                navigationBar.isHidden = false
+            }
+
+            if position == .open {
+                navigationBar.isHidden = true
+            }
+        }
     }
 }
