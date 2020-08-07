@@ -14,7 +14,6 @@ class ProfileViewController: UIViewController {
 
     init(id: Int) {
         self.id = id
-        debugPrint(id)
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -37,6 +36,18 @@ class ProfileViewController: UIViewController {
     }
 
     private func setupView(user: APIClient.User) {
+        let image = UIView(frame: CGRect(x: 40, y: (navigationController?.navigationBar.frame.origin.y)! + (navigationController?.navigationBar.frame.size.height)! + 20, width: 75, height: 75))
+        image.layer.cornerRadius = 75 / 2
+        image.backgroundColor = .secondaryBackground
+        view.addSubview(image)
 
+        let name = UILabel(frame: CGRect(x: 40, y: image.frame.origin.y + image.frame.size.height + 20, width: view.frame.size.width - 80, height: 20))
+        name.text = user.displayName
+        name.font = UIFont(name: "HelveticaNeue-Bold", size: 18)
+        view.addSubview(name)
+
+        let username = UILabel(frame: CGRect(x: 40, y: name.frame.origin.y + name.frame.size.height, width: view.frame.size.width - 80, height: 20))
+        username.text = "@" + user.username
+        view.addSubview(username)
     }
 }

@@ -270,7 +270,7 @@ extension NavigationViewController: DrawerViewDelegate {
             view.endEditing(true)
         }
     }
-    
+
     func drawer(_ drawerView: DrawerView, willTransitionFrom startPosition: DrawerPosition, to targetPosition: DrawerPosition) {
         if drawerView != roomDrawer {
             return
