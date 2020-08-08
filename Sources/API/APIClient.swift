@@ -322,7 +322,10 @@ extension APIClient {
 extension APIClient {
     // @todo add token
     func user(id: Int, callback: @escaping (Result<User, APIError>) -> Void) {
-        AF.request(baseUrl + "/v1/users/" + String(id), method: .get)
+        let keychain = Keychain(service: "com.voicely.voicely")
+        let token = keychain[string: "token"]
+
+        AF.request(baseUrl + "/v1/users/" + String(id), method: .get, headers: ["Authorization": token!])
             .validate()
             .response { result in
                 guard let data = result.data else {
