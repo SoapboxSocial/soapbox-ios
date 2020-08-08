@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import NotificationBannerSwift
 
 class ProfileViewController: UIViewController {
     private let api = APIClient()
@@ -25,7 +26,15 @@ class ProfileViewController: UIViewController {
 
         api.user(id: id) { result in
             switch result {
-            case .failure: break
+            case .failure:
+                DispatchQueue.main.async {
+                    let banner = FloatingNotificationBanner(
+                        title: NSLocalizedString("something_went_wrong", comment: ""),
+                        subtitle: NSLocalizedString("please_try_again_later", comment: ""),
+                        style: .danger
+                    )
+                    banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+                }
             case let .success(user):
                 DispatchQueue.main.async {
                     self.setupView(user: user)

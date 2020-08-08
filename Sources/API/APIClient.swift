@@ -70,6 +70,8 @@ class APIClient {
         case usernameAlreadyExists = 8
         case failedToLogin = 9
         case incorrectPin = 10
+        case userNotFound = 11
+        case failedToGetUser = 12
     }
 
     struct ErrorResponse: Decodable {
@@ -327,7 +329,9 @@ extension APIClient {
                     return callback(.failure(.requestFailed))
                 }
 
-                // @todo test if error
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
 
                 do {
                     let resp = try self.decoder.decode(User.self, from: data)
