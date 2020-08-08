@@ -5,7 +5,6 @@
 import UIKit
 
 class RoomListEmptyCell: UICollectionViewCell {
-
     override init(frame: CGRect) {
         super.init(frame: frame)
 
@@ -30,7 +29,7 @@ class RoomListEmptyCell: UICollectionViewCell {
         messageLabel.textAlignment = .center
     }
 
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }

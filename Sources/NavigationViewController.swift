@@ -181,13 +181,17 @@ extension NavigationViewController: RoomViewDelegate {
     func roomDidExit() {
         roomDrawer?.setPosition(.closed, animated: true) { _ in
             DispatchQueue.main.async {
-                self.roomDrawer?.removeFromSuperview()
-                self.roomDrawer = nil
-                self.room = nil
-                self.createRoomButton.isHidden = false
-                UIApplication.shared.isIdleTimerDisabled = false
+                self.shutdownRoom()
             }
         }
+    }
+
+    func shutdownRoom() {
+        roomDrawer?.removeFromSuperview()
+        roomDrawer = nil
+        room = nil
+        createRoomButton.isHidden = false
+        UIApplication.shared.isIdleTimerDisabled = false
     }
 }
 
@@ -201,6 +205,8 @@ extension NavigationViewController: RoomListViewDelegate {
             presentCurrentRoom()
             return
         }
+
+        shutdownRoom()
 
         activityIndicator.startAnimating()
         activityIndicator.isHidden = false
