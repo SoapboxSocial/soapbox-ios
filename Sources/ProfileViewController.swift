@@ -52,10 +52,12 @@ class ProfileViewController: UIViewController {
         let name = UILabel(frame: CGRect(x: 40, y: image.frame.origin.y + image.frame.size.height + 20, width: view.frame.size.width - 80, height: 20))
         name.text = user.displayName
         name.font = UIFont(name: "HelveticaNeue-Bold", size: 18)
+        name.textColor = .black
         view.addSubview(name)
 
         let username = UILabel(frame: CGRect(x: 40, y: name.frame.origin.y + name.frame.size.height, width: view.frame.size.width - 80, height: 20))
         username.text = "@" + user.username
+        username.textColor = .black
         view.addSubview(username)
     }
 }
