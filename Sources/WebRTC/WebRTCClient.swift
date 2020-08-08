@@ -111,10 +111,10 @@ final class WebRTCClient: NSObject {
     private func configureAudioSession() {
         rtcAudioSession.lockForConfiguration()
         do {
-            try rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.mixWithOthers, .defaultToSpeaker, .allowBluetooth, .allowBluetoothA2DP])
-            try rtcAudioSession.overrideOutputAudioPort(.speaker)
+            try rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
+//            try rtcAudioSession.overrideOutputAudioPort(.speaker)
             try rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
-            try rtcAudioSession.setActive(false)
+            //try rtcAudioSession.setActive(true)
         } catch {
             debugPrint("Error changeing AVAudioSession category: \(error)")
         }
@@ -177,6 +177,10 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     }
 
     func peerConnection(_: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
+        if newState == .connected {
+            speakerOn()
+        }
+
         delegate?.webRTCClient(self, didChangeConnectionState: newState)
     }
 
@@ -210,6 +214,24 @@ extension WebRTCClient {
     private func setAudioEnabled(_ isEnabled: Bool) {
         let audioTracks = peerConnection.transceivers.compactMap { $0.sender.track as? RTCAudioTrack }
         audioTracks.forEach { $0.isEnabled = isEnabled }
+    }
+
+    private func speakerOn() {
+        audioQueue.async { [weak self] in
+            guard let self = self else {
+                return
+            }
+
+            self.rtcAudioSession.lockForConfiguration()
+            do {
+                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.mixWithOthers, .defaultToSpeaker, .allowBluetooth, .allowBluetoothA2DP])
+                try self.rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
+                try self.rtcAudioSession.setActive(true)
+            } catch {
+                debugPrint("Couldn't force audio to speaker: \(error)")
+            }
+            self.rtcAudioSession.unlockForConfiguration()
+        }
     }
 }
 
