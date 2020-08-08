@@ -70,10 +70,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return false
         }
 
-        guard let name = UserDefaults.standard.string(forKey: "display") else {
+        if UserDefaults.standard.integer(forKey: "id") == 0 {
             return false
         }
 
-        return name != ""
+        return true
     }
 }
