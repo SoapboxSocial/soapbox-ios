@@ -137,7 +137,6 @@ class NavigationViewController: UINavigationController {
         roomDrawer!.snapPositions = [.collapsed, .open]
         roomDrawer!.backgroundColor = .elementBackground
         roomDrawer!.setPosition(.closed, animated: false)
-        roomDrawer!.delegate = self
         view.addSubview(roomDrawer!)
 
         roomDrawer!.contentVisibilityBehavior = .allowPartial
@@ -178,6 +177,15 @@ class NavigationViewController: UINavigationController {
 }
 
 extension NavigationViewController: RoomViewDelegate {
+    func didSelectViewProfile(id: Int) {
+        roomDrawer?.setPosition(.collapsed, animated: true) { _ in
+            DispatchQueue.main.async {
+                let profile = ProfileViewController(id: id)
+                self.pushViewController(profile, animated: true)
+            }
+        }
+    }
+
     func roomDidExit() {
         roomDrawer?.setPosition(.closed, animated: true) { _ in
             DispatchQueue.main.async {
@@ -274,20 +282,6 @@ extension NavigationViewController: DrawerViewDelegate {
             drawerView.removeFromSuperview(animated: false)
             createRoomButton.isHidden = false
             view.endEditing(true)
-        }
-    }
-
-    func drawer(_ drawerView: DrawerView, willTransitionFrom startPosition: DrawerPosition, to targetPosition: DrawerPosition) {
-        if drawerView != roomDrawer {
-            return
-        }
-
-        if targetPosition == .collapsed {
-            setNavigationBarHidden(false, animated: true)
-        }
-
-        if targetPosition == .open {
-            setNavigationBarHidden(true, animated: true)
         }
     }
 }

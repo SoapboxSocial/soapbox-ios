@@ -8,7 +8,6 @@
 import UIKit
 
 class ProfileViewController: UIViewController {
-
     private let api = APIClient()
     private let id: Int
 
@@ -17,7 +16,7 @@ class ProfileViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -27,7 +26,7 @@ class ProfileViewController: UIViewController {
         api.user(id: id) { result in
             switch result {
             case .failure: break
-            case .success(let user):
+            case let .success(user):
                 DispatchQueue.main.async {
                     self.setupView(user: user)
                 }

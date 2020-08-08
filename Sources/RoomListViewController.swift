@@ -60,13 +60,12 @@ class RoomListViewController: UIViewController {
         let item = UIBarButtonItem(title: "@" + UserDefaults.standard.string(forKey: "username")!, style: .plain, target: self, action: #selector(openProfile))
         item.tintColor = .black
         navigationItem.leftBarButtonItem = item
-        // navigationController?.hidesBarsOnSwipe = true // @todo this seems a little unstable
     }
 
     @objc private func openProfile() {
         let id = UserDefaults.standard.integer(forKey: "id")
         if id == 0 {
-            // @todo logout
+            (UIApplication.shared.delegate as! AppDelegate).showLoginScreen()
             return
         }
 

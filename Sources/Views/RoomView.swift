@@ -10,6 +10,7 @@ import UIKit
 
 protocol RoomViewDelegate {
     func roomDidExit()
+    func didSelectViewProfile(id: Int)
 }
 
 class RoomView: UIView {
@@ -203,7 +204,11 @@ extension RoomView: UICollectionViewDelegate {
             optionMenu.addAction(action)
         }
 
-        let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: nil)
+        let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
+            DispatchQueue.main.async {
+                self.delegate?.didSelectViewProfile(id: member.id)
+            }
+        })
         optionMenu.addAction(profileAction)
 
         let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
