@@ -73,8 +73,7 @@ final class WebRTCClient: NSObject {
     }
 
     func offer(completion: @escaping (_ sdp: RTCSessionDescription) -> Void) {
-        let constrains = RTCMediaConstraints(mandatoryConstraints: mediaConstrains,
-                                             optionalConstraints: nil)
+        let constrains = RTCMediaConstraints(mandatoryConstraints: mediaConstrains, optionalConstraints: nil)
         peerConnection.offer(for: constrains) { sdp, _ in
             guard let sdp = sdp else {
                 return
@@ -87,8 +86,7 @@ final class WebRTCClient: NSObject {
     }
 
     func answer(completion: @escaping (_ sdp: RTCSessionDescription) -> Void) {
-        let constrains = RTCMediaConstraints(mandatoryConstraints: mediaConstrains,
-                                             optionalConstraints: nil)
+        let constrains = RTCMediaConstraints(mandatoryConstraints: mediaConstrains, optionalConstraints: nil)
         peerConnection.answer(for: constrains) { sdp, _ in
             guard let sdp = sdp else {
                 return
@@ -176,7 +174,7 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
 
     func peerConnection(_: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
         if newState == .connected {
-            speakerOn()
+            configureAudioForConnectedState()
         }
 
         debugPrint("peerConnection state did change \(newState)")
@@ -215,7 +213,7 @@ extension WebRTCClient {
         audioTracks.forEach { $0.isEnabled = isEnabled }
     }
 
-    private func speakerOn() {
+    private func configureAudioForConnectedState() {
         audioQueue.async { [weak self] in
             guard let self = self else {
                 return
