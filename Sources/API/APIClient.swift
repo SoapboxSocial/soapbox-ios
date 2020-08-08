@@ -70,6 +70,8 @@ class APIClient {
         case usernameAlreadyExists = 8
         case failedToLogin = 9
         case incorrectPin = 10
+        case userNotFound = 11
+        case failedToGetUser = 12
     }
 
     struct ErrorResponse: Decodable {
@@ -204,7 +206,7 @@ extension APIClient {
         let id: Int
         let displayName: String
         let username: String
-        let email: String
+        let email: String?
 
         private enum CodingKeys: String, CodingKey {
             case id, displayName = "display_name", username, email
@@ -310,6 +312,33 @@ extension APIClient {
                     }
 
                     callback(.success((user, expires)))
+                } catch {
+                    return callback(.failure(.decode))
+                }
+            }
+    }
+}
+
+extension APIClient {
+    // @todo add token
+    func user(id: Int, callback: @escaping (Result<User, APIError>) -> Void) {
+        let keychain = Keychain(service: "com.voicely.voicely")
+        let token = keychain[string: "token"]
+
+        AF.request(baseUrl + "/v1/users/" + String(id), method: .get, headers: ["Authorization": token!])
+            .validate()
+            .response { result in
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
+
+                do {
+                    let resp = try self.decoder.decode(User.self, from: data)
+                    callback(.success(resp))
                 } catch {
                     return callback(.failure(.decode))
                 }

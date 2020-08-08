@@ -25,13 +25,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return true
         }
 
+        showLoginScreen()
+        window?.makeKeyAndVisible()
+
+        return true
+    }
+
+    func showLoginScreen() {
         let navigation = UINavigationController(rootViewController: LoginViewController())
         navigation.navigationBar.isHidden = true
 
         window!.rootViewController = navigation
-        window?.makeKeyAndVisible()
-
-        return true
     }
 
     func transitionToLoggedInState(token: String, user: APIClient.User, expires: Int) {
@@ -66,10 +70,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return false
         }
 
-        guard let name = UserDefaults.standard.string(forKey: "display") else {
+        if UserDefaults.standard.integer(forKey: "id") == 0 {
             return false
         }
 
-        return name != ""
+        return true
     }
 }

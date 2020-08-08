@@ -5,8 +5,8 @@
 import UIKit
 
 class RoomListEmptyCell: UICollectionViewCell {
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
 
         let titleLabel = UILabel()
         let messageLabel = UILabel()
@@ -27,5 +27,9 @@ class RoomListEmptyCell: UICollectionViewCell {
         messageLabel.text = NSLocalizedString("start_room_tip", comment: "")
         messageLabel.numberOfLines = 3
         messageLabel.textAlignment = .center
+    }
+
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

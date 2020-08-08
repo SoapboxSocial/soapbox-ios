@@ -47,3 +47,5 @@
 "username_already_exists" = "Username already exists";
 "invalid_username" = "Valid username required";
 "incorrect_pin" = "The entered pin was incorrect";
+
+"view_profile" = "View profile";

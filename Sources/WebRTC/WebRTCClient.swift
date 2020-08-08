@@ -112,9 +112,7 @@ final class WebRTCClient: NSObject {
         rtcAudioSession.lockForConfiguration()
         do {
             try rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
-//            try rtcAudioSession.overrideOutputAudioPort(.speaker)
             try rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
-            //try rtcAudioSession.setActive(true)
         } catch {
             debugPrint("Error changeing AVAudioSession category: \(error)")
         }
@@ -177,10 +175,6 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     }
 
     func peerConnection(_: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
-        if newState == .connected {
-            speakerOn()
-        }
-
         delegate?.webRTCClient(self, didChangeConnectionState: newState)
     }
 
