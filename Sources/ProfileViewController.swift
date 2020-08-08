@@ -23,6 +23,8 @@ class ProfileViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        view.backgroundColor = .background
 
         api.user(id: id) { result in
             switch result {
