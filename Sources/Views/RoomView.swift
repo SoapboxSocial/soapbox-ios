@@ -178,6 +178,18 @@ extension RoomView: RoomDelegate {
 extension RoomView: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if indexPath.item == 0 {
+           let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
+                DispatchQueue.main.async {
+                    self.delegate?.didSelectViewProfile(id: UserDefaults.standard.integer(forKey: "id"))
+                }
+            })
+            optionMenu.addAction(profileAction)
+
+            let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
+            optionMenu.addAction(cancel)
+
+            UIApplication.shared.keyWindow?.rootViewController!.present(optionMenu, animated: true)
             return
         }
 
