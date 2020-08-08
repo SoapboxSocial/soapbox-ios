@@ -63,7 +63,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
             style: .light
         )
         create.setTitle(NSLocalizedString("create", comment: ""), for: .normal)
-        create.addTarget(self, action: #selector(skipPressed), for: .touchUpInside)
+        create.addTarget(self, action: #selector(createPressed), for: .touchUpInside)
         contentView.addSubview(create)
     }
 
