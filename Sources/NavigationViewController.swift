@@ -11,7 +11,7 @@ import NotificationBannerSwift
 import UIKit
 
 class NavigationViewController: UINavigationController {
-    var activityIndicator = UIActivityIndicatorView(style: .medium)
+    var activityIndicator = UIActivityIndicatorView(style: .large)
 
     private var room: Room?
 
@@ -50,6 +50,7 @@ class NavigationViewController: UINavigationController {
 
         activityIndicator.isHidden = true
         activityIndicator.hidesWhenStopped = true
+        activityIndicator.color = .black
 
         activityIndicator.center = view.center
         view.addSubview(activityIndicator)
