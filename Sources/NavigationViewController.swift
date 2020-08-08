@@ -52,8 +52,13 @@ class NavigationViewController: UINavigationController {
         activityIndicator.hidesWhenStopped = true
 
         activityIndicator.center = view.center
-
         view.addSubview(activityIndicator)
+
+        navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationBar.shadowImage = UIImage()
+        navigationBar.isHidden = false
+        navigationBar.isTranslucent = true
+        navigationBar.backgroundColor = .clear
     }
 
     @objc func didTapCreateRoom() {
@@ -172,6 +177,15 @@ class NavigationViewController: UINavigationController {
 }
 
 extension NavigationViewController: RoomViewDelegate {
+    func didSelectViewProfile(id: Int) {
+        roomDrawer?.setPosition(.collapsed, animated: true) { _ in
+            DispatchQueue.main.async {
+                let profile = ProfileViewController(id: id)
+                self.pushViewController(profile, animated: true)
+            }
+        }
+    }
+
     func roomDidExit() {
         roomDrawer?.setPosition(.closed, animated: true) { _ in
             DispatchQueue.main.async {

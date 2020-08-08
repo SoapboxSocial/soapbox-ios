@@ -10,6 +10,7 @@ import UIKit
 
 protocol RoomViewDelegate {
     func roomDidExit()
+    func didSelectViewProfile(id: Int)
 }
 
 class RoomView: UIView {
@@ -177,33 +178,50 @@ extension RoomView: RoomDelegate {
 extension RoomView: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if indexPath.item == 0 {
+           let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
+                DispatchQueue.main.async {
+                    self.delegate?.didSelectViewProfile(id: UserDefaults.standard.integer(forKey: "id"))
+                }
+            })
+            optionMenu.addAction(profileAction)
+
+            let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
+            optionMenu.addAction(cancel)
+
+            UIApplication.shared.keyWindow?.rootViewController!.present(optionMenu, animated: true)
             return
         }
 
-        if room.role != .owner {
-            return
-        }
-
-        showRoleAction(for: room.members[indexPath.item - 1])
+        showMemberAction(for: room.members[indexPath.item - 1])
     }
 
-    private func showRoleAction(for member: APIClient.Member) {
+    private func showMemberAction(for member: APIClient.Member) {
         let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-        var action: UIAlertAction
+        if room.role == .owner {
+            var action: UIAlertAction
 
-        if member.role == .speaker {
-            action = UIAlertAction(title: NSLocalizedString("move_to_audience", comment: ""), style: .default, handler: { _ in
-                self.room.remove(speaker: member.id)
+            if member.role == .speaker {
+                action = UIAlertAction(title: NSLocalizedString("move_to_audience", comment: ""), style: .default, handler: { _ in
+                    self.room.remove(speaker: member.id)
 
-            })
-        } else {
-            action = UIAlertAction(title: NSLocalizedString("make_speaker", comment: ""), style: .default, handler: { _ in
-                self.room.add(speaker: member.id)
-            })
+                })
+            } else {
+                action = UIAlertAction(title: NSLocalizedString("make_speaker", comment: ""), style: .default, handler: { _ in
+                    self.room.add(speaker: member.id)
+                })
+            }
+
+            optionMenu.addAction(action)
         }
 
-        optionMenu.addAction(action)
+        let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
+            DispatchQueue.main.async {
+                self.delegate?.didSelectViewProfile(id: member.id)
+            }
+        })
+        optionMenu.addAction(profileAction)
 
         let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
         optionMenu.addAction(cancel)
