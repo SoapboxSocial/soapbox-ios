@@ -175,7 +175,7 @@ extension Room: WebRTCClientDelegate {
     func webRTCClient(_: WebRTCClient, didDiscoverLocalCandidate _: RTCIceCandidate) {}
 
     func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
-        if state == .disconnected || state == .closed || state == .failed {
+        if state == .failed {
             delegate?.roomWasClosedByRemote()
         }
     }
