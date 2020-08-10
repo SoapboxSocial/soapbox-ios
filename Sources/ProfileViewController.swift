@@ -84,16 +84,25 @@ class ProfileViewController: UIViewController {
         followingLabel.isUserInteractionEnabled = true
 
         if self.user.id != UserDefaults.standard.integer(forKey: "id") {
-            if user.followedBy ?? false {
-                let followsYou = UILabel(frame: CGRect(x: name.frame.origin.x + name.frame.size.width + 30, y: name.frame.origin.y, width: 100, height: 20))
-                followsYou.text = NSLocalizedString("follows_you", comment: "")
-                view.addSubview(followsYou)
-            }
-
             followButton = Button(frame: CGRect(x: view.frame.size.width - 140, y: image.frame.origin.y + (image.frame.size.height / 2) - 15, width: 100, height: 30))
             followButton.addTarget(self, action: #selector(followButtonPressed), for: .touchUpInside)
             updateFollowButtonLabel()
             view.addSubview(followButton)
+
+            if user.followedBy ?? false {
+                let followsYou = UILabel(frame: CGRect(x: 0, y: 0, width: 100, height: 20))
+                followsYou.text = NSLocalizedString("follows_you", comment: "")
+                view.addSubview(followsYou)
+                followsYou.sizeToFit()
+
+                followsYou.frame = CGRect(
+                    origin: CGPoint(
+                        x: followButton.frame.origin.x - followsYou.frame.size.width - 10,
+                        y: followButton.center.y - (followsYou.frame.size.height / 2)
+                    ),
+                    size: followsYou.frame.size
+                )
+            }
         }
     }
 
