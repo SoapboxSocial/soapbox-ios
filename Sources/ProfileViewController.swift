@@ -69,11 +69,19 @@ class ProfileViewController: UIViewController {
         followersLabel.textColor = .black
         view.addSubview(followersLabel)
 
+        let followersRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapFollowersLabel))
+        followersLabel.addGestureRecognizer(followersRecognizer)
+        followersLabel.isUserInteractionEnabled = true
+
         let followingLabel = UILabel(frame: CGRect(x: followersLabel.frame.size.width + followersLabel.frame.origin.x + 10, y: username.frame.origin.y + username.frame.size.height + 40, width: 100, height: 20))
         followingLabel.font = username.font
         followingLabel.textColor = .black
         followingLabel.text = String(user.following) + " " + NSLocalizedString("following", comment: "")
         view.addSubview(followingLabel)
+
+        let followingRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapFollowingLabel))
+        followingLabel.addGestureRecognizer(followingRecognizer)
+        followingLabel.isUserInteractionEnabled = true
 
         if self.user.id != UserDefaults.standard.integer(forKey: "id") {
             if user.followedBy ?? false {
@@ -87,6 +95,16 @@ class ProfileViewController: UIViewController {
             updateFollowButtonLabel()
             view.addSubview(followButton)
         }
+    }
+
+    @objc private func didTapFollowingLabel() {
+        let list = FollowerListViewController(id: id, userListFunc: api.following)
+        navigationController?.pushViewController(list, animated: true)
+    }
+
+    @objc private func didTapFollowersLabel() {
+        let list = FollowerListViewController(id: id, userListFunc: api.followers)
+        navigationController?.pushViewController(list, animated: true)
     }
 
     @objc private func followButtonPressed() {

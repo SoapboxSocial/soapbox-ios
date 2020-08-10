@@ -260,7 +260,6 @@ extension APIClient {
                 if result.error != nil {
                     do {
                         let resp = try self.decoder.decode(ErrorResponse.self, from: data)
-                        debugPrint(data)
                         if resp.code == .incorrectPin {
                             return callback(.failure(.incorrectPin))
                         }
@@ -345,8 +344,6 @@ extension APIClient {
                     callback(.failure(.noData))
                 }
 
-                debugPrint(String(data: data, encoding: .utf8))
-
                 do {
                     let resp = try self.decoder.decode(Profile.self, from: data)
                     callback(.success(resp))
@@ -362,11 +359,13 @@ extension APIClient {
         let success: Bool
     }
 
-    func followers(id: Int, callback: @escaping (Result<[User], APIError>) -> Void) {
+    typealias FollowerListFunc = (_ id: Int, _ callback: @escaping (Result<[User], APIError>) -> Void) -> Void
+
+    func followers(_ id: Int, _ callback: @escaping (Result<[User], APIError>) -> Void) {
         userListRequest("/v1/users/" + String(id) + "/followers", callback: callback)
     }
 
-    func following(id: Int, callback: @escaping (Result<[User], APIError>) -> Void) {
+    func following(_ id: Int, _ callback: @escaping (Result<[User], APIError>) -> Void) {
         userListRequest("/v1/users/" + String(id) + "/following", callback: callback)
     }
 
