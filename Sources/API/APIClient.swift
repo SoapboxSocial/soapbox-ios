@@ -16,6 +16,12 @@ enum APIError: Error {
 }
 
 class APIClient {
+    // @todo put elsewhere?
+    private var token: String? {
+        let keychain = Keychain(service: "com.voicely.voicely")
+        return keychain[string: "token"]
+    }
+
     // @todo these all need better names
     struct RoomConnection {
         let id: Int
@@ -81,7 +87,7 @@ class APIClient {
 
     let decoder = JSONDecoder()
 
-    let baseUrl = "https://spksy.app"
+    let baseUrl = "http://192.168.33.16"
 
     // @todo auth header
 
@@ -94,11 +100,6 @@ class APIClient {
             "sdp": sdp.sdp as AnyObject,
             "type": "offer" as AnyObject,
         ]
-
-        // @todo
-
-        let keychain = Keychain(service: "com.voicely.voicely")
-        let token = keychain[string: "token"]
 
         let path = String(format: "/v1/rooms/%d/join", room)
 
@@ -133,9 +134,6 @@ class APIClient {
         if name != nil {
             parameters["name"] = name! as AnyObject
         }
-
-        let keychain = Keychain(service: "com.voicely.voicely")
-        let token = keychain[string: "token"]
 
         AF.request(baseUrl + "/v1/rooms/create", method: .post, parameters: parameters, encoding: JSONEncoding(), headers: ["Authorization": token!])
             .response { result in
@@ -262,7 +260,6 @@ extension APIClient {
                 if result.error != nil {
                     do {
                         let resp = try self.decoder.decode(ErrorResponse.self, from: data)
-                        debugPrint(data)
                         if resp.code == .incorrectPin {
                             return callback(.failure(.incorrectPin))
                         }
@@ -320,11 +317,22 @@ extension APIClient {
 }
 
 extension APIClient {
-    // @todo add token
-    func user(id: Int, callback: @escaping (Result<User, APIError>) -> Void) {
-        let keychain = Keychain(service: "com.voicely.voicely")
-        let token = keychain[string: "token"]
+    struct Profile: Decodable {
+        let id: Int
+        let displayName: String
+        let username: String
+        var followers: Int
+        let following: Int
+        let followedBy: Bool?
+        var isFollowing: Bool?
 
+        private enum CodingKeys: String, CodingKey {
+            case id, displayName = "display_name", username, followers, following, followedBy = "followed_by", isFollowing = "is_following"
+        }
+    }
+
+    // @todo add token
+    func user(id: Int, callback: @escaping (Result<Profile, APIError>) -> Void) {
         AF.request(baseUrl + "/v1/users/" + String(id), method: .get, headers: ["Authorization": token!])
             .validate()
             .response { result in
@@ -337,11 +345,76 @@ extension APIClient {
                 }
 
                 do {
-                    let resp = try self.decoder.decode(User.self, from: data)
+                    let resp = try self.decoder.decode(Profile.self, from: data)
                     callback(.success(resp))
                 } catch {
                     return callback(.failure(.decode))
                 }
+            }
+    }
+}
+
+extension APIClient {
+    private struct Success {
+        let success: Bool
+    }
+
+    typealias FollowerListFunc = (_ id: Int, _ callback: @escaping (Result<[User], APIError>) -> Void) -> Void
+
+    func followers(_ id: Int, _ callback: @escaping (Result<[User], APIError>) -> Void) {
+        userListRequest("/v1/users/" + String(id) + "/followers", callback: callback)
+    }
+
+    func following(_ id: Int, _ callback: @escaping (Result<[User], APIError>) -> Void) {
+        userListRequest("/v1/users/" + String(id) + "/following", callback: callback)
+    }
+
+    func follow(id: Int, callback: @escaping (Result<Bool, APIError>) -> Void) {
+        followRequest("/v1/users/follow", id: id, callback: callback)
+    }
+
+    func unfollow(id: Int, callback: @escaping (Result<Bool, APIError>) -> Void) {
+        followRequest("/v1/users/unfollow", id: id, callback: callback)
+    }
+
+    private func userListRequest(_ path: String, callback: @escaping (Result<[User], APIError>) -> Void) {
+        AF.request(baseUrl + path, method: .get, headers: ["Authorization": token!])
+            .validate()
+            .response { result in
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
+
+                do {
+                    let resp = try self.decoder.decode([User].self, from: data)
+                    callback(.success(resp))
+                } catch {
+                    return callback(.failure(.decode))
+                }
+            }
+    }
+
+    private func followRequest(_ path: String, id: Int, callback: @escaping (Result<Bool, APIError>) -> Void) {
+        AF.request(baseUrl + path, method: .post, parameters: ["id": id], encoding: URLEncoding.default, headers: ["Authorization": token!])
+            .validate()
+            .response { result in
+                guard result.data != nil else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
+
+                if result.response?.statusCode == 200 {
+                    return callback(.success(true))
+                }
+
+                return callback(.failure(.decode))
             }
     }
 }
