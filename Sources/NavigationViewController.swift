@@ -216,7 +216,7 @@ extension NavigationViewController: RoomListViewDelegate {
         if activityIndicator.isAnimating {
             return
         }
-        
+
         if room != nil, let roomid = room?.id, id == roomid {
             presentCurrentRoom()
             return
