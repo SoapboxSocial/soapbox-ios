@@ -8,16 +8,15 @@
 import UIKit
 
 class FollowerListViewController: UIViewController {
-
     private let id: Int
     private let userListFunc: APIClient.UserListFunc
 
-    init(id: Int userListFunc: @escaping APIClient.UserListFunc) {
-        self.userListFunc = userListFunc
+    init(id _: Int userListFunc: @escaping APIClient.UserListFunc) {
+        userListFunc = userListFunc
         super.init(nibName: nil, bundle: nil)
     }
 
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -26,5 +25,4 @@ class FollowerListViewController: UIViewController {
 
         // Do any additional setup after loading the view.
     }
-
 }
