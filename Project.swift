@@ -20,6 +20,7 @@ let project = Project(
                     "ENABLE_BITCODE": SettingValue.string("NO"),
                     "CURRENT_PROJECT_VERSION": SettingValue.string("26"),
                     "MARKETING_VERSION": SettingValue.string("1.3"),
+                    "CODE_SIGN_IDENTITY": SettingValue.string("25E886LS3F"),
                 ]
             )
         ),
