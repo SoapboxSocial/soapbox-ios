@@ -15,7 +15,13 @@ let project = Project(
             dependencies: [
                 .cocoapods(path: "."),
             ],
-            settings: Settings(base: ["ENABLE_BITCODE": "NO"])
+            settings: Settings(
+                base: [
+                    "ENABLE_BITCODE": SettingValue.string("NO"),
+                    "CURRENT_PROJECT_VERSION": SettingValue.string("26"),
+                    "MARKETING_VERSION": SettingValue.string("1.3"),
+                ]
+            )
         ),
         Target(
             name: "VoicelyTests",
