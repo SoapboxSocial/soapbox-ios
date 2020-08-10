@@ -13,6 +13,7 @@ protocol RoomDelegate {
     func userDidLeaveRoom(user: Int)
     func didChangeUserRole(user: Int, role: APIClient.MemberRole)
     func didChangeMemberMuteState(user: Int, isMuted: Bool)
+    func roomWasClosedByRemote()
 }
 
 // @todo
@@ -173,7 +174,11 @@ class Room {
 extension Room: WebRTCClientDelegate {
     func webRTCClient(_: WebRTCClient, didDiscoverLocalCandidate _: RTCIceCandidate) {}
 
-    func webRTCClient(_: WebRTCClient, didChangeConnectionState _: RTCIceConnectionState) {}
+    func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
+        if state == .disconnected || state == .closed || state == .failed {
+            delegate?.roomWasClosedByRemote()
+        }
+    }
 
     func webRTCClient(_: WebRTCClient, didReceiveData data: Data) {
         do {
