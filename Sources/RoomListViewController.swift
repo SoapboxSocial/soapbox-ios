@@ -60,6 +60,10 @@ class RoomListViewController: UIViewController {
         let item = UIBarButtonItem(title: "@" + UserDefaults.standard.string(forKey: "username")!, style: .plain, target: self, action: #selector(openProfile))
         item.tintColor = .black
         navigationItem.leftBarButtonItem = item
+
+        let rightItem = UIBarButtonItem(title: "Menu", style: .plain, target: self, action: #selector(openMenu))
+        item.tintColor = .black
+        navigationItem.rightBarButtonItem = rightItem
     }
 
     @objc private func openProfile() {
@@ -71,6 +75,22 @@ class RoomListViewController: UIViewController {
 
         let profile = ProfileViewController(id: id)
         navigationController?.pushViewController(profile, animated: true)
+    }
+
+    @objc private func openMenu() {
+        let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+        let logout = UIAlertAction(title: "Logout", style: .destructive, handler: { _ in
+            DispatchQueue.main.async {
+                (UIApplication.shared.delegate as! AppDelegate).logout()
+            }
+        })
+        optionMenu.addAction(logout)
+
+        let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
+        optionMenu.addAction(cancel)
+
+        present(optionMenu, animated: true)
     }
 
     @objc private func didPullToRefresh() {
