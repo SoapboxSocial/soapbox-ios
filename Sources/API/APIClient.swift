@@ -4,6 +4,7 @@
 
 import Alamofire
 import Foundation
+import KeychainAccess
 import WebRTC
 
 enum APIError: Error {
@@ -28,8 +29,14 @@ class APIClient {
     }
 
     struct Member: Decodable {
-        let id: String
+        let id: Int
+        let displayName: String
         var role: MemberRole
+        var isMuted: Bool
+
+        private enum CodingKeys: String, CodingKey {
+            case id, role, displayName = "display_name", isMuted = "is_muted"
+        }
     }
 
     struct Room: Decodable {
@@ -63,6 +70,8 @@ class APIClient {
         case usernameAlreadyExists = 8
         case failedToLogin = 9
         case incorrectPin = 10
+        case userNotFound = 11
+        case failedToGetUser = 12
     }
 
     struct ErrorResponse: Decodable {
@@ -74,6 +83,8 @@ class APIClient {
 
     let baseUrl = "https://spksy.app"
 
+    // @todo auth header
+
     func join(
         room: Int,
         sdp: RTCSessionDescription,
@@ -84,9 +95,14 @@ class APIClient {
             "type": "offer" as AnyObject,
         ]
 
+        // @todo
+
+        let keychain = Keychain(service: "com.voicely.voicely")
+        let token = keychain[string: "token"]
+
         let path = String(format: "/v1/rooms/%d/join", room)
 
-        AF.request(baseUrl + path, method: .post, parameters: parameters, encoding: JSONEncoding())
+        AF.request(baseUrl + path, method: .post, parameters: parameters, encoding: JSONEncoding(), headers: ["Authorization": token!])
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
@@ -106,6 +122,8 @@ class APIClient {
             }
     }
 
+    // @todo auth header
+
     func createRoom(sdp: RTCSessionDescription, name: String?, callback: @escaping (Result<RoomConnection, APIError>) -> Void) {
         var parameters: [String: AnyObject] = [
             "sdp": sdp.sdp as AnyObject,
@@ -116,7 +134,10 @@ class APIClient {
             parameters["name"] = name! as AnyObject
         }
 
-        AF.request(baseUrl + "/v1/rooms/create", method: .post, parameters: parameters, encoding: JSONEncoding())
+        let keychain = Keychain(service: "com.voicely.voicely")
+        let token = keychain[string: "token"]
+
+        AF.request(baseUrl + "/v1/rooms/create", method: .post, parameters: parameters, encoding: JSONEncoding(), headers: ["Authorization": token!])
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
@@ -185,7 +206,7 @@ extension APIClient {
         let id: Int
         let displayName: String
         let username: String
-        let email: String
+        let email: String?
 
         private enum CodingKeys: String, CodingKey {
             case id, displayName = "display_name", username, email
@@ -291,6 +312,33 @@ extension APIClient {
                     }
 
                     callback(.success((user, expires)))
+                } catch {
+                    return callback(.failure(.decode))
+                }
+            }
+    }
+}
+
+extension APIClient {
+    // @todo add token
+    func user(id: Int, callback: @escaping (Result<User, APIError>) -> Void) {
+        let keychain = Keychain(service: "com.voicely.voicely")
+        let token = keychain[string: "token"]
+
+        AF.request(baseUrl + "/v1/users/" + String(id), method: .get, headers: ["Authorization": token!])
+            .validate()
+            .response { result in
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
+
+                do {
+                    let resp = try self.decoder.decode(User.self, from: data)
+                    callback(.success(resp))
                 } catch {
                     return callback(.failure(.decode))
                 }

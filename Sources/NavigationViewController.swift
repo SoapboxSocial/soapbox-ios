@@ -11,7 +11,7 @@ import NotificationBannerSwift
 import UIKit
 
 class NavigationViewController: UINavigationController {
-    var activityIndicator = UIActivityIndicatorView(style: .medium)
+    var activityIndicator = UIActivityIndicatorView(style: .large)
 
     private var room: Room?
 
@@ -50,10 +50,16 @@ class NavigationViewController: UINavigationController {
 
         activityIndicator.isHidden = true
         activityIndicator.hidesWhenStopped = true
+        activityIndicator.color = .black
 
         activityIndicator.center = view.center
-
         view.addSubview(activityIndicator)
+
+        navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationBar.shadowImage = UIImage()
+        navigationBar.isHidden = false
+        navigationBar.isTranslucent = true
+        navigationBar.backgroundColor = .clear
     }
 
     @objc func didTapCreateRoom() {
@@ -79,7 +85,8 @@ class NavigationViewController: UINavigationController {
             creationDrawer!.attachTo(view: view)
             creationDrawer!.backgroundEffect = nil
             creationDrawer!.snapPositions = [.open, .closed]
-            creationDrawer!.backgroundColor = .elementBackground
+            creationDrawer!.cornerRadius = 25
+            creationDrawer!.backgroundColor = .secondaryBackground
             creationDrawer!.setPosition(.closed, animated: false)
             view.addSubview(creationDrawer!)
 
@@ -90,7 +97,6 @@ class NavigationViewController: UINavigationController {
             roomView.translatesAutoresizingMaskIntoConstraints = false
             creationDrawer!.addSubview(roomView)
             roomView.autoPinEdgesToSuperview()
-            // roomView.delegate = self
 
             creationDrawer!.setPosition(.open, animated: true) { _ in
                 self.createRoomButton.isHidden = true
@@ -99,6 +105,7 @@ class NavigationViewController: UINavigationController {
         }
 
         // @todo this should be requested on app launch.
+        // @todo we also need to ask on joining
         switch AVAudioSession.sharedInstance().recordPermission {
         case .granted:
             showCreationDrawer()
@@ -125,6 +132,7 @@ class NavigationViewController: UINavigationController {
         }
 
         roomDrawer = DrawerView()
+        roomDrawer!.cornerRadius = 25.0
         roomDrawer!.attachTo(view: view)
         roomDrawer!.backgroundEffect = nil
         roomDrawer!.snapPositions = [.collapsed, .open]
@@ -170,16 +178,32 @@ class NavigationViewController: UINavigationController {
 }
 
 extension NavigationViewController: RoomViewDelegate {
+    func didSelectViewProfile(id: Int) {
+        roomDrawer?.setPosition(.collapsed, animated: true) { _ in
+            DispatchQueue.main.async {
+                let profile = ProfileViewController(id: id)
+                self.pushViewController(profile, animated: true)
+            }
+        }
+    }
+
     func roomDidExit() {
         roomDrawer?.setPosition(.closed, animated: true) { _ in
             DispatchQueue.main.async {
-                self.roomDrawer?.removeFromSuperview()
-                self.roomDrawer = nil
-                self.room = nil
-                self.createRoomButton.isHidden = false
-                UIApplication.shared.isIdleTimerDisabled = false
+                self.shutdownRoom()
             }
         }
+    }
+
+    func shutdownRoom() {
+        roomDrawer?.removeFromSuperview()
+        roomDrawer = nil
+
+        room?.close()
+        room = nil
+
+        createRoomButton.isHidden = false
+        UIApplication.shared.isIdleTimerDisabled = false
     }
 }
 
@@ -193,6 +217,8 @@ extension NavigationViewController: RoomListViewDelegate {
             presentCurrentRoom()
             return
         }
+
+        shutdownRoom()
 
         activityIndicator.startAnimating()
         activityIndicator.isHidden = false

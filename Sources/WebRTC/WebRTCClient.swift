@@ -73,8 +73,7 @@ final class WebRTCClient: NSObject {
     }
 
     func offer(completion: @escaping (_ sdp: RTCSessionDescription) -> Void) {
-        let constrains = RTCMediaConstraints(mandatoryConstraints: mediaConstrains,
-                                             optionalConstraints: nil)
+        let constrains = RTCMediaConstraints(mandatoryConstraints: mediaConstrains, optionalConstraints: nil)
         peerConnection.offer(for: constrains) { sdp, _ in
             guard let sdp = sdp else {
                 return
@@ -87,8 +86,7 @@ final class WebRTCClient: NSObject {
     }
 
     func answer(completion: @escaping (_ sdp: RTCSessionDescription) -> Void) {
-        let constrains = RTCMediaConstraints(mandatoryConstraints: mediaConstrains,
-                                             optionalConstraints: nil)
+        let constrains = RTCMediaConstraints(mandatoryConstraints: mediaConstrains, optionalConstraints: nil)
         peerConnection.answer(for: constrains) { sdp, _ in
             guard let sdp = sdp else {
                 return
@@ -176,9 +174,10 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
 
     func peerConnection(_: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
         if newState == .connected {
-            speakerOn()
+            configureAudioForConnectedState()
         }
 
+        debugPrint("peerConnection state did change \(newState)")
         delegate?.webRTCClient(self, didChangeConnectionState: newState)
     }
 
@@ -209,7 +208,12 @@ extension WebRTCClient {
         setAudioEnabled(true)
     }
 
-    func speakerOn() {
+    private func setAudioEnabled(_ isEnabled: Bool) {
+        let audioTracks = peerConnection.transceivers.compactMap { $0.sender.track as? RTCAudioTrack }
+        audioTracks.forEach { $0.isEnabled = isEnabled }
+    }
+
+    private func configureAudioForConnectedState() {
         audioQueue.async { [weak self] in
             guard let self = self else {
                 return
@@ -217,19 +221,14 @@ extension WebRTCClient {
 
             self.rtcAudioSession.lockForConfiguration()
             do {
-                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
-                try self.rtcAudioSession.overrideOutputAudioPort(.speaker)
+                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.mixWithOthers, .defaultToSpeaker, .allowBluetooth, .allowBluetoothA2DP])
+                try self.rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
                 try self.rtcAudioSession.setActive(true)
             } catch {
                 debugPrint("Couldn't force audio to speaker: \(error)")
             }
             self.rtcAudioSession.unlockForConfiguration()
         }
-    }
-
-    private func setAudioEnabled(_ isEnabled: Bool) {
-        let audioTracks = peerConnection.transceivers.compactMap { $0.sender.track as? RTCAudioTrack }
-        audioTracks.forEach { $0.isEnabled = isEnabled }
     }
 }
 

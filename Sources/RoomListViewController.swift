@@ -56,10 +56,24 @@ class RoomListViewController: UIViewController {
         loadData()
 
         view.addSubview(rooms)
+
+        let item = UIBarButtonItem(title: "@" + UserDefaults.standard.string(forKey: "username")!, style: .plain, target: self, action: #selector(openProfile))
+        item.tintColor = .black
+        navigationItem.leftBarButtonItem = item
     }
 
-    @objc
-    private func didPullToRefresh() {
+    @objc private func openProfile() {
+        let id = UserDefaults.standard.integer(forKey: "id")
+        if id == 0 {
+            (UIApplication.shared.delegate as! AppDelegate).showLoginScreen()
+            return
+        }
+
+        let profile = ProfileViewController(id: id)
+        navigationController?.pushViewController(profile, animated: true)
+    }
+
+    @objc private func didPullToRefresh() {
         loadData()
     }
 

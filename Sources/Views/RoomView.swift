@@ -10,6 +10,7 @@ import UIKit
 
 protocol RoomViewDelegate {
     func roomDidExit()
+    func didSelectViewProfile(id: Int)
 }
 
 class RoomView: UIView {
@@ -43,12 +44,14 @@ class RoomView: UIView {
             return
         }
 
-        layer.cornerRadius = 10.0
+        backgroundColor = .elementBackground
+
+        roundCorners(corners: [.topLeft, .topRight], radius: 25.0)
 
         let inset = safeAreaInsets.bottom
 
         let topBar = UIView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: topBarHeight + inset))
-        topBar.roundCorners(corners: [.topLeft, .topRight], radius: 9.0)
+        topBar.roundCorners(corners: [.topLeft, .topRight], radius: 25.0)
         addSubview(topBar)
 
         let recognizer = UITapGestureRecognizer(target: self, action: #selector(openBar))
@@ -80,7 +83,7 @@ class RoomView: UIView {
 
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 0, right: 10)
-        layout.itemSize = CGSize(width: 60, height: 60)
+        layout.itemSize = CGSize(width: 66, height: 90)
 
         members = UICollectionView(frame: CGRect(x: 0, y: topBar.frame.size.height, width: frame.size.width, height: frame.size.height - topBar.frame.size.height), collectionViewLayout: layout)
         members!.dataSource = self
@@ -146,20 +149,26 @@ class RoomView: UIView {
 }
 
 extension RoomView: RoomDelegate {
+    func didChangeMemberMuteState(user _: Int, isMuted: Bool) {
+        DispatchQueue.main.async {
+            self.members.reloadData()
+        }
+    }
+
     //  @todo for efficiency these should all only update the user that was changed
-    func userDidJoinRoom(user _: String) {
+    func userDidJoinRoom(user _: Int) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
     }
 
-    func userDidLeaveRoom(user _: String) {
+    func userDidLeaveRoom(user _: Int) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
     }
 
-    func didChangeUserRole(user _: String, role _: APIClient.MemberRole) {
+    func didChangeUserRole(user _: Int, role _: APIClient.MemberRole) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
@@ -169,33 +178,50 @@ extension RoomView: RoomDelegate {
 extension RoomView: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if indexPath.item == 0 {
+           let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
+                DispatchQueue.main.async {
+                    self.delegate?.didSelectViewProfile(id: UserDefaults.standard.integer(forKey: "id"))
+                }
+            })
+            optionMenu.addAction(profileAction)
+
+            let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
+            optionMenu.addAction(cancel)
+
+            UIApplication.shared.keyWindow?.rootViewController!.present(optionMenu, animated: true)
             return
         }
 
-        if room.role != .owner {
-            return
-        }
-
-        showRoleAction(for: room.members[indexPath.item - 1])
+        showMemberAction(for: room.members[indexPath.item - 1])
     }
 
-    private func showRoleAction(for member: APIClient.Member) {
+    private func showMemberAction(for member: APIClient.Member) {
         let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-        var action: UIAlertAction
+        if room.role == .owner {
+            var action: UIAlertAction
 
-        if member.role == .speaker {
-            action = UIAlertAction(title: NSLocalizedString("move_to_audience", comment: ""), style: .default, handler: { _ in
-                self.room.remove(speaker: member.id)
+            if member.role == .speaker {
+                action = UIAlertAction(title: NSLocalizedString("move_to_audience", comment: ""), style: .default, handler: { _ in
+                    self.room.remove(speaker: member.id)
 
-            })
-        } else {
-            action = UIAlertAction(title: NSLocalizedString("make_speaker", comment: ""), style: .default, handler: { _ in
-                self.room.add(speaker: member.id)
-            })
+                })
+            } else {
+                action = UIAlertAction(title: NSLocalizedString("make_speaker", comment: ""), style: .default, handler: { _ in
+                    self.room.add(speaker: member.id)
+                })
+            }
+
+            optionMenu.addAction(action)
         }
 
-        optionMenu.addAction(action)
+        let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
+            DispatchQueue.main.async {
+                self.delegate?.didSelectViewProfile(id: member.id)
+            }
+        })
+        optionMenu.addAction(profileAction)
 
         let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
         optionMenu.addAction(cancel)
@@ -213,9 +239,10 @@ extension RoomView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! RoomMemberCell
         if indexPath.item == 0 {
-            cell.setup(isSelf: true, role: room.role)
+            // @todo this is a bit ugly
+            cell.setup(isSelf: true, name: UserDefaults.standard.string(forKey: "display") ?? "", role: room.role)
         } else {
-            cell.setup(isSelf: false, role: room.members[indexPath.item - 1].role)
+            cell.setup(isSelf: false, member: room.members[indexPath.item - 1])
         }
 
         return cell

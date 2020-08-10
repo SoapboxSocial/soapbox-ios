@@ -5,14 +5,14 @@
 import UIKit
 
 class RoomListEmptyCell: UICollectionViewCell {
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
 
         let titleLabel = UILabel()
         let messageLabel = UILabel()
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.textColor = .label
+        titleLabel.textColor = .black // @todo
         titleLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 18)
         messageLabel.textColor = .lightGray
         messageLabel.font = UIFont(name: "HelveticaNeue-Regular", size: 17)
@@ -27,5 +27,9 @@ class RoomListEmptyCell: UICollectionViewCell {
         messageLabel.text = NSLocalizedString("start_room_tip", comment: "")
         messageLabel.numberOfLines = 3
         messageLabel.textAlignment = .center
+    }
+
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

@@ -6,8 +6,8 @@
 //  Copyright © 2020 Dean Eigenmann. All rights reserved.
 //
 
-import UIKit
 import KeychainAccess
+import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -19,20 +19,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
 
-        let keychain = Keychain(service: "com.voicely.voicely")
-        if let token = keychain[string: "token"], let expiry = keychain[string: "expiry"], (Int(expiry) ?? 0) > Int(Date().timeIntervalSince1970) {
+        if isLoggedIn() {
             openLoggedInState()
             window?.makeKeyAndVisible()
             return true
         }
 
+        showLoginScreen()
+        window?.makeKeyAndVisible()
+
+        return true
+    }
+
+    func showLoginScreen() {
         let navigation = UINavigationController(rootViewController: LoginViewController())
         navigation.navigationBar.isHidden = true
 
         window!.rootViewController = navigation
-        window?.makeKeyAndVisible()
-
-        return true
     }
 
     func transitionToLoggedInState(token: String, user: APIClient.User, expires: Int) {
@@ -51,5 +54,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         viewController.delegate = nav
 
         window!.rootViewController = nav
+    }
+
+    private func isLoggedIn() -> Bool {
+        let keychain = Keychain(service: "com.voicely.voicely")
+        guard let _ = keychain[string: "token"] else {
+            return false
+        }
+
+        guard let expiry = keychain[string: "expiry"] else {
+            return false
+        }
+
+        if (Int(expiry) ?? 0) <= Int(Date().timeIntervalSince1970) {
+            return false
+        }
+
+        if UserDefaults.standard.integer(forKey: "id") == 0 {
+            return false
+        }
+
+        return true
     }
 }

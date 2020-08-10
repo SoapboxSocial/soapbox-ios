@@ -5,10 +5,10 @@
 //  Created by Dean Eigenmann on 03.08.20.
 //
 
-import UIKit
 import NotificationBannerSwift
+import UIKit
 
-class RegistrationViewController: UIViewController {
+class RegistrationViewController: AbstractRegistrationProcessViewController {
     let token: String
 
     var usernameTextField: UITextField!
@@ -23,42 +23,33 @@ class RegistrationViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func setupContentView(_ view: UIView) {
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 20))
+        label.textAlignment = .center
+        label.text = NSLocalizedString("create_account", comment: "")
+        label.textColor = .white
+        label.font = label.font.withSize(20)
+        view.addSubview(label)
 
-        view.backgroundColor = UIColor(red: 213 / 255, green: 94 / 255, blue: 163 / 255, alpha: 1)
-
-        usernameTextField = TextField(frame: CGRect(x: 0, y: 100, width: 330, height: 40))
-        usernameTextField.center = CGPoint(x: view.center.x, y: usernameTextField.center.y)
-        usernameTextField.placeholder = "Username"
+        usernameTextField = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: label.frame.size.height + 20, width: 330, height: 40))
+        usernameTextField.placeholder = NSLocalizedString("username", comment: "")
+        usernameTextField.delegate = self
         view.addSubview(usernameTextField)
 
-        displayName = TextField(frame: CGRect(x: 0, y: 0, width: 330, height: 40))
-        
-        displayName.center = CGPoint(x: view.center.x, y: view.center.y)
-        displayName.placeholder = "Display Name"
+        displayName = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: usernameTextField.frame.height + usernameTextField.frame.origin.y + 10, width: 330, height: 40))
+        displayName.placeholder = NSLocalizedString("display_name", comment: "")
+        displayName.delegate = self
         view.addSubview(displayName)
-        
-        usernameTextField.frame = CGRect(origin: CGPoint(x: usernameTextField.frame.origin.x, y: displayName.frame.origin.y - (displayName.frame.size.height + 30)), size: usernameTextField.frame.size)
-
-        let createButton = UIButton(frame: CGRect(x: 0, y: displayName.frame.size.height + displayName.frame.origin.y + 30, width: view.frame.size.width / 2, height: 40))
-        createButton.setTitle(NSLocalizedString("create", comment: ""), for: .normal)
-        createButton.center = CGPoint(x: view.center.x, y: createButton.center.y)
-        createButton.layer.cornerRadius = 5
-        createButton.layer.borderWidth = 1
-        createButton.addTarget(self, action: #selector(submit), for: .touchUpInside)
-        view.addSubview(createButton)
     }
 
-    @objc private func submit() {
-
+    @objc override func didSubmit() {
         guard let username = usernameTextField.text, isValidUsername(username) else {
             return showError(text: NSLocalizedString("invalid_username", comment: ""))
         }
 
         APIClient().register(token: token, username: username, displayName: displayName.text ?? username) { result in
             switch result {
-            case .failure(let error):
+            case let .failure(error):
                 if error == .usernameAlreadyExists {
                     return self.showError(text: NSLocalizedString("username_already_exists", comment: ""))
                 }
@@ -70,14 +61,14 @@ class RegistrationViewController: UIViewController {
                     style: .danger
                 )
                 banner.show(cornerRadius: 10, shadowBlurRadius: 15)
-            case .success(let user, let expires):
+            case let .success(user, expires):
                 DispatchQueue.main.async {
                     (UIApplication.shared.delegate as! AppDelegate).transitionToLoggedInState(token: self.token, user: user, expires: expires)
                 }
             }
         }
     }
-    
+
     private func isValidUsername(_ username: String) -> Bool {
         if username.count >= 100 || username.count < 3 {
             return false
@@ -88,7 +79,7 @@ class RegistrationViewController: UIViewController {
         let usernamePred = NSPredicate(format: "SELF MATCHES %@", usernameRegexEx)
         return usernamePred.evaluate(with: username)
     }
-    
+
     private func showError(text: String) {
         let banner = NotificationBanner(title: text, style: .danger)
         banner.show()
