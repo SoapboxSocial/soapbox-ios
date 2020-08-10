@@ -403,7 +403,6 @@ extension APIClient {
         AF.request(baseUrl + path, method: .post, parameters: ["id": id], encoding: URLEncoding.default, headers: ["Authorization": token!])
             .validate()
             .response { result in
-                debugPrint(result)
                 guard result.data != nil else {
                     return callback(.failure(.requestFailed))
                 }
