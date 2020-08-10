@@ -322,7 +322,7 @@ extension APIClient {
         let id: Int
         let displayName: String
         let username: String
-        let followers: Int
+        var followers: Int
         let following: Int
         let followedBy: Bool?
         var isFollowing: Bool?

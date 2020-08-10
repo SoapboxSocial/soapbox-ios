@@ -14,6 +14,7 @@ class ProfileViewController: UIViewController {
     private var user: APIClient.Profile!
 
     private var followButton: Button!
+    private var followersLabel: UILabel!
 
     init(id: Int) {
         self.id = id
@@ -62,18 +63,18 @@ class ProfileViewController: UIViewController {
         username.textColor = .black
         view.addSubview(username)
 
-        let followers = UILabel(frame: CGRect(x: 40, y: username.frame.origin.y + username.frame.size.height + 40, width: 100, height: 20))
-        followers.text = followerLabel(count: user.followers)
-        followers.font = username.font
-        followers.textColor = .black
-        view.addSubview(followers)
+        followersLabel = UILabel(frame: CGRect(x: 40, y: username.frame.origin.y + username.frame.size.height + 40, width: 100, height: 20))
+        updateFollowersLabelText(count: user.followers)
+        followersLabel.font = username.font
+        followersLabel.textColor = .black
+        view.addSubview(followersLabel)
 
-        let following = UILabel(frame: CGRect(x: followers.frame.size.width + followers.frame.origin.x + 10, y: username.frame.origin.y + username.frame.size.height + 40, width: 100, height: 20))
-        following.text = String(user.following) + " " + NSLocalizedString("following", comment: "")
-        following.font = username.font
-        following.textColor = .black
-        view.addSubview(following)
-        
+        let followingLabel = UILabel(frame: CGRect(x: followersLabel.frame.size.width + followersLabel.frame.origin.x + 10, y: username.frame.origin.y + username.frame.size.height + 40, width: 100, height: 20))
+        followingLabel.font = username.font
+        followingLabel.textColor = .black
+        followingLabel.text = String(user.following) + " " + NSLocalizedString("following", comment: "")
+        view.addSubview(followingLabel)
+
         if self.user.id != UserDefaults.standard.integer(forKey: "id") {
             if user.followedBy ?? false {
                 let followsYou = UILabel(frame: CGRect(x: name.frame.origin.x + name.frame.size.width + 30, y: name.frame.origin.y, width: 100, height: 20))
@@ -97,6 +98,8 @@ class ProfileViewController: UIViewController {
                     case .failure:
                         self.displayErrorBanner()
                     case .success:
+                        self.user.followers -= 1
+                        self.updateFollowersLabelText(count: self.user.followers)
                         self.user.isFollowing = false
                         self.updateFollowButtonLabel()
                     }
@@ -109,6 +112,8 @@ class ProfileViewController: UIViewController {
                     case .failure:
                         self.displayErrorBanner()
                     case .success:
+                        self.user.followers += 1
+                        self.updateFollowersLabelText(count: self.user.followers)
                         self.user.isFollowing = true
                         self.updateFollowButtonLabel()
                     }
@@ -117,16 +122,15 @@ class ProfileViewController: UIViewController {
             })
         }
     }
-    
+
     private func updateFollowButtonLabel() {
         if user.isFollowing ?? false {
-            self.followButton.setTitle(NSLocalizedString("unfollow", comment: ""), for: .normal)
+            followButton.setTitle(NSLocalizedString("unfollow", comment: ""), for: .normal)
         } else {
-            self.followButton.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
+            followButton.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
         }
     }
-    
-    
+
     private func displayErrorBanner() {
         let banner = FloatingNotificationBanner(
             title: NSLocalizedString("something_went_wrong", comment: ""),
@@ -135,12 +139,13 @@ class ProfileViewController: UIViewController {
         )
         banner.show(cornerRadius: 10, shadowBlurRadius: 15)
     }
-    
-    private func followerLabel(count: Int) -> String {
+
+    private func updateFollowersLabelText(count: Int) {
         if count == 1 {
-            return String(count) + " " + NSLocalizedString("follower", comment: "")
+            followersLabel.text = String(count) + " " + NSLocalizedString("follower", comment: "")
+            return
         }
-        
-        return String(count) + " " + NSLocalizedString("followers", comment: "")
+
+        followersLabel.text = String(count) + " " + NSLocalizedString("followers", comment: "")
     }
 }
