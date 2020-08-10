@@ -52,7 +52,7 @@ class ProfileViewController: UIViewController {
         image.backgroundColor = .secondaryBackground
         view.addSubview(image)
 
-        let name = UILabel(frame: CGRect(x: 40, y: image.frame.origin.y + image.frame.size.height + 20, width: 100, height: 20))
+        let name = UILabel(frame: CGRect(x: 40, y: image.frame.origin.y + image.frame.size.height + 20, width: 200, height: 20))
         name.text = user.displayName
         name.font = UIFont(name: "HelveticaNeue-Bold", size: 18)
         name.textColor = .black
