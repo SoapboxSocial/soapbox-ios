@@ -18,8 +18,8 @@ let project = Project(
             settings: Settings(
                 base: [
                     "ENABLE_BITCODE": SettingValue.string("NO"),
-                    "CURRENT_PROJECT_VERSION": SettingValue.string("25"),
-                    "MARKETING_VERSION": SettingValue.string("1.3")
+                    "CURRENT_PROJECT_VERSION": SettingValue.string("26"),
+                    "MARKETING_VERSION": SettingValue.string("1.3"),
                 ]
             )
         ),
