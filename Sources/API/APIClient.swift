@@ -16,13 +16,12 @@ enum APIError: Error {
 }
 
 class APIClient {
-    
     // @todo put elsewhere?
     private var token: String? {
         let keychain = Keychain(service: "com.voicely.voicely")
         return keychain[string: "token"]
     }
-    
+
     // @todo these all need better names
     struct RoomConnection {
         let id: Int
@@ -88,7 +87,7 @@ class APIClient {
 
     let decoder = JSONDecoder()
 
-    let baseUrl = "https://spksy.app"
+    let baseUrl = "http://192.168.33.16"
 
     // @todo auth header
 
@@ -319,8 +318,22 @@ extension APIClient {
 }
 
 extension APIClient {
+    struct Profile: Decodable {
+        let id: Int
+        let displayName: String
+        let username: String
+        let followers: Int
+        let following: Int
+        let followedBy: Bool?
+        var isFollowing: Bool?
+
+        private enum CodingKeys: String, CodingKey {
+            case id, displayName = "display_name", username, followers, following, followedBy = "followed_by", isFollowing = "is_following"
+        }
+    }
+
     // @todo add token
-    func user(id: Int, callback: @escaping (Result<User, APIError>) -> Void) {
+    func user(id: Int, callback: @escaping (Result<Profile, APIError>) -> Void) {
         AF.request(baseUrl + "/v1/users/" + String(id), method: .get, headers: ["Authorization": token!])
             .validate()
             .response { result in
@@ -332,8 +345,10 @@ extension APIClient {
                     callback(.failure(.noData))
                 }
 
+                debugPrint(String(data: data, encoding: .utf8))
+
                 do {
-                    let resp = try self.decoder.decode(User.self, from: data)
+                    let resp = try self.decoder.decode(Profile.self, from: data)
                     callback(.success(resp))
                 } catch {
                     return callback(.failure(.decode))
@@ -343,27 +358,26 @@ extension APIClient {
 }
 
 extension APIClient {
-    
     private struct Success {
         let success: Bool
     }
-    
+
     func followers(id: Int, callback: @escaping (Result<[User], APIError>) -> Void) {
         userListRequest("/v1/users/" + String(id) + "/followers", callback: callback)
     }
-    
+
     func following(id: Int, callback: @escaping (Result<[User], APIError>) -> Void) {
         userListRequest("/v1/users/" + String(id) + "/following", callback: callback)
     }
-    
+
     func follow(id: Int, callback: @escaping (Result<Bool, APIError>) -> Void) {
         followRequest("/v1/users/follow", id: id, callback: callback)
     }
-    
+
     func unfollow(id: Int, callback: @escaping (Result<Bool, APIError>) -> Void) {
         followRequest("/v1/users/unfollow", id: id, callback: callback)
     }
-    
+
     private func userListRequest(_ path: String, callback: @escaping (Result<[User], APIError>) -> Void) {
         AF.request(baseUrl + path, method: .get, headers: ["Authorization": token!])
             .validate()
@@ -384,24 +398,25 @@ extension APIClient {
                 }
             }
     }
-    
+
     private func followRequest(_ path: String, id: Int, callback: @escaping (Result<Bool, APIError>) -> Void) {
         AF.request(baseUrl + path, method: .post, parameters: ["id": id], encoding: URLEncoding.default, headers: ["Authorization": token!])
-        .validate()
-        .response { result in
-            guard result.data != nil else {
-                return callback(.failure(.requestFailed))
-            }
+            .validate()
+            .response { result in
+                debugPrint(result)
+                guard result.data != nil else {
+                    return callback(.failure(.requestFailed))
+                }
 
-            if result.error != nil {
-                callback(.failure(.noData))
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
+
+                if result.response?.statusCode == 200 {
+                    return callback(.success(true))
+                }
+
+                return callback(.failure(.decode))
             }
-            
-            if result.response?.statusCode == 200 {
-                return callback(.success(true))
-            }
-            
-            return callback(.failure(.decode))
-        }
     }
 }

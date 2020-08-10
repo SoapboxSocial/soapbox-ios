@@ -49,3 +49,11 @@
 "incorrect_pin" = "The entered pin was incorrect";
 
 "view_profile" = "View profile";
+
+"follows_you" = "Follows you";
+"follow" = "Follow";
+"unfollow" = "Unfollow";
+
+"following" = "Following";
+"followers" = "Followers";
+"follower" = "Follower";
