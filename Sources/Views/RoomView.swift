@@ -9,6 +9,7 @@ import DrawerView
 import UIKit
 
 protocol RoomViewDelegate {
+    func roomWasClosedDueToError()
     func roomDidExit()
     func didSelectViewProfile(id: Int)
 }
@@ -149,6 +150,10 @@ class RoomView: UIView {
 }
 
 extension RoomView: RoomDelegate {
+    func roomWasClosedByRemote() {
+        delegate?.roomWasClosedDueToError()
+    }
+    
     func didChangeMemberMuteState(user _: Int, isMuted: Bool) {
         DispatchQueue.main.async {
             self.members.reloadData()
