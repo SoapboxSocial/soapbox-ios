@@ -178,6 +178,22 @@ class NavigationViewController: UINavigationController {
 }
 
 extension NavigationViewController: RoomViewDelegate {
+    func roomWasClosedDueToError() {
+        DispatchQueue.main.async {
+            self.roomDrawer?.setPosition(.closed, animated: true) { _ in
+                DispatchQueue.main.async {
+                    let banner = FloatingNotificationBanner(
+                        title: NSLocalizedString("something_went_wrong", comment: ""),
+                        style: .danger
+                    )
+                    banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+                    
+                    self.shutdownRoom()
+                }
+            }
+        }
+    }
+    
     func didSelectViewProfile(id: Int) {
         roomDrawer?.setPosition(.collapsed, animated: true) { _ in
             DispatchQueue.main.async {
