@@ -24,7 +24,36 @@ platform :ios do
   end
 
   lane :beta do
-    build_app(scheme: "Voicely")
+    disable_automatic_code_signing(path: "Voicely.xcodeproj")
+
+    match(
+      app_identifier: "com.voicely.voicely",
+      type: "appstore"
+    )
+
+    update_project_provisioning(
+      xcodeproj: "Voicely.xcodeproj",
+      target_filter: "Voicely",
+      profile:ENV["sigh_com.voicely.voicely_appstore_profile-path"],
+      build_configuration: "Release"
+    )
+
+    gym(
+      workspace: "Voicely.xcworkspace",
+      scheme:"Voicely",
+      configuration: "Release",
+      clean: true,
+      export_method: "app-store",
+      output_directory:"./build/",
+      export_options: {
+        method: "app-store",
+        provisioningProfiles: {
+          "com.voicely.voicely" => ENV["sigh_com.voicely.voicely_appstore_profile-name"]
+        }
+      },
+      codesigning_identity:"Apple Distribution: Dean Eigenmann (Z9LC5GZ33U)",
+      output_name: "Voicely.ipa"
+    )
     upload_to_testflight
   end
 end
