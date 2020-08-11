@@ -56,6 +56,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window!.rootViewController = nav
     }
 
+    func logout() {
+        let keychain = Keychain(service: "com.voicely.voicely")
+        try? keychain.remove("token")
+        showLoginScreen()
+    }
+
     private func isLoggedIn() -> Bool {
         let keychain = Keychain(service: "com.voicely.voicely")
         guard let _ = keychain[string: "token"] else {
