@@ -65,8 +65,7 @@ class RoomListViewController: UIViewController {
     @objc private func openProfile() {
         let id = UserDefaults.standard.integer(forKey: "id")
         if id == 0 {
-            (UIApplication.shared.delegate as! AppDelegate).showLoginScreen()
-            return
+            return (UIApplication.shared.delegate as! AppDelegate).transitionToLoginView()
         }
 
         let profile = ProfileViewController(id: id)
