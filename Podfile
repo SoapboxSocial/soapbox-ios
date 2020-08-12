@@ -12,6 +12,9 @@ target 'Voicely' do
   pod "DrawerView"
   pod 'NotificationBannerSwift'
   pod 'KeychainAccess'
+  pod 'SwiftConfettiView'
+  pod 'UIWindowTransitions'
+
 
   target 'VoicelyTests' do
     inherit! :search_paths

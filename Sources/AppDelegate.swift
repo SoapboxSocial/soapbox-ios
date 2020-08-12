@@ -8,6 +8,8 @@
 
 import KeychainAccess
 import UIKit
+import SwiftConfettiView
+import UIWindowTransitions
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -19,14 +21,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
 
-        if isLoggedIn() {
-            openLoggedInState()
-            window?.makeKeyAndVisible()
-            return true
-        }
-
-        showLoginScreen()
+        let viewController = AuthenticationViewController()
+        let navigation = UINavigationController(rootViewController: viewController)
+        navigation.navigationBar.isHidden = true
+        window!.rootViewController = navigation
         window?.makeKeyAndVisible()
+//        viewController.delegate = nav
+
+//        if isLoggedIn() {
+//            openLoggedInState()
+//            window?.makeKeyAndVisible()
+//            return true
+//        }
+//
+//        showLoginScreen()
+//        window?.makeKeyAndVisible()
 
         return true
     }
@@ -45,17 +54,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         UserStore.store(user: user)
 
-        openLoggedInState()
+//        openLoggedInState()
     }
 
     func openLoggedInState() {
         let viewController = RoomListViewController(api: APIClient())
         let nav = NavigationViewController(rootViewController: viewController)
         viewController.delegate = nav
-
-        window!.rootViewController = nav
+        
+        window!.setRootViewController(nav, options: UIWindow.TransitionOptions(direction: .fade, style: .easeOut))
     }
-
+    
     private func isLoggedIn() -> Bool {
         let keychain = Keychain(service: "com.voicely.voicely")
         guard let _ = keychain[string: "token"] else {

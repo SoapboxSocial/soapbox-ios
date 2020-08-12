@@ -153,7 +153,7 @@ extension RoomView: RoomDelegate {
     func roomWasClosedByRemote() {
         delegate?.roomWasClosedDueToError()
     }
-    
+
     func didChangeMemberMuteState(user _: Int, isMuted: Bool) {
         DispatchQueue.main.async {
             self.members.reloadData()
