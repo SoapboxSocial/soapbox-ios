@@ -57,3 +57,5 @@
 "following" = "Following";
 "followers" = "Followers";
 "follower" = "Follower";
+
+"account_successfully_created" = "Account Successfully created!";

@@ -25,7 +25,7 @@ class RoomListViewController: UIViewController {
     var roomsData = [APIClient.Room]()
 
     var currentRoom: Int?
-    
+
     init(api: APIClient) {
         self.api = api
         super.init(nibName: nil, bundle: nil)
@@ -37,7 +37,7 @@ class RoomListViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         rooms = UICollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout())
         rooms.dataSource = self
         rooms.alwaysBounceVertical = true

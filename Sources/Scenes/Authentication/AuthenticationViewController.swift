@@ -5,24 +5,25 @@
 //  Created by Dean Eigenmann on 12.08.20.
 //
 
-import UIKit
+import NotificationBannerSwift
 import SwiftConfettiView
+import UIKit
 
 class AuthenticationViewController: UIViewController {
     private enum State: Int {
         case login, pin, registration, success
     }
-    
+
     private let api = APIClient()
 
     private var contentView: UIView!
     private var scrollView: UIScrollView!
     private var submitButton: Button!
-    
+
     private var emailTextField: UITextField!
-    
+
     private var pinTextField: UITextField!
-    
+
     private var displayNameTextField: UITextField!
     private var usernameTextField: UITextField!
 
@@ -43,7 +44,7 @@ class AuthenticationViewController: UIViewController {
 
         contentView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height / 3))
         contentView.center = view.center
-        
+
         let height = (view.frame.size.height / 3) - 60
         scrollView = UIScrollView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: contentView.frame.size.height - 60))
         scrollView.contentSize = CGSize(width: view.frame.size.width * 4, height: scrollView.frame.size.height)
@@ -59,7 +60,7 @@ class AuthenticationViewController: UIViewController {
         submitButton.setTitle(NSLocalizedString("submit", comment: ""), for: .normal)
         submitButton.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
         contentView.addSubview(submitButton)
-        
+
         let views = [
             setupLoginView(height: height),
             setupPinView(height: height),
@@ -75,20 +76,20 @@ class AuthenticationViewController: UIViewController {
 
     private func showView(forState state: State) {
         scrollView.setContentOffset(CGPoint(x: view.frame.size.width * CGFloat(state.rawValue), y: 0), animated: true)
-        
+
         if state == .success {
             UIView.animate(withDuration: 0.3) {
                 self.submitButton.frame = CGRect(origin: CGPoint(x: self.submitButton.frame.origin.x, y: self.view.frame.size.height), size: self.submitButton.frame.size)
             }
-            
+
             let confettiView = SwiftConfettiView(frame: view.bounds)
             view.addSubview(confettiView)
             confettiView.startConfetti()
-            
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 confettiView.stopConfetti()
             }
-            
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.1) {
                 (UIApplication.shared.delegate as! AppDelegate).openLoggedInState()
             }
@@ -106,7 +107,7 @@ class AuthenticationViewController: UIViewController {
         case .registration:
             return handleRegistrationStep()
         case .success: break
-        }        
+        }
     }
 
     @objc private func keyboardWillHide() {
@@ -119,7 +120,7 @@ class AuthenticationViewController: UIViewController {
         guard let userInfo = notification.userInfo else { return }
         guard let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
 
-        let newOrigin = self.view.frame.height - (keyboardFrame.size.height + self.contentView.frame.size.height)
+        let newOrigin = view.frame.height - (keyboardFrame.size.height + contentView.frame.size.height)
 
         if newOrigin >= contentView.frame.origin.y {
             return
@@ -136,18 +137,24 @@ class AuthenticationViewController: UIViewController {
 }
 
 extension AuthenticationViewController {
-    private func handleLoginStep() {
+    private func handleLoginStep() {}
 
+    private func handlePinStep() {}
+
+    private func handleRegistrationStep() {}
+}
+
+extension AuthenticationViewController: AuthenticationPresenterOutput {
+    func displayError(_ style: ErrorStyle, title: String, description: String?) {
+        switch style {
+        case .normal:
+            let banner = NotificationBanner(title: title, subtitle: description, style: .danger)
+            banner.show()
+        case .floating:
+            let banner = FloatingNotificationBanner(title: title, subtitle: description, style: .danger)
+            banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+        }
     }
-    
-    private func handlePinStep() {
-        
-    }
-    
-    private func handleRegistrationStep() {
-        
-    }
-    
 }
 
 extension AuthenticationViewController {
@@ -166,7 +173,7 @@ extension AuthenticationViewController {
         emailTextField.placeholder = "Email"
         emailTextField.delegate = self
         view.addSubview(emailTextField)
-        
+
         return view
     }
 
@@ -184,7 +191,7 @@ extension AuthenticationViewController {
         pinTextField.keyboardType = .numberPad
         pinTextField.placeholder = NSLocalizedString("pin", comment: "")
         view.addSubview(pinTextField)
-        
+
         return view
     }
 
@@ -207,7 +214,7 @@ extension AuthenticationViewController {
         displayNameTextField.placeholder = NSLocalizedString("display_name", comment: "")
         displayNameTextField.delegate = self
         view.addSubview(displayNameTextField)
-        
+
         return view
     }
 
@@ -216,7 +223,7 @@ extension AuthenticationViewController {
 
         let label = UILabel(frame: CGRect(x: 0, y: (height / 2) + 30, width: view.frame.size.width, height: 20))
         label.textAlignment = .center
-        label.text = "Account Successfully created!"
+        label.text = NSLocalizedString("account_successfully_created", comment: "")
         label.textColor = .white
         label.font = label.font.withSize(20)
         view.addSubview(label)

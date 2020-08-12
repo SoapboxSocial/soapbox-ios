@@ -7,6 +7,4 @@
 
 import Foundation
 
-class AuthenticationInteractor {
-
-}
+class AuthenticationInteractor {}

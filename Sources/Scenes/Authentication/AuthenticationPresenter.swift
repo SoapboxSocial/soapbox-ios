@@ -7,6 +7,12 @@
 
 import Foundation
 
-class AuthenticationPresenter {
-
+enum ErrorStyle {
+    case normal, floating
 }
+
+protocol AuthenticationPresenterOutput {
+    func displayError(_ style: ErrorStyle, title: String, description: String?)
+}
+
+class AuthenticationPresenter {}

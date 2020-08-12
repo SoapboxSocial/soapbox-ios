@@ -7,8 +7,8 @@
 //
 
 import KeychainAccess
-import UIKit
 import SwiftConfettiView
+import UIKit
 import UIWindowTransitions
 
 @UIApplicationMain
@@ -61,10 +61,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let viewController = RoomListViewController(api: APIClient())
         let nav = NavigationViewController(rootViewController: viewController)
         viewController.delegate = nav
-        
+
         window!.setRootViewController(nav, options: UIWindow.TransitionOptions(direction: .fade, style: .easeOut))
     }
-    
+
     private func isLoggedIn() -> Bool {
         let keychain = Keychain(service: "com.voicely.voicely")
         guard let _ = keychain[string: "token"] else {
