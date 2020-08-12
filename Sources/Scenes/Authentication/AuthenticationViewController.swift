@@ -9,12 +9,18 @@ import NotificationBannerSwift
 import SwiftConfettiView
 import UIKit
 
+protocol AuthenticationViewControllerOutput {
+    func login(email: String?)
+    func submitPin(pin: String?)
+    func register(username: String?, displayName: String?)
+}
+
 class AuthenticationViewController: UIViewController {
     private enum State: Int {
         case login, pin, registration, success
     }
 
-    private let api = APIClient()
+    var output: AuthenticationViewControllerOutput!
 
     private var contentView: UIView!
     private var scrollView: UIScrollView!
@@ -27,11 +33,7 @@ class AuthenticationViewController: UIViewController {
     private var displayNameTextField: UITextField!
     private var usernameTextField: UITextField!
 
-    private var state = State.login {
-        willSet {
-            showView(forState: newValue)
-        }
-    }
+    private var state = AuthenticationInteractor.AuthenticationState.login
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -89,23 +91,18 @@ class AuthenticationViewController: UIViewController {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 confettiView.stopConfetti()
             }
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.1) {
-                (UIApplication.shared.delegate as! AppDelegate).openLoggedInState()
-            }
         }
     }
 
     @objc private func didSubmit() {
-        state = State(rawValue: state.rawValue + 1)!
-
+        view.endEditing(true)
         switch state {
         case .login:
-            return handleLoginStep()
+            return output.login(email: emailTextField.text)
         case .pin:
-            return handlePinStep()
+            return output.submitPin(pin: pinTextField.text)
         case .registration:
-            return handleRegistrationStep()
+            return output.register(username: usernameTextField.text, displayName: displayNameTextField.text)
         case .success: break
         }
     }
@@ -136,15 +133,26 @@ class AuthenticationViewController: UIViewController {
     }
 }
 
-extension AuthenticationViewController {
-    private func handleLoginStep() {}
-
-    private func handlePinStep() {}
-
-    private func handleRegistrationStep() {}
-}
-
 extension AuthenticationViewController: AuthenticationPresenterOutput {
+    func transitionTo(state: AuthenticationInteractor.AuthenticationState) {
+        self.state = state
+        scrollView.setContentOffset(CGPoint(x: view.frame.size.width * CGFloat(state.rawValue), y: 0), animated: true)
+
+        if state == .success {
+            UIView.animate(withDuration: 0.3) {
+                self.submitButton.frame = CGRect(origin: CGPoint(x: self.submitButton.frame.origin.x, y: self.view.frame.size.height), size: self.submitButton.frame.size)
+            }
+
+            let confettiView = SwiftConfettiView(frame: view.bounds)
+            view.addSubview(confettiView)
+            confettiView.startConfetti()
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                confettiView.stopConfetti()
+            }
+        }
+    }
+
     func displayError(_ style: ErrorStyle, title: String, description: String?) {
         switch style {
         case .normal:
@@ -223,7 +231,7 @@ extension AuthenticationViewController {
 
         let label = UILabel(frame: CGRect(x: 0, y: (height / 2) + 30, width: view.frame.size.width, height: 20))
         label.textAlignment = .center
-        label.text = NSLocalizedString("account_successfully_created", comment: "")
+        label.text = NSLocalizedString("welcome_to_voicely", comment: "")
         label.textColor = .white
         label.font = label.font.withSize(20)
         view.addSubview(label)
