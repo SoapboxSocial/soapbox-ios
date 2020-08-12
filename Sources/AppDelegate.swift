@@ -7,7 +7,9 @@
 //
 
 import KeychainAccess
+import SwiftConfettiView
 import UIKit
+import UIWindowTransitions
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -19,41 +21,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
 
-        if isLoggedIn() {
-            openLoggedInState()
-            window?.makeKeyAndVisible()
-            return true
-        }
+        let controller = { () -> UIViewController in
+            if isLoggedIn() {
+                return createLoggedIn()
+            } else {
+                return createLoginView()
+            }
+        }()
 
-        showLoginScreen()
+        window!.rootViewController = controller
         window?.makeKeyAndVisible()
 
         return true
     }
 
-    func showLoginScreen() {
-        let navigation = UINavigationController(rootViewController: LoginViewController())
-        navigation.navigationBar.isHidden = true
-
-        window!.rootViewController = navigation
+    func transitionToLoginView() {
+        window?.setRootViewController(createLoginView(), options: UIWindow.TransitionOptions(direction: .fade, style: .easeOut))
     }
 
-    func transitionToLoggedInState(token: String, user: APIClient.User, expires: Int) {
-        let keychain = Keychain(service: "com.voicely.voicely")
-        try? keychain.set(token, key: "token")
-        try? keychain.set(String(Int(Date().timeIntervalSince1970) + expires), key: "expiry")
-
-        UserStore.store(user: user)
-
-        openLoggedInState()
-    }
-
-    func openLoggedInState() {
+    func createLoggedIn() -> UIViewController {
         let viewController = RoomListViewController(api: APIClient())
         let nav = NavigationViewController(rootViewController: viewController)
         viewController.delegate = nav
 
-        window!.rootViewController = nav
+        return nav
+    }
+
+    func createLoginView() -> UIViewController {
+        let viewController = AuthenticationViewController()
+        let presenter = AuthenticationPresenter(output: viewController)
+        let interactor = AuthenticationInteractor(output: presenter, api: APIClient())
+        viewController.output = interactor
+
+        let navigation = UINavigationController(rootViewController: viewController)
+        navigation.navigationBar.isHidden = true
+
+        return navigation
     }
 
     private func isLoggedIn() -> Bool {

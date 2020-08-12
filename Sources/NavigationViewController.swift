@@ -187,13 +187,13 @@ extension NavigationViewController: RoomViewDelegate {
                         style: .danger
                     )
                     banner.show(cornerRadius: 10, shadowBlurRadius: 15)
-                    
+
                     self.shutdownRoom()
                 }
             }
         }
     }
-    
+
     func didSelectViewProfile(id: Int) {
         roomDrawer?.setPosition(.collapsed, animated: true) { _ in
             DispatchQueue.main.async {

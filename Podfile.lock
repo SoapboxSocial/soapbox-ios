@@ -8,7 +8,9 @@ PODS:
     - MarqueeLabel (~> 4.0.0)
     - SnapKit (~> 5.0.0)
   - SnapKit (5.0.1)
+  - SwiftConfettiView (0.1.0)
   - SwiftProtobuf (1.8.0)
+  - UIWindowTransitions (0.2.0)
 
 DEPENDENCIES:
   - Alamofire
@@ -16,7 +18,9 @@ DEPENDENCIES:
   - GoogleWebRTC
   - KeychainAccess
   - NotificationBannerSwift
+  - SwiftConfettiView
   - SwiftProtobuf
+  - UIWindowTransitions
 
 SPEC REPOS:
   trunk:
@@ -27,7 +31,9 @@ SPEC REPOS:
     - MarqueeLabel
     - NotificationBannerSwift
     - SnapKit
+    - SwiftConfettiView
     - SwiftProtobuf
+    - UIWindowTransitions
 
 SPEC CHECKSUMS:
   Alamofire: 814429acc853c6c54ff123fc3d2ef66803823ce0
@@ -37,8 +43,10 @@ SPEC CHECKSUMS:
   MarqueeLabel: f762aa681ae201f66c1d511858b171f75d83013a
   NotificationBannerSwift: 713e20f21b6105f4a36a00e5d9fa414a930d3d8e
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
+  SwiftConfettiView: 1bdbc2e6913b6b1c76d8070802b212508ad5c352
   SwiftProtobuf: 2cbd9409689b7df170d82a92a33443c8e3e14a70
+  UIWindowTransitions: cb662e2ae9e2d1060fcdbe3eb3de9232bedb7612
 
-PODFILE CHECKSUM: 565b8e8345cc86ea3b40382f1920e8d84276b8ff
+PODFILE CHECKSUM: 214baf12102f8f966228ff86afa25b987b2fb28b
 
 COCOAPODS: 1.9.1
