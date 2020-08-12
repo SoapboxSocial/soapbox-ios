@@ -15,7 +15,6 @@ target 'Voicely' do
   pod 'SwiftConfettiView'
   pod 'UIWindowTransitions'
 
-
   target 'VoicelyTests' do
     inherit! :search_paths
     # Pods for testing
