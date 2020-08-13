@@ -78,6 +78,9 @@ class APIClient {
         case incorrectPin = 10
         case userNotFound = 11
         case failedToGetUser = 12
+        case failedToGetFollowers = 13
+        case unauthorized = 14
+        case failedToStoreDevice = 15
     }
 
     struct ErrorResponse: Decodable {
