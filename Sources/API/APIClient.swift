@@ -418,3 +418,25 @@ extension APIClient {
             }
     }
 }
+
+extension APIClient {
+    func addDevice(token: String, callback: @escaping(Result<Bool, APIError>) -> Void) {
+        AF.request(baseUrl + "/v1/devices/add", method: .post, parameters: ["token": token], encoding: URLEncoding.default, headers: ["Authorization": self.token!])
+        .validate()
+        .response { result in
+            guard result.data != nil else {
+                return callback(.failure(.requestFailed))
+            }
+
+            if result.error != nil {
+                callback(.failure(.noData))
+            }
+
+            if result.response?.statusCode == 200 {
+                return callback(.success(true))
+            }
+
+            return callback(.failure(.decode))
+        }
+    }
+}
