@@ -37,7 +37,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // THIS IS HERE FOR BACKWARDS COMPATIBILITY.
         // WHAT WE WILL NEED IS INSTEAD SETTINGS PAGE WHERE PEOPLE CAN ENABLE / DISABLE NOTIFICATIONS.
         if loggedIn {
-            NotificationManager.shared.delegate = self
             NotificationManager.shared.requestAuthorization()
         }
 
@@ -99,18 +98,5 @@ extension AppDelegate {
         // @todo
         print("Failed to register: \(error)")
         NotificationManager.shared.failedToSetToken()
-    }
-}
-
-extension AppDelegate: NotificationManagerDelegate {
-    func deviceTokenFailedToSet() {}
-
-    func deviceTokenWasSet(_ token: Data) {
-        let tokenParts = token.map { data in String(format: "%02.2hhx", data) }
-        let token = tokenParts.joined()
-
-        APIClient().addDevice(token: token) { _ in
-            // @todo need to think about error handling
-        }
     }
 }

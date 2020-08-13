@@ -139,13 +139,7 @@ extension AuthenticationInteractor: NotificationManagerDelegate {
         output.present(state: .success)
     }
 
-    func deviceTokenWasSet(_ token: Data) {
-        let tokenParts = token.map { data in String(format: "%02.2hhx", data) }
-        let token = tokenParts.joined()
-
-        api.addDevice(token: token) { _ in
-            // @todo need to think about error handling
-            self.output.present(state: .success)
-        }
+    func deviceTokenWasSet() {
+        self.output.present(state: .success)
     }
 }

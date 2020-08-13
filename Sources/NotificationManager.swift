@@ -8,20 +8,25 @@
 import UIKit
 
 protocol NotificationManagerDelegate {
-    func deviceTokenWasSet(_ token: Data)
+    func deviceTokenWasSet()
     func deviceTokenFailedToSet()
 }
 
 class NotificationManager {
     static let shared = NotificationManager()
 
-    private var deviceToken: Data?
+    private var api = APIClient()
 
     var delegate: NotificationManagerDelegate?
 
-    func setDeviceToken(_ data: Data) {
-        deviceToken = data
-        delegate?.deviceTokenWasSet(data)
+    func setDeviceToken(_ token: Data) {
+        let tokenParts = token.map { data in String(format: "%02.2hhx", data) }
+        let token = tokenParts.joined()
+        
+        api.addDevice(token: token) { _ in
+            // @todo
+            self.delegate?.deviceTokenWasSet()
+        }
     }
 
     func failedToSetToken() {
