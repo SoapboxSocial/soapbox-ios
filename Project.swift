@@ -4,7 +4,7 @@ let settings = Settings(
     base: [
         "ENABLE_BITCODE": SettingValue.string("NO"),
         "CURRENT_PROJECT_VERSION": SettingValue.string("31"),
-        "MARKETING_VERSION": SettingValue.string("1.3")
+        "MARKETING_VERSION": SettingValue.string("1.3"),
     ],
     configurations: [
         CustomConfiguration.debug(
@@ -16,7 +16,7 @@ let settings = Settings(
             name: "release",
             settings: ["CODE_SIGN_ENTITLEMENTS": SettingValue.string("./Entitlements/release.entitlements")],
             xcconfig: nil
-        )
+        ),
     ]
 )
 
