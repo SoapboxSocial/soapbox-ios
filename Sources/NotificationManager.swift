@@ -27,4 +27,18 @@ class NotificationManager {
     func failedToSetToken() {
         delegate?.deviceTokenFailedToSet()
     }
+    
+    func requestAuthorization() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
+            guard granted else { return }
+
+            UNUserNotificationCenter.current().getNotificationSettings { settings in
+                guard settings.authorizationStatus == .authorized else { return }
+
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            }
+        }
+    }
 }

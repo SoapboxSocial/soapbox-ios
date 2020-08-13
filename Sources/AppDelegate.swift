@@ -35,18 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         if loggedIn {
             NotificationManager.shared.delegate = self
-
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
-                guard granted else { return }
-
-                UNUserNotificationCenter.current().getNotificationSettings { settings in
-                    guard settings.authorizationStatus == .authorized else { return }
-
-                    DispatchQueue.main.async {
-                        UIApplication.shared.registerForRemoteNotifications()
-                    }
-                }
-            }
+            NotificationManager.shared.requestAuthorization()
         }
 
         return true

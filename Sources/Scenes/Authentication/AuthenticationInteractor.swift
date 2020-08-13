@@ -99,7 +99,9 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
                 self.store(token: self.token!, expires: expires, user: user)
                 DispatchQueue.main.async {
                     self.output.present(state: .requestNotifications)
-                    self.requestNotifications()
+                    
+                    NotificationManager.shared.delegate = self
+                    NotificationManager.shared.requestAuthorization()
                 }
             }
         }
@@ -144,22 +146,6 @@ extension AuthenticationInteractor: NotificationManagerDelegate {
         api.addDevice(token: token) { _ in
             // @todo need to think about error handling
             self.output.present(state: .success)
-        }
-    }
-
-    func requestNotifications() {
-        NotificationManager.shared.delegate = self
-
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
-            guard granted else { return }
-
-            UNUserNotificationCenter.current().getNotificationSettings { settings in
-                guard settings.authorizationStatus == .authorized else { return }
-
-                DispatchQueue.main.async {
-                    UIApplication.shared.registerForRemoteNotifications()
-                }
-            }
         }
     }
 }
