@@ -37,6 +37,7 @@
 	<array>
 		<string>audio</string>
 		<string>bluetooth-central</string>
+		<string>remote-notification</string>
 		<string>voip</string>
 	</array>
 	<key>UILaunchStoryboardName</key>

@@ -7,9 +7,9 @@
 //
 
 import KeychainAccess
-import SwiftConfettiView
 import UIKit
 import UIWindowTransitions
+import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -32,7 +32,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window!.rootViewController = controller
         window?.makeKeyAndVisible()
 
+        registerForPushNotifications()
+
         return true
+    }
+
+    func registerForPushNotifications() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
+            guard granted else { return }
+
+            debugPrint("Permissions: \(granted)")
+        }
     }
 
     func transitionToLoginView() {
