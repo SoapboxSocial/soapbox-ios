@@ -21,8 +21,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
 
+        let loggedIn = isLoggedIn()
+
         window!.rootViewController = { () -> UIViewController in
-            if isLoggedIn() {
+            if loggedIn {
                 return createLoggedIn()
             } else {
                 return createLoginView()
@@ -31,7 +33,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         window?.makeKeyAndVisible()
 
-        // @todo we need to rerequest the device token here essentially.
+        if loggedIn {
+            NotificationManager.shared.delegate = self
+
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
+                guard granted else { return }
+
+                UNUserNotificationCenter.current().getNotificationSettings { settings in
+                    guard settings.authorizationStatus == .authorized else { return }
+
+                    DispatchQueue.main.async {
+                        UIApplication.shared.registerForRemoteNotifications()
+                    }
+                }
+            }
+        }
 
         return true
     }
@@ -91,5 +107,18 @@ extension AppDelegate {
         // @todo
         print("Failed to register: \(error)")
         NotificationManager.shared.failedToSetToken()
+    }
+}
+
+extension AppDelegate: NotificationManagerDelegate {
+    func deviceTokenFailedToSet() {}
+
+    func deviceTokenWasSet(_ token: Data) {
+        let tokenParts = token.map { data in String(format: "%02.2hhx", data) }
+        let token = tokenParts.joined()
+
+        APIClient().addDevice(token: token) { _ in
+            // @todo need to think about error handling
+        }
     }
 }
