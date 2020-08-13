@@ -11,7 +11,7 @@ let project = Project(
             deploymentTarget: .iOS(targetVersion: "13.0", devices: .iphone),
             infoPlist: "Info.plist",
             sources: ["Sources/**"],
-            resources: ["Assets.xcassets", "Localization/**/*.strings"],
+            resources: ["Voicely.entitlements", "Assets.xcassets", "Localization/**/*.strings"],
             dependencies: [
                 .cocoapods(path: "."),
             ],
@@ -20,6 +20,7 @@ let project = Project(
                     "ENABLE_BITCODE": SettingValue.string("NO"),
                     "CURRENT_PROJECT_VERSION": SettingValue.string("31"),
                     "MARKETING_VERSION": SettingValue.string("1.3"),
+                    "CODE_SIGN_ENTITLEMENTS": SettingValue.string("./Voicely.entitlements"),
                 ]
             )
         ),

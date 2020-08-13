@@ -87,7 +87,7 @@ class APIClient {
 
     let decoder = JSONDecoder()
 
-    let baseUrl = "https://spksy.app"
+    let baseUrl = "http://10.1.21.82:8080"
 
     // @todo auth header
 

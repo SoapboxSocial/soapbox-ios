@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
 
-        let controller = { () -> UIViewController in
+        window!.rootViewController = { () -> UIViewController in
             if isLoggedIn() {
                 return createLoggedIn()
             } else {
@@ -29,20 +29,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }()
 
-        window!.rootViewController = controller
         window?.makeKeyAndVisible()
 
-        registerForPushNotifications()
+        // @todo we need to rerequest the device token here essentially.
 
         return true
-    }
-
-    func registerForPushNotifications() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
-            guard granted else { return }
-
-            debugPrint("Permissions: \(granted)")
-        }
     }
 
     func transitionToLoginView() {
@@ -88,5 +79,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         return true
+    }
+}
+
+extension AppDelegate {
+    func application(_: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        NotificationManager.shared.setDeviceToken(deviceToken)
+    }
+
+    func application(_: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        // @todo
+        print("Failed to register: \(error)")
+        NotificationManager.shared.failedToSetToken()
     }
 }

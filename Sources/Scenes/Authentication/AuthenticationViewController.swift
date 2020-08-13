@@ -16,10 +16,6 @@ protocol AuthenticationViewControllerOutput {
 }
 
 class AuthenticationViewController: UIViewController {
-    private enum State: Int {
-        case login, pin, registration, success
-    }
-
     var output: AuthenticationViewControllerOutput!
 
     private var contentView: UIView!
@@ -67,30 +63,13 @@ class AuthenticationViewController: UIViewController {
             setupLoginView(height: height),
             setupPinView(height: height),
             setupRegistrationView(height: height),
+            setupNotificationRequestView(height: height),
             setupSuccessfulView(height: height),
         ]
 
         for (i, state) in views.enumerated() {
             state.frame = CGRect(origin: CGPoint(x: view.frame.size.width * CGFloat(i), y: 0), size: state.frame.size)
             scrollView.addSubview(state)
-        }
-    }
-
-    private func showView(forState state: State) {
-        scrollView.setContentOffset(CGPoint(x: view.frame.size.width * CGFloat(state.rawValue), y: 0), animated: true)
-
-        if state == .success {
-            UIView.animate(withDuration: 0.3) {
-                self.submitButton.frame = CGRect(origin: CGPoint(x: self.submitButton.frame.origin.x, y: self.view.frame.size.height), size: self.submitButton.frame.size)
-            }
-
-            let confettiView = SwiftConfettiView(frame: view.bounds)
-            view.addSubview(confettiView)
-            confettiView.startConfetti()
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                confettiView.stopConfetti()
-            }
         }
     }
 
@@ -103,7 +82,7 @@ class AuthenticationViewController: UIViewController {
             return output.submitPin(pin: pinTextField.text)
         case .registration:
             return output.register(username: usernameTextField.text, displayName: displayNameTextField.text)
-        case .success: break
+        case .requestNotifications, .success: break
         }
     }
 
@@ -138,11 +117,13 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
         self.state = state
         scrollView.setContentOffset(CGPoint(x: view.frame.size.width * CGFloat(state.rawValue), y: 0), animated: true)
 
-        if state == .success {
+        if state == .requestNotifications {
             UIView.animate(withDuration: 0.3) {
                 self.submitButton.frame = CGRect(origin: CGPoint(x: self.submitButton.frame.origin.x, y: self.view.frame.size.height), size: self.submitButton.frame.size)
             }
+        }
 
+        if state == .success {
             let confettiView = SwiftConfettiView(frame: view.bounds)
             view.addSubview(confettiView)
             confettiView.startConfetti()
@@ -224,6 +205,10 @@ extension AuthenticationViewController {
         view.addSubview(displayNameTextField)
 
         return view
+    }
+
+    private func setupNotificationRequestView(height: CGFloat) -> UIView {
+        return UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: height))
     }
 
     private func setupSuccessfulView(height: CGFloat) -> UIView {
