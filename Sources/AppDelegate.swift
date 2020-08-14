@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(
         _: UIApplication,
-        didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?
+        didFinishLaunchingWithOptions options: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
 
@@ -36,8 +36,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // @TODO: WHEN WE RE-RELEASE THE APP UNDER A DIFFERENT IDENTIFIER, WE CAN REMOVE THIS.
         // THIS IS HERE FOR BACKWARDS COMPATIBILITY.
         // WHAT WE WILL NEED IS INSTEAD SETTINGS PAGE WHERE PEOPLE CAN ENABLE / DISABLE NOTIFICATIONS.
-        if loggedIn {
-            NotificationManager.shared.requestAuthorization()
+        if !loggedIn {
+            return true
+        }
+
+        NotificationManager.shared.requestAuthorization()
+
+        if let notification = options?[.remoteNotification] as? [String: AnyObject] {
+            DispatchQueue.global(qos: .background).async {
+                self.launchWith(notification: notification)
+            }
         }
 
         return true
@@ -86,6 +94,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         return true
+    }
+    
+    private func launchWith(notification: [String: AnyObject]) {
+        guard let aps = notification["aps"] as? [String: AnyObject] else {
+            return
+        }
+        
+        guard let category = aps["category"] as? String else {
+            return
+        }
+        
+        switch category {
+        case "NEW_ROOM": break
+        default:
+            break
+        }
+
     }
 }
 
