@@ -1,5 +1,25 @@
 import ProjectDescription
 
+let settings = Settings(
+    base: [
+        "ENABLE_BITCODE": SettingValue.string("NO"),
+        "CURRENT_PROJECT_VERSION": SettingValue.string("31"),
+        "MARKETING_VERSION": SettingValue.string("1.3"),
+    ],
+    configurations: [
+        CustomConfiguration.debug(
+            name: "debug",
+            settings: ["CODE_SIGN_ENTITLEMENTS": SettingValue.string("./Entitlements/debug.entitlements")],
+            xcconfig: nil
+        ),
+        CustomConfiguration.release(
+            name: "release",
+            settings: ["CODE_SIGN_ENTITLEMENTS": SettingValue.string("./Entitlements/release.entitlements")],
+            xcconfig: nil
+        ),
+    ]
+)
+
 let project = Project(
     name: "Voicely",
     targets: [
@@ -11,17 +31,11 @@ let project = Project(
             deploymentTarget: .iOS(targetVersion: "13.0", devices: .iphone),
             infoPlist: "Info.plist",
             sources: ["Sources/**"],
-            resources: ["Assets.xcassets", "Localization/**/*.strings"],
+            resources: ["Entitlements/*", "Assets.xcassets", "Localization/**/*.strings"],
             dependencies: [
                 .cocoapods(path: "."),
             ],
-            settings: Settings(
-                base: [
-                    "ENABLE_BITCODE": SettingValue.string("NO"),
-                    "CURRENT_PROJECT_VERSION": SettingValue.string("31"),
-                    "MARKETING_VERSION": SettingValue.string("1.3"),
-                ]
-            )
+            settings: settings
         ),
         Target(
             name: "VoicelyTests",

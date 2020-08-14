@@ -7,9 +7,9 @@
 //
 
 import KeychainAccess
-import SwiftConfettiView
 import UIKit
 import UIWindowTransitions
+import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -21,16 +21,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
 
-        let controller = { () -> UIViewController in
-            if isLoggedIn() {
+        let loggedIn = isLoggedIn()
+
+        window!.rootViewController = { () -> UIViewController in
+            if loggedIn {
                 return createLoggedIn()
             } else {
                 return createLoginView()
             }
         }()
 
-        window!.rootViewController = controller
         window?.makeKeyAndVisible()
+
+        // @TODO: WHEN WE RE-RELEASE THE APP UNDER A DIFFERENT IDENTIFIER, WE CAN REMOVE THIS.
+        // THIS IS HERE FOR BACKWARDS COMPATIBILITY.
+        // WHAT WE WILL NEED IS INSTEAD SETTINGS PAGE WHERE PEOPLE CAN ENABLE / DISABLE NOTIFICATIONS.
+        if loggedIn {
+            NotificationManager.shared.requestAuthorization()
+        }
 
         return true
     }
@@ -78,5 +86,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         return true
+    }
+}
+
+extension AppDelegate {
+    func application(_: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        NotificationManager.shared.setDeviceToken(deviceToken)
+    }
+
+    func application(_: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        // @todo
+        print("Failed to register: \(error)")
+        NotificationManager.shared.failedToSetToken()
     }
 }
