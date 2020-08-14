@@ -140,6 +140,6 @@ extension AuthenticationInteractor: NotificationManagerDelegate {
     }
 
     func deviceTokenWasSet() {
-        self.output.present(state: .success)
+        output.present(state: .success)
     }
 }

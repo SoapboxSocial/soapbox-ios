@@ -43,12 +43,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NotificationManager.shared.requestAuthorization()
 
         if let notification = options?[.remoteNotification] as? [String: AnyObject] {
-            DispatchQueue.global(qos: .background).async {
-                self.launchWith(notification: notification)
-            }
+            launchWith(notification: notification)
         }
 
         return true
+    }
+
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
+        if application.applicationState == .inactive || application.applicationState == .background {
+            guard let notification = userInfo as? [String: AnyObject] else { return }
+            launchWith(notification: notification)
+        }
     }
 
     func transitionToLoginView() {
@@ -97,31 +102,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func launchWith(notification: [String: AnyObject]) {
-        guard let aps = notification["aps"] as? [String: AnyObject] else {
-            return
-        }
-
-        guard let category = aps["category"] as? String else {
-            return
-        }
-
-        switch category {
-        case "NEW_ROOM":
-            guard let arguments = aps["arguments"] as? [String: AnyObject] else {
+        DispatchQueue.global(qos: .background).async {
+            guard let aps = notification["aps"] as? [String: AnyObject] else {
                 return
             }
 
-            guard let id = arguments["id"] as? Int else {
+            guard let category = aps["category"] as? String else {
                 return
             }
 
-            DispatchQueue.main.async {
-                (self.window?.rootViewController as? NavigationViewController)?.didSelectRoom(id: id)
-            }
-        default:
-            break
-        }
+            switch category {
+            case "NEW_ROOM":
+                guard let arguments = aps["arguments"] as? [String: AnyObject] else {
+                    return
+                }
 
+                guard let id = arguments["id"] as? Int else {
+                    return
+                }
+
+                DispatchQueue.main.async {
+                    (self.window?.rootViewController as? NavigationViewController)?.didSelectRoom(id: id)
+                }
+            default:
+                break
+            }
+        }
     }
 }
 
