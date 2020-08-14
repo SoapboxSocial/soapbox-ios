@@ -115,7 +115,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return
             }
 
-            debugPrint(id)
+            DispatchQueue.main.async {
+                (self.window?.rootViewController as? NavigationViewController)?.didSelectRoom(id: id)
+            }
         default:
             break
         }
