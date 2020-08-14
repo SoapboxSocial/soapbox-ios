@@ -205,7 +205,7 @@ extension Room: WebRTCClientDelegate {
             case .unmutedSpeaker:
                 updateMemberMuteState(user: Int(event.from), isMuted: false)
             case .UNRECOGNIZED:
-                    return
+                return
             }
         } catch {
             debugPrint("failed to decode \(error.localizedDescription)")
