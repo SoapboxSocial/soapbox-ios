@@ -106,7 +106,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         switch category {
-        case "NEW_ROOM": break
+        case "NEW_ROOM":
+            guard let arguments = aps["arguments"] as? [String: AnyObject] else {
+                return
+            }
+
+            guard let id = arguments["id"] as? Int else {
+                return
+            }
+
+            debugPrint(id)
         default:
             break
         }
