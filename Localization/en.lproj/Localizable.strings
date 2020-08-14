@@ -59,3 +59,6 @@
 "follower" = "Follower";
 
 "welcome_to_voicely" = "Welcome to Voicely!";
+
+"new_room_notification" = "%@ started a room, why not join them?";
+"new_room_with_name_notification" = "%@ started the room \"%@\", why not join them?";

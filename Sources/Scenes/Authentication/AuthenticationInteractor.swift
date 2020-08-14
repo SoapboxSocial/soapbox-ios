@@ -22,7 +22,7 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
     private var token: String?
 
     enum AuthenticationState: Int {
-        case login, pin, registration, success
+        case login, pin, registration, requestNotifications, success
     }
 
     enum AuthenticationError {
@@ -95,10 +95,13 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
                 }
 
                 return self.output.present(error: .general)
-            case let .success(user, expires):
+            case let .success((user, expires)):
                 self.store(token: self.token!, expires: expires, user: user)
                 DispatchQueue.main.async {
-                    self.output.present(state: .success)
+                    self.output.present(state: .requestNotifications)
+                    
+                    NotificationManager.shared.delegate = self
+                    NotificationManager.shared.requestAuthorization()
                 }
             }
         }
@@ -128,5 +131,15 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
         try? keychain.set(String(Int(Date().timeIntervalSince1970) + expires), key: "expiry")
 
         UserStore.store(user: user)
+    }
+}
+
+extension AuthenticationInteractor: NotificationManagerDelegate {
+    func deviceTokenFailedToSet() {
+        output.present(state: .success)
+    }
+
+    func deviceTokenWasSet() {
+        self.output.present(state: .success)
     }
 }

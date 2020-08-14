@@ -78,6 +78,9 @@ class APIClient {
         case incorrectPin = 10
         case userNotFound = 11
         case failedToGetUser = 12
+        case failedToGetFollowers = 13
+        case unauthorized = 14
+        case failedToStoreDevice = 15
     }
 
     struct ErrorResponse: Decodable {
@@ -400,6 +403,28 @@ extension APIClient {
 
     private func followRequest(_ path: String, id: Int, callback: @escaping (Result<Bool, APIError>) -> Void) {
         AF.request(baseUrl + path, method: .post, parameters: ["id": id], encoding: URLEncoding.default, headers: ["Authorization": token!])
+            .validate()
+            .response { result in
+                guard result.data != nil else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
+
+                if result.response?.statusCode == 200 {
+                    return callback(.success(true))
+                }
+
+                return callback(.failure(.decode))
+            }
+    }
+}
+
+extension APIClient {
+    func addDevice(token: String, callback: @escaping (Result<Bool, APIError>) -> Void) {
+        AF.request(baseUrl + "/v1/devices/add", method: .post, parameters: ["token": token], encoding: URLEncoding.default, headers: ["Authorization": self.token!])
             .validate()
             .response { result in
                 guard result.data != nil else {
