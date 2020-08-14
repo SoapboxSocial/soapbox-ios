@@ -5,6 +5,11 @@ on:
   push:
     branches:
       - master
+    paths:
+      - '.github/workflows/ci.yml'
+      - '.swiftlint.yml'
+      - '**/*.swift'
+      - '!Pods/**'
 
 jobs:
   lint:
