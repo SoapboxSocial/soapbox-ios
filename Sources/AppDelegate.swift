@@ -95,16 +95,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         return true
     }
-    
+
     private func launchWith(notification: [String: AnyObject]) {
         guard let aps = notification["aps"] as? [String: AnyObject] else {
             return
         }
-        
+
         guard let category = aps["category"] as? String else {
             return
         }
-        
+
         switch category {
         case "NEW_ROOM":
             guard let arguments = aps["arguments"] as? [String: AnyObject] else {

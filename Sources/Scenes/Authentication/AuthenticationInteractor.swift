@@ -99,7 +99,7 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
                 self.store(token: self.token!, expires: expires, user: user)
                 DispatchQueue.main.async {
                     self.output.present(state: .requestNotifications)
-                    
+
                     NotificationManager.shared.delegate = self
                     NotificationManager.shared.requestAuthorization()
                 }
