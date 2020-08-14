@@ -22,7 +22,7 @@ class NotificationManager {
     func setDeviceToken(_ token: Data) {
         let tokenParts = token.map { data in String(format: "%02.2hhx", data) }
         let token = tokenParts.joined()
-        
+
         api.addDevice(token: token) { _ in
             // @todo
             self.delegate?.deviceTokenWasSet()
@@ -32,7 +32,7 @@ class NotificationManager {
     func failedToSetToken() {
         delegate?.deviceTokenFailedToSet()
     }
-    
+
     func requestAuthorization() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
             guard granted else { return }
