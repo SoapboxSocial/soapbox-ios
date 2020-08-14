@@ -184,7 +184,6 @@ extension Room: WebRTCClientDelegate {
         do {
             let event = try RoomEvent(serializedData: data)
 
-            debugPrint(event)
             switch event.type {
             case .joined:
                 let member = try decoder.decode(APIClient.Member.self, from: event.data)
@@ -201,12 +200,12 @@ extension Room: WebRTCClientDelegate {
                 updateMemberRole(user: event.data.toInt, role: .audience)
             case .changedOwner:
                 updateMemberRole(user: event.data.toInt, role: .owner)
-            case .UNRECOGNIZED:
-                return
             case .mutedSpeaker:
                 updateMemberMuteState(user: Int(event.from), isMuted: true)
             case .unmutedSpeaker:
                 updateMemberMuteState(user: Int(event.from), isMuted: false)
+            case .UNRECOGNIZED:
+                    return
             }
         } catch {
             debugPrint("failed to decode \(error.localizedDescription)")
