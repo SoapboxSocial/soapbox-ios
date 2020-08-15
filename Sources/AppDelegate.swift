@@ -100,35 +100,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         return true
     }
-
-    private func launchWith(notification: [String: AnyObject]) {
-        DispatchQueue.global(qos: .background).async {
-            guard let aps = notification["aps"] as? [String: AnyObject] else {
-                return
-            }
-
-            guard let category = aps["category"] as? String else {
-                return
-            }
-
-            switch category {
-            case "NEW_ROOM":
-                guard let arguments = aps["arguments"] as? [String: AnyObject] else {
-                    return
-                }
-
-                guard let id = arguments["id"] as? Int else {
-                    return
-                }
-
-                DispatchQueue.main.async {
-                    (self.window?.rootViewController as? NavigationViewController)?.didSelectRoom(id: id)
-                }
-            default:
-                break
-            }
-        }
-    }
 }
 
 extension AppDelegate {
@@ -140,5 +111,46 @@ extension AppDelegate {
         // @todo
         print("Failed to register: \(error)")
         NotificationManager.shared.failedToSetToken()
+    }
+
+    private func launchWith(notification: [String: AnyObject]) {
+        DispatchQueue.global(qos: .background).async {
+            guard let aps = notification["aps"] as? [String: AnyObject] else {
+                return
+            }
+
+            guard let category = aps["category"] as? String else {
+                return
+            }
+
+            guard let arguments = aps["arguments"] as? [String: AnyObject] else {
+                return
+            }
+
+            guard let nav = self.window?.rootViewController as? NavigationViewController else {
+                return
+            }
+
+            switch category {
+            case "NEW_ROOM":
+                guard let id = arguments["id"] as? Int else {
+                    return
+                }
+
+                DispatchQueue.main.async {
+                    nav.didSelectRoom(id: id)
+                }
+            case "NEW_FOLLOWER":
+                guard let id = arguments["id"] as? Int else {
+                    return
+                }
+
+                DispatchQueue.main.async {
+                    nav.pushViewController(ProfileViewController(id: id), animated: true)
+                }
+            default:
+                break
+            }
+        }
     }
 }
