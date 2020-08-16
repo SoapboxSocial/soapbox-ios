@@ -5,23 +5,22 @@
 //  Created by Dean Eigenmann on 16.08.20.
 //
 
-import UIKit
 import NotificationBannerSwift
+import UIKit
 
 class EditProfileViewController: UIViewController {
-
     private var displayNameTextField: TextField!
 
     private var user: APIClient.Profile
     private let parentVC: ProfileViewController
 
     init(user: APIClient.Profile, parent: ProfileViewController) {
-        self.parentVC = parent
+        parentVC = parent
         self.user = user
         super.init(nibName: nil, bundle: nil)
     }
 
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 

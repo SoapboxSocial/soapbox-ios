@@ -356,22 +356,22 @@ extension APIClient {
 
     func editProfile(displayName: String, callback: @escaping (Result<Bool, APIError>) -> Void) {
         AF.request(Configuration.rootURL.appendingPathComponent("/v1/users/edit"), method: .post, parameters: ["display_name": displayName], encoding: URLEncoding.default, headers: ["Authorization": token!])
-        .validate()
-        .response { result in
-            guard result.data != nil else {
-                return callback(.failure(.requestFailed))
-            }
+            .validate()
+            .response { result in
+                guard result.data != nil else {
+                    return callback(.failure(.requestFailed))
+                }
 
-            if result.error != nil {
-                callback(.failure(.noData))
-            }
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
 
-            if result.response?.statusCode == 200 {
-                return callback(.success(true))
-            }
+                if result.response?.statusCode == 200 {
+                    return callback(.success(true))
+                }
 
-            return callback(.failure(.decode))
-        }
+                return callback(.failure(.decode))
+            }
     }
 }
 
