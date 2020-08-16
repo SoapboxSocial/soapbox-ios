@@ -5,6 +5,7 @@
 //  Created by Dean Eigenmann on 10.08.20.
 //
 import UIKit
+import AlamofireImage
 
 class UserCell: UICollectionViewCell {
     var nameLabel: UILabel!
@@ -20,10 +21,14 @@ class UserCell: UICollectionViewCell {
         content.layer.cornerRadius = 8
         content.layer.masksToBounds = true
         addSubview(content)
-
-        let profilePicture = UIView(frame: CGRect(x: 20, y: 20, width: content.frame.size.height - 40, height: content.frame.size.height - 40))
-        profilePicture.backgroundColor = .secondaryBackground
+        
+        let profilePicture = UIImageView(frame: CGRect(x: 20, y: 20, width: content.frame.size.height - 40, height: content.frame.size.height - 40))
         profilePicture.layer.cornerRadius = (content.frame.size.height - 40) / 2
+        profilePicture.backgroundColor = .systemGray5
+
+        let url = URL(string: "https://httpbin.org/image/png")!
+        profilePicture.af.setImage(withURL: url)
+        
         content.addSubview(profilePicture)
 
         nameLabel = UILabel(frame: CGRect(x: profilePicture.frame.size.width + profilePicture.frame.origin.x + 20, y: 15, width: contentView.frame.size.width - (profilePicture.frame.size.width + profilePicture.frame.origin.x + 20), height: 30))
