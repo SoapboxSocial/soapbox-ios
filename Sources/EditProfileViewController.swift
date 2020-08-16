@@ -13,8 +13,10 @@ class EditProfileViewController: UIViewController {
     private var displayNameTextField: TextField!
 
     private var user: APIClient.Profile
+    private let parentVC: ProfileViewController
 
-    init(user: APIClient.Profile) {
+    init(user: APIClient.Profile, parent: ProfileViewController) {
+        self.parentVC = parent
         self.user = user
         super.init(nibName: nil, bundle: nil)
     }
@@ -68,10 +70,9 @@ class EditProfileViewController: UIViewController {
                 banner.show(cornerRadius: 10, shadowBlurRadius: 15)
             case .success:
                 DispatchQueue.main.async {
-                    if let parent = self.presentingViewController as? ProfileViewController {
-                        // @todo make sure parent is updated
-                    }
+                    self.user.displayName = displayName
 
+                    self.parentVC.setupView(user: self.user)
                     self.dismiss(animated: true)
                 }
             }

@@ -322,7 +322,7 @@ extension APIClient {
 extension APIClient {
     struct Profile: Decodable {
         let id: Int
-        let displayName: String
+        var displayName: String
         let username: String
         var followers: Int
         let following: Int
@@ -360,7 +360,6 @@ extension APIClient {
         AF.request(baseUrl + "/v1/users/edit", method: .post, parameters: ["display_name": displayName], encoding: URLEncoding.default, headers: ["Authorization": token!])
         .validate()
         .response { result in
-            debugPrint(result)
             guard result.data != nil else {
                 return callback(.failure(.requestFailed))
             }
