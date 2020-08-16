@@ -1,0 +1,6 @@
+// Development.xcconfig
+#include "../Pods/Target Support Files/Pods-Voicely/Pods-Voicely.debug.xcconfig"
+
+// Server URL
+ROOT_URL = http:/$()/192.168.33.16
+

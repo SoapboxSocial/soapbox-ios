@@ -1,0 +1,6 @@
+// Production.xcconfig
+#include "../Pods/Target Support Files/Pods-Voicely/Pods-Voicely.release.xcconfig"
+
+// Server URL
+ROOT_URL = https:/$()/spksy.app
+
