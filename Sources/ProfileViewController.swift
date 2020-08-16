@@ -103,7 +103,19 @@ class ProfileViewController: UIViewController {
                     size: followsYou.frame.size
                 )
             }
+        } else {
+            let editButton = Button(frame: CGRect(x: view.frame.size.width - 140, y: image.frame.origin.y + (image.frame.size.height / 2) - 15, width: 100, height: 30))
+            editButton.addTarget(self, action: #selector(editButtonPressed), for: .touchUpInside)
+            editButton.setTitle("Edit", for: .normal)
+            view.addSubview(editButton)
+
         }
+    }
+
+    @objc private func editButtonPressed() {
+        let vc = EditProfileViewController(user: user)
+        vc.modalPresentationStyle = .fullScreen
+        present(vc, animated: true)
     }
 
     @objc private func didTapFollowingLabel() {

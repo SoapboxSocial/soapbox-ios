@@ -64,3 +64,6 @@
 "new_room_with_name_notification" = "%@ started the room \"%@\", why not join them?";
 
 "new_follower_notification" = "%@ started following you!";
+
+"save" = "Save";
+"invalid_display_name" = "Valid display name required";
