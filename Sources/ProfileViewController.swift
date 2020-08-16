@@ -7,6 +7,7 @@
 
 import NotificationBannerSwift
 import UIKit
+import AlamofireImage
 
 class ProfileViewController: UIViewController {
     private let api = APIClient()
@@ -18,7 +19,7 @@ class ProfileViewController: UIViewController {
     private var followingLabel: UILabel!
     private var followsYou: UILabel!
 
-    private var image: UIView!
+    private var image: UIImageView!
     private var name: UILabel!
     private var username: UILabel!
 
@@ -63,6 +64,8 @@ class ProfileViewController: UIViewController {
         updateFollowersLabelText(count: user.followers)
 
         followingLabel.text = String(user.following) + " " + NSLocalizedString("following", comment: "")
+        // @todo image URL
+        image.af.setImage(withURL: URL(string: "http://192.168.33.16/cdn/images/" + user.image)!)
 
         if self.user.id != UserDefaults.standard.integer(forKey: "id") {
             editButton.isHidden = true
@@ -81,7 +84,7 @@ class ProfileViewController: UIViewController {
     }
 
     private func setup() {
-        image = UIView(frame: CGRect(x: 40, y: (navigationController?.navigationBar.frame.origin.y)! + (navigationController?.navigationBar.frame.size.height)! + 20, width: 75, height: 75))
+        image = UIImageView(frame: CGRect(x: 40, y: (navigationController?.navigationBar.frame.origin.y)! + (navigationController?.navigationBar.frame.size.height)! + 20, width: 75, height: 75))
         image.layer.cornerRadius = 75 / 2
         image.backgroundColor = .secondaryBackground
         view.addSubview(image)

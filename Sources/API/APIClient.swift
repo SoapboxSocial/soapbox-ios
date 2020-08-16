@@ -90,7 +90,7 @@ class APIClient {
 
     let decoder = JSONDecoder()
 
-    let baseUrl = "https://spksy.app"
+    let baseUrl = "http://192.168.33.16"
 
     // @todo auth header
 
@@ -328,9 +328,10 @@ extension APIClient {
         let following: Int
         let followedBy: Bool?
         var isFollowing: Bool?
+        let image: String
 
         private enum CodingKeys: String, CodingKey {
-            case id, displayName = "display_name", username, followers, following, followedBy = "followed_by", isFollowing = "is_following"
+            case id, displayName = "display_name", username, followers, following, followedBy = "followed_by", isFollowing = "is_following", image
         }
     }
 
