@@ -15,6 +15,14 @@ class ProfileViewController: UIViewController {
 
     private var followButton: Button!
     private var followersLabel: UILabel!
+    private var followingLabel: UILabel!
+    private var followsYou: UILabel!
+
+    private var image: UIView!
+    private var name: UILabel!
+    private var username: UILabel!
+
+    private var editButton: Button!
 
     init(id: Int) {
         self.id = id
@@ -27,6 +35,8 @@ class ProfileViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        setup()
 
         view.backgroundColor = .background
 
@@ -44,27 +54,48 @@ class ProfileViewController: UIViewController {
         }
     }
 
-    private func setupView(user: APIClient.Profile) {
+    func setupView(user: APIClient.Profile) {
         self.user = user
 
-        let image = UIView(frame: CGRect(x: 40, y: (navigationController?.navigationBar.frame.origin.y)! + (navigationController?.navigationBar.frame.size.height)! + 20, width: 75, height: 75))
+        name.text = user.displayName
+        username.text = "@" + user.username
+
+        updateFollowersLabelText(count: user.followers)
+
+        followingLabel.text = String(user.following) + " " + NSLocalizedString("following", comment: "")
+
+        if self.user.id != UserDefaults.standard.integer(forKey: "id") {
+            editButton.isHidden = true
+
+            followButton.isHidden = false
+            updateFollowButtonLabel()
+
+            if user.followedBy ?? false {
+                followsYou.isHidden = false
+            }
+        } else {
+            editButton.isHidden = false
+            followButton.isHidden = true
+            followsYou.isHidden = true
+        }
+    }
+
+    private func setup() {
+        image = UIView(frame: CGRect(x: 40, y: (navigationController?.navigationBar.frame.origin.y)! + (navigationController?.navigationBar.frame.size.height)! + 20, width: 75, height: 75))
         image.layer.cornerRadius = 75 / 2
         image.backgroundColor = .secondaryBackground
         view.addSubview(image)
 
-        let name = UILabel(frame: CGRect(x: 40, y: image.frame.origin.y + image.frame.size.height + 20, width: 200, height: 20))
-        name.text = user.displayName
+        name = UILabel(frame: CGRect(x: 40, y: image.frame.origin.y + image.frame.size.height + 20, width: 200, height: 20))
         name.font = UIFont(name: "HelveticaNeue-Bold", size: 18)
         name.textColor = .black
         view.addSubview(name)
 
-        let username = UILabel(frame: CGRect(x: 40, y: name.frame.origin.y + name.frame.size.height, width: view.frame.size.width - 80, height: 20))
-        username.text = "@" + user.username
+        username = UILabel(frame: CGRect(x: 40, y: name.frame.origin.y + name.frame.size.height, width: view.frame.size.width - 80, height: 20))
         username.textColor = .black
         view.addSubview(username)
 
         followersLabel = UILabel(frame: CGRect(x: 40, y: username.frame.origin.y + username.frame.size.height + 40, width: 100, height: 20))
-        updateFollowersLabelText(count: user.followers)
         followersLabel.font = username.font
         followersLabel.textColor = .black
         view.addSubview(followersLabel)
@@ -73,37 +104,44 @@ class ProfileViewController: UIViewController {
         followersLabel.addGestureRecognizer(followersRecognizer)
         followersLabel.isUserInteractionEnabled = true
 
-        let followingLabel = UILabel(frame: CGRect(x: followersLabel.frame.size.width + followersLabel.frame.origin.x + 10, y: username.frame.origin.y + username.frame.size.height + 40, width: 100, height: 20))
+        followingLabel = UILabel(frame: CGRect(x: followersLabel.frame.size.width + followersLabel.frame.origin.x + 10, y: username.frame.origin.y + username.frame.size.height + 40, width: 100, height: 20))
         followingLabel.font = username.font
         followingLabel.textColor = .black
-        followingLabel.text = String(user.following) + " " + NSLocalizedString("following", comment: "")
         view.addSubview(followingLabel)
 
         let followingRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapFollowingLabel))
         followingLabel.addGestureRecognizer(followingRecognizer)
         followingLabel.isUserInteractionEnabled = true
 
-        if self.user.id != UserDefaults.standard.integer(forKey: "id") {
-            followButton = Button(frame: CGRect(x: view.frame.size.width - 140, y: image.frame.origin.y + (image.frame.size.height / 2) - 15, width: 100, height: 30))
-            followButton.addTarget(self, action: #selector(followButtonPressed), for: .touchUpInside)
-            updateFollowButtonLabel()
-            view.addSubview(followButton)
+        followButton = Button(frame: CGRect(x: view.frame.size.width - 140, y: image.frame.origin.y + (image.frame.size.height / 2) - 15, width: 100, height: 30))
+        followButton.addTarget(self, action: #selector(followButtonPressed), for: .touchUpInside)
+        view.addSubview(followButton)
 
-            if user.followedBy ?? false {
-                let followsYou = UILabel(frame: CGRect(x: 0, y: 0, width: 100, height: 20))
-                followsYou.text = NSLocalizedString("follows_you", comment: "")
-                view.addSubview(followsYou)
-                followsYou.sizeToFit()
+        followsYou = UILabel(frame: CGRect(x: 0, y: 0, width: 100, height: 20))
+        followsYou.text = NSLocalizedString("follows_you", comment: "")
+        view.addSubview(followsYou)
+        followsYou.sizeToFit()
 
-                followsYou.frame = CGRect(
-                    origin: CGPoint(
-                        x: followButton.frame.origin.x - followsYou.frame.size.width - 10,
-                        y: followButton.center.y - (followsYou.frame.size.height / 2)
-                    ),
-                    size: followsYou.frame.size
-                )
-            }
-        }
+        followsYou.frame = CGRect(
+            origin: CGPoint(
+                x: followButton.frame.origin.x - followsYou.frame.size.width - 10,
+                y: followButton.center.y - (followsYou.frame.size.height / 2)
+            ),
+            size: followsYou.frame.size
+        )
+
+        followsYou.isHidden = true
+
+        editButton = Button(frame: CGRect(x: view.frame.size.width - 140, y: image.frame.origin.y + (image.frame.size.height / 2) - 15, width: 100, height: 30))
+        editButton.addTarget(self, action: #selector(editButtonPressed), for: .touchUpInside)
+        editButton.setTitle("Edit", for: .normal)
+        view.addSubview(editButton)
+    }
+
+    @objc private func editButtonPressed() {
+        let vc = EditProfileViewController(user: user, parent: self)
+        vc.modalPresentationStyle = .fullScreen
+        present(vc, animated: true)
     }
 
     @objc private func didTapFollowingLabel() {
