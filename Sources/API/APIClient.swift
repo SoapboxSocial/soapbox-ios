@@ -90,7 +90,7 @@ class APIClient {
 
     let decoder = JSONDecoder()
 
-    let baseUrl = "https://spksy.app"
+    let baseUrl = "http://192.168.33.16"
 
     // @todo auth header
 
@@ -322,7 +322,7 @@ extension APIClient {
 extension APIClient {
     struct Profile: Decodable {
         let id: Int
-        let displayName: String
+        var displayName: String
         let username: String
         var followers: Int
         let following: Int
@@ -354,6 +354,26 @@ extension APIClient {
                     return callback(.failure(.decode))
                 }
             }
+    }
+
+    func editProfile(displayName: String, callback: @escaping (Result<Bool, APIError>) -> Void) {
+        AF.request(baseUrl + "/v1/users/edit", method: .post, parameters: ["display_name": displayName], encoding: URLEncoding.default, headers: ["Authorization": token!])
+        .validate()
+        .response { result in
+            guard result.data != nil else {
+                return callback(.failure(.requestFailed))
+            }
+
+            if result.error != nil {
+                callback(.failure(.noData))
+            }
+
+            if result.response?.statusCode == 200 {
+                return callback(.success(true))
+            }
+
+            return callback(.failure(.decode))
+        }
     }
 }
 
