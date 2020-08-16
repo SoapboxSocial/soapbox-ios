@@ -64,8 +64,7 @@ class ProfileViewController: UIViewController {
         updateFollowersLabelText(count: user.followers)
 
         followingLabel.text = String(user.following) + " " + NSLocalizedString("following", comment: "")
-        // @todo image URL
-        image.af.setImage(withURL: URL(string: "http://192.168.33.16/cdn/images/" + user.image)!)
+        image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + user.image))
 
         if self.user.id != UserDefaults.standard.integer(forKey: "id") {
             editButton.isHidden = true

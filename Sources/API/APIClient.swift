@@ -90,8 +90,6 @@ class APIClient {
 
     let decoder = JSONDecoder()
 
-    let baseUrl = "http://192.168.33.16"
-
     // @todo auth header
 
     func join(
@@ -106,7 +104,7 @@ class APIClient {
 
         let path = String(format: "/v1/rooms/%d/join", room)
 
-        AF.request(baseUrl + path, method: .post, parameters: parameters, encoding: JSONEncoding(), headers: ["Authorization": token!])
+        AF.request(Configuration.rootURL.appendingPathComponent(path), method: .post, parameters: parameters, encoding: JSONEncoding(), headers: ["Authorization": token!])
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
@@ -138,7 +136,7 @@ class APIClient {
             parameters["name"] = name! as AnyObject
         }
 
-        AF.request(baseUrl + "/v1/rooms/create", method: .post, parameters: parameters, encoding: JSONEncoding(), headers: ["Authorization": token!])
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/rooms/create"), method: .post, parameters: parameters, encoding: JSONEncoding(), headers: ["Authorization": token!])
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
@@ -163,7 +161,7 @@ class APIClient {
     }
 
     func rooms(callback: @escaping (Result<[Room], APIError>) -> Void) {
-        AF.request(baseUrl + "/v1/rooms", method: .get)
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/rooms"), method: .get)
             .response { result in
                 if result.error != nil {
                     return callback(.failure(.requestFailed))
@@ -225,7 +223,7 @@ extension APIClient {
     }
 
     func login(email: String, callback: @escaping (Result<String, APIError>) -> Void) {
-        AF.request(baseUrl + "/v1/login/start", method: .post, parameters: ["email": email], encoding: URLEncoding.default)
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/login/start"), method: .post, parameters: ["email": email], encoding: URLEncoding.default)
             .validate()
             .response { result in
 
@@ -253,7 +251,7 @@ extension APIClient {
     }
 
     func submitPin(token: String, pin: String, callback: @escaping (Result<(LoginState, User?, Int?), APIError>) -> Void) {
-        AF.request(baseUrl + "/v1/login/pin", method: .post, parameters: ["token": token, "pin": pin], encoding: URLEncoding.default)
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/login/pin"), method: .post, parameters: ["token": token, "pin": pin], encoding: URLEncoding.default)
             .validate()
             .response { result in
                 guard let data = result.data else {
@@ -285,7 +283,7 @@ extension APIClient {
     // @todo return expires in and store it somewhere
 
     func register(token: String, username: String, displayName: String, callback: @escaping (Result<(User, Int), APIError>) -> Void) {
-        AF.request(baseUrl + "/v1/login/register", method: .post, parameters: ["username": username, "display_name": displayName, "token": token], encoding: URLEncoding.default)
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/login/register"), method: .post, parameters: ["username": username, "display_name": displayName, "token": token], encoding: URLEncoding.default)
             .validate()
             .response { result in
                 guard let data = result.data else {
@@ -337,7 +335,7 @@ extension APIClient {
 
     // @todo add token
     func user(id: Int, callback: @escaping (Result<Profile, APIError>) -> Void) {
-        AF.request(baseUrl + "/v1/users/" + String(id), method: .get, headers: ["Authorization": token!])
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/users/" + String(id)), method: .get, headers: ["Authorization": token!])
             .validate()
             .response { result in
                 guard let data = result.data else {
@@ -358,23 +356,23 @@ extension APIClient {
     }
 
     func editProfile(displayName: String, callback: @escaping (Result<Bool, APIError>) -> Void) {
-        AF.request(baseUrl + "/v1/users/edit", method: .post, parameters: ["display_name": displayName], encoding: URLEncoding.default, headers: ["Authorization": token!])
-        .validate()
-        .response { result in
-            guard result.data != nil else {
-                return callback(.failure(.requestFailed))
-            }
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/users/edit"), method: .post, parameters: ["display_name": displayName], encoding: URLEncoding.default, headers: ["Authorization": token!])
+            .validate()
+            .response { result in
+                guard result.data != nil else {
+                    return callback(.failure(.requestFailed))
+                }
 
-            if result.error != nil {
-                callback(.failure(.noData))
-            }
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
 
-            if result.response?.statusCode == 200 {
-                return callback(.success(true))
-            }
+                if result.response?.statusCode == 200 {
+                    return callback(.success(true))
+                }
 
-            return callback(.failure(.decode))
-        }
+                return callback(.failure(.decode))
+            }
     }
 }
 
@@ -402,7 +400,7 @@ extension APIClient {
     }
 
     private func userListRequest(_ path: String, callback: @escaping (Result<[User], APIError>) -> Void) {
-        AF.request(baseUrl + path, method: .get, headers: ["Authorization": token!])
+        AF.request(Configuration.rootURL.appendingPathComponent(path), method: .get, headers: ["Authorization": token!])
             .validate()
             .response { result in
                 guard let data = result.data else {
@@ -423,7 +421,7 @@ extension APIClient {
     }
 
     private func followRequest(_ path: String, id: Int, callback: @escaping (Result<Bool, APIError>) -> Void) {
-        AF.request(baseUrl + path, method: .post, parameters: ["id": id], encoding: URLEncoding.default, headers: ["Authorization": token!])
+        AF.request(Configuration.rootURL.appendingPathComponent(path), method: .post, parameters: ["id": id], encoding: URLEncoding.default, headers: ["Authorization": token!])
             .validate()
             .response { result in
                 guard result.data != nil else {
@@ -445,7 +443,7 @@ extension APIClient {
 
 extension APIClient {
     func addDevice(token: String, callback: @escaping (Result<Bool, APIError>) -> Void) {
-        AF.request(baseUrl + "/v1/devices/add", method: .post, parameters: ["token": token], encoding: URLEncoding.default, headers: ["Authorization": self.token!])
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/devices/add"), method: .post, parameters: ["token": token], encoding: URLEncoding.default, headers: ["Authorization": self.token!])
             .validate()
             .response { result in
                 guard result.data != nil else {

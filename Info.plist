@@ -53,5 +53,9 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>CDN_URL</key>
+	<string>$(CDN_URL)</string>
+	<key>ROOT_URL</key>
+	<string>$(ROOT_URL)</string>
 </dict>
 </plist>
