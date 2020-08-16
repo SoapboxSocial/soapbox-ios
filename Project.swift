@@ -10,12 +10,12 @@ let settings = Settings(
         CustomConfiguration.debug(
             name: "debug",
             settings: ["CODE_SIGN_ENTITLEMENTS": SettingValue.string("./Entitlements/debug.entitlements")],
-            xcconfig: "./Configurations/Development.xcconfig"
+            xcconfig: "./Configurations/Debug.xcconfig"
         ),
         CustomConfiguration.release(
             name: "release",
             settings: ["CODE_SIGN_ENTITLEMENTS": SettingValue.string("./Entitlements/release.entitlements")],
-            xcconfig: nil
+            xcconfig: "./Configurations/Release.xcconfig"
         ),
     ]
 )
