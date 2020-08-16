@@ -60,6 +60,15 @@ class RoomListViewController: UIViewController {
         let item = UIBarButtonItem(title: "@" + UserDefaults.standard.string(forKey: "username")!, style: .plain, target: self, action: #selector(openProfile))
         item.tintColor = .black
         navigationItem.leftBarButtonItem = item
+        
+        let sc = UISearchController(searchResultsController: nil)
+//        sc.delegate = self
+        let scb = sc.searchBar
+        scb.tintColor = UIColor.secondaryBackground
+//        scb.barTintColor = UIColor.white
+        
+        navigationItem.searchController = sc
+        navigationItem.hidesSearchBarWhenScrolling = false
     }
 
     @objc private func openProfile() {
