@@ -13,7 +13,7 @@ class EditProfileViewController: UIViewController {
 
     private var user: APIClient.Profile
     private let parentVC: ProfileViewController
-    private var imageView: UIImageView!
+    private var imageView: EditProfileImageButton!
     private var imagePicker: UIImagePickerController!
 
     private var image: UIImage?
@@ -37,17 +37,10 @@ class EditProfileViewController: UIViewController {
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
 
-        imageView = UIImageView(frame: CGRect(x: 40, y: 100, width: 75, height: 75))
-        imageView.layer.cornerRadius = 75 / 2
-        imageView.backgroundColor = .secondaryBackground
-        imageView.clipsToBounds = true
-        view.addSubview(imageView)
-
-        let imageTap = UITapGestureRecognizer(target: self, action: #selector(selectImage))
-        imageView.addGestureRecognizer(imageTap)
-        imageView.isUserInteractionEnabled = true
-
+        imageView = EditProfileImageButton(frame: CGRect(x: 40, y: 100, width: 75, height: 75))
+        imageView.addTarget(self, action: #selector(selectImage))
         imageView.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + user.image))
+        view.addSubview(imageView)
 
         imagePicker = UIImagePickerController()
         imagePicker.delegate = self
