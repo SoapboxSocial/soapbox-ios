@@ -193,7 +193,7 @@ extension AuthenticationViewController {
         label.textColor = .white
         label.font = label.font.withSize(20)
         view.addSubview(label)
-        
+
         let image = EditProfileImageButton(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: label.frame.size.height + 20, width: 90, height: 90))
         view.addSubview(image)
 
