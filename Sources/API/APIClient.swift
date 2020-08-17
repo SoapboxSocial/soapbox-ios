@@ -284,38 +284,51 @@ extension APIClient {
 
     // @todo return expires in and store it somewhere
 
-    func register(token: String, username: String, displayName: String, callback: @escaping (Result<(User, Int), APIError>) -> Void) {
-        AF.request(Configuration.rootURL.appendingPathComponent("/v1/login/register"), method: .post, parameters: ["username": username, "display_name": displayName, "token": token], encoding: URLEncoding.default)
-            .validate()
-            .response { result in
-                guard let data = result.data else {
-                    return callback(.failure(.requestFailed))
+    func register(token: String, username: String, displayName: String, image: UIImage, callback: @escaping (Result<(User, Int), APIError>) -> Void) {
+        AF.upload(
+            multipartFormData: { multipartFormData in
+                guard let imgData = image.jpegData(compressionQuality: 0.5) else {
+                    return callback(.failure(.noData))
                 }
 
-                if result.error != nil {
-                    do {
-                        let resp = try self.decoder.decode(ErrorResponse.self, from: data)
-                        if resp.code == .usernameAlreadyExists {
-                            return callback(.failure(.usernameAlreadyExists))
-                        }
+                multipartFormData.append(imgData, withName: "profile", fileName: "profile", mimeType: "image/jpg")
 
-                        return callback(.failure(.requestFailed))
-                    } catch {
-                        return callback(.failure(.decode))
-                    }
-                }
+                multipartFormData.append(displayName.data(using: String.Encoding.utf8)!, withName: "display_name")
+                multipartFormData.append(username.data(using: String.Encoding.utf8)!, withName: "username")
+                multipartFormData.append(token.data(using: String.Encoding.utf8)!, withName: "token")
+            },
+            to: Configuration.rootURL.appendingPathComponent("/v1/login/register")
+        )
+        .validate()
+        .response { result in
+            guard let data = result.data else {
+                return callback(.failure(.requestFailed))
+            }
 
+            if result.error != nil {
                 do {
-                    let resp = try self.decoder.decode(PinEntryResponse.self, from: data)
-                    guard let user = resp.user, let expires = resp.expiresIn else {
-                        return callback(.failure(.decode))
+                    let resp = try self.decoder.decode(ErrorResponse.self, from: data)
+                    if resp.code == .usernameAlreadyExists {
+                        return callback(.failure(.usernameAlreadyExists))
                     }
 
-                    callback(.success((user, expires)))
+                    return callback(.failure(.requestFailed))
                 } catch {
                     return callback(.failure(.decode))
                 }
             }
+
+            do {
+                let resp = try self.decoder.decode(PinEntryResponse.self, from: data)
+                guard let user = resp.user, let expires = resp.expiresIn else {
+                    return callback(.failure(.decode))
+                }
+
+                callback(.success((user, expires)))
+            } catch {
+                return callback(.failure(.decode))
+            }
+        }
     }
 }
 
@@ -362,8 +375,7 @@ extension APIClient {
             multipartFormData: { multipartFormData in
                 if let uploadImage = image {
                     guard let imgData = uploadImage.jpegData(compressionQuality: 0.5) else {
-                        // @todo
-                        return
+                        return callback(.failure(.noData))
                     }
 
                     multipartFormData.append(imgData, withName: "profile", fileName: "profile", mimeType: "image/jpg")
