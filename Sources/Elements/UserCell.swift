@@ -10,6 +10,7 @@ import UIKit
 class UserCell: UICollectionViewCell {
     var nameLabel: UILabel!
     var usernameLabel: UILabel!
+    var profilePicture: UIImageView!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -22,12 +23,9 @@ class UserCell: UICollectionViewCell {
         content.layer.masksToBounds = true
         addSubview(content)
 
-        let profilePicture = UIImageView(frame: CGRect(x: 20, y: 20, width: content.frame.size.height - 40, height: content.frame.size.height - 40))
+        profilePicture = UIImageView(frame: CGRect(x: 20, y: 20, width: content.frame.size.height - 40, height: content.frame.size.height - 40))
         profilePicture.layer.cornerRadius = (content.frame.size.height - 40) / 2
         profilePicture.backgroundColor = .systemGray5
-
-        let url = URL(string: "https://httpbin.org/image/png")!
-        profilePicture.af.setImage(withURL: url)
 
         content.addSubview(profilePicture)
 
@@ -46,5 +44,9 @@ class UserCell: UICollectionViewCell {
     public func setup(user: APIClient.User) {
         nameLabel.text = user.displayName
         usernameLabel.text = "@" + user.username
+
+        if let image = user.image {
+            profilePicture.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
+        }
     }
 }

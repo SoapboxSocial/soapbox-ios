@@ -41,6 +41,10 @@ class ProfileViewController: UIViewController {
 
         view.backgroundColor = .background
 
+        loadData()
+    }
+
+    func loadData() {
         api.user(id: id) { result in
             switch result {
             case .failure:
@@ -55,7 +59,7 @@ class ProfileViewController: UIViewController {
         }
     }
 
-    func setupView(user: APIClient.Profile) {
+    private func setupView(user: APIClient.Profile) {
         self.user = user
 
         name.text = user.displayName

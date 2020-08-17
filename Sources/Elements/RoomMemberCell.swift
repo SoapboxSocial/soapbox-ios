@@ -5,6 +5,7 @@
 //  Created by Dean Eigenmann on 29.07.20.
 //
 
+import AlamofireImage
 import UIKit
 
 class RoomMemberCell: UICollectionViewCell {
@@ -12,14 +13,15 @@ class RoomMemberCell: UICollectionViewCell {
     private var roleLabel: UILabel!
     private var nameLabel: UILabel!
     private var muteView: UIView!
+    private var profileImage: UIImageView!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        let circle = UIView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.width))
-        circle.layer.cornerRadius = frame.size.width / 2
-        circle.clipsToBounds = true
-        circle.backgroundColor = .highlight
+        profileImage = UIImageView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.width))
+        profileImage.layer.cornerRadius = frame.size.width / 2
+        profileImage.clipsToBounds = true
+        profileImage.backgroundColor = .highlight
 
         nameLabel = UILabel(frame: CGRect(x: 0, y: 66, width: 66, height: frame.size.height - 66))
         nameLabel.textAlignment = .center
@@ -29,9 +31,9 @@ class RoomMemberCell: UICollectionViewCell {
         isSelfLabel.text = "You"
         isSelfLabel.textAlignment = .center
         isSelfLabel.textColor = .elementBackground
-        circle.addSubview(isSelfLabel)
+        profileImage.addSubview(isSelfLabel)
 
-        contentView.addSubview(circle)
+        contentView.addSubview(profileImage)
 
         let roleView = UIView(frame: CGRect(x: 66 - 20, y: 0, width: 20, height: 20))
         roleView.backgroundColor = .background
@@ -62,7 +64,7 @@ class RoomMemberCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setup(isSelf: Bool, name: String, role: APIClient.MemberRole) {
+    func setup(isSelf: Bool, name: String, image: String, role: APIClient.MemberRole) {
         muteView.isHidden = true
 
         if isSelf {
@@ -73,10 +75,16 @@ class RoomMemberCell: UICollectionViewCell {
 
         nameLabel.text = first(name)
         roleLabel.text = emoji(for: role)
+
+        if image == "" {
+            return
+        }
+
+        profileImage.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
     }
 
     func setup(isSelf: Bool, member: APIClient.Member) {
-        setup(isSelf: isSelf, name: member.displayName, role: member.role)
+        setup(isSelf: isSelf, name: member.displayName, image: member.image, role: member.role)
 
         if member.role != APIClient.MemberRole.audience, member.isMuted {
             muteView.isHidden = false

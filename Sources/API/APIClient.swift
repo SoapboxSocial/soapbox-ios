@@ -37,11 +37,12 @@ class APIClient {
     struct Member: Decodable {
         let id: Int
         let displayName: String
+        let image: String
         var role: MemberRole
         var isMuted: Bool
 
         private enum CodingKeys: String, CodingKey {
-            case id, role, displayName = "display_name", isMuted = "is_muted"
+            case id, role, displayName = "display_name", image, isMuted = "is_muted"
         }
     }
 
@@ -206,9 +207,10 @@ extension APIClient {
         let displayName: String
         let username: String
         let email: String?
+        let image: String?
 
         private enum CodingKeys: String, CodingKey {
-            case id, displayName = "display_name", username, email
+            case id, displayName = "display_name", username, email, image
         }
     }
 
@@ -375,7 +377,6 @@ extension APIClient {
         .validate()
         .response {
             result in
-            debugPrint(result)
             guard result.data != nil else {
                 return callback(.failure(.requestFailed))
             }
