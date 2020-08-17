@@ -193,13 +193,16 @@ extension AuthenticationViewController {
         label.textColor = .white
         label.font = label.font.withSize(20)
         view.addSubview(label)
+        
+        let image = EditProfileImageButton(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: label.frame.size.height + 20, width: 90, height: 90))
+        view.addSubview(image)
 
-        usernameTextField = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: label.frame.size.height + 20, width: 330, height: 40))
+        usernameTextField = TextField(frame: CGRect(x: image.frame.origin.x + image.frame.size.width + 10, y: label.frame.size.height + 20, width: view.frame.size.width - ((image.frame.origin.x * 2) + image.frame.size.width + 10), height: 40))
         usernameTextField.placeholder = NSLocalizedString("username", comment: "")
         usernameTextField.delegate = self
         view.addSubview(usernameTextField)
 
-        displayNameTextField = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: usernameTextField.frame.height + usernameTextField.frame.origin.y + 10, width: 330, height: 40))
+        displayNameTextField = TextField(frame: CGRect(x: usernameTextField.frame.origin.x, y: usernameTextField.frame.height + usernameTextField.frame.origin.y + 10, width: usernameTextField.frame.size.width, height: 40))
         displayNameTextField.placeholder = NSLocalizedString("display_name", comment: "")
         displayNameTextField.delegate = self
         view.addSubview(displayNameTextField)

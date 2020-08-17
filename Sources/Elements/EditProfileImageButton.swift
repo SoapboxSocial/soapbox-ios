@@ -29,7 +29,7 @@ class EditProfileImageButton: UIImageView {
         backgroundColor = .secondaryBackground
         clipsToBounds = true
 
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: 75, height: 75))
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height))
         label.text = NSLocalizedString("edit", comment: "")
         label.textColor = .white
         label.textAlignment = .center
