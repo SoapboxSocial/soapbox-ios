@@ -1,5 +1,7 @@
 PODS:
   - Alamofire (5.2.2)
+  - AlamofireImage (4.1.0):
+    - Alamofire (~> 5.1)
   - DrawerView (1.3.1)
   - GoogleWebRTC (1.1.29400)
   - KeychainAccess (4.2.0)
@@ -14,6 +16,7 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire
+  - AlamofireImage
   - DrawerView
   - GoogleWebRTC
   - KeychainAccess
@@ -25,6 +28,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Alamofire
+    - AlamofireImage
     - DrawerView
     - GoogleWebRTC
     - KeychainAccess
@@ -37,6 +41,7 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   Alamofire: 814429acc853c6c54ff123fc3d2ef66803823ce0
+  AlamofireImage: c4a2ba349885fb3064feb74d2e547bd42ce9be10
   DrawerView: 0c7e6c40e5076b2fb64c394fa5fc8166ff917eff
   GoogleWebRTC: cfb83bc346435a17fe06bb05f04ad826b858a7fb
   KeychainAccess: 3f760109aa99b05d0f231e28b22642da7153e38a
@@ -47,6 +52,6 @@ SPEC CHECKSUMS:
   SwiftProtobuf: f889fe5772f90ef7d7b8aac352d1fddf39650713
   UIWindowTransitions: cb662e2ae9e2d1060fcdbe3eb3de9232bedb7612
 
-PODFILE CHECKSUM: 1c398c05ee7a9af737d0b609907f4468d04ae407
+PODFILE CHECKSUM: 67ae8c62e91663165614de8d54037fadc76228f8
 
 COCOAPODS: 1.9.1

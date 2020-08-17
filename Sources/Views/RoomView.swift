@@ -245,9 +245,9 @@ extension RoomView: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! RoomMemberCell
         if indexPath.item == 0 {
             // @todo this is a bit ugly
-            cell.setup(isSelf: true, name: UserDefaults.standard.string(forKey: "display") ?? "", role: room.role)
+            cell.setup(name: UserDefaults.standard.string(forKey: "display") ?? "", image: UserDefaults.standard.string(forKey: "image") ?? "", role: room.role)
         } else {
-            cell.setup(isSelf: false, member: room.members[indexPath.item - 1])
+            cell.setup(member: room.members[indexPath.item - 1])
         }
 
         return cell

@@ -15,6 +15,8 @@ enum ErrorStyle {
 protocol AuthenticationPresenterOutput {
     func displayError(_ style: ErrorStyle, title: String, description: String?)
     func transitionTo(state: AuthenticationInteractor.AuthenticationState)
+    func display(profileImage: UIImage)
+    func displayImagePicker()
 }
 
 class AuthenticationPresenter: AuthenticationInteractorOutput {
@@ -38,9 +40,15 @@ class AuthenticationPresenter: AuthenticationInteractorOutput {
             output.displayError(.normal, title: NSLocalizedString("incorrect_pin", comment: ""), description: nil)
         case .invalidUsername:
             output.displayError(.normal, title: NSLocalizedString("invalid_username", comment: ""), description: nil)
+        case .missingProfileImage:
+            output.displayError(.normal, title: NSLocalizedString("pick_profile_image", comment: ""), description: nil)
         case .usernameTaken:
             output.displayError(.normal, title: NSLocalizedString("username_already_exists", comment: ""), description: nil)
         }
+    }
+
+    func present(profileImage image: UIImage) {
+        output.display(profileImage: image)
     }
 
     func present(state: AuthenticationInteractor.AuthenticationState) {
@@ -51,6 +59,10 @@ class AuthenticationPresenter: AuthenticationInteractorOutput {
                 self.presentLoggedInView()
             }
         }
+    }
+
+    func presentImagePicker() {
+        output.displayImagePicker()
     }
 
     func presentLoggedInView() {

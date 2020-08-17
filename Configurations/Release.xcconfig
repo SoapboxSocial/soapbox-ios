@@ -3,3 +3,6 @@
 
 // Server URL
 ROOT_URL = https:/$()/spksy.app
+
+// CDN URL
+CDN_URL = https:/$()/cdn.spksy.app

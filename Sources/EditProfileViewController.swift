@@ -13,6 +13,10 @@ class EditProfileViewController: UIViewController {
 
     private var user: APIClient.Profile
     private let parentVC: ProfileViewController
+    private var imageView: EditProfileImageButton!
+    private var imagePicker: UIImagePickerController!
+
+    private var image: UIImage?
 
     init(user: APIClient.Profile, parent: ProfileViewController) {
         parentVC = parent
@@ -33,6 +37,15 @@ class EditProfileViewController: UIViewController {
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
 
+        imageView = EditProfileImageButton(frame: CGRect(x: 40, y: 100, width: 75, height: 75))
+        imageView.addTarget(self, action: #selector(selectImage))
+        imageView.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + user.image))
+        view.addSubview(imageView)
+
+        imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.allowsEditing = true
+
         let cancelButton = UIButton(frame: CGRect(x: 10, y: 40, width: 100, height: 20))
         cancelButton.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
         cancelButton.setTitleColor(.secondaryBackground, for: .normal)
@@ -45,10 +58,14 @@ class EditProfileViewController: UIViewController {
         saveButton.addTarget(self, action: #selector(savePressed), for: .touchUpInside)
         view.addSubview(saveButton)
 
-        displayNameTextField = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: 100, width: 330, height: 40))
+        displayNameTextField = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: imageView.frame.origin.y + imageView.frame.size.height + 20, width: 330, height: 40))
         displayNameTextField.placeholder = NSLocalizedString("display_name", comment: "")
         displayNameTextField.text = user.displayName
         view.addSubview(displayNameTextField)
+    }
+
+    @objc private func selectImage() {
+        present(imagePicker, animated: true)
     }
 
     @objc private func savePressed() {
@@ -58,7 +75,7 @@ class EditProfileViewController: UIViewController {
             return
         }
 
-        APIClient().editProfile(displayName: displayName) { result in
+        APIClient().editProfile(displayName: displayName, image: image) { result in
             switch result {
             case .failure:
                 let banner = FloatingNotificationBanner(
@@ -69,9 +86,7 @@ class EditProfileViewController: UIViewController {
                 banner.show(cornerRadius: 10, shadowBlurRadius: 15)
             case .success:
                 DispatchQueue.main.async {
-                    self.user.displayName = displayName
-
-                    self.parentVC.setupView(user: self.user)
+                    self.parentVC.loadData()
                     self.dismiss(animated: true)
                 }
             }
@@ -84,5 +99,16 @@ class EditProfileViewController: UIViewController {
 
     @objc private func dismissKeyboard() {
         view.endEditing(true)
+    }
+}
+
+extension EditProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        guard let image = info[.editedImage] as? UIImage else { return }
+
+        imageView.image = image
+        self.image = image
+
+        dismiss(animated: true)
     }
 }

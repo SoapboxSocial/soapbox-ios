@@ -27,4 +27,16 @@ class Configuration {
 
         return url
     }()
+
+    static let cdn: URL = {
+        guard let cdnURLstring = Configuration.infoDictionary["CDN_URL"] as? String else {
+            fatalError("CDN URL not set in plist for this environment")
+        }
+
+        guard let url = URL(string: cdnURLstring) else {
+            fatalError("CDN URL is invalid")
+        }
+
+        return url
+    }()
 }

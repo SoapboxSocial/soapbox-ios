@@ -13,6 +13,8 @@ protocol AuthenticationViewControllerOutput {
     func login(email: String?)
     func submitPin(pin: String?)
     func register(username: String?, displayName: String?)
+    func showImagePicker()
+    func didSelect(image: UIImage)
 }
 
 class AuthenticationViewController: UIViewController {
@@ -28,6 +30,8 @@ class AuthenticationViewController: UIViewController {
 
     private var displayNameTextField: UITextField!
     private var usernameTextField: UITextField!
+
+    private var profileImage: EditProfileImageButton!
 
     private var state = AuthenticationInteractor.AuthenticationState.login
 
@@ -144,6 +148,19 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
             banner.show(cornerRadius: 10, shadowBlurRadius: 15)
         }
     }
+
+    func display(profileImage image: UIImage) {
+        profileImage.image = image
+    }
+
+    func displayImagePicker() {
+        DispatchQueue.main.async {
+            let imagePicker = UIImagePickerController()
+            imagePicker.delegate = self
+            imagePicker.allowsEditing = true
+            self.present(imagePicker, animated: true)
+        }
+    }
 }
 
 extension AuthenticationViewController {
@@ -194,17 +211,25 @@ extension AuthenticationViewController {
         label.font = label.font.withSize(20)
         view.addSubview(label)
 
-        usernameTextField = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: label.frame.size.height + 20, width: 330, height: 40))
+        profileImage = EditProfileImageButton(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: label.frame.size.height + 20, width: 90, height: 90))
+        view.addSubview(profileImage)
+        profileImage.addTarget(self, action: #selector(showImagePicker))
+
+        usernameTextField = TextField(frame: CGRect(x: profileImage.frame.origin.x + profileImage.frame.size.width + 10, y: label.frame.size.height + 20, width: view.frame.size.width - ((profileImage.frame.origin.x * 2) + profileImage.frame.size.width + 10), height: 40))
         usernameTextField.placeholder = NSLocalizedString("username", comment: "")
         usernameTextField.delegate = self
         view.addSubview(usernameTextField)
 
-        displayNameTextField = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: usernameTextField.frame.height + usernameTextField.frame.origin.y + 10, width: 330, height: 40))
+        displayNameTextField = TextField(frame: CGRect(x: usernameTextField.frame.origin.x, y: usernameTextField.frame.height + usernameTextField.frame.origin.y + 10, width: usernameTextField.frame.size.width, height: 40))
         displayNameTextField.placeholder = NSLocalizedString("display_name", comment: "")
         displayNameTextField.delegate = self
         view.addSubview(displayNameTextField)
 
         return view
+    }
+
+    @objc private func showImagePicker() {
+        output.showImagePicker()
     }
 
     private func setupNotificationRequestView(height: CGFloat) -> UIView {
@@ -234,5 +259,15 @@ extension AuthenticationViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+}
+
+extension AuthenticationViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        guard let image = info[.editedImage] as? UIImage else { return }
+
+        output.didSelect(image: image)
+
+        dismiss(animated: true)
     }
 }

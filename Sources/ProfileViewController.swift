@@ -5,6 +5,7 @@
 //  Created by Dean Eigenmann on 06.08.20.
 //
 
+import AlamofireImage
 import NotificationBannerSwift
 import UIKit
 
@@ -18,7 +19,7 @@ class ProfileViewController: UIViewController {
     private var followingLabel: UILabel!
     private var followsYou: UILabel!
 
-    private var image: UIView!
+    private var image: UIImageView!
     private var name: UILabel!
     private var username: UILabel!
 
@@ -40,6 +41,10 @@ class ProfileViewController: UIViewController {
 
         view.backgroundColor = .background
 
+        loadData()
+    }
+
+    func loadData() {
         api.user(id: id) { result in
             switch result {
             case .failure:
@@ -54,7 +59,7 @@ class ProfileViewController: UIViewController {
         }
     }
 
-    func setupView(user: APIClient.Profile) {
+    private func setupView(user: APIClient.Profile) {
         self.user = user
 
         name.text = user.displayName
@@ -63,6 +68,7 @@ class ProfileViewController: UIViewController {
         updateFollowersLabelText(count: user.followers)
 
         followingLabel.text = String(user.following) + " " + NSLocalizedString("following", comment: "")
+        image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + user.image))
 
         if self.user.id != UserDefaults.standard.integer(forKey: "id") {
             editButton.isHidden = true
@@ -74,6 +80,16 @@ class ProfileViewController: UIViewController {
                 followsYou.isHidden = false
             }
         } else {
+            // @todo this is a hacky way to refresh the user after update.
+            UserStore.store(user:
+                APIClient.User(
+                    id: user.id,
+                    displayName: user.displayName,
+                    username: user.username,
+                    email: UserDefaults.standard.string(forKey: "email") ?? "",
+                    image: user.image
+                ))
+
             editButton.isHidden = false
             followButton.isHidden = true
             followsYou.isHidden = true
@@ -81,9 +97,10 @@ class ProfileViewController: UIViewController {
     }
 
     private func setup() {
-        image = UIView(frame: CGRect(x: 40, y: (navigationController?.navigationBar.frame.origin.y)! + (navigationController?.navigationBar.frame.size.height)! + 20, width: 75, height: 75))
+        image = UIImageView(frame: CGRect(x: 40, y: (navigationController?.navigationBar.frame.origin.y)! + (navigationController?.navigationBar.frame.size.height)! + 20, width: 75, height: 75))
         image.layer.cornerRadius = 75 / 2
         image.backgroundColor = .secondaryBackground
+        image.clipsToBounds = true
         view.addSubview(image)
 
         name = UILabel(frame: CGRect(x: 40, y: image.frame.origin.y + image.frame.size.height + 20, width: 200, height: 20))

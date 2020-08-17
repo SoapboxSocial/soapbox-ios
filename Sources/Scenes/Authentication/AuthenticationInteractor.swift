@@ -13,6 +13,8 @@ protocol AuthenticationInteractorOutput {
     func present(error: AuthenticationInteractor.AuthenticationError)
     func present(state: AuthenticationInteractor.AuthenticationState)
     func presentLoggedInView()
+    func present(profileImage: UIImage)
+    func presentImagePicker()
 }
 
 class AuthenticationInteractor: AuthenticationViewControllerOutput {
@@ -21,12 +23,14 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
 
     private var token: String?
 
+    private var image: UIImage?
+
     enum AuthenticationState: Int {
         case login, pin, registration, requestNotifications, success
     }
 
     enum AuthenticationError {
-        case invalidEmail, invalidPin, invalidUsername, usernameTaken, general
+        case invalidEmail, invalidPin, invalidUsername, usernameTaken, missingProfileImage, general
     }
 
     init(output: AuthenticationInteractorOutput, api: APIClient) {
@@ -87,7 +91,11 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
             return output.present(error: .invalidUsername)
         }
 
-        api.register(token: token!, username: usernameInput, displayName: displayName ?? usernameInput) { result in
+        guard let profileImage = image else {
+            return output.present(error: .missingProfileImage)
+        }
+
+        api.register(token: token!, username: usernameInput, displayName: displayName ?? usernameInput, image: profileImage) { result in
             switch result {
             case let .failure(error):
                 if error == .usernameAlreadyExists {
@@ -105,6 +113,15 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
                 }
             }
         }
+    }
+
+    func showImagePicker() {
+        output.presentImagePicker()
+    }
+
+    @objc func didSelect(image: UIImage) {
+        self.image = image
+        output.present(profileImage: image)
     }
 
     private func isValidUsername(_ username: String) -> Bool {

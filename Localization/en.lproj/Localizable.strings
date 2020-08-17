@@ -67,3 +67,7 @@
 
 "save" = "Save";
 "invalid_display_name" = "Valid display name required";
+
+"edit" = "Edit";
+
+"pick_profile_image" = "Please select a profile image.";
