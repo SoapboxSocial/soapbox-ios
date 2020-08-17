@@ -80,6 +80,18 @@ class ProfileViewController: UIViewController {
                 followsYou.isHidden = false
             }
         } else {
+            
+            // @todo this is a hacky way to refresh the user after update.
+            UserStore.store(user:
+                APIClient.User(
+                    id: user.id,
+                    displayName: user.displayName,
+                    username: user.username,
+                    email: UserDefaults.standard.string(forKey: "email") ?? "",
+                    image: user.image
+                )
+            )
+            
             editButton.isHidden = false
             followButton.isHidden = true
             followsYou.isHidden = true

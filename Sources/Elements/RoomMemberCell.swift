@@ -9,7 +9,6 @@ import AlamofireImage
 import UIKit
 
 class RoomMemberCell: UICollectionViewCell {
-    private var isSelfLabel: UILabel!
     private var roleLabel: UILabel!
     private var nameLabel: UILabel!
     private var muteView: UIView!
@@ -22,18 +21,11 @@ class RoomMemberCell: UICollectionViewCell {
         profileImage.layer.cornerRadius = frame.size.width / 2
         profileImage.clipsToBounds = true
         profileImage.backgroundColor = .highlight
+        contentView.addSubview(profileImage)
 
         nameLabel = UILabel(frame: CGRect(x: 0, y: 66, width: 66, height: frame.size.height - 66))
         nameLabel.textAlignment = .center
         addSubview(nameLabel)
-
-        isSelfLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 66, height: 66))
-        isSelfLabel.text = "You"
-        isSelfLabel.textAlignment = .center
-        isSelfLabel.textColor = .elementBackground
-        profileImage.addSubview(isSelfLabel)
-
-        contentView.addSubview(profileImage)
 
         let roleView = UIView(frame: CGRect(x: 66 - 20, y: 0, width: 20, height: 20))
         roleView.backgroundColor = .background
@@ -64,14 +56,8 @@ class RoomMemberCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setup(isSelf: Bool, name: String, image: String, role: APIClient.MemberRole) {
+    func setup(name: String, image: String, role: APIClient.MemberRole) {
         muteView.isHidden = true
-
-        if isSelf {
-            isSelfLabel.isHidden = false
-        } else {
-            isSelfLabel.isHidden = true
-        }
 
         nameLabel.text = first(name)
         roleLabel.text = emoji(for: role)
@@ -83,8 +69,8 @@ class RoomMemberCell: UICollectionViewCell {
         profileImage.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
     }
 
-    func setup(isSelf: Bool, member: APIClient.Member) {
-        setup(isSelf: isSelf, name: member.displayName, image: member.image, role: member.role)
+    func setup(member: APIClient.Member) {
+        setup(name: member.displayName, image: member.image, role: member.role)
 
         if member.role != APIClient.MemberRole.audience, member.isMuted {
             muteView.isHidden = false

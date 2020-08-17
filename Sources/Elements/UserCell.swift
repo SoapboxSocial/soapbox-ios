@@ -26,6 +26,7 @@ class UserCell: UICollectionViewCell {
         profilePicture = UIImageView(frame: CGRect(x: 20, y: 20, width: content.frame.size.height - 40, height: content.frame.size.height - 40))
         profilePicture.layer.cornerRadius = (content.frame.size.height - 40) / 2
         profilePicture.backgroundColor = .systemGray5
+        profilePicture.clipsToBounds = true
 
         content.addSubview(profilePicture)
 
