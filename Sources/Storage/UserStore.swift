@@ -14,5 +14,6 @@ class UserStore {
         UserDefaults.standard.set(user.displayName, forKey: "display")
         UserDefaults.standard.set(user.id, forKey: "id")
         UserDefaults.standard.set(user.email, forKey: "email")
+        UserDefaults.standard.set(user.image, forKey: "image")
     }
 }

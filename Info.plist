@@ -53,5 +53,11 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>CDN_URL</key>
+	<string>$(CDN_URL)</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app wants to use your photos.</string>
+	<key>ROOT_URL</key>
+	<string>$(ROOT_URL)</string>
 </dict>
 </plist>
