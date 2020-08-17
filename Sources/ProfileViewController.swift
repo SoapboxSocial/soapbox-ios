@@ -5,9 +5,9 @@
 //  Created by Dean Eigenmann on 06.08.20.
 //
 
+import AlamofireImage
 import NotificationBannerSwift
 import UIKit
-import AlamofireImage
 
 class ProfileViewController: UIViewController {
     private let api = APIClient()
@@ -86,6 +86,7 @@ class ProfileViewController: UIViewController {
         image = UIImageView(frame: CGRect(x: 40, y: (navigationController?.navigationBar.frame.origin.y)! + (navigationController?.navigationBar.frame.size.height)! + 20, width: 75, height: 75))
         image.layer.cornerRadius = 75 / 2
         image.backgroundColor = .secondaryBackground
+        image.clipsToBounds = true
         view.addSubview(image)
 
         name = UILabel(frame: CGRect(x: 40, y: image.frame.origin.y + image.frame.size.height + 20, width: 200, height: 20))

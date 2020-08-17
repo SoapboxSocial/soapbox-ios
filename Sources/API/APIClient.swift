@@ -355,24 +355,41 @@ extension APIClient {
             }
     }
 
-    func editProfile(displayName: String, callback: @escaping (Result<Bool, APIError>) -> Void) {
-        AF.request(Configuration.rootURL.appendingPathComponent("/v1/users/edit"), method: .post, parameters: ["display_name": displayName], encoding: URLEncoding.default, headers: ["Authorization": token!])
-            .validate()
-            .response { result in
-                guard result.data != nil else {
-                    return callback(.failure(.requestFailed))
+    func editProfile(displayName: String, image: UIImage?, callback: @escaping (Result<Bool, APIError>) -> Void) {
+        AF.upload(
+            multipartFormData: { multipartFormData in
+                if let uploadImage = image {
+                    guard let imgData = uploadImage.jpegData(compressionQuality: 0.5) else {
+                        // @todo
+                        return
+                    }
+
+                    multipartFormData.append(imgData, withName: "profile", fileName: "profile", mimeType: "image/jpg")
                 }
 
-                if result.error != nil {
-                    callback(.failure(.noData))
-                }
-
-                if result.response?.statusCode == 200 {
-                    return callback(.success(true))
-                }
-
-                return callback(.failure(.decode))
+                multipartFormData.append(displayName.data(using: String.Encoding.utf8)!, withName: "display_name")
+            },
+            to: Configuration.rootURL.appendingPathComponent("/v1/users/edit"),
+            headers: ["Authorization": token!]
+        )
+        .validate()
+        .response {
+            result in
+            debugPrint(result)
+            guard result.data != nil else {
+                return callback(.failure(.requestFailed))
             }
+
+            if result.error != nil {
+                callback(.failure(.noData))
+            }
+
+            if result.response?.statusCode == 200 {
+                return callback(.success(true))
+            }
+
+            return callback(.failure(.decode))
+        }
     }
 }
 
