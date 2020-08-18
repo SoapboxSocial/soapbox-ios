@@ -10,12 +10,12 @@ let settings = Settings(
         CustomConfiguration.debug(
             name: "debug",
             settings: ["CODE_SIGN_ENTITLEMENTS": SettingValue.string("./Entitlements/debug.entitlements")],
-            xcconfig: nil
+            xcconfig: "./Configurations/Debug.xcconfig"
         ),
         CustomConfiguration.release(
             name: "release",
             settings: ["CODE_SIGN_ENTITLEMENTS": SettingValue.string("./Entitlements/release.entitlements")],
-            xcconfig: nil
+            xcconfig: "./Configurations/Release.xcconfig"
         ),
     ]
 )
@@ -31,7 +31,7 @@ let project = Project(
             deploymentTarget: .iOS(targetVersion: "13.0", devices: .iphone),
             infoPlist: "Info.plist",
             sources: ["Sources/**"],
-            resources: ["Entitlements/*", "Assets.xcassets", "Localization/**/*.strings"],
+            resources: ["Configurations/*", "Entitlements/*", "Assets.xcassets", "Localization/**/*.strings"],
             dependencies: [
                 .cocoapods(path: "."),
             ],

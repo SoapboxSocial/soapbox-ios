@@ -14,6 +14,7 @@ target 'Voicely' do
   pod 'KeychainAccess'
   pod 'SwiftConfettiView'
   pod 'UIWindowTransitions'
+  pod 'AlamofireImage'
 
   target 'VoicelyTests' do
     inherit! :search_paths
