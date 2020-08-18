@@ -42,7 +42,6 @@ class RoomListViewController: UIViewController {
         rooms = UICollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout())
         rooms.dataSource = self
         rooms.alwaysBounceVertical = true
-        // @TODO: THIS IS A HACK
         rooms.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: CellIdentifier.footer.rawValue)
         rooms.register(RoomCell.self, forCellWithReuseIdentifier: CellIdentifier.room.rawValue)
         rooms.register(RoomListEmptyCell.self, forCellWithReuseIdentifier: CellIdentifier.empty.rawValue)
