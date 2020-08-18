@@ -63,7 +63,7 @@ class RoomMemberCell: UICollectionViewCell {
         roleLabel.text = emoji(for: role)
 
         if image == "" {
-            return
+            return profileImage.image = nil
         }
 
         profileImage.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
