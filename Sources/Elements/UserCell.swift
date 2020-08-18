@@ -1,11 +1,11 @@
 //
+import AlamofireImage
 //  UserCell.swift
 //  Voicely
 //
 //  Created by Dean Eigenmann on 10.08.20.
 //
 import UIKit
-import AlamofireImage
 
 class UserCell: UICollectionViewCell {
     var nameLabel: UILabel!

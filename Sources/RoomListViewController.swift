@@ -43,7 +43,7 @@ class RoomListViewController: UIViewController {
         rooms.dataSource = self
         rooms.alwaysBounceVertical = true
         // @TODO: THIS IS A HACK
-        rooms.register(UICollectionViewCell.self, forCellWithReuseIdentifier: CellIdentifier.footer.rawValue)
+        rooms.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: CellIdentifier.footer.rawValue)
         rooms.register(RoomCell.self, forCellWithReuseIdentifier: CellIdentifier.room.rawValue)
         rooms.register(RoomListEmptyCell.self, forCellWithReuseIdentifier: CellIdentifier.empty.rawValue)
         rooms.delegate = self
@@ -121,16 +121,12 @@ extension RoomListViewController: UICollectionViewDataSource {
             return 1
         }
 
-        return roomsData.count + 1
+        return roomsData.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if roomsData.count == 0 {
             return collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.empty.rawValue, for: indexPath)
-        }
-        
-        if roomsData.count == indexPath.item {
-            return collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.footer.rawValue, for: indexPath)
         }
 
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.room.rawValue, for: indexPath) as! RoomCell
@@ -144,6 +140,10 @@ extension RoomListViewController: UICollectionViewDataSource {
         }
 
         return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CellIdentifier.footer.rawValue, for: indexPath)
     }
 }
 
@@ -162,6 +162,14 @@ extension RoomListViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
         if roomsData.count == 0 {
             return CGSize(width: collectionView.frame.width, height: getEmptyHeight())
+        }
+
+        return CGSize(width: collectionView.frame.width, height: 105)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForFooterInSection _: Int) -> CGSize {
+        if roomsData.count == 0 {
+            return CGSize.zero
         }
 
         return CGSize(width: collectionView.frame.width, height: 105)
