@@ -13,6 +13,7 @@ class FollowerListViewController: UIViewController {
     private let userListFunc: APIClient.FollowerListFunc
 
     private let cellIdentifier = "cell"
+    private let footerIdentifier = "footer"
 
     var users = [APIClient.User]()
 
@@ -37,6 +38,7 @@ class FollowerListViewController: UIViewController {
         userList.dataSource = self
         userList.alwaysBounceVertical = true
         userList.register(UserCell.self, forCellWithReuseIdentifier: cellIdentifier)
+        userList.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: footerIdentifier)
         userList.delegate = self
         userList.backgroundColor = .clear
         userList.reloadData()
@@ -73,9 +75,17 @@ extension FollowerListViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if indexPath.item == users.count {
+            return collectionView.dequeueReusableCell(withReuseIdentifier: footerIdentifier, for: indexPath)
+        }
+
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: indexPath) as! UserCell
         cell.setup(user: users[indexPath.item])
         return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: footerIdentifier, for: indexPath)
     }
 }
 
@@ -87,6 +97,14 @@ extension FollowerListViewController: UICollectionViewDelegate {
 
 extension FollowerListViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
+        return CGSize(width: collectionView.frame.width, height: 105)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForFooterInSection _: Int) -> CGSize {
+        if users.count == 0 {
+            return CGSize.zero
+        }
+
         return CGSize(width: collectionView.frame.width, height: 105)
     }
 }

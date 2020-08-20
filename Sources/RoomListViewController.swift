@@ -14,6 +14,7 @@ class RoomListViewController: UIViewController {
     enum CellIdentifier: String {
         case room
         case empty
+        case footer
     }
 
     var delegate: RoomListViewDelegate?
@@ -41,6 +42,7 @@ class RoomListViewController: UIViewController {
         rooms = UICollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout())
         rooms.dataSource = self
         rooms.alwaysBounceVertical = true
+        rooms.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: CellIdentifier.footer.rawValue)
         rooms.register(RoomCell.self, forCellWithReuseIdentifier: CellIdentifier.room.rawValue)
         rooms.register(RoomListEmptyCell.self, forCellWithReuseIdentifier: CellIdentifier.empty.rawValue)
         rooms.delegate = self
@@ -147,6 +149,10 @@ extension RoomListViewController: UICollectionViewDataSource {
 
         return cell
     }
+
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CellIdentifier.footer.rawValue, for: indexPath)
+    }
 }
 
 extension RoomListViewController: UICollectionViewDelegate {
@@ -164,6 +170,14 @@ extension RoomListViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
         if roomsData.count == 0 {
             return CGSize(width: collectionView.frame.width, height: getEmptyHeight())
+        }
+
+        return CGSize(width: collectionView.frame.width, height: 105)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForFooterInSection _: Int) -> CGSize {
+        if roomsData.count == 0 {
+            return CGSize.zero
         }
 
         return CGSize(width: collectionView.frame.width, height: 105)
