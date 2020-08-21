@@ -153,6 +153,7 @@ extension RoomListViewController: UISearchResultsUpdating {
 extension RoomListViewController: UISearchControllerDelegate {
     func didDismissSearchController(_: UISearchController) {
         DispatchQueue.main.async {
+            self.users = []
             self.rooms.reloadData()
         }
     }
