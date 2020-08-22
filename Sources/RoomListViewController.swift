@@ -139,6 +139,8 @@ extension RoomListViewController: UISearchResultsUpdating {
             return
         }
 
+        rooms.refreshControl?.beginRefreshing()
+
         api.search(text) { result in
             switch result {
             case .failure:
@@ -148,6 +150,7 @@ extension RoomListViewController: UISearchResultsUpdating {
             }
 
             DispatchQueue.main.async {
+                self.rooms.refreshControl?.endRefreshing()
                 self.rooms.reloadData()
             }
         }
@@ -155,7 +158,7 @@ extension RoomListViewController: UISearchResultsUpdating {
 }
 
 extension RoomListViewController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    func searchBarSearchButtonClicked(_: UISearchBar) {
         view.endEditing(true)
     }
 }
@@ -225,7 +228,7 @@ extension RoomListViewController: UICollectionViewDelegate {
             navigationController?.pushViewController(ProfileViewController(id: users[index.item].id), animated: true)
             return
         }
-        
+
         if roomsData.count == 0 {
             return
         }

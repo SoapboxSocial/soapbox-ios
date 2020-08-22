@@ -260,17 +260,17 @@ extension NavigationViewController: RoomListViewDelegate {
             }
         }
     }
-    
+
     func didBeginSearching() {
-        self.createRoomButton.isHidden = true
+        createRoomButton.isHidden = true
     }
-    
+
     func didEndSearching() {
         if room != nil {
             return
         }
 
-        self.createRoomButton.isHidden = false
+        createRoomButton.isHidden = false
     }
 }
 
