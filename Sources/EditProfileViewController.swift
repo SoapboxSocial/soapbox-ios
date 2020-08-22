@@ -10,6 +10,7 @@ import UIKit
 
 class EditProfileViewController: UIViewController {
     private var displayNameTextField: TextField!
+    private var activityIndicator = UIActivityIndicatorView(style: .large)
 
     private var user: APIClient.Profile
     private let parentVC: ProfileViewController
@@ -62,6 +63,13 @@ class EditProfileViewController: UIViewController {
         displayNameTextField.placeholder = NSLocalizedString("display_name", comment: "")
         displayNameTextField.text = user.displayName
         view.addSubview(displayNameTextField)
+
+        activityIndicator.isHidden = true
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.color = .black
+
+        activityIndicator.center = view.center
+        view.addSubview(activityIndicator)
     }
 
     @objc private func selectImage() {
@@ -75,7 +83,15 @@ class EditProfileViewController: UIViewController {
             return
         }
 
+        activityIndicator.startAnimating()
+        activityIndicator.isHidden = false
+
         APIClient().editProfile(displayName: displayName, image: image) { result in
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
+                self.activityIndicator.isHidden = true
+            }
+
             switch result {
             case .failure:
                 let banner = FloatingNotificationBanner(
