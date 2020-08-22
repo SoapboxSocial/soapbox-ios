@@ -14,7 +14,7 @@ protocol ImagePickerDelegate {
 class ImagePicker: NSObject {
     var delegate: ImagePickerDelegate?
 
-    private let targetSize = CGSize(width: 400 / UIScreen.main.scale, height: 400 / UIScreen.main.scale)
+    private let targetSize = CGFloat(400 / UIScreen.main.scale)
     private let imagePicker: UIImagePickerController
 
     override init() {
@@ -42,20 +42,21 @@ extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDe
         guard let image = info[.editedImage] as? UIImage else { return }
 
         let size = image.size
-        if size.width <= targetSize.width, size.height <= targetSize.height {
+        if size.width <= targetSize, size.height <= targetSize {
             delegate?.didSelect(image: image)
             return
         }
 
-        let widthRatio = targetSize.width / size.width
-        let heightRatio = targetSize.height / size.height
+        let widthRatio = targetSize / size.width
+        let heightRatio = targetSize / size.height
 
-        var newSize: CGSize
-        if widthRatio > heightRatio {
-            newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
-        } else {
-            newSize = CGSize(width: size.width * widthRatio, height: size.height * widthRatio)
-        }
+        let newSize = { () -> CGSize in
+            if widthRatio > heightRatio {
+                return CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
+            }
+
+            return CGSize(width: size.width * widthRatio, height: size.height * widthRatio)
+        }()
 
         let renderer = UIGraphicsImageRenderer(size: newSize)
         let newImage = renderer.image { _ in
