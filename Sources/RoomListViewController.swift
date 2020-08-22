@@ -8,6 +8,9 @@ import UIKit
 protocol RoomListViewDelegate {
     func currentRoom() -> Int?
     func didSelectRoom(id: Int)
+    
+    func didBeginSearching()
+    func didEndSearching()
 }
 
 class RoomListViewController: UIViewController {
@@ -74,6 +77,8 @@ class RoomListViewController: UIViewController {
 
         let scb = searchController.searchBar
         scb.tintColor = UIColor.secondaryBackground
+        scb.returnKeyType = .default
+        scb.delegate = self
 
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -150,9 +155,16 @@ extension RoomListViewController: UISearchResultsUpdating {
     }
 }
 
+extension RoomListViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        view.endEditing(true)
+    }
+}
+
 extension RoomListViewController: UISearchControllerDelegate {
     func didDismissSearchController(_: UISearchController) {
         DispatchQueue.main.async {
+            self.delegate?.didEndSearching()
             self.users = []
             self.rooms.reloadData()
         }
@@ -160,6 +172,7 @@ extension RoomListViewController: UISearchControllerDelegate {
 
     func didPresentSearchController(_: UISearchController) {
         DispatchQueue.main.async {
+            self.delegate?.didBeginSearching()
             self.rooms.reloadData()
         }
     }
