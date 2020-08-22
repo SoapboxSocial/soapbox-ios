@@ -14,7 +14,7 @@ public protocol ImagePickerDelegate: class {
 class ImagePicker: NSObject {
     var delegate: ImagePickerDelegate?
 
-    private let targetSize = CGSize(width: 400, height: 400)
+    private let targetSize = CGSize(width: 400 / UIScreen.main.scale, height: 400 / UIScreen.main.scale)
     private let imagePicker: UIImagePickerController
 
     override init() {
