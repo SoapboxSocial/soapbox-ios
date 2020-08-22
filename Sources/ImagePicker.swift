@@ -30,7 +30,7 @@ class ImagePicker: NSObject {
     }
 }
 
-extension ImagePicker: UIImagePickerControllerDelegate {
+extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true)
         delegate?.didSelect(image: nil)
@@ -65,5 +65,3 @@ extension ImagePicker: UIImagePickerControllerDelegate {
         delegate?.didSelect(image: newImage)
     }
 }
-
-extension ImagePicker: UINavigationControllerDelegate {}
