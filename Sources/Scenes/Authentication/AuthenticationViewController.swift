@@ -155,10 +155,9 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
 
     func displayImagePicker() {
         DispatchQueue.main.async {
-            let imagePicker = UIImagePickerController()
+            let imagePicker = ImagePicker()
             imagePicker.delegate = self
-            imagePicker.allowsEditing = true
-            self.present(imagePicker, animated: true)
+            imagePicker.present(self)
         }
     }
 }
@@ -262,12 +261,10 @@ extension AuthenticationViewController: UITextFieldDelegate {
     }
 }
 
-extension AuthenticationViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        guard let image = info[.editedImage] as? UIImage else { return }
-
-        output.didSelect(image: image)
-
-        dismiss(animated: true)
+extension AuthenticationViewController: ImagePickerDelegate {
+    func didSelect(image: UIImage?) {
+        if image != nil {
+            output.didSelect(image: image!)
+        }
     }
 }
