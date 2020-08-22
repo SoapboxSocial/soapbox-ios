@@ -246,7 +246,8 @@ extension RoomListViewController: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForFooterInSection _: Int) -> CGSize {
-        if roomsData.count == 0 {
+        // @todo also check if current room is open, otherwise we additionally do not need this
+        if roomsData.count == 0, !searchController.isActive {
             return CGSize.zero
         }
 
