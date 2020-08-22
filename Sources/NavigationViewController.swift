@@ -260,6 +260,18 @@ extension NavigationViewController: RoomListViewDelegate {
             }
         }
     }
+
+    func didBeginSearching() {
+        createRoomButton.isHidden = true
+    }
+
+    func didEndSearching() {
+        if room != nil {
+            return
+        }
+
+        createRoomButton.isHidden = false
+    }
 }
 
 extension NavigationViewController: RoomCreationDelegate {
