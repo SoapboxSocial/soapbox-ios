@@ -8,7 +8,6 @@ import UIKit
 protocol RoomListViewDelegate {
     func currentRoom() -> Int?
     func didSelectRoom(id: Int)
-    
     func didBeginSearching()
     func didEndSearching()
 }
