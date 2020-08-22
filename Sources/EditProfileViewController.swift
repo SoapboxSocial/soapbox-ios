@@ -15,7 +15,7 @@ class EditProfileViewController: UIViewController {
     private var user: APIClient.Profile
     private let parentVC: ProfileViewController
     private var imageView: EditProfileImageButton!
-    private var imagePicker: UIImagePickerController!
+    private var imagePicker: ImagePicker!
 
     private var image: UIImage?
 
@@ -43,9 +43,8 @@ class EditProfileViewController: UIViewController {
         imageView.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + user.image))
         view.addSubview(imageView)
 
-        imagePicker = UIImagePickerController()
+        imagePicker = ImagePicker()
         imagePicker.delegate = self
-        imagePicker.allowsEditing = true
 
         let cancelButton = UIButton(frame: CGRect(x: 10, y: 40, width: 100, height: 20))
         cancelButton.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
@@ -73,7 +72,7 @@ class EditProfileViewController: UIViewController {
     }
 
     @objc private func selectImage() {
-        present(imagePicker, animated: true)
+        imagePicker.present(self)
     }
 
     @objc private func savePressed() {
@@ -118,13 +117,10 @@ class EditProfileViewController: UIViewController {
     }
 }
 
-extension EditProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        guard let image = info[.editedImage] as? UIImage else { return }
-
+extension EditProfileViewController: ImagePickerDelegate {
+    func didSelect(image: UIImage?) {
+        guard image != nil else { return }
         imageView.image = image
         self.image = image
-
-        dismiss(animated: true)
     }
 }
