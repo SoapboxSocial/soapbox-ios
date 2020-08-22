@@ -20,6 +20,8 @@ protocol AuthenticationViewControllerOutput {
 class AuthenticationViewController: UIViewController {
     var output: AuthenticationViewControllerOutput!
 
+    private var imagePicker: ImagePicker!
+
     private var contentView: UIView!
     private var scrollView: UIScrollView!
     private var submitButton: Button!
@@ -62,6 +64,9 @@ class AuthenticationViewController: UIViewController {
         submitButton.setTitle(NSLocalizedString("submit", comment: ""), for: .normal)
         submitButton.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
         contentView.addSubview(submitButton)
+
+        imagePicker = ImagePicker()
+        imagePicker.delegate = self
 
         let views = [
             setupLoginView(height: height),
@@ -155,10 +160,7 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
 
     func displayImagePicker() {
         DispatchQueue.main.async {
-            let imagePicker = UIImagePickerController()
-            imagePicker.delegate = self
-            imagePicker.allowsEditing = true
-            self.present(imagePicker, animated: true)
+            self.imagePicker.present(self)
         }
     }
 }
@@ -262,12 +264,10 @@ extension AuthenticationViewController: UITextFieldDelegate {
     }
 }
 
-extension AuthenticationViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        guard let image = info[.editedImage] as? UIImage else { return }
-
-        output.didSelect(image: image)
-
-        dismiss(animated: true)
+extension AuthenticationViewController: ImagePickerDelegate {
+    func didSelect(image: UIImage?) {
+        if image != nil {
+            output.didSelect(image: image!)
+        }
     }
 }
