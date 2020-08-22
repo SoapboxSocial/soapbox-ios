@@ -20,6 +20,8 @@ protocol AuthenticationViewControllerOutput {
 class AuthenticationViewController: UIViewController {
     var output: AuthenticationViewControllerOutput!
 
+    private var imagePicker: ImagePicker!
+
     private var contentView: UIView!
     private var scrollView: UIScrollView!
     private var submitButton: Button!
@@ -62,6 +64,9 @@ class AuthenticationViewController: UIViewController {
         submitButton.setTitle(NSLocalizedString("submit", comment: ""), for: .normal)
         submitButton.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
         contentView.addSubview(submitButton)
+
+        imagePicker = ImagePicker()
+        imagePicker.delegate = self
 
         let views = [
             setupLoginView(height: height),
@@ -155,9 +160,7 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
 
     func displayImagePicker() {
         DispatchQueue.main.async {
-            let imagePicker = ImagePicker()
-            imagePicker.delegate = self
-            imagePicker.present(self)
+            self.imagePicker.present(self)
         }
     }
 }
