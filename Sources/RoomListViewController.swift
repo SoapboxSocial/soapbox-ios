@@ -8,6 +8,8 @@ import UIKit
 protocol RoomListViewDelegate {
     func currentRoom() -> Int?
     func didSelectRoom(id: Int)
+    func didBeginSearching()
+    func didEndSearching()
 }
 
 class RoomListViewController: UIViewController {
@@ -74,6 +76,8 @@ class RoomListViewController: UIViewController {
 
         let scb = searchController.searchBar
         scb.tintColor = UIColor.secondaryBackground
+        scb.returnKeyType = .default
+        scb.delegate = self
 
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -135,6 +139,8 @@ extension RoomListViewController: UISearchResultsUpdating {
             return
         }
 
+        rooms.refreshControl?.beginRefreshing()
+
         api.search(text) { result in
             switch result {
             case .failure:
@@ -144,15 +150,23 @@ extension RoomListViewController: UISearchResultsUpdating {
             }
 
             DispatchQueue.main.async {
+                self.rooms.refreshControl?.endRefreshing()
                 self.rooms.reloadData()
             }
         }
     }
 }
 
+extension RoomListViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_: UISearchBar) {
+        view.endEditing(true)
+    }
+}
+
 extension RoomListViewController: UISearchControllerDelegate {
     func didDismissSearchController(_: UISearchController) {
         DispatchQueue.main.async {
+            self.delegate?.didEndSearching()
             self.users = []
             self.rooms.reloadData()
         }
@@ -160,6 +174,7 @@ extension RoomListViewController: UISearchControllerDelegate {
 
     func didPresentSearchController(_: UISearchController) {
         DispatchQueue.main.async {
+            self.delegate?.didBeginSearching()
             self.rooms.reloadData()
         }
     }
@@ -213,7 +228,7 @@ extension RoomListViewController: UICollectionViewDelegate {
             navigationController?.pushViewController(ProfileViewController(id: users[index.item].id), animated: true)
             return
         }
-        
+
         if roomsData.count == 0 {
             return
         }
@@ -233,7 +248,8 @@ extension RoomListViewController: UICollectionViewDelegateFlowLayout {
     }
 
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForFooterInSection _: Int) -> CGSize {
-        if roomsData.count == 0 {
+        // @todo also check if current room is open, otherwise we additionally do not need this
+        if roomsData.count == 0, !searchController.isActive {
             return CGSize.zero
         }
 
