@@ -9,7 +9,6 @@ import AlamofireImage
 import UIKit
 
 class RoomMemberCell: UICollectionViewCell {
-
     private(set) var user: Int?
 
     private var roleLabel: UILabel!
