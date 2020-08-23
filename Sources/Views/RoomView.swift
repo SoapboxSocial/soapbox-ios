@@ -150,6 +150,12 @@ class RoomView: UIView {
 }
 
 extension RoomView: RoomDelegate {
+    func userDidReact(user: Int, reaction: Room.Reaction) {
+        if let cell = (members.visibleCells as! [RoomMemberCell]).first(where: { $0.user == user }) {
+            cell.didReact(with: reaction)
+        }
+    }
+
     func roomWasClosedByRemote() {
         delegate?.roomWasClosedDueToError()
     }

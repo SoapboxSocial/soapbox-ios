@@ -12,6 +12,7 @@ protocol RoomDelegate {
     func userDidJoinRoom(user: Int)
     func userDidLeaveRoom(user: Int)
     func didChangeUserRole(user: Int, role: APIClient.MemberRole)
+    func userDidReact(user: Int, reaction: Room.Reaction)
     func didChangeMemberMuteState(user: Int, isMuted: Bool)
     func roomWasClosedByRemote()
 }
@@ -20,6 +21,11 @@ protocol RoomDelegate {
 class RoomError: Error {}
 
 class Room {
+    enum Reaction: String {
+        case thumbsUp = "👍"
+        case heart = "❤️"
+    }
+
     private(set) var name: String!
 
     var id: Int?
@@ -204,6 +210,9 @@ extension Room: WebRTCClientDelegate {
                 updateMemberMuteState(user: Int(event.from), isMuted: true)
             case .unmutedSpeaker:
                 updateMemberMuteState(user: Int(event.from), isMuted: false)
+            case .reacted:
+                // @TODO
+                break
             case .UNRECOGNIZED:
                 return
             }

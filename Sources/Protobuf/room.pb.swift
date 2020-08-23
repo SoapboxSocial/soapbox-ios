@@ -41,6 +41,7 @@ struct RoomEvent {
     case changedOwner // = 4
     case mutedSpeaker // = 5
     case unmutedSpeaker // = 6
+    case reacted // = 7
     case UNRECOGNIZED(Int)
 
     init() {
@@ -56,6 +57,7 @@ struct RoomEvent {
       case 4: self = .changedOwner
       case 5: self = .mutedSpeaker
       case 6: self = .unmutedSpeaker
+      case 7: self = .reacted
       default: self = .UNRECOGNIZED(rawValue)
       }
     }
@@ -69,6 +71,7 @@ struct RoomEvent {
       case .changedOwner: return 4
       case .mutedSpeaker: return 5
       case .unmutedSpeaker: return 6
+      case .reacted: return 7
       case .UNRECOGNIZED(let i): return i
       }
     }
@@ -90,6 +93,7 @@ extension RoomEvent.TypeEnum: CaseIterable {
     .changedOwner,
     .mutedSpeaker,
     .unmutedSpeaker,
+    .reacted,
   ]
 }
 
@@ -112,6 +116,7 @@ struct RoomCommand {
     case removeSpeaker // = 1
     case muteSpeaker // = 2
     case unmuteSpeaker // = 3
+    case reaction // = 4
     case UNRECOGNIZED(Int)
 
     init() {
@@ -124,6 +129,7 @@ struct RoomCommand {
       case 1: self = .removeSpeaker
       case 2: self = .muteSpeaker
       case 3: self = .unmuteSpeaker
+      case 4: self = .reaction
       default: self = .UNRECOGNIZED(rawValue)
       }
     }
@@ -134,6 +140,7 @@ struct RoomCommand {
       case .removeSpeaker: return 1
       case .muteSpeaker: return 2
       case .unmuteSpeaker: return 3
+      case .reaction: return 4
       case .UNRECOGNIZED(let i): return i
       }
     }
@@ -152,6 +159,7 @@ extension RoomCommand.TypeEnum: CaseIterable {
     .removeSpeaker,
     .muteSpeaker,
     .unmuteSpeaker,
+    .reaction,
   ]
 }
 
@@ -209,6 +217,7 @@ extension RoomEvent.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     4: .same(proto: "CHANGED_OWNER"),
     5: .same(proto: "MUTED_SPEAKER"),
     6: .same(proto: "UNMUTED_SPEAKER"),
+    7: .same(proto: "REACTED"),
   ]
 }
 
@@ -253,5 +262,6 @@ extension RoomCommand.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     1: .same(proto: "REMOVE_SPEAKER"),
     2: .same(proto: "MUTE_SPEAKER"),
     3: .same(proto: "UNMUTE_SPEAKER"),
+    4: .same(proto: "REACTION"),
   ]
 }
