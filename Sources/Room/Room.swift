@@ -113,6 +113,21 @@ class Room {
         }
     }
 
+    func react(with reaction: Reaction) {
+        do {
+            let data = Data(reaction.rawValue.utf8)
+            let command = RoomCommand.with {
+                $0.type = RoomCommand.TypeEnum.reaction
+                $0.data = data
+            }
+
+            try rtc.sendData(command.serializedData())
+            delegate?.userDidReact(user: 0, reaction: reaction)
+        } catch {
+            debugPrint("\(error.localizedDescription)")
+        }
+    }
+
     func create(name: String?, completion: @escaping (Error?) -> Void) {
         role = .owner
 
@@ -211,8 +226,15 @@ extension Room: WebRTCClientDelegate {
             case .unmutedSpeaker:
                 updateMemberMuteState(user: Int(event.from), isMuted: false)
             case .reacted:
-                // @TODO
-                break
+                guard let value = String(bytes: event.data, encoding: .utf8) else {
+                    return
+                }
+
+                guard let reaction = Reaction(rawValue: value) else {
+                    return
+                }
+
+                delegate?.userDidReact(user: Int(event.from), reaction: reaction)
             case .UNRECOGNIZED:
                 return
             }

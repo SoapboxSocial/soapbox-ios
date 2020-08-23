@@ -15,6 +15,7 @@ class ReactionView: UIView {
         super.init(frame: frame)
         label = UILabel(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: frame.size))
         label.textAlignment = .center
+        addSubview(label)
     }
 
     required init?(coder: NSCoder) {

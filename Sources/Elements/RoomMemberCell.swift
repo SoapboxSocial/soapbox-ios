@@ -65,7 +65,7 @@ class RoomMemberCell: UICollectionViewCell {
     }
 
     func setup(name: String, image: String, role: APIClient.MemberRole) {
-        user = nil
+        user = 0
         muteView.isHidden = true
 
         nameLabel.text = first(name)
