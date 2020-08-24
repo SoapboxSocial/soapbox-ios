@@ -199,6 +199,7 @@ class ReactionView: UIView {
             NSValue(caTransform3D: CATransform3DMakeScale(0.99, 0.99, 1.0)),
             NSValue(caTransform3D: CATransform3DIdentity),
         ]
+
         imageTransform.keyTimes = [
             0.0,
             0.1,
