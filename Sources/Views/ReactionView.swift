@@ -97,7 +97,7 @@ class ReactionView: UIView {
         circleShape.mask = circleMask
 
         let maskPath = UIBezierPath(rect: frame)
-        maskPath.addArc(withCenter: center, radius: 0.1, startAngle: CGFloat(0.0), endAngle: CGFloat(Double.pi * 2), clockwise: true)
+        maskPath.addArc(withCenter: center, radius: 0.1, startAngle: 0.0, endAngle: CGFloat(Double.pi * 2), clockwise: true)
         circleMask.path = maskPath.cgPath
 
         lines = []
@@ -172,38 +172,12 @@ class ReactionView: UIView {
         ]
 
         lineStrokeEnd.duration = 0.6
-        lineStrokeEnd.values = [
-            0.0,
-            0.0,
-            0.32,
-            0.48,
-            0.64,
-            0.68,
-            0.92,
-            0.92,
-        ]
-        lineStrokeEnd.keyTimes = [
-            0.0,
-            0.056,
-            0.111,
-            0.167,
-            0.222,
-            0.278,
-            0.944,
-            1.0,
-        ]
+        lineStrokeEnd.values = [0.0, 0.0, 0.32, 0.48, 0.64, 0.68, 0.92, 0.92]
+        lineStrokeEnd.keyTimes = [0.0, 0.056, 0.111, 0.167, 0.222, 0.278, 0.944, 1.0]
 
         lineOpacity.duration = 1.0
-        lineOpacity.values = [
-            1.0,
-            1.0,
-            0.0,
-        ]
-        lineOpacity.keyTimes = [
-            0.0,
-            0.4,
-            0.567,
-        ]
+        lineOpacity.values = [1.0, 1.0, 0.0]
+        lineOpacity.keyTimes = [0.0, 0.4, 0.567]
 
         imageTransform.duration = 1.0
         imageTransform.values = [
