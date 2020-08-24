@@ -11,22 +11,15 @@ import UIKit
 // https://github.com/okmr-d/DOFavoriteButton
 
 class ReactionView: UIView {
-    private var circleShape: CAShapeLayer!
-    private var circleMask: CAShapeLayer!
-    private var circleColor: UIColor! = UIColor(red: 255 / 255, green: 172 / 255, blue: 51 / 255, alpha: 1.0) {
-        didSet {
-            circleShape.fillColor = circleColor.cgColor
-        }
+    private struct ReactionColor {
+        let circle: UIColor
+        let lines: UIColor
     }
 
+    private var circleShape: CAShapeLayer!
+    private var circleMask: CAShapeLayer!
+
     private var lines: [CAShapeLayer]!
-    private var lineColor: UIColor! = UIColor(red: 250 / 255, green: 120 / 255, blue: 68 / 255, alpha: 1.0) {
-        didSet {
-            for line in lines {
-                line.strokeColor = lineColor.cgColor
-            }
-        }
-    }
 
     private let circleTransform = CAKeyframeAnimation(keyPath: "transform")
     private let circleMaskTransform = CAKeyframeAnimation(keyPath: "transform")
@@ -50,6 +43,14 @@ class ReactionView: UIView {
     }
 
     func react(_ reaction: Room.Reaction) {
+        let colors = self.colors(for: reaction)
+
+        circleShape.fillColor = colors.circle.cgColor
+
+        for line in lines {
+            line.strokeColor = colors.lines.cgColor
+        }
+
         label.text = reaction.rawValue
 
         CATransaction.begin()
@@ -86,7 +87,6 @@ class ReactionView: UIView {
         circleShape.bounds = frame
         circleShape.position = center
         circleShape.path = UIBezierPath(ovalIn: frame).cgPath
-        circleShape.fillColor = circleColor.cgColor
         circleShape.transform = CATransform3DMakeScale(0.0, 0.0, 1.0)
         layer.addSublayer(circleShape)
 
@@ -107,7 +107,6 @@ class ReactionView: UIView {
             line.position = center
             line.masksToBounds = true
             line.actions = ["strokeStart": NSNull(), "strokeEnd": NSNull()]
-            line.strokeColor = lineColor.cgColor
             line.lineWidth = 1.25
             line.miterLimit = 1.25
             line.path = {
@@ -219,5 +218,20 @@ class ReactionView: UIView {
             0.967,
             1.0,
         ]
+    }
+
+    private func colors(for reaction: Room.Reaction) -> ReactionColor {
+        switch reaction {
+        case .heart:
+            return ReactionColor(
+                circle: UIColor(red: 254 / 255, green: 110 / 255, blue: 111 / 255, alpha: 1.0),
+                lines: UIColor(red: 226 / 255, green: 96 / 255, blue: 96 / 255, alpha: 1.0)
+            )
+        case .thumbsUp:
+            return ReactionColor(
+                circle: UIColor(red: 255 / 255, green: 172 / 255, blue: 51 / 255, alpha: 1.0),
+                lines: UIColor(red: 250 / 255, green: 120 / 255, blue: 68 / 255, alpha: 1.0)
+            )
+        }
     }
 }
