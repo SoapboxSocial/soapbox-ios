@@ -14,6 +14,21 @@ class ReactionView: UIView {
     private struct ReactionColor {
         let circle: UIColor
         let lines: UIColor
+        
+        static func forReaction(_ reaction: Room.Reaction) -> ReactionColor {
+            switch reaction {
+            case .heart:
+                return ReactionColor(
+                    circle: UIColor(red: 254 / 255, green: 110 / 255, blue: 111 / 255, alpha: 1.0),
+                    lines: UIColor(red: 226 / 255, green: 96 / 255, blue: 96 / 255, alpha: 1.0)
+                )
+            case .thumbsUp:
+                return ReactionColor(
+                    circle: UIColor(red: 255 / 255, green: 172 / 255, blue: 51 / 255, alpha: 1.0),
+                    lines: UIColor(red: 250 / 255, green: 120 / 255, blue: 68 / 255, alpha: 1.0)
+                )
+            }
+        }
     }
 
     private var circleShape: CAShapeLayer!
@@ -43,7 +58,7 @@ class ReactionView: UIView {
     }
 
     func react(_ reaction: Room.Reaction) {
-        let colors = self.colors(for: reaction)
+        let colors = ReactionColor.forReaction(reaction)
 
         circleShape.fillColor = colors.circle.cgColor
 
@@ -218,20 +233,5 @@ class ReactionView: UIView {
             0.967,
             1.0,
         ]
-    }
-
-    private func colors(for reaction: Room.Reaction) -> ReactionColor {
-        switch reaction {
-        case .heart:
-            return ReactionColor(
-                circle: UIColor(red: 254 / 255, green: 110 / 255, blue: 111 / 255, alpha: 1.0),
-                lines: UIColor(red: 226 / 255, green: 96 / 255, blue: 96 / 255, alpha: 1.0)
-            )
-        case .thumbsUp:
-            return ReactionColor(
-                circle: UIColor(red: 255 / 255, green: 172 / 255, blue: 51 / 255, alpha: 1.0),
-                lines: UIColor(red: 250 / 255, green: 120 / 255, blue: 68 / 255, alpha: 1.0)
-            )
-        }
     }
 }
