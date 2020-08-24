@@ -24,6 +24,7 @@ class Room {
     enum Reaction: String {
         case thumbsUp = "👍"
         case heart = "❤️"
+        case flame = "🔥"
     }
 
     private(set) var name: String!

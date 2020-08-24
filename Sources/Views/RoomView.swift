@@ -93,7 +93,12 @@ class RoomView: UIView {
         members!.backgroundColor = .clear
         addSubview(members)
 
-        let thumbsUpButton = UIButton(frame: CGRect(origin: CGPoint(x: exitButton.frame.origin.x, y: frame.size.height - (exitButton.frame.size.height + 10 + safeAreaInsets.bottom)), size: exitButton.frame.size))
+        let flameButton = UIButton(frame: CGRect(origin: CGPoint(x: exitButton.frame.origin.x, y: frame.size.height - (exitButton.frame.size.height + 10 + safeAreaInsets.bottom)), size: exitButton.frame.size))
+        flameButton.setTitle("🔥", for: .normal)
+        flameButton.addTarget(self, action: #selector(flameTapped), for: .touchUpInside)
+        addSubview(flameButton)
+
+        let thumbsUpButton = UIButton(frame: CGRect(origin: CGPoint(x: flameButton.frame.origin.x - (flameButton.frame.size.width + 10), y: flameButton.frame.origin.y), size: flameButton.frame.size))
         thumbsUpButton.setTitle("👍", for: .normal)
         thumbsUpButton.addTarget(self, action: #selector(thumbsUpTapped), for: .touchUpInside)
         addSubview(thumbsUpButton)
@@ -106,6 +111,10 @@ class RoomView: UIView {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
+    }
+
+    @objc private func flameTapped() {
+        room.react(with: .flame)
     }
 
     @objc private func thumbsUpTapped() {
