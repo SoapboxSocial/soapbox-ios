@@ -45,6 +45,8 @@ class ReactionView: UIView {
 
     private var label: UILabel!
 
+    private var reactionQueue = [Room.Reaction]()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         createLayers()
@@ -58,6 +60,17 @@ class ReactionView: UIView {
     }
 
     func react(_ reaction: Room.Reaction) {
+        reactionQueue.append(reaction)
+        if reactionQueue.count == 1 {
+            play()
+        }
+    }
+
+    private func play() {
+        guard let reaction = reactionQueue.first else {
+            return
+        }
+
         let colors = ReactionColor.forReaction(reaction)
 
         circleShape.fillColor = colors.circle.cgColor
@@ -73,7 +86,10 @@ class ReactionView: UIView {
         CATransaction.setCompletionBlock {
             UIView.transition(with: self.label, duration: 0.25, options: .transitionCrossDissolve, animations: { [weak self] in
                 self?.label.text = ""
-            })
+            }) { [weak self] _ in
+                self?.reactionQueue.removeFirst()
+                self?.play()
+            }
         }
 
         circleShape.add(circleTransform, forKey: "transform")
