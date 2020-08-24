@@ -14,7 +14,11 @@ enum APIError: Error {
 class APIClient {
     // @todo put elsewhere?
     private var token: String? {
-        let keychain = Keychain(service: "app.soapbox.soapbox")
+        guard let identifier = Bundle.main.bundleIdentifier else {
+            fatalError("no identifier")
+        }
+
+        let keychain = Keychain(service: identifier)
         return keychain[string: "token"]
     }
 

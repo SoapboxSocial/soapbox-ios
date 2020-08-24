@@ -73,7 +73,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func isLoggedIn() -> Bool {
-        let keychain = Keychain(service: "app.soapbox.soapbox")
+        guard let identifier = Bundle.main.bundleIdentifier else {
+            fatalError("no identifier")
+        }
+
+        let keychain = Keychain(service: identifier)
         guard let _ = keychain[string: "token"] else {
             return false
         }
