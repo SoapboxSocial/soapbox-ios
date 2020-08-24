@@ -14,7 +14,7 @@ class ReactionView: UIView {
     private struct ReactionColor {
         let circle: UIColor
         let lines: UIColor
-        
+
         static func forReaction(_ reaction: Room.Reaction) -> ReactionColor {
             switch reaction {
             case .heart:
