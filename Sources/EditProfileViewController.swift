@@ -1,10 +1,3 @@
-//
-//  EditProfileViewController.swift
-//  VoicelyTests
-//
-//  Created by Dean Eigenmann on 16.08.20.
-//
-
 import NotificationBannerSwift
 import UIKit
 

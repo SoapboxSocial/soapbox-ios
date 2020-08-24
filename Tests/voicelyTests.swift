@@ -1,15 +1,7 @@
-//
-//  voicelyTests.swift
-//  voicelyTests
-//
-//  Created by Dean Eigenmann on 21.07.20.
-//  Copyright © 2020 Dean Eigenmann. All rights reserved.
-//
-
-@testable import voicely
+@testable import soapbox
 import XCTest
 
-class voicelyTests: XCTestCase {
+class soapboxTests: XCTestCase {
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }

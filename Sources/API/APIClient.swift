@@ -1,7 +1,3 @@
-//
-// Created by Dean Eigenmann on 23.07.20.
-//
-
 import Alamofire
 import Foundation
 import KeychainAccess
@@ -18,7 +14,7 @@ enum APIError: Error {
 class APIClient {
     // @todo put elsewhere?
     private var token: String? {
-        let keychain = Keychain(service: "com.voicely.voicely")
+        let keychain = Keychain(service: "app.soapbox.soapbox")
         return keychain[string: "token"]
     }
 

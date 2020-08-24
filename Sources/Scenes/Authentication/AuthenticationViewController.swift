@@ -1,10 +1,3 @@
-//
-//  AuthenticationViewController.swift
-//  Voicely
-//
-//  Created by Dean Eigenmann on 12.08.20.
-//
-
 import NotificationBannerSwift
 import SwiftConfettiView
 import UIKit
@@ -248,7 +241,7 @@ extension AuthenticationViewController {
 
         let label = UILabel(frame: CGRect(x: 0, y: (height / 2) + 30, width: view.frame.size.width, height: 20))
         label.textAlignment = .center
-        label.text = NSLocalizedString("welcome_to_voicely", comment: "")
+        label.text = NSLocalizedString("welcome", comment: "")
         label.textColor = .white
         label.font = label.font.withSize(20)
         view.addSubview(label)

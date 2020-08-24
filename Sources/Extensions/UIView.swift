@@ -1,10 +1,3 @@
-//
-//  UIView.swift
-//  Voicely
-//
-//  Created by Dean Eigenmann on 30.07.20.
-//
-
 import UIKit
 
 import UIKit

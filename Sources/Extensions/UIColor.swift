@@ -1,10 +1,3 @@
-//
-//  Color.swift
-//  Voicely
-//
-//  Created by Dean Eigenmann on 27.07.20.
-//
-
 import UIKit
 
 extension UIColor {
