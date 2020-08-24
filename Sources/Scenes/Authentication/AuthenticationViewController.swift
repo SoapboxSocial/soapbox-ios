@@ -178,8 +178,11 @@ extension AuthenticationViewController {
 
         emailTextField = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: label.frame.size.height + 20, width: 330, height: 40))
         emailTextField.keyboardType = .emailAddress
+        emailTextField.textContentType = .emailAddress
         emailTextField.placeholder = "Email"
         emailTextField.delegate = self
+        emailTextField.autocorrectionType = .no
+        emailTextField.autocapitalizationType = .none
         view.addSubview(emailTextField)
 
         return view
@@ -220,6 +223,8 @@ extension AuthenticationViewController {
         usernameTextField = TextField(frame: CGRect(x: profileImage.frame.origin.x + profileImage.frame.size.width + 10, y: label.frame.size.height + 20, width: view.frame.size.width - ((profileImage.frame.origin.x * 2) + profileImage.frame.size.width + 10), height: 40))
         usernameTextField.placeholder = NSLocalizedString("username", comment: "")
         usernameTextField.delegate = self
+        usernameTextField.autocorrectionType = .no
+        usernameTextField.autocapitalizationType = .none
         view.addSubview(usernameTextField)
 
         displayNameTextField = TextField(frame: CGRect(x: usernameTextField.frame.origin.x, y: usernameTextField.frame.height + usernameTextField.frame.origin.y + 10, width: usernameTextField.frame.size.width, height: 40))
