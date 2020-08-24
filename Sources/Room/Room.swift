@@ -12,6 +12,7 @@ protocol RoomDelegate {
     func userDidJoinRoom(user: Int)
     func userDidLeaveRoom(user: Int)
     func didChangeUserRole(user: Int, role: APIClient.MemberRole)
+    func userDidReact(user: Int, reaction: Room.Reaction)
     func didChangeMemberMuteState(user: Int, isMuted: Bool)
     func roomWasClosedByRemote()
 }
@@ -20,6 +21,11 @@ protocol RoomDelegate {
 class RoomError: Error {}
 
 class Room {
+    enum Reaction: String {
+        case thumbsUp = "👍"
+        case heart = "❤️"
+    }
+
     private(set) var name: String!
 
     var id: Int?
@@ -102,6 +108,21 @@ class Room {
 
             try rtc.sendData(command.serializedData())
             updateMemberRole(user: speaker, role: .speaker)
+        } catch {
+            debugPrint("\(error.localizedDescription)")
+        }
+    }
+
+    func react(with reaction: Reaction) {
+        do {
+            let data = Data(reaction.rawValue.utf8)
+            let command = RoomCommand.with {
+                $0.type = RoomCommand.TypeEnum.reaction
+                $0.data = data
+            }
+
+            try rtc.sendData(command.serializedData())
+            delegate?.userDidReact(user: 0, reaction: reaction)
         } catch {
             debugPrint("\(error.localizedDescription)")
         }
@@ -204,6 +225,16 @@ extension Room: WebRTCClientDelegate {
                 updateMemberMuteState(user: Int(event.from), isMuted: true)
             case .unmutedSpeaker:
                 updateMemberMuteState(user: Int(event.from), isMuted: false)
+            case .reacted:
+                guard let value = String(bytes: event.data, encoding: .utf8) else {
+                    return
+                }
+
+                guard let reaction = Reaction(rawValue: value) else {
+                    return
+                }
+
+                delegate?.userDidReact(user: Int(event.from), reaction: reaction)
             case .UNRECOGNIZED:
                 return
             }
