@@ -106,14 +106,6 @@ class RoomView: UIView {
         }
     }
 
-    @objc private func thumbsUpTapped() {
-        room.react(with: .thumbsUp)
-    }
-
-    @objc private func heartTapped() {
-        room.react(with: .heart)
-    }
-
     @objc private func exitTapped() {
         if room.members.count == 0 {
             showExitAlert()
