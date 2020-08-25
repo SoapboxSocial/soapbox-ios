@@ -92,29 +92,18 @@ class RoomView: UIView {
         members!.register(RoomMemberCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         members!.backgroundColor = .clear
         addSubview(members)
-
-        let flameButton = UIButton(frame: CGRect(origin: CGPoint(x: exitButton.frame.origin.x, y: frame.size.height - (exitButton.frame.size.height + 10 + safeAreaInsets.bottom)), size: exitButton.frame.size))
-        flameButton.setTitle("🔥", for: .normal)
-        flameButton.addTarget(self, action: #selector(flameTapped), for: .touchUpInside)
-        addSubview(flameButton)
-
-        let thumbsUpButton = UIButton(frame: CGRect(origin: CGPoint(x: flameButton.frame.origin.x - (flameButton.frame.size.width + 10), y: flameButton.frame.origin.y), size: flameButton.frame.size))
-        thumbsUpButton.setTitle("👍", for: .normal)
-        thumbsUpButton.addTarget(self, action: #selector(thumbsUpTapped), for: .touchUpInside)
-        addSubview(thumbsUpButton)
-
-        let heartButton = UIButton(frame: CGRect(origin: CGPoint(x: thumbsUpButton.frame.origin.x - (thumbsUpButton.frame.size.width + 10), y: thumbsUpButton.frame.origin.y), size: thumbsUpButton.frame.size))
-        heartButton.setTitle("❤️", for: .normal)
-        heartButton.addTarget(self, action: #selector(heartTapped), for: .touchUpInside)
-        addSubview(heartButton)
+        
+        var origin = CGPoint(x: exitButton.frame.origin.x, y: frame.size.height - (exitButton.frame.size.height + 10 + safeAreaInsets.bottom))
+        for reaction in Room.Reaction.allCases {
+            let button = ReactionButton(frame: CGRect(origin: origin, size: exitButton.frame.size), reaction: reaction)
+            origin.x = origin.x - (button.frame.size.width + 10)
+            button.delegate = self
+            addSubview(button)
+        }
 
         DispatchQueue.main.async {
             self.members.reloadData()
         }
-    }
-
-    @objc private func flameTapped() {
-        room.react(with: .flame)
     }
 
     @objc private func thumbsUpTapped() {
@@ -173,6 +162,12 @@ class RoomView: UIView {
         if parent.position == .collapsed {
             parent.setPosition(.open, animated: true)
         }
+    }
+}
+
+extension RoomView: ReactionButtonDelegate {
+    func didTap(reaction: Room.Reaction) {
+        room.react(with: reaction)
     }
 }
 
