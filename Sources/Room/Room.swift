@@ -21,9 +21,10 @@ protocol RoomDelegate {
 class RoomError: Error {}
 
 class Room {
-    enum Reaction: String {
+    enum Reaction: String, CaseIterable {
         case thumbsUp = "👍"
         case heart = "❤️"
+        case flame = "🔥"
     }
 
     private(set) var name: String!

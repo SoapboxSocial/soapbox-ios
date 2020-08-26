@@ -2,7 +2,7 @@
 #include "../Pods/Target Support Files/Pods-Soapbox/Pods-Soapbox.release.xcconfig"
 
 // Server URL
-ROOT_URL = https:/$()/spksy.app
+ROOT_URL = https:/$()/api.soapbox.social
 
 // CDN URL
-CDN_URL = https:/$()/cdn.spksy.app
+CDN_URL = https:/$()/cdn.soapbox.social

@@ -15,7 +15,7 @@ class ReactionView: UIView {
                     circle: UIColor(red: 254 / 255, green: 110 / 255, blue: 111 / 255, alpha: 1.0),
                     lines: UIColor(red: 226 / 255, green: 96 / 255, blue: 96 / 255, alpha: 1.0)
                 )
-            case .thumbsUp:
+            case .thumbsUp, .flame:
                 return ReactionColor(
                     circle: UIColor(red: 255 / 255, green: 172 / 255, blue: 51 / 255, alpha: 1.0),
                     lines: UIColor(red: 250 / 255, green: 120 / 255, blue: 68 / 255, alpha: 1.0)

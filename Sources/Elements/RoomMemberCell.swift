@@ -47,9 +47,6 @@ class RoomMemberCell: UICollectionViewCell {
         muteLabel.textAlignment = .center
         muteLabel.font = muteLabel.font.withSize(10)
         muteView.addSubview(muteLabel)
-
-        reactionView = ReactionView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.width))
-        contentView.addSubview(reactionView)
     }
 
     required init?(coder _: NSCoder) {
@@ -62,6 +59,13 @@ class RoomMemberCell: UICollectionViewCell {
 
         nameLabel.text = first(name)
         roleLabel.text = emoji(for: role)
+
+        if reactionView != nil {
+            reactionView.removeFromSuperview()
+        }
+
+        reactionView = ReactionView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.width))
+        contentView.addSubview(reactionView)
 
         if image == "" {
             return profileImage.image = nil
