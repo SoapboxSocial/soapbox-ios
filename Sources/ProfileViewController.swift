@@ -97,7 +97,13 @@ class ProfileViewController: UIViewController {
     }
 
     private func setup() {
-        image = UIImageView(frame: CGRect(x: 16, y: (navigationController?.navigationBar.frame.origin.y)! + (navigationController?.navigationBar.frame.size.height)! + 20, width: 80, height: 80))
+        guard let navigation = navigationController else {
+            return
+        }
+
+        let bar = navigation.navigationBar
+
+        image = UIImageView(frame: CGRect(x: 16, y: bar.frame.origin.y + bar.frame.size.height + 20, width: 80, height: 80))
         image.layer.cornerRadius = 75 / 2
         image.backgroundColor = .secondaryBackground
         image.clipsToBounds = true
@@ -114,7 +120,7 @@ class ProfileViewController: UIViewController {
         username.textColor = .black
         view.addSubview(username)
 
-        followersLabel = UILabel(frame: CGRect(x: 40, y: image.frame.origin.y + image.frame.size.height + 16, width: 100, height: 20))
+        followersLabel = UILabel(frame: CGRect(x: image.frame.origin.x, y: image.frame.origin.y + image.frame.size.height + 16, width: 100, height: 20))
         followersLabel.font = username.font
         followersLabel.textColor = .black
         view.addSubview(followersLabel)
@@ -136,18 +142,10 @@ class ProfileViewController: UIViewController {
         followButton.addTarget(self, action: #selector(followButtonPressed), for: .touchUpInside)
         view.addSubview(followButton)
 
-        followsYou = UILabel(frame: CGRect(x: username.frame.origin.x, y: username.frame.origin.y + username.frame.size.height + 5, width: 100, height: 20))
+        followsYou = UILabel(frame: CGRect(x: username.frame.origin.x, y: image.frame.origin.y + image.frame.size.height - 20, width: view.frame.size.width - 80, height: 20))
         followsYou.text = NSLocalizedString("follows_you", comment: "")
         view.addSubview(followsYou)
         followsYou.sizeToFit()
-
-        followsYou.frame = CGRect(
-            origin: CGPoint(
-                x: followButton.frame.origin.x - followsYou.frame.size.width - 10,
-                y: followButton.center.y - (followsYou.frame.size.height / 2)
-            ),
-            size: followsYou.frame.size
-        )
 
         followsYou.isHidden = true
 
