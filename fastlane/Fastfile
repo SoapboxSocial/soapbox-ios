@@ -27,14 +27,14 @@ platform :ios do
     disable_automatic_code_signing(path: "Soapbox.xcodeproj")
 
     match(
-      app_identifier: "app.soapbox.soapbox",
+      app_identifier: "app.social.soapbox",
       type: "appstore"
     )
 
     update_project_provisioning(
       xcodeproj: "Soapbox.xcodeproj",
       target_filter: "Soapbox",
-      profile:ENV["sigh_app.soapbox.soapbox_appstore_profile-path"],
+      profile:ENV["sigh_app.social.soapbox_appstore_profile-path"],
       build_configuration: "Release"
     )
 
@@ -52,7 +52,7 @@ platform :ios do
       export_options: {
         method: "app-store",
         provisioningProfiles: {
-          "app.soapbox.soapbox" => ENV["sigh_app.soapbox.soapbox_appstore_profile-name"]
+          "app.social.soapbox" => ENV["sigh_app.social.soapbox_appstore_profile-name"]
         }
       },
       codesigning_identity:"Apple Distribution: Dean Eigenmann (Z9LC5GZ33U)",

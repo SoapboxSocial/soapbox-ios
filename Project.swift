@@ -27,7 +27,7 @@ let project = Project(
             name: "Soapbox",
             platform: .iOS,
             product: .app,
-            bundleId: "app.soapbox.soapbox",
+            bundleId: "app.social.soapbox",
             deploymentTarget: .iOS(targetVersion: "13.0", devices: .iphone),
             infoPlist: "Info.plist",
             sources: ["Sources/**"],
@@ -41,7 +41,7 @@ let project = Project(
             name: "SoapboxTests",
             platform: .iOS,
             product: .unitTests,
-            bundleId: "app.soapbox.soapboxTests",
+            bundleId: "app.social.soapboxTests",
             infoPlist: "Tests.plist",
             sources: "Tests/**",
             dependencies: [
@@ -52,7 +52,7 @@ let project = Project(
             name: "SoapboxUITests",
             platform: .iOS,
             product: .uiTests,
-            bundleId: "app.soapbox.soapboxUITests",
+            bundleId: "app.social.soapboxUITests",
             infoPlist: "UITests.plist",
             sources: "UITests/**",
             dependencies: [
