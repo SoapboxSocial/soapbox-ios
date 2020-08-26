@@ -5,14 +5,9 @@ on:
   push:
     branches:
       - master
-    paths:
-      - '.github/workflows/ci.yml'
-      - '.swiftlint.yml'
-      - 'Sources/**/*.swift'
-      - '!Pods/**'
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: norio-nomura/action-swiftlint@3.1.0
+      - uses: norio-nomura/action-swiftlint@master
