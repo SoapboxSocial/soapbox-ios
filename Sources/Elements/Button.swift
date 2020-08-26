@@ -1,10 +1,3 @@
-//
-//  Button.swift
-//  Voicely
-//
-//  Created by Dean Eigenmann on 04.08.20.
-//
-
 import UIKit
 
 class Button: UIButton {

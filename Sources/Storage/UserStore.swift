@@ -1,10 +1,3 @@
-//
-//  UserStore.swift
-//  Voicely
-//
-//  Created by Dean Eigenmann on 03.08.20.
-//
-
 import Foundation
 
 // @todo what we want to do is store the user

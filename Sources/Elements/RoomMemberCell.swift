@@ -1,10 +1,3 @@
-//
-//  RoomMemberCell.swift
-//  Voicely
-//
-//  Created by Dean Eigenmann on 29.07.20.
-//
-
 import AlamofireImage
 import UIKit
 

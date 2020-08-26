@@ -1,4 +1,4 @@
-app_identifier("com.voicely.voicely") # The bundle identifier of your app
+app_identifier("app.soapbox.soapbox") # The bundle identifier of your app
 apple_id("dean.eigenmann@gmail.com") # Your Apple email address
 
 itc_team_id("118396924") # App Store Connect Team ID

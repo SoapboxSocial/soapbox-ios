@@ -1,10 +1,3 @@
-//
-//  ProfileViewController.swift
-//  Voicely
-//
-//  Created by Dean Eigenmann on 06.08.20.
-//
-
 import AlamofireImage
 import NotificationBannerSwift
 import UIKit

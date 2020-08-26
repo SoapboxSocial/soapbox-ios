@@ -1,10 +1,3 @@
-//
-//  Configuration.swift
-//  Voicely
-//
-//  Created by Dean Eigenmann on 17.08.20.
-//
-
 import Foundation
 
 class Configuration {

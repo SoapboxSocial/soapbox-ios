@@ -1,6 +1,6 @@
 .PHONY: protobuf setup format test lint autocorrect clean build
 
-APP="Voicely"
+APP="Soapbox"
 
 # Apple
 ifeq ($(shell uname),Darwin)

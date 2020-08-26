@@ -1,10 +1,3 @@
-//
-//  NotificationManager.swift
-//  Voicely
-//
-//  Created by Dean Eigenmann on 13.08.20.
-//
-
 import UIKit
 
 protocol NotificationManagerDelegate {
