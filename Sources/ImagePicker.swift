@@ -1,10 +1,3 @@
-//
-//  ImagePicker.swift
-//  Voicely
-//
-//  Created by Dean Eigenmann on 22.08.20.
-//
-
 import UIKit
 
 protocol ImagePickerDelegate {

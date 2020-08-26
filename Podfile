@@ -1,7 +1,7 @@
 # Uncomment the next line to define a global platform for your project
 platform :ios, '13.0'
 
-target 'Voicely' do
+target 'Soapbox' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
@@ -16,12 +16,12 @@ target 'Voicely' do
   pod 'UIWindowTransitions'
   pod 'AlamofireImage'
 
-  target 'VoicelyTests' do
+  target 'SoapboxTests' do
     inherit! :search_paths
     # Pods for testing
   end
 
-  target 'VoicelyUITests' do
+  target 'SoapboxUITests' do
     # Pods for testing
   end
 end

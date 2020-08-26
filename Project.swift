@@ -3,7 +3,7 @@ import ProjectDescription
 let settings = Settings(
     base: [
         "ENABLE_BITCODE": SettingValue.string("NO"),
-        "CURRENT_PROJECT_VERSION": SettingValue.string("33"),
+        "CURRENT_PROJECT_VERSION": SettingValue.string(""),
         "MARKETING_VERSION": SettingValue.string("1.3"),
     ],
     configurations: [
@@ -21,13 +21,13 @@ let settings = Settings(
 )
 
 let project = Project(
-    name: "Voicely",
+    name: "Soapbox",
     targets: [
         Target(
-            name: "Voicely",
+            name: "Soapbox",
             platform: .iOS,
             product: .app,
-            bundleId: "com.voicely.voicely",
+            bundleId: "app.soapbox.soapbox",
             deploymentTarget: .iOS(targetVersion: "13.0", devices: .iphone),
             infoPlist: "Info.plist",
             sources: ["Sources/**"],
@@ -38,25 +38,25 @@ let project = Project(
             settings: settings
         ),
         Target(
-            name: "VoicelyTests",
+            name: "SoapboxTests",
             platform: .iOS,
             product: .unitTests,
-            bundleId: "com.voicely.voicelyTests",
+            bundleId: "app.soapbox.soapboxTests",
             infoPlist: "Tests.plist",
             sources: "Tests/**",
             dependencies: [
-                .target(name: "Voicely"),
+                .target(name: "Soapbox"),
             ]
         ),
         Target(
-            name: "VoicelyUITests",
+            name: "SoapboxUITests",
             platform: .iOS,
             product: .uiTests,
-            bundleId: "com.voicely.voicelyUITests",
+            bundleId: "app.soapbox.soapboxUITests",
             infoPlist: "UITests.plist",
             sources: "UITests/**",
             dependencies: [
-                .target(name: "Voicely"),
+                .target(name: "Soapbox"),
             ]
         ),
     ]

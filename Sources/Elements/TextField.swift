@@ -1,10 +1,3 @@
-//
-//  TextField.swift
-//  Voicely
-//
-//  Created by Dean Eigenmann on 03.08.20.
-//
-
 import UIKit
 
 class TextField: UITextField {

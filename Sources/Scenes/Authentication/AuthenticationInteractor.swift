@@ -143,7 +143,12 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
     }
 
     private func store(token: String, expires: Int, user: APIClient.User) {
-        let keychain = Keychain(service: "com.voicely.voicely")
+        guard let identifier = Bundle.main.bundleIdentifier else {
+            fatalError("no identifier")
+        }
+
+        let keychain = Keychain(service: identifier)
+
         try? keychain.set(token, key: "token")
         try? keychain.set(String(Int(Date().timeIntervalSince1970) + expires), key: "expiry")
 

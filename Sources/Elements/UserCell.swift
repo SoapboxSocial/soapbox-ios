@@ -1,10 +1,4 @@
-//
 import AlamofireImage
-//  UserCell.swift
-//  Voicely
-//
-//  Created by Dean Eigenmann on 10.08.20.
-//
 import UIKit
 
 class UserCell: UICollectionViewCell {

@@ -1,10 +1,3 @@
-//
-//  ReactionView.swift
-//  Voicely
-//
-//  Created by Dean Eigenmann on 23.08.20.
-//
-
 import UIKit
 
 // The animation code in this class were taken from:

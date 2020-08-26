@@ -1,10 +1,3 @@
-//
-//  UserListViewController.swift
-//  Voicely
-//
-//  Created by Dean Eigenmann on 10.08.20.
-//
-
 import NotificationBannerSwift
 import UIKit
 

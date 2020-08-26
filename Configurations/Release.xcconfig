@@ -1,5 +1,5 @@
 // Release.xcconfig
-#include "../Pods/Target Support Files/Pods-Voicely/Pods-Voicely.release.xcconfig"
+#include "../Pods/Target Support Files/Pods-Soapbox/Pods-Soapbox.release.xcconfig"
 
 // Server URL
 ROOT_URL = https:/$()/api.soapbox.social

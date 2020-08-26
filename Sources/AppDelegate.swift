@@ -1,11 +1,3 @@
-//
-//  AppDelegate.swift
-//  voicely
-//
-//  Created by Dean Eigenmann on 21.07.20.
-//  Copyright © 2020 Dean Eigenmann. All rights reserved.
-//
-
 import KeychainAccess
 import UIKit
 import UIWindowTransitions
@@ -81,7 +73,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func isLoggedIn() -> Bool {
-        let keychain = Keychain(service: "com.voicely.voicely")
+        guard let identifier = Bundle.main.bundleIdentifier else {
+            fatalError("no identifier")
+        }
+
+        let keychain = Keychain(service: identifier)
         guard let _ = keychain[string: "token"] else {
             return false
         }
