@@ -1,11 +1,11 @@
 //
+import AlamofireImage
 //  UserCell.swift
 //  Voicely
 //
 //  Created by Dean Eigenmann on 10.08.20.
 //
 import UIKit
-import AlamofireImage
 
 class UserCell: UICollectionViewCell {
     var nameLabel: UILabel!
@@ -46,8 +46,10 @@ class UserCell: UICollectionViewCell {
         nameLabel.text = user.displayName
         usernameLabel.text = "@" + user.username
 
-        if let image = user.image {
+        if let image = user.image, image != "" {
             profilePicture.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
+        } else {
+            profilePicture.image = nil
         }
     }
 }

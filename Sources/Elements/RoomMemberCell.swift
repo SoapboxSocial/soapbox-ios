@@ -9,10 +9,14 @@ import AlamofireImage
 import UIKit
 
 class RoomMemberCell: UICollectionViewCell {
+    private(set) var user: Int?
+
     private var roleLabel: UILabel!
     private var nameLabel: UILabel!
     private var muteView: UIView!
     private var profileImage: UIImageView!
+
+    private var reactionView: ReactionView!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -57,10 +61,18 @@ class RoomMemberCell: UICollectionViewCell {
     }
 
     func setup(name: String, image: String, role: APIClient.MemberRole) {
+        user = 0
         muteView.isHidden = true
 
         nameLabel.text = first(name)
         roleLabel.text = emoji(for: role)
+
+        if reactionView != nil {
+            reactionView.removeFromSuperview()
+        }
+
+        reactionView = ReactionView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.width))
+        contentView.addSubview(reactionView)
 
         if image == "" {
             return profileImage.image = nil
@@ -72,11 +84,17 @@ class RoomMemberCell: UICollectionViewCell {
     func setup(member: APIClient.Member) {
         setup(name: member.displayName, image: member.image, role: member.role)
 
+        user = member.id
+
         if member.role != APIClient.MemberRole.audience, member.isMuted {
             muteView.isHidden = false
         } else {
             muteView.isHidden = true
         }
+    }
+
+    func didReact(with: Room.Reaction) {
+        reactionView.react(with)
     }
 
     private func emoji(for role: APIClient.MemberRole) -> String {

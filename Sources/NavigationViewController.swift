@@ -163,8 +163,7 @@ class NavigationViewController: UINavigationController {
             "stun:stun4.l.google.com:19302",
         ])
 
-        let r = Room(rtc: webRTCClient, client: client)
-        return r
+        return Room(rtc: webRTCClient, client: client)
     }
 
     private func showNetworkError() {
@@ -259,6 +258,18 @@ extension NavigationViewController: RoomListViewDelegate {
                 self.presentCurrentRoom()
             }
         }
+    }
+
+    func didBeginSearching() {
+        createRoomButton.isHidden = true
+    }
+
+    func didEndSearching() {
+        if room != nil {
+            return
+        }
+
+        createRoomButton.isHidden = false
     }
 }
 

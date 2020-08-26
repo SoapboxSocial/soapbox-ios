@@ -20,6 +20,8 @@ protocol AuthenticationViewControllerOutput {
 class AuthenticationViewController: UIViewController {
     var output: AuthenticationViewControllerOutput!
 
+    private var imagePicker: ImagePicker!
+
     private var contentView: UIView!
     private var scrollView: UIScrollView!
     private var submitButton: Button!
@@ -62,6 +64,9 @@ class AuthenticationViewController: UIViewController {
         submitButton.setTitle(NSLocalizedString("submit", comment: ""), for: .normal)
         submitButton.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
         contentView.addSubview(submitButton)
+
+        imagePicker = ImagePicker()
+        imagePicker.delegate = self
 
         let views = [
             setupLoginView(height: height),
@@ -155,10 +160,7 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
 
     func displayImagePicker() {
         DispatchQueue.main.async {
-            let imagePicker = UIImagePickerController()
-            imagePicker.delegate = self
-            imagePicker.allowsEditing = true
-            self.present(imagePicker, animated: true)
+            self.imagePicker.present(self)
         }
     }
 }
@@ -176,8 +178,11 @@ extension AuthenticationViewController {
 
         emailTextField = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: label.frame.size.height + 20, width: 330, height: 40))
         emailTextField.keyboardType = .emailAddress
+        emailTextField.textContentType = .emailAddress
         emailTextField.placeholder = "Email"
         emailTextField.delegate = self
+        emailTextField.autocorrectionType = .no
+        emailTextField.autocapitalizationType = .none
         view.addSubview(emailTextField)
 
         return view
@@ -218,6 +223,8 @@ extension AuthenticationViewController {
         usernameTextField = TextField(frame: CGRect(x: profileImage.frame.origin.x + profileImage.frame.size.width + 10, y: label.frame.size.height + 20, width: view.frame.size.width - ((profileImage.frame.origin.x * 2) + profileImage.frame.size.width + 10), height: 40))
         usernameTextField.placeholder = NSLocalizedString("username", comment: "")
         usernameTextField.delegate = self
+        usernameTextField.autocorrectionType = .no
+        usernameTextField.autocapitalizationType = .none
         view.addSubview(usernameTextField)
 
         displayNameTextField = TextField(frame: CGRect(x: usernameTextField.frame.origin.x, y: usernameTextField.frame.height + usernameTextField.frame.origin.y + 10, width: usernameTextField.frame.size.width, height: 40))
@@ -262,12 +269,10 @@ extension AuthenticationViewController: UITextFieldDelegate {
     }
 }
 
-extension AuthenticationViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        guard let image = info[.editedImage] as? UIImage else { return }
-
-        output.didSelect(image: image)
-
-        dismiss(animated: true)
+extension AuthenticationViewController: ImagePickerDelegate {
+    func didSelect(image: UIImage?) {
+        if image != nil {
+            output.didSelect(image: image!)
+        }
     }
 }

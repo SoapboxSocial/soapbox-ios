@@ -492,3 +492,26 @@ extension APIClient {
             }
     }
 }
+
+extension APIClient {
+    func search(_ text: String, callback: @escaping (Result<[User], APIError>) -> Void) {
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/users/search"), method: .get, parameters: ["query": text], encoding: URLEncoding.default, headers: ["Authorization": self.token!])
+            .validate()
+            .response { result in
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
+
+                do {
+                    let resp = try self.decoder.decode([User].self, from: data)
+                    callback(.success(resp))
+                } catch {
+                    return callback(.failure(.decode))
+                }
+            }
+    }
+}

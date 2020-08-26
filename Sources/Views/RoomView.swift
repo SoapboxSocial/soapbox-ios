@@ -92,6 +92,14 @@ class RoomView: UIView {
         members!.register(RoomMemberCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         members!.backgroundColor = .clear
         addSubview(members)
+        
+        var origin = CGPoint(x: exitButton.frame.origin.x, y: frame.size.height - (exitButton.frame.size.height + 10 + safeAreaInsets.bottom))
+        for reaction in Room.Reaction.allCases {
+            let button = ReactionButton(frame: CGRect(origin: origin, size: exitButton.frame.size), reaction: reaction)
+            origin.x = origin.x - (button.frame.size.width + 10)
+            button.delegate = self
+            addSubview(button)
+        }
 
         DispatchQueue.main.async {
             self.members.reloadData()
@@ -149,7 +157,21 @@ class RoomView: UIView {
     }
 }
 
+extension RoomView: ReactionButtonDelegate {
+    func didTap(reaction: Room.Reaction) {
+        room.react(with: reaction)
+    }
+}
+
 extension RoomView: RoomDelegate {
+    func userDidReact(user: Int, reaction: Room.Reaction) {
+        DispatchQueue.main.async {
+            if let cell = (self.members.visibleCells as! [RoomMemberCell]).first(where: { $0.user == user }) {
+                cell.didReact(with: reaction)
+            }
+        }
+    }
+
     func roomWasClosedByRemote() {
         delegate?.roomWasClosedDueToError()
     }

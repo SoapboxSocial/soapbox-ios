@@ -8,21 +8,27 @@ import UIKit
 protocol RoomListViewDelegate {
     func currentRoom() -> Int?
     func didSelectRoom(id: Int)
+    func didBeginSearching()
+    func didEndSearching()
 }
 
 class RoomListViewController: UIViewController {
     enum CellIdentifier: String {
         case room
         case empty
+        case footer
+        case user
     }
 
     var delegate: RoomListViewDelegate?
 
     var rooms: UICollectionView!
+    var searchController: UISearchController!
 
     var api: APIClient
 
     var roomsData = [APIClient.Room]()
+    var users = [APIClient.User]()
 
     var currentRoom: Int?
 
@@ -41,8 +47,10 @@ class RoomListViewController: UIViewController {
         rooms = UICollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout())
         rooms.dataSource = self
         rooms.alwaysBounceVertical = true
+        rooms.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: CellIdentifier.footer.rawValue)
         rooms.register(RoomCell.self, forCellWithReuseIdentifier: CellIdentifier.room.rawValue)
         rooms.register(RoomListEmptyCell.self, forCellWithReuseIdentifier: CellIdentifier.empty.rawValue)
+        rooms.register(UserCell.self, forCellWithReuseIdentifier: CellIdentifier.user.rawValue)
         rooms.delegate = self
         rooms.backgroundColor = .clear
 
@@ -60,6 +68,19 @@ class RoomListViewController: UIViewController {
         let item = UIBarButtonItem(title: "@" + UserDefaults.standard.string(forKey: "username")!, style: .plain, target: self, action: #selector(openProfile))
         item.tintColor = .black
         navigationItem.leftBarButtonItem = item
+
+        searchController = UISearchController(searchResultsController: nil)
+        searchController.searchResultsUpdater = self
+        searchController.delegate = self
+        searchController.obscuresBackgroundDuringPresentation = false
+
+        let scb = searchController.searchBar
+        scb.tintColor = UIColor.secondaryBackground
+        scb.returnKeyType = .default
+        scb.delegate = self
+
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
     }
 
     @objc private func openProfile() {
@@ -112,8 +133,59 @@ class RoomListViewController: UIViewController {
     }
 }
 
+extension RoomListViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let text = searchController.searchBar.text, text != "" else {
+            return
+        }
+
+        rooms.refreshControl?.beginRefreshing()
+
+        api.search(text) { result in
+            switch result {
+            case .failure:
+                self.users = []
+            case let .success(users):
+                self.users = users
+            }
+
+            DispatchQueue.main.async {
+                self.rooms.refreshControl?.endRefreshing()
+                self.rooms.reloadData()
+            }
+        }
+    }
+}
+
+extension RoomListViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_: UISearchBar) {
+        view.endEditing(true)
+    }
+}
+
+extension RoomListViewController: UISearchControllerDelegate {
+    func didDismissSearchController(_: UISearchController) {
+        DispatchQueue.main.async {
+            self.delegate?.didEndSearching()
+            self.users = []
+            self.rooms.reloadData()
+        }
+    }
+
+    func didPresentSearchController(_: UISearchController) {
+        DispatchQueue.main.async {
+            self.delegate?.didBeginSearching()
+            self.rooms.reloadData()
+        }
+    }
+}
+
 extension RoomListViewController: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
+        if searchController.isActive {
+            return users.count
+        }
+
         if roomsData.count == 0 {
             return 1
         }
@@ -122,6 +194,12 @@ extension RoomListViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if searchController.isActive {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.user.rawValue, for: indexPath) as! UserCell
+            cell.setup(user: users[indexPath.item])
+            return cell
+        }
+
         if roomsData.count == 0 {
             return collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.empty.rawValue, for: indexPath)
         }
@@ -138,10 +216,19 @@ extension RoomListViewController: UICollectionViewDataSource {
 
         return cell
     }
+
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CellIdentifier.footer.rawValue, for: indexPath)
+    }
 }
 
 extension RoomListViewController: UICollectionViewDelegate {
     public func collectionView(_: UICollectionView, didSelectItemAt index: IndexPath) {
+        if searchController.isActive {
+            navigationController?.pushViewController(ProfileViewController(id: users[index.item].id), animated: true)
+            return
+        }
+
         if roomsData.count == 0 {
             return
         }
@@ -153,8 +240,17 @@ extension RoomListViewController: UICollectionViewDelegate {
 
 extension RoomListViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
-        if roomsData.count == 0 {
+        if roomsData.count == 0, !searchController.isActive {
             return CGSize(width: collectionView.frame.width, height: getEmptyHeight())
+        }
+
+        return CGSize(width: collectionView.frame.width, height: 105)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForFooterInSection _: Int) -> CGSize {
+        // @todo also check if current room is open, otherwise we additionally do not need this
+        if roomsData.count == 0, !searchController.isActive {
+            return CGSize.zero
         }
 
         return CGSize(width: collectionView.frame.width, height: 105)

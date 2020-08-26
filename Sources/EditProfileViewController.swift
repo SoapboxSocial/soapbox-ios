@@ -10,11 +10,12 @@ import UIKit
 
 class EditProfileViewController: UIViewController {
     private var displayNameTextField: TextField!
+    private var activityIndicator = UIActivityIndicatorView(style: .large)
 
     private var user: APIClient.Profile
     private let parentVC: ProfileViewController
     private var imageView: EditProfileImageButton!
-    private var imagePicker: UIImagePickerController!
+    private var imagePicker: ImagePicker!
 
     private var image: UIImage?
 
@@ -42,9 +43,8 @@ class EditProfileViewController: UIViewController {
         imageView.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + user.image))
         view.addSubview(imageView)
 
-        imagePicker = UIImagePickerController()
+        imagePicker = ImagePicker()
         imagePicker.delegate = self
-        imagePicker.allowsEditing = true
 
         let cancelButton = UIButton(frame: CGRect(x: 10, y: 40, width: 100, height: 20))
         cancelButton.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
@@ -62,10 +62,17 @@ class EditProfileViewController: UIViewController {
         displayNameTextField.placeholder = NSLocalizedString("display_name", comment: "")
         displayNameTextField.text = user.displayName
         view.addSubview(displayNameTextField)
+
+        activityIndicator.isHidden = true
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.color = .black
+
+        activityIndicator.center = view.center
+        view.addSubview(activityIndicator)
     }
 
     @objc private func selectImage() {
-        present(imagePicker, animated: true)
+        imagePicker.present(self)
     }
 
     @objc private func savePressed() {
@@ -75,7 +82,15 @@ class EditProfileViewController: UIViewController {
             return
         }
 
+        activityIndicator.startAnimating()
+        activityIndicator.isHidden = false
+
         APIClient().editProfile(displayName: displayName, image: image) { result in
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
+                self.activityIndicator.isHidden = true
+            }
+
             switch result {
             case .failure:
                 let banner = FloatingNotificationBanner(
@@ -102,13 +117,10 @@ class EditProfileViewController: UIViewController {
     }
 }
 
-extension EditProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        guard let image = info[.editedImage] as? UIImage else { return }
-
+extension EditProfileViewController: ImagePickerDelegate {
+    func didSelect(image: UIImage?) {
+        guard image != nil else { return }
         imageView.image = image
         self.image = image
-
-        dismiss(animated: true)
     }
 }
