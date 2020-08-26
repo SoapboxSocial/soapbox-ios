@@ -96,8 +96,10 @@ class ProfileViewController: UIViewController {
 
         let bar = navigation.navigationBar
 
-        image = UIImageView(frame: CGRect(x: 16, y: bar.frame.origin.y + bar.frame.size.height + 20, width: 80, height: 80))
-        image.layer.cornerRadius = 75 / 2
+        let margin = CGFloat(16.0)
+
+        image = UIImageView(frame: CGRect(x: margin, y: bar.frame.origin.y + bar.frame.size.height + 20, width: 80, height: 80))
+        image.layer.cornerRadius = image.frame.size.width / 2
         image.backgroundColor = .secondaryBackground
         image.clipsToBounds = true
         view.addSubview(image)
@@ -113,7 +115,7 @@ class ProfileViewController: UIViewController {
         username.textColor = .black
         view.addSubview(username)
 
-        followersLabel = UILabel(frame: CGRect(x: image.frame.origin.x, y: image.frame.origin.y + image.frame.size.height + 16, width: 100, height: 20))
+        followersLabel = UILabel(frame: CGRect(x: image.frame.origin.x, y: image.frame.origin.y + image.frame.size.height + margin, width: 100, height: 20))
         followersLabel.font = username.font
         followersLabel.textColor = .black
         view.addSubview(followersLabel)
@@ -131,18 +133,20 @@ class ProfileViewController: UIViewController {
         followingLabel.addGestureRecognizer(followingRecognizer)
         followingLabel.isUserInteractionEnabled = true
 
-        followButton = Button(frame: CGRect(x: view.frame.size.width - 140, y: image.frame.origin.y + (image.frame.size.height / 2) - 15, width: 100, height: 30))
-        followButton.addTarget(self, action: #selector(followButtonPressed), for: .touchUpInside)
-        view.addSubview(followButton)
-
         followsYou = UILabel(frame: CGRect(x: username.frame.origin.x, y: image.frame.origin.y + image.frame.size.height - 20, width: view.frame.size.width - 80, height: 20))
+        followsYou.textColor = .gray
         followsYou.text = NSLocalizedString("follows_you", comment: "")
         view.addSubview(followsYou)
         followsYou.sizeToFit()
 
         followsYou.isHidden = true
 
-        editButton = Button(frame: CGRect(x: view.frame.size.width - 140, y: image.frame.origin.y + (image.frame.size.height / 2) - 15, width: 100, height: 30))
+        followButton = Button(frame: CGRect(x: view.frame.size.width - (100 + margin), y: 0, width: 100, height: 30))
+        followButton.center = CGPoint(x: followButton.center.x, y: followsYou.center.y)
+        followButton.addTarget(self, action: #selector(followButtonPressed), for: .touchUpInside)
+        view.addSubview(followButton)
+
+        editButton = Button(frame: followButton.frame)
         editButton.addTarget(self, action: #selector(editButtonPressed), for: .touchUpInside)
         editButton.setTitle("Edit", for: .normal)
         view.addSubview(editButton)
