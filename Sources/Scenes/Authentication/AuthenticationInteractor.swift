@@ -76,6 +76,8 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
 
                     self.store(token: self.token!, expires: expires, user: user)
 
+                    NotificationManager.shared.requestAuthorization()
+
                     DispatchQueue.main.async {
                         self.output.presentLoggedInView()
                     }
