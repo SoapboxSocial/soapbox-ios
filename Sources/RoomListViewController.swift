@@ -79,8 +79,9 @@ class RoomListViewController: UIViewController {
         scb.returnKeyType = .default
         scb.delegate = self
 
-        navigationItem.searchController = searchController
+        navigationItem.titleView = scb
         navigationItem.hidesSearchBarWhenScrolling = false
+        searchController.hidesNavigationBarDuringPresentation = false
     }
 
     @objc private func openProfile() {

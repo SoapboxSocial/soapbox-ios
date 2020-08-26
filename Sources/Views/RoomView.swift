@@ -92,7 +92,7 @@ class RoomView: UIView {
         members!.register(RoomMemberCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         members!.backgroundColor = .clear
         addSubview(members)
-        
+
         var origin = CGPoint(x: exitButton.frame.origin.x, y: frame.size.height - (exitButton.frame.size.height + 10 + safeAreaInsets.bottom))
         for reaction in Room.Reaction.allCases {
             let button = ReactionButton(frame: CGRect(origin: origin, size: exitButton.frame.size), reaction: reaction)
