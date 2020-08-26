@@ -3,8 +3,13 @@ import ProjectDescription
 let settings = Settings(
     base: [
         "ENABLE_BITCODE": SettingValue.string("NO"),
+<<<<<<< Updated upstream
         "CURRENT_PROJECT_VERSION": SettingValue.string("33"),
         "MARKETING_VERSION": SettingValue.string("1.3"),
+=======
+        "CURRENT_PROJECT_VERSION": SettingValue.string(""),
+        "MARKETING_VERSION": SettingValue.string("0.1"),
+>>>>>>> Stashed changes
     ],
     configurations: [
         CustomConfiguration.debug(
