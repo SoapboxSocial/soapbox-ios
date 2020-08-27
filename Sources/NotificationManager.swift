@@ -28,7 +28,12 @@ class NotificationManager {
 
     func requestAuthorization() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
-            guard granted else { return }
+            guard granted else {
+                DispatchQueue.main.async {
+                    self.delegate?.deviceTokenFailedToSet()
+                }
+                return
+            }
 
             UNUserNotificationCenter.current().getNotificationSettings { settings in
                 guard settings.authorizationStatus == .authorized else { return }
