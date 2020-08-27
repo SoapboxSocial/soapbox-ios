@@ -9,6 +9,7 @@ enum APIError: Error {
     case decode
     case usernameAlreadyExists
     case incorrectPin
+    case fullRoom
 }
 
 class APIClient {
@@ -82,6 +83,9 @@ class APIClient {
         case failedToGetFollowers = 13
         case unauthorized = 14
         case failedToStoreDevice = 15
+        case notFound = 16
+        case notAllowed = 17
+        case roomFull = 18
     }
 
     struct ErrorResponse: Decodable {
@@ -106,13 +110,23 @@ class APIClient {
         let path = String(format: "/v1/rooms/%d/join", room)
 
         AF.request(Configuration.rootURL.appendingPathComponent(path), method: .post, parameters: parameters, encoding: JSONEncoding(), headers: ["Authorization": token!])
+        .validate()
             .response { result in
-                if result.error != nil {
-                    return callback(.failure(.requestFailed))
-                }
-
                 guard let data = result.data else {
                     return callback(.failure(.noData))
+                }
+                                
+                if result.error != nil {
+                    do {
+                        let resp = try self.decoder.decode(ErrorResponse.self, from: data)
+                        if resp.code == .roomFull {
+                            return callback(.failure(.fullRoom))
+                        }
+
+                        return callback(.failure(.requestFailed))
+                    } catch {
+                        return callback(.failure(.requestFailed))
+                    }
                 }
 
                 do {

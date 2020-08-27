@@ -167,6 +167,15 @@ class NavigationViewController: UINavigationController {
         )
         banner.show(cornerRadius: 10, shadowBlurRadius: 15)
     }
+    
+    private func showFullRoomError() {
+        let banner = FloatingNotificationBanner(
+            title: NSLocalizedString("room_is_full", comment: ""),
+            subtitle: NSLocalizedString("why_not_create_a_new_room", comment: ""),
+            style: .danger
+        )
+        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+    }
 }
 
 extension NavigationViewController: RoomViewDelegate {
@@ -242,11 +251,17 @@ extension NavigationViewController: RoomListViewDelegate {
                 self.activityIndicator.stopAnimating()
                 self.activityIndicator.isHidden = true
             }
-
-            if error != nil {
-                return self.showNetworkError()
+            
+            if let error = error {
+                switch error {
+                case .general:
+                    return self.showNetworkError()
+                case .fullRoom:
+                    return self.showFullRoomError()
+                }
+                
             }
-
+            
             DispatchQueue.main.async {
                 self.presentCurrentRoom()
             }

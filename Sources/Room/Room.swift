@@ -18,7 +18,10 @@ protocol RoomDelegate {
 }
 
 // @todo
-class RoomError: Error {}
+enum RoomError: Error {
+    case general
+    case fullRoom
+}
 
 class Room {
     enum Reaction: String, CaseIterable {
@@ -129,7 +132,7 @@ class Room {
         }
     }
 
-    func create(name: String?, completion: @escaping (Error?) -> Void) {
+    func create(name: String?, completion: @escaping (RoomError?) -> Void) {
         role = .owner
 
         if let roomName = name, roomName != "" {
@@ -142,13 +145,13 @@ class Room {
             self.client.createRoom(sdp: sdp, name: name) { result in
                 switch result {
                 case .failure:
-                    return completion(RoomError())
+                    return completion(.general)
                 case let .success(data):
                     self.id = data.id
 
                     self.rtc.set(remoteSdp: data.sessionDescription, completion: { error in
                         if error != nil {
-                            return completion(RoomError())
+                            return completion(.general)
                         }
                         // @todo check error
                         // @todo so this is a bit too late, it makes it really slow.
@@ -160,15 +163,19 @@ class Room {
         }
     }
 
-    func join(id: Int, completion: @escaping (Error?) -> Void) {
+    func join(id: Int, completion: @escaping (RoomError?) -> Void) {
         // @todo This should either be the rooms name, or Person's room
         name = NSLocalizedString("your_room", comment: "")
 
         rtc.offer { sdp in
             self.client.join(room: id, sdp: sdp) { result in
                 switch result {
-                case .failure:
-                    return completion(RoomError())
+                case .failure(let error):
+                    if error == .fullRoom {
+                        return completion(.fullRoom)
+                    }
+                    
+                    return completion(.general)
                 case let .success(data):
                     self.role = data.2
                     self.members = data.1
@@ -181,7 +188,7 @@ class Room {
 
                     self.rtc.set(remoteSdp: data.0, completion: { error in
                         if error != nil {
-                            return completion(error)
+                            return completion(.general)
                         }
 
                         completion(nil)

@@ -71,3 +71,6 @@
 "edit" = "Edit";
 
 "pick_profile_image" = "Please select a profile image.";
+
+"room_is_full" = "This room is full!";
+"why_not_create_a_new_room" = "Why not create a new room?";
