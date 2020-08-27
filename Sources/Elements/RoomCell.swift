@@ -29,7 +29,7 @@ class RoomCell: UICollectionViewCell {
         content.addSubview(titleLabel)
 
         countLabel = UILabel(frame: CGRect(x: 15, y: 45, width: contentView.frame.size.width - 30, height: 30))
-        countLabel.textColor = .highlight
+        countLabel.textColor = .secondaryBackground
         content.addSubview(countLabel)
     }
 

@@ -17,7 +17,7 @@ class RoomMemberCell: UICollectionViewCell {
         profileImage = UIImageView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.width))
         profileImage.layer.cornerRadius = frame.size.width / 2
         profileImage.clipsToBounds = true
-        profileImage.backgroundColor = .highlight
+        profileImage.backgroundColor = .secondaryBackground
         contentView.addSubview(profileImage)
 
         nameLabel = UILabel(frame: CGRect(x: 0, y: 66, width: 66, height: frame.size.height - 66))
