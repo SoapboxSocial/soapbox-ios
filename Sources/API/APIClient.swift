@@ -110,12 +110,12 @@ class APIClient {
         let path = String(format: "/v1/rooms/%d/join", room)
 
         AF.request(Configuration.rootURL.appendingPathComponent(path), method: .post, parameters: parameters, encoding: JSONEncoding(), headers: ["Authorization": token!])
-        .validate()
+            .validate()
             .response { result in
                 guard let data = result.data else {
                     return callback(.failure(.noData))
                 }
-                                
+
                 if result.error != nil {
                     do {
                         let resp = try self.decoder.decode(ErrorResponse.self, from: data)
