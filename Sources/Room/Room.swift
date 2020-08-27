@@ -170,11 +170,11 @@ class Room {
         rtc.offer { sdp in
             self.client.join(room: id, sdp: sdp) { result in
                 switch result {
-                case .failure(let error):
+                case let .failure(error):
                     if error == .fullRoom {
                         return completion(.fullRoom)
                     }
-                    
+
                     return completion(.general)
                 case let .success(data):
                     self.role = data.2
