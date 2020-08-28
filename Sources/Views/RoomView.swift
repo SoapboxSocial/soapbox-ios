@@ -54,13 +54,6 @@ class RoomView: UIView {
         recognizerView.addGestureRecognizer(recognizer)
         topBar.addSubview(recognizerView)
 
-        let label = UILabel(frame: CGRect(x: safeAreaInsets.left + 15, y: 0, width: frame.size.width / 2, height: 0))
-        label.text = room.name!
-        label.font = UIFont(name: "HelveticaNeue-Bold", size: label.font.pointSize)
-        label.sizeToFit()
-        label.center = CGPoint(x: label.center.x, y: topBar.center.y - (inset / 2))
-        topBar.addSubview(label)
-
         let exitButton = UIButton(
             frame: CGRect(x: frame.size.width - (30 + 15 + safeAreaInsets.left), y: (frame.size.height - inset) / 2 - 15, width: 30, height: 30)
         )
@@ -74,6 +67,12 @@ class RoomView: UIView {
         muteButton.center = CGPoint(x: exitButton.center.x - (15 + exitButton.frame.size.width), y: exitButton.center.y)
         muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
         addSubview(muteButton)
+
+        let label = UILabel(frame: CGRect(x: safeAreaInsets.left + 15, y: 0, width: muteButton.frame.origin.x - (safeAreaInsets.left + 30), height: 20))
+        label.text = room.name!
+        label.font = UIFont(name: "HelveticaNeue-Bold", size: label.font.pointSize)
+        label.center = CGPoint(x: label.center.x, y: topBar.center.y - (inset / 2))
+        topBar.addSubview(label)
 
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 0, right: 10)
