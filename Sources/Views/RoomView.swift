@@ -53,7 +53,7 @@ class RoomView: UIView {
         let recognizerView = UIView(frame: CGRect(x: 0, y: 0, width: topBar.frame.size.width, height: topBar.frame.size.height))
         recognizerView.addGestureRecognizer(recognizer)
         topBar.addSubview(recognizerView)
-
+        
         let exitButton = UIButton(
             frame: CGRect(x: frame.size.width - (30 + 15 + safeAreaInsets.left), y: (frame.size.height - inset) / 2 - 15, width: 30, height: 30)
         )
@@ -71,7 +71,7 @@ class RoomView: UIView {
         let label = UILabel(frame: CGRect(x: safeAreaInsets.left + 15, y: 0, width: muteButton.frame.origin.x - (safeAreaInsets.left + 30), height: 20))
         label.text = room.name!
         label.font = UIFont(name: "HelveticaNeue-Bold", size: label.font.pointSize)
-        label.center = CGPoint(x: label.center.x, y: topBar.center.y - (inset / 2))
+        label.center = CGPoint(x: label.center.x, y: exitButton.center.y)
         topBar.addSubview(label)
 
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
