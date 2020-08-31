@@ -96,7 +96,16 @@ class APIClient {
     let decoder = JSONDecoder()
 
     // @todo auth header
+    
+    func join(room: Int, callback: @escaping (Result<(RTCSessionDescription, [Member], MemberRole, String?), APIError>) -> Void) {
+        
+    }
 
+    func createRoom(name: String?, callback: @escaping (Result<RoomConnection, APIError>) -> Void) {
+        
+    }
+    
+    
     func join(
         room: Int,
         sdp: RTCSessionDescription,

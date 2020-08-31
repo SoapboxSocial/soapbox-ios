@@ -140,60 +140,59 @@ class Room {
         } else {
             self.name = NSLocalizedString("your_room", comment: "")
         }
-
-        rtc.offer { sdp in
-            self.client.createRoom(sdp: sdp, name: name) { result in
-                switch result {
-                case .failure:
-                    return completion(.general)
-                case let .success(data):
-                    self.id = data.id
-
-                    self.rtc.set(remoteSdp: data.sessionDescription, completion: { error in
-                        if error != nil {
-                            return completion(.general)
-                        }
-                        // @todo check error
-                        // @todo so this is a bit too late, it makes it really slow.
-                        // Maybe we should complete before this and throw errors in case with a delegat?
-                        completion(nil)
-                    })
+        
+        client.createRoom(name: name) { result in
+            switch result {
+            case .failure:
+                return completion(.general)
+            case let .success(connection):
+                self.id = connection.id
+                
+                self.rtc.set(remoteSdp: connection.sessionDescription) { error in
+                    if error != nil {
+                        return completion(.general)
+                    }
+                    
+                    self.rtc.answer { description in
+                        // @todo answer
+                    }
                 }
             }
+            
         }
     }
 
     func join(id: Int, completion: @escaping (RoomError?) -> Void) {
         // @todo This should either be the rooms name, or Person's room
-        name = NSLocalizedString("your_room", comment: "")
+        name = NSLocalizedString("current_room", comment: "")
+        
+        client.join(room: id) { result in
+            switch result {
+            case let .failure(error):
+                if error == .fullRoom {
+                    return completion(.fullRoom)
+                }
 
-        rtc.offer { sdp in
-            self.client.join(room: id, sdp: sdp) { result in
-                switch result {
-                case let .failure(error):
-                    if error == .fullRoom {
-                        return completion(.fullRoom)
+                return completion(.general)
+            case let .success((session, members, role, name)):
+                DispatchQueue.main.async {
+                    self.members = members
+                    self.role = role
+                    
+                    if let n = name, n != "" {
+                        self.name = n
                     }
-
-                    return completion(.general)
-                case let .success(data):
-                    self.role = data.2
-                    self.members = data.1
-
-                    DispatchQueue.main.async {
-                        if let name = data.3, name != "" {
-                            self.name = name
-                        }
+                }
+                
+                self.rtc.set(remoteSdp: session) { error in
+                    if error != nil {
+                        return completion(.general)
                     }
-
-                    self.rtc.set(remoteSdp: data.0, completion: { error in
-                        if error != nil {
-                            return completion(.general)
-                        }
-
-                        completion(nil)
-                        self.id = id
-                    })
+                    
+                    
+                    self.rtc.answer { description in
+                        // @todo send
+                    }
                 }
             }
         }
