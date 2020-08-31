@@ -256,7 +256,7 @@ extension Room: WebRTCClientDelegate {
     private func onOffer(sdp: RTCSessionDescription) {
         rtc.set(remoteSdp: sdp) { e in
             if let error = e {
-                // @TODO
+                debugPrint(error)
                 return
             }
 
@@ -275,6 +275,10 @@ extension Room: WebRTCClientDelegate {
                 }
             }
         }
+    }
+
+    private func onICECandidate(iceCandidate: RTCIceCandidate) {
+        rtc.set(remoteCandidate: iceCandidate)
     }
 
     private func updateMemberMuteState(user: Int, isMuted: Bool) {
