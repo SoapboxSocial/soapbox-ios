@@ -54,7 +54,10 @@ class Room {
     }
 
     func close() {
+        client.delegate = nil
+        rtc.delegate = nil
         rtc.close()
+        client?.disconnect()
     }
 
     func mute() {
@@ -168,44 +171,10 @@ class Room {
 //
     }
 
-    func join(id: Int, completion _: @escaping (RoomError?) -> Void) {
-        // @todo This should either be the rooms name, or Person's room
-        // name = NSLocalizedString("current_room", comment: "")
-
+    func join(id: Int) {
         client = WebSocketProvider(url: Configuration.websocketURL.appendingPathComponent(String(format: "/v1/rooms/%d/join", id)))
         client.delegate = self
         client.connect()
-
-//        client.join(room: id) { result in
-//            switch result {
-//            case let .failure(error):
-//                if error == .fullRoom {
-//                    return completion(.fullRoom)
-//                }
-//
-//                return completion(.general)
-//            case let .success((session, members, role, name)):
-//                DispatchQueue.main.async {
-//                    self.members = members
-//                    self.role = role
-//
-//                    if let n = name, n != "" {
-//                        self.name = n
-//                    }
-//                }
-//
-//                self.rtc.set(remoteSdp: session) { error in
-//                    if error != nil {
-//                        return completion(.general)
-//                    }
-//
-//
-//                    self.rtc.answer { description in
-//                        // @todo send
-//                    }
-//                }
-//            }
-//        }
     }
 }
 

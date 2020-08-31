@@ -57,7 +57,7 @@ class WebSocketProvider: NSObject {
         }
     }
 
-    private func disconnect() {
+    func disconnect() {
         socket?.cancel()
         socket = nil
         delegate?.webSocketDidDisconnect(self)

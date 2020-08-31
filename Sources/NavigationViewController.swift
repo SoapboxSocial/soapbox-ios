@@ -246,25 +246,11 @@ extension NavigationViewController: RoomListViewDelegate {
 
         room = newRoom()
 
-        room?.join(id: id) { error in
-            DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-                self.activityIndicator.isHidden = true
-            }
+        room?.join(id: id)
 
-            if let error = error {
-                switch error {
-                case .general:
-                    return self.showNetworkError()
-                case .fullRoom:
-                    return self.showFullRoomError()
-                }
-            }
-
-            DispatchQueue.main.async {
-                self.presentCurrentRoom()
-            }
-        }
+        activityIndicator.stopAnimating()
+        activityIndicator.isHidden = true
+        presentCurrentRoom()
     }
 
     func didBeginSearching() {
