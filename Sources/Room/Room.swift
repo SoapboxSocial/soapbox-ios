@@ -251,6 +251,19 @@ extension Room: WebRTCClientDelegate {
         }
     }
 
+    private func onOffer(sdp: RTCSessionDescription) {
+        rtc.set(remoteSdp: sdp) { e in
+            if let error = e {
+                // @TODO
+                return
+            }
+
+            self.rtc.answer { _ in
+                // @TODO SEND DESCRIPTION TO PEER
+            }
+        }
+    }
+
     private func updateMemberMuteState(user: Int, isMuted: Bool) {
         DispatchQueue.main.async {
             let index = self.members.firstIndex(where: { $0.id == user })
