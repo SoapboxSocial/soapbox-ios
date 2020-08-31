@@ -28,7 +28,7 @@ class WebSocketProvider: NSObject {
     }
 
     func connect() {
-        let socket = urlSession.webSocketTask(with: try! URLRequest(url: url, method: .post, headers: ["Authorization": token!]))
+        let socket = urlSession.webSocketTask(with: try! URLRequest(url: url, method: .get, headers: ["Authorization": token!]))
         socket.resume()
         self.socket = socket
         readMessage()

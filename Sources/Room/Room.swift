@@ -174,6 +174,7 @@ class Room {
 
         client = WebSocketProvider(url: Configuration.websocketURL.appendingPathComponent(String(format: "/v1/rooms/%d/join", id)))
         client.delegate = self
+        client.connect()
 
 //        client.join(room: id) { result in
 //            switch result {
@@ -211,7 +212,9 @@ class Room {
 extension Room: WebSocketProviderDelegate {
     func webSocketDidConnect(_: WebSocketProvider) {}
 
-    func webSocketDidDisconnect(_: WebSocketProvider) {}
+    func webSocketDidDisconnect(_: WebSocketProvider) {
+        delegate?.roomWasClosedByRemote()
+    }
 
     func webSocket(_: WebSocketProvider, didReceiveData data: Data) {
         do {
@@ -288,8 +291,19 @@ extension Room: WebRTCClientDelegate {
                 return
             }
 
-            self.rtc.answer { _ in
-                // @TODO SEND DESCRIPTION TO PEER
+            self.rtc.answer { description in
+                let data = Data(description.sdp.utf8)
+                let command = RoomCommand.with {
+                    $0.type = RoomCommand.TypeEnum.answer
+                    $0.data = data
+                }
+
+                do {
+                    let body = try command.serializedData()
+                    self.client.send(data: body)
+                } catch {
+                    debugPrint("failed to encode \(error.localizedDescription)")
+                }
             }
         }
     }
