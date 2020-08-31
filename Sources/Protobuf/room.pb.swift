@@ -42,6 +42,7 @@ struct RoomEvent {
     case mutedSpeaker // = 5
     case unmutedSpeaker // = 6
     case reacted // = 7
+    case offer // = 8
     case UNRECOGNIZED(Int)
 
     init() {
@@ -58,6 +59,7 @@ struct RoomEvent {
       case 5: self = .mutedSpeaker
       case 6: self = .unmutedSpeaker
       case 7: self = .reacted
+      case 8: self = .offer
       default: self = .UNRECOGNIZED(rawValue)
       }
     }
@@ -72,6 +74,7 @@ struct RoomEvent {
       case .mutedSpeaker: return 5
       case .unmutedSpeaker: return 6
       case .reacted: return 7
+      case .offer: return 8
       case .UNRECOGNIZED(let i): return i
       }
     }
@@ -94,6 +97,7 @@ extension RoomEvent.TypeEnum: CaseIterable {
     .mutedSpeaker,
     .unmutedSpeaker,
     .reacted,
+    .offer,
   ]
 }
 
@@ -117,6 +121,7 @@ struct RoomCommand {
     case muteSpeaker // = 2
     case unmuteSpeaker // = 3
     case reaction // = 4
+    case answer // = 5
     case UNRECOGNIZED(Int)
 
     init() {
@@ -130,6 +135,7 @@ struct RoomCommand {
       case 2: self = .muteSpeaker
       case 3: self = .unmuteSpeaker
       case 4: self = .reaction
+      case 5: self = .answer
       default: self = .UNRECOGNIZED(rawValue)
       }
     }
@@ -141,6 +147,7 @@ struct RoomCommand {
       case .muteSpeaker: return 2
       case .unmuteSpeaker: return 3
       case .reaction: return 4
+      case .answer: return 5
       case .UNRECOGNIZED(let i): return i
       }
     }
@@ -160,6 +167,7 @@ extension RoomCommand.TypeEnum: CaseIterable {
     .muteSpeaker,
     .unmuteSpeaker,
     .reaction,
+    .answer,
   ]
 }
 
@@ -218,6 +226,7 @@ extension RoomEvent.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     5: .same(proto: "MUTED_SPEAKER"),
     6: .same(proto: "UNMUTED_SPEAKER"),
     7: .same(proto: "REACTED"),
+    8: .same(proto: "OFFER"),
   ]
 }
 
@@ -263,5 +272,6 @@ extension RoomCommand.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     2: .same(proto: "MUTE_SPEAKER"),
     3: .same(proto: "UNMUTE_SPEAKER"),
     4: .same(proto: "REACTION"),
+    5: .same(proto: "ANSWER"),
   ]
 }
