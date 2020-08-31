@@ -156,7 +156,7 @@ class NavigationViewController: UINavigationController {
             "stun:stun4.l.google.com:19302",
         ])
 
-        return Room(rtc: webRTCClient, client: client)
+        return Room(rtc: webRTCClient)
     }
 
     private func showNetworkError() {
