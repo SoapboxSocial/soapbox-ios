@@ -165,7 +165,7 @@ class Room {
 
     func join(id: Int, completion: @escaping (RoomError?) -> Void) {
         // @todo This should either be the rooms name, or Person's room
-        name = NSLocalizedString("your_room", comment: "")
+        name = NSLocalizedString("current_room", comment: "")
 
         rtc.offer { sdp in
             self.client.join(room: id, sdp: sdp) { result in
