@@ -123,9 +123,9 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     func peerConnection(_: RTCPeerConnection, didAdd stream: RTCMediaStream) {
         inbound = stream
 
-        let audioConstrains = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
-        let audioSource = WebRTCClient.factory.audioSource(with: audioConstrains)
-        stream.addAudioTrack(WebRTCClient.factory.audioTrack(with: audioSource, trackId: "audio0"))
+        for track in stream.audioTracks {
+            peerConnection.add(track, streamIds: [stream.streamId])
+        }
 
         debugPrint("peerConnection did add stream")
     }
