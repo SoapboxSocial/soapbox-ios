@@ -43,6 +43,7 @@ struct RoomEvent {
     case unmutedSpeaker // = 6
     case reacted // = 7
     case offer // = 8
+    case candidate // = 9
     case UNRECOGNIZED(Int)
 
     init() {
@@ -60,6 +61,7 @@ struct RoomEvent {
       case 6: self = .unmutedSpeaker
       case 7: self = .reacted
       case 8: self = .offer
+      case 9: self = .candidate
       default: self = .UNRECOGNIZED(rawValue)
       }
     }
@@ -75,6 +77,7 @@ struct RoomEvent {
       case .unmutedSpeaker: return 6
       case .reacted: return 7
       case .offer: return 8
+      case .candidate: return 9
       case .UNRECOGNIZED(let i): return i
       }
     }
@@ -98,6 +101,7 @@ extension RoomEvent.TypeEnum: CaseIterable {
     .unmutedSpeaker,
     .reacted,
     .offer,
+    .candidate,
   ]
 }
 
@@ -122,6 +126,7 @@ struct RoomCommand {
     case unmuteSpeaker // = 3
     case reaction // = 4
     case answer // = 5
+    case candidate // = 6
     case UNRECOGNIZED(Int)
 
     init() {
@@ -136,6 +141,7 @@ struct RoomCommand {
       case 3: self = .unmuteSpeaker
       case 4: self = .reaction
       case 5: self = .answer
+      case 6: self = .candidate
       default: self = .UNRECOGNIZED(rawValue)
       }
     }
@@ -148,6 +154,7 @@ struct RoomCommand {
       case .unmuteSpeaker: return 3
       case .reaction: return 4
       case .answer: return 5
+      case .candidate: return 6
       case .UNRECOGNIZED(let i): return i
       }
     }
@@ -168,6 +175,7 @@ extension RoomCommand.TypeEnum: CaseIterable {
     .unmuteSpeaker,
     .reaction,
     .answer,
+    .candidate,
   ]
 }
 
@@ -227,6 +235,7 @@ extension RoomEvent.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     6: .same(proto: "UNMUTED_SPEAKER"),
     7: .same(proto: "REACTED"),
     8: .same(proto: "OFFER"),
+    9: .same(proto: "CANDIDATE"),
   ]
 }
 
@@ -273,5 +282,6 @@ extension RoomCommand.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     3: .same(proto: "UNMUTE_SPEAKER"),
     4: .same(proto: "REACTION"),
     5: .same(proto: "ANSWER"),
+    6: .same(proto: "CANDIDATE"),
   ]
 }
