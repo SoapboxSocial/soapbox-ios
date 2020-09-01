@@ -47,6 +47,13 @@ class Room {
     private var client: WebSocketProvider!
 
     var delegate: RoomDelegate?
+    
+    private struct Candidate: Codable {
+        let candidate: String
+        let sdpMLineIndex: Int32
+        let usernameFragment: String
+    }
+    
 
     init(rtc: WebRTCClient) {
         self.rtc = rtc
@@ -191,6 +198,16 @@ extension Room: WebSocketProviderDelegate {
             switch event.type {
             case .offer:
                 onOffer(sdp: RTCSessionDescription(type: .offer, sdp: String(bytes: event.data, encoding: .utf8)!))
+            case .candidate:
+                do {
+                    let decoder = JSONDecoder()
+                    let payload = try decoder.decode(Candidate.self, from: event.data)
+                    
+                    let candidate = RTCIceCandidate(sdp: payload.candidate, sdpMLineIndex: payload.sdpMLineIndex, sdpMid: nil)
+                    rtc.set(remoteCandidate: candidate)
+                } catch {
+                    debugPrint("failed to decode \(error.localizedDescription)")
+                }
             default:
                 return
             }
@@ -201,7 +218,32 @@ extension Room: WebSocketProviderDelegate {
 }
 
 extension Room: WebRTCClientDelegate {
-    func webRTCClient(_: WebRTCClient, didDiscoverLocalCandidate _: RTCIceCandidate) {}
+
+    func webRTCClient(_: WebRTCClient, didDiscoverLocalCandidate local: RTCIceCandidate) {
+        let candidate = Candidate(candidate: local.sdp, sdpMLineIndex: local.sdpMLineIndex, usernameFragment: "")
+        let encoder = JSONEncoder()
+        
+        var data: Data
+        
+        do {
+            data = try encoder.encode(candidate)
+        } catch {
+            debugPrint("failed to encode \(error.localizedDescription)")
+            return
+        }
+        
+        let command = RoomCommand.with {
+            $0.type = RoomCommand.TypeEnum.candidate
+            $0.data = data
+        }
+
+        do {
+            let body = try command.serializedData()
+            self.client.send(data: body)
+        } catch {
+            debugPrint("failed to encode \(error.localizedDescription)")
+        }
+    }
 
     func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
         if state == .failed {
@@ -246,6 +288,8 @@ extension Room: WebRTCClientDelegate {
             case .UNRECOGNIZED:
                 return
             case .offer:
+                break
+            case .candidate:
                 break
             }
         } catch {

@@ -76,24 +76,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         guard let identifier = Bundle.main.bundleIdentifier else {
             fatalError("no identifier")
         }
+//
+//        let keychain = Keychain(service: identifier)
+//        guard let _ = keychain[string: "token"] else {
+//            return false
+//        }
+//
+//        guard let expiry = keychain[string: "expiry"] else {
+//            return false
+//        }
+//
+//        if (Int(expiry) ?? 0) <= Int(Date().timeIntervalSince1970) {
+//            return false
+//        }
+//
+//        if UserDefaults.standard.integer(forKey: "id") == 0 {
+//            return false
+//        }
 
         let keychain = Keychain(service: identifier)
-        guard let _ = keychain[string: "token"] else {
-            return false
-        }
-
-        guard let expiry = keychain[string: "expiry"] else {
-            return false
-        }
-
-        if (Int(expiry) ?? 0) <= Int(Date().timeIntervalSince1970) {
-            return false
-        }
-
-        if UserDefaults.standard.integer(forKey: "id") == 0 {
-            return false
-        }
-
+        try? keychain.set("1234", key: "token")
+        
         return true
     }
 }
