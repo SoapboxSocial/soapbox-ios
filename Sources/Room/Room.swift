@@ -14,7 +14,7 @@ protocol RoomDelegate {
     func didChangeUserRole(user: Int, role: APIClient.MemberRole)
     func userDidReact(user: Int, reaction: Room.Reaction)
     func didChangeMemberMuteState(user: Int, isMuted: Bool)
-    func roomWasClosedByRemote()    
+    func roomWasClosedByRemote()
 }
 
 // @todo
@@ -57,7 +57,7 @@ class Room {
 
     init(rtc: WebRTCClient, socket: WebSocketProvider) {
         self.rtc = rtc
-        self.client = socket
+        client = socket
         rtc.delegate = self
         client.delegate = self
         client.connect()
@@ -73,7 +73,7 @@ class Room {
     func mute() {
         rtc.muteAudio()
         isMuted = true
-        
+
         send(command: RoomCommand.with {
             $0.type = RoomCommand.TypeEnum.muteSpeaker
         })
@@ -82,7 +82,7 @@ class Room {
     func unmute() {
         rtc.unmuteAudio()
         isMuted = false
-        
+
         send(command: RoomCommand.with {
             $0.type = RoomCommand.TypeEnum.unmuteSpeaker
         })
@@ -93,9 +93,8 @@ class Room {
             $0.type = RoomCommand.TypeEnum.removeSpeaker
             $0.data = Data(withUnsafeBytes(of: speaker.littleEndian, Array.init))
         })
-        
-        updateMemberRole(user: speaker, role: .audience)
 
+        updateMemberRole(user: speaker, role: .audience)
     }
 
     func add(speaker: Int) {
@@ -103,8 +102,8 @@ class Room {
             $0.type = RoomCommand.TypeEnum.addSpeaker
             $0.data = Data(withUnsafeBytes(of: speaker.littleEndian, Array.init))
         })
-        
-         updateMemberRole(user: speaker, role: .speaker)
+
+        updateMemberRole(user: speaker, role: .speaker)
     }
 
     func react(with reaction: Reaction) {
@@ -112,7 +111,7 @@ class Room {
             $0.type = RoomCommand.TypeEnum.reaction
             $0.data = Data(reaction.rawValue.utf8)
         })
-        
+
         delegate?.userDidReact(user: 0, reaction: reaction)
     }
 

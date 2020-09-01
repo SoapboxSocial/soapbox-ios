@@ -254,31 +254,20 @@ extension NavigationViewController: RoomListViewDelegate {
 
 extension NavigationViewController: RoomCreationDelegate {
     func createRoom(name: String?) {
-//        DispatchQueue.main.async {
-//            self.createRoomButton.isHidden = true
-//            self.activityIndicator.startAnimating()
-//            self.activityIndicator.isHidden = false
-//        }
-//
-//        room = newRoom()
-//        room?.create(name: name) { error in
-//            DispatchQueue.main.async {
-//                self.activityIndicator.stopAnimating()
-//                self.activityIndicator.isHidden = true
-//            }
-//
-//            if error != nil {
-//                DispatchQueue.main.async {
-//                    self.createRoomButton.isHidden = false
-//                }
-//
-//                return self.showNetworkError()
-//            }
-//
-//            DispatchQueue.main.async {
-//                self.presentCurrentRoom()
-//            }
-//        }
+        DispatchQueue.main.async {
+            self.createRoomButton.isHidden = true
+            self.activityIndicator.startAnimating()
+            self.activityIndicator.isHidden = false
+        }
+
+        room = RoomFactory.create(name: name)
+
+        DispatchQueue.main.async {
+            self.activityIndicator.stopAnimating()
+            self.activityIndicator.isHidden = true
+
+            self.presentCurrentRoom()
+        }
     }
 
     func didEnterWithName(_ name: String?) {
