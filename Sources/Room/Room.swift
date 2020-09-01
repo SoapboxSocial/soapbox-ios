@@ -130,7 +130,7 @@ class Room {
     }
 
 //
-    func react(with rection: Reaction) {
+    func react(with reaction: Reaction) {
         send(command: RoomCommand.with {
             $0.type = RoomCommand.TypeEnum.reaction
             $0.data = Data(reaction.rawValue.utf8)
