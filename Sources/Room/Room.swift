@@ -14,7 +14,7 @@ protocol RoomDelegate {
     func didChangeUserRole(user: Int, role: APIClient.MemberRole)
     func userDidReact(user: Int, reaction: Room.Reaction)
     func didChangeMemberMuteState(user: Int, isMuted: Bool)
-    func roomWasClosedByRemote()
+    func roomWasClosedByRemote()    
 }
 
 // @todo
@@ -45,7 +45,7 @@ class Room {
     private(set) var members = [APIClient.Member]()
 
     private let rtc: WebRTCClient
-    private var client: WebSocketProvider!
+    private let client: WebSocketProvider
 
     var delegate: RoomDelegate?
 
@@ -55,16 +55,19 @@ class Room {
         let usernameFragment: String
     }
 
-    init(rtc: WebRTCClient) {
+    init(rtc: WebRTCClient, socket: WebSocketProvider) {
         self.rtc = rtc
+        self.client = socket
         rtc.delegate = self
+        client.delegate = self
+        client.connect()
     }
 
     func close() {
         client.delegate = nil
         rtc.delegate = nil
         rtc.close()
-        client?.disconnect()
+        client.disconnect()
     }
 
     func mute() {
@@ -144,12 +147,6 @@ class Room {
 //                }
 //            }
 //
-    }
-
-    func join(id: Int) {
-        client = WebSocketProvider(url: Configuration.websocketURL.appendingPathComponent(String(format: "/v1/rooms/%d/join", id)))
-        client.delegate = self
-        client.connect()
     }
 }
 

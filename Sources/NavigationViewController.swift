@@ -147,18 +147,6 @@ class NavigationViewController: UINavigationController {
         }
     }
 
-    private func newRoom() -> Room {
-        let webRTCClient = WebRTCClient(iceServers: [
-            "stun:stun.l.google.com:19302",
-            "stun:stun1.l.google.com:19302",
-            "stun:stun2.l.google.com:19302",
-            "stun:stun3.l.google.com:19302",
-            "stun:stun4.l.google.com:19302",
-        ])
-
-        return Room(rtc: webRTCClient)
-    }
-
     private func showNetworkError() {
         let banner = FloatingNotificationBanner(
             title: NSLocalizedString("something_went_wrong", comment: ""),
@@ -244,9 +232,7 @@ extension NavigationViewController: RoomListViewDelegate {
         activityIndicator.startAnimating()
         activityIndicator.isHidden = false
 
-        room = newRoom()
-
-        room?.join(id: id)
+        room = RoomFactory.join(id: id)
 
         activityIndicator.stopAnimating()
         activityIndicator.isHidden = true
@@ -268,31 +254,31 @@ extension NavigationViewController: RoomListViewDelegate {
 
 extension NavigationViewController: RoomCreationDelegate {
     func createRoom(name: String?) {
-        DispatchQueue.main.async {
-            self.createRoomButton.isHidden = true
-            self.activityIndicator.startAnimating()
-            self.activityIndicator.isHidden = false
-        }
-
-        room = newRoom()
-        room?.create(name: name) { error in
-            DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-                self.activityIndicator.isHidden = true
-            }
-
-            if error != nil {
-                DispatchQueue.main.async {
-                    self.createRoomButton.isHidden = false
-                }
-
-                return self.showNetworkError()
-            }
-
-            DispatchQueue.main.async {
-                self.presentCurrentRoom()
-            }
-        }
+//        DispatchQueue.main.async {
+//            self.createRoomButton.isHidden = true
+//            self.activityIndicator.startAnimating()
+//            self.activityIndicator.isHidden = false
+//        }
+//
+//        room = newRoom()
+//        room?.create(name: name) { error in
+//            DispatchQueue.main.async {
+//                self.activityIndicator.stopAnimating()
+//                self.activityIndicator.isHidden = true
+//            }
+//
+//            if error != nil {
+//                DispatchQueue.main.async {
+//                    self.createRoomButton.isHidden = false
+//                }
+//
+//                return self.showNetworkError()
+//            }
+//
+//            DispatchQueue.main.async {
+//                self.presentCurrentRoom()
+//            }
+//        }
     }
 
     func didEnterWithName(_ name: String?) {
