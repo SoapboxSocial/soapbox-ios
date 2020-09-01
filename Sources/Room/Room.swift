@@ -1,10 +1,3 @@
-//
-//  Room.swift
-//  Voicely
-//
-//  Created by Dean Eigenmann on 22.07.20.
-//
-
 import Foundation
 import WebRTC
 
@@ -113,39 +106,6 @@ class Room {
         })
 
         delegate?.userDidReact(user: 0, reaction: reaction)
-    }
-
-    func create(name _: String?, completion _: @escaping (RoomError?) -> Void) {
-//        role = .owner
-//
-//        if let roomName = name, roomName != "" {
-//            self.name = name
-//        } else {
-//            self.name = NSLocalizedString("your_room", comment: "")
-//        }
-//
-//        self.client = WebSocketProvider(url: Configuration.websocketURL.appendingPathComponent(""))
-//
-//        client.
-//
-//        client.createRoom(name: name) { result in
-//            switch result {
-//            case .failure:
-//                return completion(.general)
-//            case let .success(connection):
-//                self.id = connection.id
-//
-//                self.rtc.set(remoteSdp: connection.sessionDescription) { error in
-//                    if error != nil {
-//                        return completion(.general)
-//                    }
-//
-//                    self.rtc.answer { description in
-//                        // @todo answer
-//                    }
-//                }
-//            }
-//
     }
 }
 
