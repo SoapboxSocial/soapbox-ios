@@ -2,9 +2,10 @@ import Foundation
 
 class RoomFactory {
     static func join(id: Int) -> Room {
-        let client = WebSocketProvider(url: Configuration.websocketURL.appendingPathComponent(String(format: "/v1/rooms/%d/join", id)))
-
-        return Room(rtc: newRTCClient(), socket: client)
+        return Room(
+            rtc: newRTCClient(),
+            socket: WebSocketProvider(url: Configuration.websocketURL.appendingPathComponent(String(format: "/v1/rooms/%d/join", id)))
+        )
     }
 
 //    static func create(name _: String) -> Room {}
