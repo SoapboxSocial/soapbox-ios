@@ -37,7 +37,7 @@ class Room {
 
     var id: Int?
 
-    private(set) var role = APIClient.MemberRole.audience
+    private(set) var role = APIClient.MemberRole.speaker
 
     // @todo think about this for when users join and are muted by default
     private(set) var isMuted = false
