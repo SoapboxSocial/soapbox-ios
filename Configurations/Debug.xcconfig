@@ -2,10 +2,10 @@
 #include "../Pods/Target Support Files/Pods-Soapbox/Pods-Soapbox.debug.xcconfig"
 
 // Server URL
-ROOT_URL = http:/$()/127.0.0.1:8080
+ROOT_URL = http:/$()/192.168.33.16
 
 // Websocket URL
-WEBSOCKET_URL = ws:/$()/127.0.0.1:8080
+WEBSOCKET_URL = ws:/$()/192.168.33.16
 
 // CDN URL
-CDN_URL = http:/$()/127.0.0.1:8080/cdn
+CDN_URL = http:/$()/192.168.33.16/cdn

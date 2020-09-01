@@ -130,19 +130,11 @@ class Room {
     }
 
 //
-    func react(with _: Reaction) {
-//        do {
-//            let data = Data(reaction.rawValue.utf8)
-//            let command = RoomCommand.with {
-//                $0.type = RoomCommand.TypeEnum.reaction
-//                $0.data = data
-//            }
-//
-//            try rtc.sendData(command.serializedData())
-//            delegate?.userDidReact(user: 0, reaction: reaction)
-//        } catch {
-//            debugPrint("\(error.localizedDescription)")
-//        }
+    func react(with rection: Reaction) {
+        send(command: RoomCommand.with {
+            $0.type = RoomCommand.TypeEnum.reaction
+            $0.data = Data(reaction.rawValue.utf8)
+        })
     }
 
     func create(name _: String?, completion _: @escaping (RoomError?) -> Void) {
