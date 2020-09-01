@@ -8,7 +8,12 @@ class RoomFactory {
         )
     }
 
-//    static func create(name _: String) -> Room {}
+    static func create(name: String) -> Result<Room, Error> {
+        // @todo I think the flow here should be, call create, this will return the ID. Then join
+        // on the server side we will need a timeout in-case the owner never actually joins the room.
+        // or maybe there is something less ugly.
+        fatalError()
+    }
     
     private static func newRTCClient() -> WebRTCClient {
         return WebRTCClient(iceServers: [
