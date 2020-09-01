@@ -96,7 +96,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let keychain = Keychain(service: identifier)
         try? keychain.set("1234", key: "token")
-        
+
         return true
     }
 }

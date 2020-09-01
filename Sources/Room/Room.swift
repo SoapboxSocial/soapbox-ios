@@ -24,6 +24,9 @@ enum RoomError: Error {
 }
 
 class Room {
+    private let decoder = JSONDecoder()
+    private let encoder = JSONEncoder()
+
     enum Reaction: String, CaseIterable {
         case thumbsUp = "👍"
         case heart = "❤️"
@@ -41,19 +44,16 @@ class Room {
 
     private(set) var members = [APIClient.Member]()
 
-    private let decoder = JSONDecoder()
-
     private let rtc: WebRTCClient
     private var client: WebSocketProvider!
 
     var delegate: RoomDelegate?
-    
+
     private struct Candidate: Codable {
         let candidate: String
         let sdpMLineIndex: Int32
         let usernameFragment: String
     }
-    
 
     init(rtc: WebRTCClient) {
         self.rtc = rtc
@@ -68,8 +68,8 @@ class Room {
     }
 
     func mute() {
-//        rtc.muteAudio()
-//        isMuted = true
+        rtc.muteAudio()
+        isMuted = true
 //
 //        do {
 //            let command = RoomCommand.with {
@@ -83,8 +83,8 @@ class Room {
 
 //
     func unmute() {
-//        rtc.unmuteAudio()
-//        isMuted = false
+        rtc.unmuteAudio()
+        isMuted = false
 //
 //        do {
 //            let command = RoomCommand.with {
@@ -197,132 +197,110 @@ extension Room: WebSocketProviderDelegate {
             let event = try RoomEvent(serializedData: data)
             switch event.type {
             case .offer:
-                onOffer(sdp: RTCSessionDescription(type: .offer, sdp: String(bytes: event.data, encoding: .utf8)!))
+                didReceiveOffer(event)
             case .candidate:
-                do {
-                    let decoder = JSONDecoder()
-                    let payload = try decoder.decode(Candidate.self, from: event.data)
-                    
-                    let candidate = RTCIceCandidate(sdp: payload.candidate, sdpMLineIndex: payload.sdpMLineIndex, sdpMid: nil)
-                    rtc.set(remoteCandidate: candidate)
-                } catch {
-                    debugPrint("failed to decode \(error.localizedDescription)")
-                }
-            default:
-                return
-            }
-        } catch {
-            debugPrint("failed to decode \(error.localizedDescription)")
-        }
-    }
-}
-
-extension Room: WebRTCClientDelegate {
-
-    func webRTCClient(_: WebRTCClient, didDiscoverLocalCandidate local: RTCIceCandidate) {
-        let candidate = Candidate(candidate: local.sdp, sdpMLineIndex: local.sdpMLineIndex, usernameFragment: "")
-        let encoder = JSONEncoder()
-        
-        var data: Data
-        
-        do {
-            data = try encoder.encode(candidate)
-        } catch {
-            debugPrint("failed to encode \(error.localizedDescription)")
-            return
-        }
-        
-        let command = RoomCommand.with {
-            $0.type = RoomCommand.TypeEnum.candidate
-            $0.data = data
-        }
-
-        do {
-            let body = try command.serializedData()
-            self.client.send(data: body)
-        } catch {
-            debugPrint("failed to encode \(error.localizedDescription)")
-        }
-    }
-
-    func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
-        if state == .failed {
-            delegate?.roomWasClosedByRemote()
-        }
-    }
-
-    func webRTCClient(_: WebRTCClient, didReceiveData data: Data) {
-        do {
-            let event = try RoomEvent(serializedData: data)
-
-            switch event.type {
+                didReceiveCandidate(event)
             case .joined:
-                let member = try decoder.decode(APIClient.Member.self, from: event.data)
-                if !members.contains(where: { $0.id == member.id }) {
-                    members.append(member)
-                    delegate?.userDidJoinRoom(user: Int(event.from))
-                }
+                didReceiveJoin(event)
             case .left:
-                members.removeAll(where: { $0.id == Int(event.from) })
-                delegate?.userDidLeaveRoom(user: Int(event.from))
+                didReceiveLeft(event)
             case .addedSpeaker:
-                updateMemberRole(user: event.data.toInt, role: .speaker)
+                didReceiveAddedSpeaker(event)
             case .removedSpeaker:
-                updateMemberRole(user: event.data.toInt, role: .audience)
+                didReceiveRemovedSpeaker(event)
             case .changedOwner:
-                updateMemberRole(user: event.data.toInt, role: .owner)
+                didReceiveChangedOwner(event)
             case .mutedSpeaker:
-                updateMemberMuteState(user: Int(event.from), isMuted: true)
+                didReceiveMuteSpeaker(event)
             case .unmutedSpeaker:
-                updateMemberMuteState(user: Int(event.from), isMuted: false)
+                didReceiveUnmuteSpeaker(event)
             case .reacted:
-                guard let value = String(bytes: event.data, encoding: .utf8) else {
-                    return
-                }
-
-                guard let reaction = Reaction(rawValue: value) else {
-                    return
-                }
-
-                delegate?.userDidReact(user: Int(event.from), reaction: reaction)
+                didReceiveReacted(event)
             case .UNRECOGNIZED:
                 return
-            case .offer:
-                break
-            case .candidate:
-                break
             }
         } catch {
             debugPrint("failed to decode \(error.localizedDescription)")
         }
     }
 
-    private func onOffer(sdp: RTCSessionDescription) {
-        rtc.set(remoteSdp: sdp) { e in
+    private func didReceiveOffer(_ event: RoomEvent) {
+        guard let sdp = String(bytes: event.data, encoding: .utf8) else {
+            return
+        }
+
+        rtc.set(remoteSdp: RTCSessionDescription(type: .offer, sdp: sdp)) { e in
             if let error = e {
                 debugPrint(error)
                 return
             }
 
             self.rtc.answer { description in
-                let data = Data(description.sdp.utf8)
-                let command = RoomCommand.with {
+                self.send(command: RoomCommand.with {
                     $0.type = RoomCommand.TypeEnum.answer
-                    $0.data = data
-                }
-
-                do {
-                    let body = try command.serializedData()
-                    self.client.send(data: body)
-                } catch {
-                    debugPrint("failed to encode \(error.localizedDescription)")
-                }
+                    $0.data = Data(description.sdp.utf8)
+                })
             }
         }
     }
 
-    private func onICECandidate(iceCandidate: RTCIceCandidate) {
-        rtc.set(remoteCandidate: iceCandidate)
+    private func didReceiveCandidate(_ event: RoomEvent) {
+        do {
+            let payload = try decoder.decode(Candidate.self, from: event.data)
+            let candidate = RTCIceCandidate(sdp: payload.candidate, sdpMLineIndex: payload.sdpMLineIndex, sdpMid: nil)
+            rtc.set(remoteCandidate: candidate)
+        } catch {
+            debugPrint("failed to decode \(error.localizedDescription)")
+        }
+    }
+
+    private func didReceiveJoin(_ event: RoomEvent) {
+        do {
+            let member = try decoder.decode(APIClient.Member.self, from: event.data)
+            if !members.contains(where: { $0.id == member.id }) {
+                members.append(member)
+                delegate?.userDidJoinRoom(user: Int(event.from))
+            }
+        } catch {
+            debugPrint("failed to decode \(error.localizedDescription)")
+        }
+    }
+
+    private func didReceiveLeft(_ event: RoomEvent) {
+        members.removeAll(where: { $0.id == Int(event.from) })
+        delegate?.userDidLeaveRoom(user: Int(event.from))
+    }
+
+    private func didReceiveAddedSpeaker(_ event: RoomEvent) {
+        updateMemberRole(user: event.data.toInt, role: .speaker)
+    }
+
+    private func didReceiveRemovedSpeaker(_ event: RoomEvent) {
+        updateMemberRole(user: event.data.toInt, role: .audience)
+    }
+
+    private func didReceiveChangedOwner(_ event: RoomEvent) {
+        updateMemberRole(user: event.data.toInt, role: .owner)
+    }
+
+    private func didReceiveMuteSpeaker(_ event: RoomEvent) {
+        updateMemberMuteState(user: Int(event.from), isMuted: true)
+    }
+
+    private func didReceiveUnmuteSpeaker(_ event: RoomEvent) {
+        updateMemberMuteState(user: Int(event.from), isMuted: false)
+    }
+
+    private func didReceiveReacted(_ event: RoomEvent) {
+        guard let value = String(bytes: event.data, encoding: .utf8) else {
+            return
+        }
+
+        guard let reaction = Reaction(rawValue: value) else {
+            return
+        }
+
+        delegate?.userDidReact(user: Int(event.from), reaction: reaction)
     }
 
     private func updateMemberMuteState(user: Int, isMuted: Bool) {
@@ -350,4 +328,40 @@ extension Room: WebRTCClientDelegate {
 
         delegate?.didChangeUserRole(user: user, role: role)
     }
+
+    private func send(command: RoomCommand) {
+        do {
+            client.send(data: try command.serializedData())
+        } catch {
+            debugPrint("failed to encode \(error.localizedDescription)")
+        }
+    }
+}
+
+extension Room: WebRTCClientDelegate {
+    func webRTCClient(_: WebRTCClient, didDiscoverLocalCandidate local: RTCIceCandidate) {
+        let candidate = Candidate(candidate: local.sdp, sdpMLineIndex: local.sdpMLineIndex, usernameFragment: "")
+
+        var data: Data
+
+        do {
+            data = try encoder.encode(candidate)
+        } catch {
+            debugPrint("failed to encode \(error.localizedDescription)")
+            return
+        }
+
+        send(command: RoomCommand.with {
+            $0.type = RoomCommand.TypeEnum.candidate
+            $0.data = data
+        })
+    }
+
+    func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
+        if state == .failed {
+            delegate?.roomWasClosedByRemote()
+        }
+    }
+
+    func webRTCClient(_: WebRTCClient, didReceiveData _: Data) {}
 }
