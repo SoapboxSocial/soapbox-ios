@@ -15,6 +15,7 @@ target 'Soapbox' do
   pod 'SwiftConfettiView'
   pod 'UIWindowTransitions'
   pod 'AlamofireImage'
+  pod 'gRPC-Swift', '~> 1.0.0-alpha.18'
 
   target 'SoapboxTests' do
     inherit! :search_paths

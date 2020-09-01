@@ -1,7 +1,20 @@
 import Foundation
+import GRPC
 
 class RoomFactory {
     static func join(id: Int) -> Room {
+        // @todo
+        let group = PlatformSupport.makeEventLoopGroup(loopCount: 1)
+
+        let channel = ClientConnection
+            .secure(group: group)
+            .connect(host: "speech.googleapis.com", port: 443)
+        
+//        let room = RoomServiceClient(channel: channel)
+        
+//        let room = RoomServiceClient(channel: channel)
+//        room.signal(callOptions: nil, handler: ())
+        
         return Room(
             rtc: newRTCClient(),
             socket: WebSocketProvider(url: Configuration.websocketURL.appendingPathComponent(String(format: "/v1/rooms/%d/join", id)))
