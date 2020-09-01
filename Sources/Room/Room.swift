@@ -70,71 +70,47 @@ class Room {
     func mute() {
         rtc.muteAudio()
         isMuted = true
-//
-//        do {
-//            let command = RoomCommand.with {
-//                $0.type = RoomCommand.TypeEnum.muteSpeaker
-//            }
-//            try rtc.sendData(command.serializedData())
-//        } catch {
-//            debugPrint("\(error.localizedDescription)")
-//        }
+        
+        send(command: RoomCommand.with {
+            $0.type = RoomCommand.TypeEnum.muteSpeaker
+        })
     }
 
-//
     func unmute() {
         rtc.unmuteAudio()
         isMuted = false
-//
-//        do {
-//            let command = RoomCommand.with {
-//                $0.type = RoomCommand.TypeEnum.unmuteSpeaker
-//            }
-//            try rtc.sendData(command.serializedData())
-//        } catch {
-//            debugPrint("\(error.localizedDescription)")
-//        }
+        
+        send(command: RoomCommand.with {
+            $0.type = RoomCommand.TypeEnum.unmuteSpeaker
+        })
     }
 
-//
-    func remove(speaker _: Int) {
-//        do {
-//            let data = Data(withUnsafeBytes(of: speaker.littleEndian, Array.init))
-//
-//            let command = RoomCommand.with {
-//                $0.type = RoomCommand.TypeEnum.removeSpeaker
-//                $0.data = data
-//            }
-//
-//            try rtc.sendData(command.serializedData())
-//            updateMemberRole(user: speaker, role: .audience)
-//        } catch {
-//            debugPrint("\(error.localizedDescription)")
-//        }
+    func remove(speaker: Int) {
+        send(command: RoomCommand.with {
+            $0.type = RoomCommand.TypeEnum.removeSpeaker
+            $0.data = Data(withUnsafeBytes(of: speaker.littleEndian, Array.init))
+        })
+        
+        updateMemberRole(user: speaker, role: .audience)
+
     }
 
-//
-    func add(speaker _: Int) {
-//        do {
-//            let data = Data(withUnsafeBytes(of: speaker.littleEndian, Array.init))
-//            let command = RoomCommand.with {
-//                $0.type = RoomCommand.TypeEnum.addSpeaker
-//                $0.data = data
-//            }
-//
-//            try rtc.sendData(command.serializedData())
-//            updateMemberRole(user: speaker, role: .speaker)
-//        } catch {
-//            debugPrint("\(error.localizedDescription)")
-//        }
+    func add(speaker: Int) {
+        send(command: RoomCommand.with {
+            $0.type = RoomCommand.TypeEnum.addSpeaker
+            $0.data = Data(withUnsafeBytes(of: speaker.littleEndian, Array.init))
+        })
+        
+         updateMemberRole(user: speaker, role: .speaker)
     }
 
-//
     func react(with reaction: Reaction) {
         send(command: RoomCommand.with {
             $0.type = RoomCommand.TypeEnum.reaction
             $0.data = Data(reaction.rawValue.utf8)
         })
+        
+        delegate?.userDidReact(user: 0, reaction: reaction)
     }
 
     func create(name _: String?, completion _: @escaping (RoomError?) -> Void) {
