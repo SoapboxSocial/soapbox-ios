@@ -19,10 +19,6 @@ class RoomFactory {
     }
 
     static func create(name: String?) -> Room {
-        var url = Configuration.websocketURL.appendingPathComponent(String(format: "/v1/rooms/create"))
-        if name != nil {
-            url.appendQueryItem(name: "name", value: name)
-        }
 
         fatalError()
 //

@@ -4,8 +4,9 @@
 // Server URL
 ROOT_URL = http:/$()/192.168.33.16
 
-// Websocket URL
-WEBSOCKET_URL = ws:/$()/192.168.33.16
+// Room Service
+ROOM_SERVICE_URL = ws:/$()/192.168.33.16
+ROOM_SERVICE_PORT = 50051
 
 // CDN URL
 CDN_URL = http:/$()/192.168.33.16/cdn

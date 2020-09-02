@@ -4,8 +4,9 @@
 // Server URL
 ROOT_URL = https:/$()/api.soapbox.social
 
-// Websocket URL
-WEBSOCKET_URL = ws:/$()/api.soapbox.social
+// Room Service URL
+ROOM_SERVICE_URL = https:/$()/api.soapbox.social
+ROOM_SERVICE_PORT = 50051
 
 // CDN URL
 CDN_URL = https:/$()/cdn.soapbox.social
