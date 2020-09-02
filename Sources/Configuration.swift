@@ -20,16 +20,16 @@ class Configuration {
     static let roomServiceURL: URL = {
         url(key: "ROOM_SERVICE_URL")
     }()
-    
+
     static let roomServicePort: Int = {
         guard let value = Configuration.infoDictionary["ROOM_SERVICE_PORT"] as? String else {
             fatalError("ROOM_SERVICE_PORT not set in plist for this environment")
         }
-        
+
         guard let port = Int(value) else {
             fatalError("\(value) could not be converted")
         }
-        
+
         return port
     }()
 

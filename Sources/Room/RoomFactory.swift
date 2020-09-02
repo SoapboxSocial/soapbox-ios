@@ -18,8 +18,7 @@ class RoomFactory {
         )
     }
 
-    static func create(name: String?) -> Room {
-
+    static func create(name _: String?) -> Room {
         fatalError()
 //
 //        return Room(
