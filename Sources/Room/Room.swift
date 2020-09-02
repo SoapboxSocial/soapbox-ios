@@ -205,36 +205,6 @@ class Room {
 //        }
 //    }
 //
-//    private func didReceiveOffer(_ event: RoomEvent) {
-//        guard let sdp = String(bytes: event.data, encoding: .utf8) else {
-//            return
-//        }
-//
-//        rtc.set(remoteSdp: RTCSessionDescription(type: .offer, sdp: sdp)) { e in
-//            if let error = e {
-//                debugPrint(error)
-//                return
-//            }
-//
-//            self.rtc.answer { description in
-//                self.send(command: RoomCommand.with {
-//                    $0.type = RoomCommand.TypeEnum.answer
-//                    $0.data = Data(description.sdp.utf8)
-//                })
-//            }
-//        }
-//    }
-//
-//    private func didReceiveCandidate(_ event: RoomEvent) {
-//        do {
-//            let payload = try decoder.decode(Candidate.self, from: event.data)
-//            let candidate = RTCIceCandidate(sdp: payload.candidate, sdpMLineIndex: payload.sdpMLineIndex, sdpMid: nil)
-//            rtc.set(remoteCandidate: candidate)
-//        } catch {
-//            debugPrint("failed to decode \(error.localizedDescription)")
-//        }
-//    }
-//
 //    private func didReceiveJoin(_ event: RoomEvent) {
 //        do {
 //            let member = try decoder.decode(APIClient.Member.self, from: event.data)
