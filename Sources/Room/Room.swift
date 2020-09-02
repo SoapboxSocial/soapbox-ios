@@ -1,4 +1,5 @@
 import Foundation
+import GRPC
 import WebRTC
 
 protocol RoomDelegate {
@@ -38,7 +39,8 @@ class Room {
     private(set) var members = [APIClient.Member]()
 
     private let rtc: WebRTCClient
-    private let client: WebSocketProvider
+    private let grpc: RoomServiceClient
+    private var stream: BidirectionalStreamingCall<SignalRequest, SignalReply>!
 
     var delegate: RoomDelegate?
 
@@ -48,19 +50,25 @@ class Room {
         let usernameFragment: String
     }
 
-    init(rtc: WebRTCClient, socket: WebSocketProvider) {
+    init(rtc: WebRTCClient, grpc: RoomServiceClient) {
         self.rtc = rtc
-        client = socket
+        self.grpc = grpc
+
+        stream = grpc.signal(handler: handle)
         rtc.delegate = self
-//        client.delegate = self
-        client.connect()
+    }
+
+    func join(id: Int) {
+        _ = stream.sendMessage(SignalRequest.with {
+            $0.join = JoinRequest.with {
+                $0.room = Int64(id)
+            }
+        })
     }
 
     func close() {
-        client.delegate = nil
         rtc.delegate = nil
         rtc.close()
-        client.disconnect()
     }
 
     func mute() {
@@ -81,7 +89,7 @@ class Room {
 //        })
     }
 
-    func remove(speaker: Int) {
+    func remove(speaker _: Int) {
 //        send(command: RoomCommand.with {
 //            $0.type = RoomCommand.TypeEnum.removeSpeaker
 //            $0.data = Data(withUnsafeBytes(of: speaker.littleEndian, Array.init))
@@ -90,7 +98,7 @@ class Room {
 //        updateMemberRole(user: speaker, role: .audience)
     }
 
-    func add(speaker: Int) {
+    func add(speaker _: Int) {
 //        send(command: RoomCommand.with {
 //            $0.type = RoomCommand.TypeEnum.addSpeaker
 //            $0.data = Data(withUnsafeBytes(of: speaker.littleEndian, Array.init))
@@ -99,7 +107,7 @@ class Room {
 //        updateMemberRole(user: speaker, role: .speaker)
     }
 
-    func react(with reaction: Reaction) {
+    func react(with _: Reaction) {
 //        send(command: RoomCommand.with {
 //            $0.type = RoomCommand.TypeEnum.reaction
 //            $0.data = Data(reaction.rawValue.utf8)
@@ -107,9 +115,58 @@ class Room {
 //
 //        delegate?.userDidReact(user: 0, reaction: reaction)
     }
+
+    private func handle(_ reply: SignalReply) {
+        switch reply.payload {
+        case let .join(join):
+            on(join: join)
+        case let .create(create): break
+        case let .negotiate(negotiate): break
+        case let .trickle(trickle):
+            on(trickle: trickle)
+        default:
+            break
+        }
+    }
+
+    private func on(join: JoinReply) {
+        guard let sdp = String(data: join.answer.sdp, encoding: .utf8) else {
+            // @todo
+            return
+        }
+
+        let sessionDescription = RTCSessionDescription(type: .offer, sdp: sdp)
+
+        rtc.set(remoteSdp: sessionDescription) { e in
+            if let error = e {
+                debugPrint(error)
+                return
+            }
+
+            self.rtc.answer { description in
+                self.stream.sendMessage(SignalRequest.with {
+                    $0.negotiate = SessionDescription.with {
+                        $0.type = "answer"
+                        $0.sdp = Data(description.sdp.utf8)
+                    }
+                })
+            }
+        }
+    }
+
+    private func on(trickle: Trickle) {
+        do {
+            let payload = try decoder.decode(Candidate.self, from: Data(trickle.init_p.utf8))
+            let candidate = RTCIceCandidate(sdp: payload.candidate, sdpMLineIndex: payload.sdpMLineIndex, sdpMid: nil)
+            rtc.set(remoteCandidate: candidate)
+        } catch {
+            debugPrint("failed to decode \(error.localizedDescription)")
+            return
+        }
+    }
 }
 
-//extension Room: WebSocketProviderDelegate {
+// extension Room: WebSocketProviderDelegate {
 //    func webSocketDidConnect(_: WebSocketProvider) {}
 //
 //    func webSocketDidDisconnect(_: WebSocketProvider) {
@@ -260,7 +317,7 @@ class Room {
 //            debugPrint("failed to encode \(error.localizedDescription)")
 //        }
 //    }
-//}
+// }
 
 extension Room: WebRTCClientDelegate {
     func webRTCClient(_: WebRTCClient, didDiscoverLocalCandidate local: RTCIceCandidate) {
@@ -275,10 +332,15 @@ extension Room: WebRTCClientDelegate {
             return
         }
 
-//        send(command: RoomCommand.with {
-//            $0.type = RoomCommand.TypeEnum.candidate
-//            $0.data = data
-//        })
+        guard let trickle = String(data: data, encoding: .utf8) else {
+            return
+        }
+
+        stream.sendMessage(SignalRequest.with {
+            $0.trickle = Trickle.with {
+                $0.init_p = trickle
+            }
+        })
     }
 
     func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {

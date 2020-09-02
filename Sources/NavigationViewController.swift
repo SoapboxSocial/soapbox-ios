@@ -233,6 +233,7 @@ extension NavigationViewController: RoomListViewDelegate {
         activityIndicator.isHidden = false
 
         room = RoomFactory.join(id: id)
+        room?.join(id: id)
 
         activityIndicator.stopAnimating()
         activityIndicator.isHidden = true
