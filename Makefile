@@ -47,6 +47,6 @@ protobuf:
 	 protoc \
 	  --proto_path=$(PROTO_PATH) \
 	  --swift_out=./Sources/Protobuf \
-	  --grpc-swift_out=Client=true,Server=false:. \
+	  --grpc-swift_out=Client=true,Server=false:./Sources/Protobuf \
 	  room.proto
 

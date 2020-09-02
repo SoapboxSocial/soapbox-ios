@@ -59,6 +59,14 @@ struct SignalRequest {
     set {payload = .trickle(newValue)}
   }
 
+  var command: SignalRequest.Command {
+    get {
+      if case .command(let v)? = payload {return v}
+      return SignalRequest.Command()
+    }
+    set {payload = .command(newValue)}
+  }
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum OneOf_Payload: Equatable {
@@ -66,6 +74,7 @@ struct SignalRequest {
     case create(CreateRequest)
     case negotiate(SessionDescription)
     case trickle(Trickle)
+    case command(SignalRequest.Command)
 
   #if !swift(>=4.1)
     static func ==(lhs: SignalRequest.OneOf_Payload, rhs: SignalRequest.OneOf_Payload) -> Bool {
@@ -74,14 +83,81 @@ struct SignalRequest {
       case (.create(let l), .create(let r)): return l == r
       case (.negotiate(let l), .negotiate(let r)): return l == r
       case (.trickle(let l), .trickle(let r)): return l == r
+      case (.command(let l), .command(let r)): return l == r
       default: return false
       }
     }
   #endif
   }
 
+  struct Command {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var type: SignalRequest.Command.TypeEnum = .addSpeaker
+
+    var data: Data = SwiftProtobuf.Internal.emptyData
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    enum TypeEnum: SwiftProtobuf.Enum {
+      typealias RawValue = Int
+      case addSpeaker // = 0
+      case removeSpeaker // = 1
+      case muteSpeaker // = 2
+      case unmuteSpeaker // = 3
+      case reaction // = 4
+      case UNRECOGNIZED(Int)
+
+      init() {
+        self = .addSpeaker
+      }
+
+      init?(rawValue: Int) {
+        switch rawValue {
+        case 0: self = .addSpeaker
+        case 1: self = .removeSpeaker
+        case 2: self = .muteSpeaker
+        case 3: self = .unmuteSpeaker
+        case 4: self = .reaction
+        default: self = .UNRECOGNIZED(rawValue)
+        }
+      }
+
+      var rawValue: Int {
+        switch self {
+        case .addSpeaker: return 0
+        case .removeSpeaker: return 1
+        case .muteSpeaker: return 2
+        case .unmuteSpeaker: return 3
+        case .reaction: return 4
+        case .UNRECOGNIZED(let i): return i
+        }
+      }
+
+    }
+
+    init() {}
+  }
+
   init() {}
 }
+
+#if swift(>=4.2)
+
+extension SignalRequest.Command.TypeEnum: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  static var allCases: [SignalRequest.Command.TypeEnum] = [
+    .addSpeaker,
+    .removeSpeaker,
+    .muteSpeaker,
+    .unmuteSpeaker,
+    .reaction,
+  ]
+}
+
+#endif  // swift(>=4.2)
 
 struct SignalReply {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
@@ -122,6 +198,14 @@ struct SignalReply {
     set {payload = .trickle(newValue)}
   }
 
+  var event: SignalReply.Event {
+    get {
+      if case .event(let v)? = payload {return v}
+      return SignalReply.Event()
+    }
+    set {payload = .event(newValue)}
+  }
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum OneOf_Payload: Equatable {
@@ -129,6 +213,7 @@ struct SignalReply {
     case create(CreateReply)
     case negotiate(SessionDescription)
     case trickle(Trickle)
+    case event(SignalReply.Event)
 
   #if !swift(>=4.1)
     static func ==(lhs: SignalReply.OneOf_Payload, rhs: SignalReply.OneOf_Payload) -> Bool {
@@ -137,14 +222,95 @@ struct SignalReply {
       case (.create(let l), .create(let r)): return l == r
       case (.negotiate(let l), .negotiate(let r)): return l == r
       case (.trickle(let l), .trickle(let r)): return l == r
+      case (.event(let l), .event(let r)): return l == r
       default: return false
       }
     }
   #endif
   }
 
+  struct Event {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var type: SignalReply.Event.TypeEnum = .joined
+
+    var from: Int64 = 0
+
+    var data: Data = SwiftProtobuf.Internal.emptyData
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    enum TypeEnum: SwiftProtobuf.Enum {
+      typealias RawValue = Int
+      case joined // = 0
+      case left // = 1
+      case addedSpeaker // = 2
+      case removedSpeaker // = 3
+      case changedOwner // = 4
+      case mutedSpeaker // = 5
+      case unmutedSpeaker // = 6
+      case reacted // = 7
+      case UNRECOGNIZED(Int)
+
+      init() {
+        self = .joined
+      }
+
+      init?(rawValue: Int) {
+        switch rawValue {
+        case 0: self = .joined
+        case 1: self = .left
+        case 2: self = .addedSpeaker
+        case 3: self = .removedSpeaker
+        case 4: self = .changedOwner
+        case 5: self = .mutedSpeaker
+        case 6: self = .unmutedSpeaker
+        case 7: self = .reacted
+        default: self = .UNRECOGNIZED(rawValue)
+        }
+      }
+
+      var rawValue: Int {
+        switch self {
+        case .joined: return 0
+        case .left: return 1
+        case .addedSpeaker: return 2
+        case .removedSpeaker: return 3
+        case .changedOwner: return 4
+        case .mutedSpeaker: return 5
+        case .unmutedSpeaker: return 6
+        case .reacted: return 7
+        case .UNRECOGNIZED(let i): return i
+        }
+      }
+
+    }
+
+    init() {}
+  }
+
   init() {}
 }
+
+#if swift(>=4.2)
+
+extension SignalReply.Event.TypeEnum: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  static var allCases: [SignalReply.Event.TypeEnum] = [
+    .joined,
+    .left,
+    .addedSpeaker,
+    .removedSpeaker,
+    .changedOwner,
+    .mutedSpeaker,
+    .unmutedSpeaker,
+    .reacted,
+  ]
+}
+
+#endif  // swift(>=4.2)
 
 struct JoinRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
@@ -187,6 +353,8 @@ struct CreateRequest {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
+  var name: String = String()
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
@@ -197,9 +365,22 @@ struct CreateReply {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
+  var id: Int64 = 0
+
+  var answer: SessionDescription {
+    get {return _answer ?? SessionDescription()}
+    set {_answer = newValue}
+  }
+  /// Returns true if `answer` has been explicitly set.
+  var hasAnswer: Bool {return self._answer != nil}
+  /// Clears the value of `answer`. Subsequent reads from it will return its default value.
+  mutating func clearAnswer() {self._answer = nil}
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
+
+  fileprivate var _answer: SessionDescription? = nil
 }
 
 struct Trickle {
@@ -238,6 +419,7 @@ extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     2: .same(proto: "create"),
     3: .same(proto: "negotiate"),
     4: .same(proto: "trickle"),
+    5: .same(proto: "command"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -275,6 +457,14 @@ extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .trickle(v)}
+      case 5:
+        var v: SignalRequest.Command?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .command(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .command(v)}
       default: break
       }
     }
@@ -290,6 +480,8 @@ extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
     case .trickle(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+    case .command(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -302,6 +494,51 @@ extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
   }
 }
 
+extension SignalRequest.Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = SignalRequest.protoMessageName + ".Command"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "type"),
+    2: .same(proto: "data"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularEnumField(value: &self.type)
+      case 2: try decoder.decodeSingularBytesField(value: &self.data)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.type != .addSpeaker {
+      try visitor.visitSingularEnumField(value: self.type, fieldNumber: 1)
+    }
+    if !self.data.isEmpty {
+      try visitor.visitSingularBytesField(value: self.data, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: SignalRequest.Command, rhs: SignalRequest.Command) -> Bool {
+    if lhs.type != rhs.type {return false}
+    if lhs.data != rhs.data {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension SignalRequest.Command.TypeEnum: SwiftProtobuf._ProtoNameProviding {
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "ADD_SPEAKER"),
+    1: .same(proto: "REMOVE_SPEAKER"),
+    2: .same(proto: "MUTE_SPEAKER"),
+    3: .same(proto: "UNMUTE_SPEAKER"),
+    4: .same(proto: "REACTION"),
+  ]
+}
+
 extension SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "SignalReply"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -309,6 +546,7 @@ extension SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     2: .same(proto: "create"),
     3: .same(proto: "negotiate"),
     4: .same(proto: "trickle"),
+    5: .same(proto: "event"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -346,6 +584,14 @@ extension SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .trickle(v)}
+      case 5:
+        var v: SignalReply.Event?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .event(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .event(v)}
       default: break
       }
     }
@@ -361,6 +607,8 @@ extension SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
     case .trickle(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+    case .event(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -371,6 +619,60 @@ extension SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
+}
+
+extension SignalReply.Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = SignalReply.protoMessageName + ".Event"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "type"),
+    2: .same(proto: "from"),
+    3: .same(proto: "data"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularEnumField(value: &self.type)
+      case 2: try decoder.decodeSingularInt64Field(value: &self.from)
+      case 3: try decoder.decodeSingularBytesField(value: &self.data)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.type != .joined {
+      try visitor.visitSingularEnumField(value: self.type, fieldNumber: 1)
+    }
+    if self.from != 0 {
+      try visitor.visitSingularInt64Field(value: self.from, fieldNumber: 2)
+    }
+    if !self.data.isEmpty {
+      try visitor.visitSingularBytesField(value: self.data, fieldNumber: 3)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: SignalReply.Event, rhs: SignalReply.Event) -> Bool {
+    if lhs.type != rhs.type {return false}
+    if lhs.from != rhs.from {return false}
+    if lhs.data != rhs.data {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension SignalReply.Event.TypeEnum: SwiftProtobuf._ProtoNameProviding {
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "JOINED"),
+    1: .same(proto: "LEFT"),
+    2: .same(proto: "ADDED_SPEAKER"),
+    3: .same(proto: "REMOVED_SPEAKER"),
+    4: .same(proto: "CHANGED_OWNER"),
+    5: .same(proto: "MUTED_SPEAKER"),
+    6: .same(proto: "UNMUTED_SPEAKER"),
+    7: .same(proto: "REACTED"),
+  ]
 }
 
 extension JoinRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
@@ -439,18 +741,28 @@ extension JoinReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
 
 extension CreateRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "CreateRequest"
-  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "name"),
+  ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let _ = try decoder.nextFieldNumber() {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularStringField(value: &self.name)
+      default: break
+      }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.name.isEmpty {
+      try visitor.visitSingularStringField(value: self.name, fieldNumber: 1)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: CreateRequest, rhs: CreateRequest) -> Bool {
+    if lhs.name != rhs.name {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -458,18 +770,34 @@ extension CreateRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
 
 extension CreateReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "CreateReply"
-  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+    2: .same(proto: "answer"),
+  ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let _ = try decoder.nextFieldNumber() {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      case 2: try decoder.decodeSingularMessageField(value: &self._answer)
+      default: break
+      }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.id != 0 {
+      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
+    }
+    if let v = self._answer {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: CreateReply, rhs: CreateReply) -> Bool {
+    if lhs.id != rhs.id {return false}
+    if lhs._answer != rhs._answer {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
