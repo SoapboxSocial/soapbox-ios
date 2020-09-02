@@ -124,7 +124,8 @@ class Room {
         case let .join(join):
             on(join: join)
         case let .create(create): break
-        case let .negotiate(negotiate): break
+        case let .negotiate(negotiate):
+            on(negotiate: negotiate)
         case let .trickle(trickle):
             on(trickle: trickle)
         default:
@@ -132,8 +133,32 @@ class Room {
         }
     }
 
+    private func on(negotiate: SessionDescription) {
+        if negotiate.type != "offer" {
+            debugPrint("\(negotiate.type) received")
+            return
+        }
+
+        receivedOffer(negotiate.sdp)
+    }
+
     private func on(join: JoinReply) {
-        guard let sdp = String(data: join.answer.sdp, encoding: .utf8) else {
+        receivedOffer(join.answer.sdp)
+    }
+
+    private func on(trickle: Trickle) {
+        do {
+            let payload = try decoder.decode(Candidate.self, from: Data(trickle.init_p.utf8))
+            let candidate = RTCIceCandidate(sdp: payload.candidate, sdpMLineIndex: payload.sdpMLineIndex, sdpMid: nil)
+            rtc.set(remoteCandidate: candidate)
+        } catch {
+            debugPrint("failed to decode \(error.localizedDescription)")
+            return
+        }
+    }
+
+    private func receivedOffer(_ data: Data) {
+        guard let sdp = String(data: data, encoding: .utf8) else {
             // @todo
             return
         }
@@ -154,17 +179,6 @@ class Room {
                     }
                 })
             }
-        }
-    }
-
-    private func on(trickle: Trickle) {
-        do {
-            let payload = try decoder.decode(Candidate.self, from: Data(trickle.init_p.utf8))
-            let candidate = RTCIceCandidate(sdp: payload.candidate, sdpMLineIndex: payload.sdpMLineIndex, sdpMid: nil)
-            rtc.set(remoteCandidate: candidate)
-        } catch {
-            debugPrint("failed to decode \(error.localizedDescription)")
-            return
         }
     }
 }
