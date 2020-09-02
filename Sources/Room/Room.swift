@@ -69,6 +69,9 @@ class Room {
     func close() {
         rtc.delegate = nil
         rtc.close()
+
+        stream.sendEnd()
+        grpc.channel.close()
     }
 
     func mute() {
