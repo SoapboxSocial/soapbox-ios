@@ -81,7 +81,7 @@ class Room {
                     if let c = self.completion {
                         return c(.failure(RoomError.general))
                     }
-                    
+
                     if !self.isClosed {
                         self.delegate?.roomWasClosedByRemote()
                     }
@@ -170,8 +170,29 @@ class Room {
     }
 
     private func on(join: JoinReply) {
+        guard let r = APIClient.MemberRole(rawValue: join.room.role) else {
+            return completion(.failure(RoomError.general))
+        }
+
+        role = r
+
+        for member in join.room.members {
+            members.append(
+                APIClient.Member(
+                    id: Int(member.id),
+                    displayName: member.displayName,
+                    image: member.image,
+                    role: APIClient.MemberRole(rawValue: member.role) ?? .speaker,
+                    isMuted: member.muted
+                )
+            )
+        }
+
+        name = join.room.name
+
         completion(.success(()))
         completion = nil
+
         receivedOffer(join.answer.sdp)
     }
 

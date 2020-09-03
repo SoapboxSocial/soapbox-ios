@@ -53,13 +53,6 @@ class APIClient {
         let members: [Member]
     }
 
-    struct JoinResponse: Decodable {
-        let name: String?
-        let members: [Member]
-        let sdp: SDPPayload
-        let role: MemberRole
-    }
-
     struct SDPPayload: Decodable {
         let id: Int?
         let sdp: String
