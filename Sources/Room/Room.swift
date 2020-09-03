@@ -30,6 +30,7 @@ class Room {
     private(set) var name: String!
 
     var id: Int?
+    var isClosed = false
 
     private(set) var role = APIClient.MemberRole.speaker
 
@@ -77,14 +78,20 @@ class Room {
                 switch status.code {
                 case .ok: break
                 default:
-                    guard let c = self.completion else { return }
-                    c(.failure(RoomError.general))
+                    if let c = self.completion {
+                        return c(.failure(RoomError.general))
+                    }
+                    
+                    if !self.isClosed {
+                        self.delegate?.roomWasClosedByRemote()
+                    }
                 }
             }
         }
     }
 
     func close() {
+        isClosed = true
         rtc.delegate = nil
         rtc.close()
 
@@ -340,6 +347,4 @@ extension Room: WebRTCClientDelegate {
             delegate?.roomWasClosedByRemote()
         }
     }
-
-    func webRTCClient(_: WebRTCClient, didReceiveData _: Data) {}
 }
