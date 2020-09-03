@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>ROOM_SERVICE_PORT</key>
-	<string>$(ROOM_SERVICE_PORT)</string>
 	<key>CDN_URL</key>
 	<string>$(CDN_URL)</string>
 	<key>CFBundleDevelopmentRegion</key>
@@ -34,11 +32,15 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>We don&apos;t use this, must investigate further</string>
+	<string>We don't use this, must investigate further</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone is required</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app wants to use your photos.</string>
+	<key>ROOM_SERVICE_PORT</key>
+	<string>$(ROOM_SERVICE_PORT)</string>
+	<key>ROOM_SERVICE_URL</key>
+	<string>$(ROOM_SERVICE_URL)</string>
 	<key>ROOT_URL</key>
 	<string>$(ROOT_URL)</string>
 	<key>UIBackgroundModes</key>
@@ -61,7 +63,5 @@
 	</array>
 	<key>UIUserInterfaceStyle</key>
 	<string>Light</string>
-	<key>ROOM_SERVICE_URL</key>
-	<string>$(ROOM_SERVICE_URL)</string>
 </dict>
 </plist>
