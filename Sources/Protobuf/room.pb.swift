@@ -90,6 +90,7 @@ struct SignalRequest {
   #endif
   }
 
+  /// @TODO think about turning these into seperate things
   struct Command {
     // SwiftProtobuf.Message conformance is added in an extension below. See the
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -331,7 +332,6 @@ struct JoinReply {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  ///    string pid = 1;
   var answer: SessionDescription {
     get {return _answer ?? SessionDescription()}
     set {_answer = newValue}
@@ -340,6 +340,8 @@ struct JoinReply {
   var hasAnswer: Bool {return self._answer != nil}
   /// Clears the value of `answer`. Subsequent reads from it will return its default value.
   mutating func clearAnswer() {self._answer = nil}
+
+  var room: Data = SwiftProtobuf.Internal.emptyData
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -713,13 +715,15 @@ extension JoinRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
 extension JoinReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "JoinReply"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    2: .same(proto: "answer"),
+    1: .same(proto: "answer"),
+    2: .same(proto: "room"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
-      case 2: try decoder.decodeSingularMessageField(value: &self._answer)
+      case 1: try decoder.decodeSingularMessageField(value: &self._answer)
+      case 2: try decoder.decodeSingularBytesField(value: &self.room)
       default: break
       }
     }
@@ -727,13 +731,17 @@ extension JoinReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if let v = self._answer {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    }
+    if !self.room.isEmpty {
+      try visitor.visitSingularBytesField(value: self.room, fieldNumber: 2)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: JoinReply, rhs: JoinReply) -> Bool {
     if lhs._answer != rhs._answer {return false}
+    if lhs.room != rhs.room {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
