@@ -237,7 +237,7 @@ extension NavigationViewController: RoomListViewDelegate {
             DispatchQueue.main.async {
                 self.activityIndicator.stopAnimating()
                 self.activityIndicator.isHidden = true
-            
+
                 switch result {
                 case .failure:
                     // @toodo investigate error type
@@ -263,7 +263,7 @@ extension NavigationViewController: RoomListViewDelegate {
 }
 
 extension NavigationViewController: RoomCreationDelegate {
-    func createRoom(name: String?) {
+    func createRoom(name _: String?) {
 //        DispatchQueue.main.async {
 //            self.createRoomButton.isHidden = true
 //            self.activityIndicator.startAnimating()

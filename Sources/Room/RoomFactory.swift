@@ -2,7 +2,6 @@ import Foundation
 import GRPC
 
 class RoomFactory {
-    
     static func createRoom() -> Room {
         let group = PlatformSupport.makeEventLoopGroup(loopCount: 1)
 

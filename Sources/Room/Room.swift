@@ -41,7 +41,7 @@ class Room {
     private let rtc: WebRTCClient
     private let grpc: RoomServiceClient
     private var stream: BidirectionalStreamingCall<SignalRequest, SignalReply>!
-    
+
     private var completion: ((Result<Void, Error>) -> Void)!
 
     var delegate: RoomDelegate?
@@ -62,19 +62,32 @@ class Room {
 
     func join(id: Int, completion: @escaping (Result<Void, Error>) -> Void) {
         self.completion = completion
-        
+
         _ = stream.sendMessage(SignalRequest.with {
             $0.join = JoinRequest.with {
                 $0.room = Int64(id)
             }
         })
-        
-        stream.status.whenFailure { result in
-            completion(.failure(result))
+
+        stream.status.whenComplete { result in
+            switch result {
+            case let .failure(error):
+                completion(.failure(error))
+            case let .success(status):
+                switch status.code {
+                case .ok: break
+                default:
+                    guard let c = self.completion else { return }
+                    c(.failure(RoomError.general))
+                }
+            }
         }
     }
 
     func close() {
+        // We want to ignore furhter notifications
+        stream.status.whenComplete { _ in }
+
         rtc.delegate = nil
         rtc.close()
 
@@ -154,14 +167,8 @@ class Room {
 
     private func on(join: JoinReply) {
         completion(.success(()))
+        completion = nil
         receivedOffer(join.answer.sdp)
-        
-        stream.status.whenFailure { result in
-            DispatchQueue.main.async {
-                self.close()
-                self.delegate?.roomWasClosedByRemote()
-            }
-        }
     }
 
     private func on(trickle: Trickle) {
@@ -174,7 +181,7 @@ class Room {
             return
         }
     }
-    
+
     private func on(event: SignalReply.Event) {
         switch event.type {
         case .joined:
@@ -222,7 +229,7 @@ class Room {
             }
         }
     }
-    
+
     private func send(command: SignalRequest.Command) {
         stream.sendMessage(SignalRequest.with {
             $0.command = command
@@ -230,7 +237,7 @@ class Room {
     }
 }
 
- extension Room {
+extension Room {
     private func didReceiveJoin(_ event: SignalReply.Event) {
         do {
             let member = try decoder.decode(APIClient.Member.self, from: event.data)
@@ -305,7 +312,7 @@ class Room {
 
         delegate?.didChangeUserRole(user: user, role: role)
     }
- }
+}
 
 extension Room: WebRTCClientDelegate {
     func webRTCClient(_: WebRTCClient, didDiscoverLocalCandidate local: RTCIceCandidate) {
