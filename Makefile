@@ -49,4 +49,3 @@ protobuf:
 	  --swift_out=./Sources/Protobuf \
 	  --grpc-swift_out=Client=true,Server=false:./Sources/Protobuf \
 	  room.proto
-
