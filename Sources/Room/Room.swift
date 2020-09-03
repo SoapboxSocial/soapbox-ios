@@ -41,6 +41,8 @@ class Room {
     private let rtc: WebRTCClient
     private let grpc: RoomServiceClient
     private var stream: BidirectionalStreamingCall<SignalRequest, SignalReply>!
+    
+    private var completion: ((Result<Void, Error>) -> Void)!
 
     var delegate: RoomDelegate?
 
@@ -58,17 +60,18 @@ class Room {
         rtc.delegate = self
     }
 
-    func join(id: Int) {
+    func join(id: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+        self.completion = completion
+        
         _ = stream.sendMessage(SignalRequest.with {
             $0.join = JoinRequest.with {
                 $0.room = Int64(id)
             }
         })
         
-        // @todo think about putting this in the factory
-//        stream.status.whenComplete { result in
-//            debugPrint(result)
-//        }
+        stream.status.whenFailure { result in
+            completion(.failure(result))
+        }
     }
 
     func close() {
@@ -150,7 +153,15 @@ class Room {
     }
 
     private func on(join: JoinReply) {
+        completion(.success(()))
         receivedOffer(join.answer.sdp)
+        
+        stream.status.whenFailure { result in
+            DispatchQueue.main.async {
+                self.close()
+                self.delegate?.roomWasClosedByRemote()
+            }
+        }
     }
 
     private func on(trickle: Trickle) {

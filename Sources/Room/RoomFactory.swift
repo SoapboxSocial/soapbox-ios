@@ -2,8 +2,8 @@ import Foundation
 import GRPC
 
 class RoomFactory {
-    static func join(id _: Int) -> Room {
-        // @todo
+    
+    static func createRoom() -> Room {
         let group = PlatformSupport.makeEventLoopGroup(loopCount: 1)
 
         let channel = ClientConnection
@@ -16,15 +16,6 @@ class RoomFactory {
             rtc: newRTCClient(),
             grpc: service
         )
-    }
-
-    static func create(name _: String?) -> Room {
-        fatalError()
-//
-//        return Room(
-//            rtc: newRTCClient(),
-//            socket: WebSocketProvider(url: url)
-//        )
     }
 
     private static func newRTCClient() -> WebRTCClient {

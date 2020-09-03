@@ -232,12 +232,21 @@ extension NavigationViewController: RoomListViewDelegate {
         activityIndicator.startAnimating()
         activityIndicator.isHidden = false
 
-        room = RoomFactory.join(id: id)
-        room?.join(id: id)
-
-        activityIndicator.stopAnimating()
-        activityIndicator.isHidden = true
-        presentCurrentRoom()
+        room = RoomFactory.createRoom()
+        room?.join(id: id) { result in
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
+                self.activityIndicator.isHidden = true
+            
+                switch result {
+                case .failure:
+                    // @toodo investigate error type
+                    return self.showNetworkError()
+                case .success:
+                    return self.presentCurrentRoom()
+                }
+            }
+        }
     }
 
     func didBeginSearching() {
@@ -255,20 +264,20 @@ extension NavigationViewController: RoomListViewDelegate {
 
 extension NavigationViewController: RoomCreationDelegate {
     func createRoom(name: String?) {
-        DispatchQueue.main.async {
-            self.createRoomButton.isHidden = true
-            self.activityIndicator.startAnimating()
-            self.activityIndicator.isHidden = false
-        }
-
-        room = RoomFactory.create(name: name)
-
-        DispatchQueue.main.async {
-            self.activityIndicator.stopAnimating()
-            self.activityIndicator.isHidden = true
-
-            self.presentCurrentRoom()
-        }
+//        DispatchQueue.main.async {
+//            self.createRoomButton.isHidden = true
+//            self.activityIndicator.startAnimating()
+//            self.activityIndicator.isHidden = false
+//        }
+//
+//        room = RoomFactory.create(name: name)
+//
+//        DispatchQueue.main.async {
+//            self.activityIndicator.stopAnimating()
+//            self.activityIndicator.isHidden = true
+//
+//            self.presentCurrentRoom()
+//        }
     }
 
     func didEnterWithName(_ name: String?) {
