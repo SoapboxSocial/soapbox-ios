@@ -64,6 +64,11 @@ class Room {
                 $0.room = Int64(id)
             }
         })
+        
+        // @todo think about putting this in the factory
+//        stream.status.whenComplete { result in
+//            debugPrint(result)
+//        }
     }
 
     func close() {
