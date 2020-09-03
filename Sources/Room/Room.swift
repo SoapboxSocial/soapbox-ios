@@ -85,9 +85,6 @@ class Room {
     }
 
     func close() {
-        // We want to ignore furhter notifications
-        stream.status.whenComplete { _ in }
-
         rtc.delegate = nil
         rtc.close()
 
