@@ -37,6 +37,10 @@
 	<string>Microphone is required</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app wants to use your photos.</string>
+	<key>ROOM_SERVICE_PORT</key>
+	<string>$(ROOM_SERVICE_PORT)</string>
+	<key>ROOM_SERVICE_URL</key>
+	<string>$(ROOM_SERVICE_URL)</string>
 	<key>ROOT_URL</key>
 	<string>$(ROOT_URL)</string>
 	<key>UIBackgroundModes</key>

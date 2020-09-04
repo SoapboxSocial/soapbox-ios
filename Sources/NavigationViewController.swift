@@ -147,18 +147,6 @@ class NavigationViewController: UINavigationController {
         }
     }
 
-    private func newRoom() -> Room {
-        let webRTCClient = WebRTCClient(iceServers: [
-            "stun:stun.l.google.com:19302",
-            "stun:stun1.l.google.com:19302",
-            "stun:stun2.l.google.com:19302",
-            "stun:stun3.l.google.com:19302",
-            "stun:stun4.l.google.com:19302",
-        ])
-
-        return Room(rtc: webRTCClient, client: client)
-    }
-
     private func showNetworkError() {
         let banner = FloatingNotificationBanner(
             title: NSLocalizedString("something_went_wrong", comment: ""),
@@ -244,25 +232,19 @@ extension NavigationViewController: RoomListViewDelegate {
         activityIndicator.startAnimating()
         activityIndicator.isHidden = false
 
-        room = newRoom()
-
-        room?.join(id: id) { error in
+        room = RoomFactory.createRoom()
+        room?.join(id: id) { result in
             DispatchQueue.main.async {
                 self.activityIndicator.stopAnimating()
                 self.activityIndicator.isHidden = true
-            }
 
-            if let error = error {
-                switch error {
-                case .general:
+                switch result {
+                case .failure:
+                    // @toodo investigate error type
                     return self.showNetworkError()
-                case .fullRoom:
-                    return self.showFullRoomError()
+                case .success:
+                    return self.presentCurrentRoom()
                 }
-            }
-
-            DispatchQueue.main.async {
-                self.presentCurrentRoom()
             }
         }
     }
@@ -288,23 +270,19 @@ extension NavigationViewController: RoomCreationDelegate {
             self.activityIndicator.isHidden = false
         }
 
-        room = newRoom()
-        room?.create(name: name) { error in
+        room = RoomFactory.createRoom()
+        room?.create(name: name) { result in
             DispatchQueue.main.async {
                 self.activityIndicator.stopAnimating()
                 self.activityIndicator.isHidden = true
-            }
 
-            if error != nil {
-                DispatchQueue.main.async {
+                switch result {
+                case .failure:
                     self.createRoomButton.isHidden = false
+                    return self.showNetworkError()
+                case .success:
+                    return self.presentCurrentRoom()
                 }
-
-                return self.showNetworkError()
-            }
-
-            DispatchQueue.main.async {
-                self.presentCurrentRoom()
             }
         }
     }

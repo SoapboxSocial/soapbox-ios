@@ -9,7 +9,6 @@ enum APIError: Error {
     case decode
     case usernameAlreadyExists
     case incorrectPin
-    case fullRoom
 }
 
 class APIClient {
@@ -21,12 +20,6 @@ class APIClient {
 
         let keychain = Keychain(service: identifier)
         return keychain[string: "token"]
-    }
-
-    // @todo these all need better names
-    struct RoomConnection {
-        let id: Int
-        let sessionDescription: RTCSessionDescription
     }
 
     enum MemberRole: String, Decodable {
@@ -47,45 +40,22 @@ class APIClient {
         }
     }
 
-    struct Room: Decodable {
-        let name: String?
-        let id: Int
-        let members: [Member]
-    }
-
-    struct JoinResponse: Decodable {
-        let name: String?
-        let members: [Member]
-        let sdp: SDPPayload
-        let role: MemberRole
-    }
-
-    struct SDPPayload: Decodable {
-        let id: Int?
-        let sdp: String
-        let type: String
-    }
-
     enum ErrorCode: Int, Decodable {
-        case roomNotFound = 0
-        case roomFailedToJoin = 1
-        case invalidRequestBody = 2
-        case failedToCreateRoom = 3
-        case missingParameter = 4
-        case failedToRegister = 5
-        case invalidEmail = 6
-        case invalidUsername = 7
-        case usernameAlreadyExists = 8
-        case failedToLogin = 9
-        case incorrectPin = 10
-        case userNotFound = 11
-        case failedToGetUser = 12
-        case failedToGetFollowers = 13
-        case unauthorized = 14
-        case failedToStoreDevice = 15
-        case notFound = 16
-        case notAllowed = 17
-        case roomFull = 18
+        case invalidRequestBody = 0
+        case missingParameter = 1
+        case failedToRegister = 2
+        case invalidEmail = 3
+        case invalidUsername = 4
+        case usernameAlreadyExists = 5
+        case failedToLogin = 6
+        case incorrectPin = 7
+        case userNotFound = 8
+        case failedToGetUser = 9
+        case failedToGetFollowers = 10
+        case unauthorized = 11
+        case failedToStoreDevice = 12
+        case notFound = 13
+        case notAllowed = 14
     }
 
     struct ErrorResponse: Decodable {
@@ -94,120 +64,6 @@ class APIClient {
     }
 
     let decoder = JSONDecoder()
-
-    // @todo auth header
-
-    func join(
-        room: Int,
-        sdp: RTCSessionDescription,
-        callback: @escaping (Result<(RTCSessionDescription, [Member], MemberRole, String?), APIError>) -> Void
-    ) {
-        let parameters: [String: AnyObject] = [
-            "sdp": sdp.sdp as AnyObject,
-            "type": "offer" as AnyObject,
-        ]
-
-        let path = String(format: "/v1/rooms/%d/join", room)
-
-        AF.request(Configuration.rootURL.appendingPathComponent(path), method: .post, parameters: parameters, encoding: JSONEncoding(), headers: ["Authorization": token!])
-            .validate()
-            .response { result in
-                guard let data = result.data else {
-                    return callback(.failure(.noData))
-                }
-
-                if result.error != nil {
-                    do {
-                        let resp = try self.decoder.decode(ErrorResponse.self, from: data)
-                        if resp.code == .roomFull {
-                            return callback(.failure(.fullRoom))
-                        }
-
-                        return callback(.failure(.requestFailed))
-                    } catch {
-                        return callback(.failure(.requestFailed))
-                    }
-                }
-
-                do {
-                    let payload = try self.decoder.decode(JoinResponse.self, from: data)
-                    let description = RTCSessionDescription(type: self.type(type: payload.sdp.type), sdp: payload.sdp.sdp)
-                    callback(.success((description, payload.members, payload.role, payload.name)))
-                } catch {
-                    callback(.failure(.decode))
-                }
-            }
-    }
-
-    // @todo auth header
-
-    func createRoom(sdp: RTCSessionDescription, name: String?, callback: @escaping (Result<RoomConnection, APIError>) -> Void) {
-        var parameters: [String: AnyObject] = [
-            "sdp": sdp.sdp as AnyObject,
-            "type": "offer" as AnyObject,
-        ]
-
-        if name != nil {
-            parameters["name"] = name! as AnyObject
-        }
-
-        AF.request(Configuration.rootURL.appendingPathComponent("/v1/rooms/create"), method: .post, parameters: parameters, encoding: JSONEncoding(), headers: ["Authorization": token!])
-            .response { result in
-                if result.error != nil {
-                    return callback(.failure(.requestFailed))
-                }
-
-                guard let data = result.data else {
-                    return callback(.failure(.requestFailed))
-                }
-
-                do {
-                    let payload = try self.decoder.decode(SDPPayload.self, from: data)
-                    let room = RoomConnection(
-                        id: payload.id!,
-                        sessionDescription: RTCSessionDescription(type: self.type(type: payload.type), sdp: payload.sdp)
-                    )
-
-                    callback(.success(room))
-                } catch {
-                    return callback(.failure(.decode))
-                }
-            }
-    }
-
-    func rooms(callback: @escaping (Result<[Room], APIError>) -> Void) {
-        AF.request(Configuration.rootURL.appendingPathComponent("/v1/rooms"), method: .get)
-            .response { result in
-                if result.error != nil {
-                    return callback(.failure(.requestFailed))
-                }
-
-                guard let data = result.data else {
-                    return callback(.failure(.requestFailed))
-                }
-
-                do {
-                    let rooms = try self.decoder.decode([Room].self, from: data)
-                    callback(.success(rooms))
-                } catch {
-                    return callback(.failure(.decode))
-                }
-            }
-    }
-
-    private func type(type: String) -> RTCSdpType {
-        switch type {
-        case "offer":
-            return .offer
-        case "answer":
-            return .answer
-        case "pranswer":
-            return .prAnswer
-        default:
-            // @todo error
-            return .offer
-        }
-    }
 }
 
 extension APIClient {

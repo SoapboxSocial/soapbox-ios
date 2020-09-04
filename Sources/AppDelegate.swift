@@ -53,7 +53,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func createLoggedIn() -> UIViewController {
-        let viewController = RoomListViewController(api: APIClient())
+        let viewController = RoomListViewController(api: APIClient(), service: ServiceFactory.createRoomService())
         let nav = NavigationViewController(rootViewController: viewController)
         viewController.delegate = nav
 
