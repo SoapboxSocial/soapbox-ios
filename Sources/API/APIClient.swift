@@ -9,7 +9,6 @@ enum APIError: Error {
     case decode
     case usernameAlreadyExists
     case incorrectPin
-    case fullRoom
 }
 
 class APIClient {
