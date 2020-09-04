@@ -65,40 +65,6 @@ class APIClient {
     }
 
     let decoder = JSONDecoder()
-
-    func rooms(callback: @escaping (Result<[Room], APIError>) -> Void) {
-        AF.request(Configuration.rootURL.appendingPathComponent("/v1/rooms"), method: .get)
-            .response { result in
-                if result.error != nil {
-                    return callback(.failure(.requestFailed))
-                }
-
-                guard let data = result.data else {
-                    return callback(.failure(.requestFailed))
-                }
-
-                do {
-                    let rooms = try self.decoder.decode([Room].self, from: data)
-                    callback(.success(rooms))
-                } catch {
-                    return callback(.failure(.decode))
-                }
-            }
-    }
-
-    private func type(type: String) -> RTCSdpType {
-        switch type {
-        case "offer":
-            return .offer
-        case "answer":
-            return .answer
-        case "pranswer":
-            return .prAnswer
-        default:
-            // @todo error
-            return .offer
-        }
-    }
 }
 
 extension APIClient {
