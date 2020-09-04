@@ -3,6 +3,7 @@
 //
 
 import NotificationBannerSwift
+import SwiftProtobuf
 import UIKit
 
 protocol RoomListViewDelegate {
@@ -26,14 +27,16 @@ class RoomListViewController: UIViewController {
     var searchController: UISearchController!
 
     var api: APIClient
+    var roomService: RoomServiceClient
 
-    var roomsData = [APIClient.Room]()
+    var roomsData = [RoomState]()
     var users = [APIClient.User]()
 
     var currentRoom: Int?
 
-    init(api: APIClient) {
+    init(api: APIClient, service: RoomServiceClient) {
         self.api = api
+        roomService = service
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -101,33 +104,25 @@ class RoomListViewController: UIViewController {
     private func loadData() {
         currentRoom = delegate?.currentRoom()
 
-        api.rooms { result in
+        let call = roomService.listRooms(Google_Protobuf_Empty())
+
+        call.response.whenComplete { result in
             DispatchQueue.main.async {
                 self.rooms.refreshControl?.endRefreshing()
-            }
 
-            switch result {
-            case .failure:
                 self.roomsData = []
-
-                let banner = FloatingNotificationBanner(
-                    title: NSLocalizedString("failed_to_load_rooms", comment: ""),
-                    subtitle: NSLocalizedString("please_try_again_later", comment: ""),
-                    style: .danger
-                )
-                banner.show(cornerRadius: 10, shadowBlurRadius: 15)
-
-            case let .success(rooms):
-                self.roomsData = rooms
-
-                if let current = self.currentRoom {
-                    self.roomsData.sort {
-                        ($0.id == current) && !($1.id == current)
-                    }
+                switch result {
+                case let .failure(err):
+                    let banner = FloatingNotificationBanner(
+                        title: NSLocalizedString("failed_to_load_rooms", comment: ""),
+                        subtitle: NSLocalizedString("please_try_again_later", comment: ""),
+                        style: .danger
+                    )
+                    banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+                case let .success(list):
+                    self.roomsData = list.rooms
                 }
-            }
 
-            DispatchQueue.main.async {
                 self.rooms.reloadData()
             }
         }
@@ -209,7 +204,7 @@ extension RoomListViewController: UICollectionViewDataSource {
 
         let item = roomsData[indexPath.item]
 
-        if item.id == currentRoom {
+        if Int(item.id) == currentRoom {
             cell.setup(style: .current, data: item)
         } else {
             cell.setup(style: .normal, data: item)
@@ -234,7 +229,7 @@ extension RoomListViewController: UICollectionViewDelegate {
             return
         }
 
-        delegate?.didSelectRoom(id: roomsData[index.item].id)
+        delegate?.didSelectRoom(id: Int(roomsData[index.item].id))
         // @todo probably reload?
     }
 }

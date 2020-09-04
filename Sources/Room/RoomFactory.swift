@@ -1,19 +1,12 @@
 import Foundation
 import GRPC
+import SwiftProtobuf
 
 class RoomFactory {
     static func createRoom() -> Room {
-        let group = PlatformSupport.makeEventLoopGroup(loopCount: 1)
-
-        let channel = ClientConnection
-            .insecure(group: group)
-            .connect(host: Configuration.roomServiceURL, port: Configuration.roomServicePort)
-
-        let service = RoomServiceClient(channel: channel)
-
         return Room(
             rtc: newRTCClient(),
-            grpc: service
+            grpc: ServiceFactory.createRoomService()
         )
     }
 

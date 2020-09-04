@@ -37,7 +37,7 @@ class RoomCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public func setup(style: RoomCellStyle, data: APIClient.Room) {
+    public func setup(style: RoomCellStyle, data: RoomState) {
         titleLabel.text = title(room: data, style: style)
 
         if data.members.count == 1 {
@@ -47,11 +47,11 @@ class RoomCell: UICollectionViewCell {
         }
     }
 
-    private func title(room: APIClient.Room, style: RoomCellStyle) -> String {
+    private func title(room: RoomState, style: RoomCellStyle) -> String {
         switch style {
         case .normal:
-            if let name = room.name {
-                return "👂 " + name
+            if room.name != "" {
+                return "👂 " + room.name
             }
 
             return "👂 " + NSLocalizedString("listen_in", comment: "")

@@ -34,6 +34,11 @@ internal protocol RoomServiceClientProtocol: GRPCClient {
     handler: @escaping (SignalReply) -> Void
   ) -> BidirectionalStreamingCall<SignalRequest, SignalReply>
 
+  func listRooms(
+    _ request: SwiftProtobuf.Google_Protobuf_Empty,
+    callOptions: CallOptions?
+  ) -> UnaryCall<SwiftProtobuf.Google_Protobuf_Empty, RoomList>
+
 }
 
 extension RoomServiceClientProtocol {
@@ -55,6 +60,23 @@ extension RoomServiceClientProtocol {
       path: "/RoomService/Signal",
       callOptions: callOptions ?? self.defaultCallOptions,
       handler: handler
+    )
+  }
+
+  /// Unary call to ListRooms
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to ListRooms.
+  ///   - callOptions: Call options.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func listRooms(
+    _ request: SwiftProtobuf.Google_Protobuf_Empty,
+    callOptions: CallOptions? = nil
+  ) -> UnaryCall<SwiftProtobuf.Google_Protobuf_Empty, RoomList> {
+    return self.makeUnaryCall(
+      path: "/RoomService/ListRooms",
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions
     )
   }
 }
