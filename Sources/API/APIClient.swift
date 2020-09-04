@@ -41,12 +41,6 @@ class APIClient {
         }
     }
 
-    struct Room: Decodable {
-        let name: String?
-        let id: Int
-        let members: [Member]
-    }
-
     enum ErrorCode: Int, Decodable {
         case invalidRequestBody = 0
         case missingParameter = 1
