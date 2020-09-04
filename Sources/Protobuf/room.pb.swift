@@ -367,6 +367,7 @@ struct RoomState {
 
   var members: [RoomState.RoomMember] = []
 
+  /// @TODO THINK ABOUT ENUM
   var role: String = String()
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -400,6 +401,8 @@ struct CreateRequest {
   // methods supported on all messages.
 
   var name: String = String()
+
+  var session: String = String()
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -889,12 +892,14 @@ extension CreateRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
   static let protoMessageName: String = "CreateRequest"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "name"),
+    2: .same(proto: "session"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularStringField(value: &self.name)
+      case 2: try decoder.decodeSingularStringField(value: &self.session)
       default: break
       }
     }
@@ -904,11 +909,15 @@ extension CreateRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     if !self.name.isEmpty {
       try visitor.visitSingularStringField(value: self.name, fieldNumber: 1)
     }
+    if !self.session.isEmpty {
+      try visitor.visitSingularStringField(value: self.session, fieldNumber: 2)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: CreateRequest, rhs: CreateRequest) -> Bool {
     if lhs.name != rhs.name {return false}
+    if lhs.session != rhs.session {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
