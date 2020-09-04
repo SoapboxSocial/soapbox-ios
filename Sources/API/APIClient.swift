@@ -48,25 +48,21 @@ class APIClient {
     }
 
     enum ErrorCode: Int, Decodable {
-        case roomNotFound = 0
-        case roomFailedToJoin = 1
-        case invalidRequestBody = 2
-        case failedToCreateRoom = 3
-        case missingParameter = 4
-        case failedToRegister = 5
-        case invalidEmail = 6
-        case invalidUsername = 7
-        case usernameAlreadyExists = 8
-        case failedToLogin = 9
-        case incorrectPin = 10
-        case userNotFound = 11
-        case failedToGetUser = 12
-        case failedToGetFollowers = 13
-        case unauthorized = 14
-        case failedToStoreDevice = 15
-        case notFound = 16
-        case notAllowed = 17
-        case roomFull = 18
+        case invalidRequestBody = 0
+        case missingParameter = 1
+        case failedToRegister = 2
+        case invalidEmail = 3
+        case invalidUsername = 4
+        case usernameAlreadyExists = 5
+        case failedToLogin = 6
+        case incorrectPin = 7
+        case userNotFound = 8
+        case failedToGetUser = 9
+        case failedToGetFollowers = 10
+        case unauthorized = 11
+        case failedToStoreDevice = 12
+        case notFound = 13
+        case notAllowed = 14
     }
 
     struct ErrorResponse: Decodable {
