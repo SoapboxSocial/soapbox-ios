@@ -277,10 +277,6 @@ extension APIClient {
 }
 
 extension APIClient {
-    private struct Success {
-        let success: Bool
-    }
-
     typealias FollowerListFunc = (_ id: Int, _ callback: @escaping (Result<[User], APIError>) -> Void) -> Void
 
     func followers(_ id: Int, _ callback: @escaping (Result<[User], APIError>) -> Void) {
@@ -291,11 +287,11 @@ extension APIClient {
         userListRequest("/v1/users/" + String(id) + "/following", callback: callback)
     }
 
-    func follow(id: Int, callback: @escaping (Result<Bool, APIError>) -> Void) {
+    func follow(id: Int, callback: @escaping (Result<Void, APIError>) -> Void) {
         followRequest("/v1/users/follow", id: id, callback: callback)
     }
 
-    func unfollow(id: Int, callback: @escaping (Result<Bool, APIError>) -> Void) {
+    func unfollow(id: Int, callback: @escaping (Result<Void, APIError>) -> Void) {
         followRequest("/v1/users/unfollow", id: id, callback: callback)
     }
 
@@ -320,7 +316,7 @@ extension APIClient {
             }
     }
 
-    private func followRequest(_ path: String, id: Int, callback: @escaping (Result<Bool, APIError>) -> Void) {
+    private func followRequest(_ path: String, id: Int, callback: @escaping (Result<Void, APIError>) -> Void) {
         AF.request(Configuration.rootURL.appendingPathComponent(path), method: .post, parameters: ["id": id], encoding: URLEncoding.default, headers: ["Authorization": token!])
             .validate()
             .response { result in
@@ -333,7 +329,7 @@ extension APIClient {
                 }
 
                 if result.response?.statusCode == 200 {
-                    return callback(.success(true))
+                    return callback(.success(()))
                 }
 
                 return callback(.failure(.decode))
@@ -342,7 +338,7 @@ extension APIClient {
 }
 
 extension APIClient {
-    func addDevice(token: String, callback: @escaping (Result<Bool, APIError>) -> Void) {
+    func addDevice(token: String, callback: @escaping (Result<Void, APIError>) -> Void) {
         AF.request(Configuration.rootURL.appendingPathComponent("/v1/devices/add"), method: .post, parameters: ["token": token], encoding: URLEncoding.default, headers: ["Authorization": self.token!])
             .validate()
             .response { result in
@@ -355,7 +351,7 @@ extension APIClient {
                 }
 
                 if result.response?.statusCode == 200 {
-                    return callback(.success(true))
+                    return callback(.success(()))
                 }
 
                 return callback(.failure(.decode))
