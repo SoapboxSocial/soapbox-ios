@@ -23,12 +23,6 @@ class APIClient {
         return keychain[string: "token"]
     }
 
-    // @todo these all need better names
-    struct RoomConnection {
-        let id: Int
-        let sessionDescription: RTCSessionDescription
-    }
-
     enum MemberRole: String, Decodable {
         case owner
         case audience
@@ -51,12 +45,6 @@ class APIClient {
         let name: String?
         let id: Int
         let members: [Member]
-    }
-
-    struct SDPPayload: Decodable {
-        let id: Int?
-        let sdp: String
-        let type: String
     }
 
     enum ErrorCode: Int, Decodable {
