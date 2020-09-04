@@ -17,8 +17,12 @@ class Configuration {
         url(key: "CDN_URL")
     }()
 
-    static let roomServiceURL: URL = {
-        url(key: "ROOM_SERVICE_URL")
+    static let roomServiceURL: String = {
+        guard let urlString = Configuration.infoDictionary["ROOM_SERVICE_URL"] as? String else {
+            fatalError("ROOM_SERVICE_URL not set in plist for this environment")
+        }
+
+        return urlString
     }()
 
     static let roomServicePort: Int = {

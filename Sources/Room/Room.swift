@@ -119,7 +119,7 @@ class Room {
             }
         }
     }
-    
+
     func close() {
         isClosed = true
         rtc.delegate = nil
@@ -226,11 +226,11 @@ class Room {
 
         receivedOffer(join.answer.sdp)
     }
-    
+
     private func on(create: CreateReply) {
         completion(.success(()))
         completion = nil
-        
+
         id = Int(create.id)
         receivedOffer(create.answer.sdp)
     }

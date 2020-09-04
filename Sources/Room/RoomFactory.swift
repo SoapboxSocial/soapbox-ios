@@ -7,7 +7,7 @@ class RoomFactory {
 
         let channel = ClientConnection
             .insecure(group: group)
-            .connect(host: "127.0.0.1", port: 50051)
+            .connect(host: Configuration.roomServiceURL, port: Configuration.roomServicePort)
 
         let service = RoomServiceClient(channel: channel)
 
