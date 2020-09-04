@@ -5,7 +5,7 @@
 ROOT_URL = https:/$()/api.soapbox.social
 
 // Room Service URL
-ROOM_SERVICE_URL = https:/$()/api.soapbox.social
+ROOM_SERVICE_URL = 134.122.76.105
 ROOM_SERVICE_PORT = 50051
 
 // CDN URL
