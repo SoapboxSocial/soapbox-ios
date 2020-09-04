@@ -90,6 +90,36 @@ class Room {
         }
     }
 
+    func create(name: String?, completion: @escaping (Result<Void, Error>) -> Void) {
+        self.name = name
+        self.completion = completion
+
+        _ = stream.sendMessage(SignalRequest.with {
+            $0.create = CreateRequest.with {
+                $0.name = name ?? ""
+            }
+        })
+
+        stream.status.whenComplete { result in
+            switch result {
+            case let .failure(error):
+                completion(.failure(error))
+            case let .success(status):
+                switch status.code {
+                case .ok: break
+                default:
+                    if let c = self.completion {
+                        return c(.failure(RoomError.general))
+                    }
+
+                    if !self.isClosed {
+                        self.delegate?.roomWasClosedByRemote()
+                    }
+                }
+            }
+        }
+    }
+    
     func close() {
         isClosed = true
         rtc.delegate = nil
@@ -148,7 +178,8 @@ class Room {
         switch reply.payload {
         case let .join(join):
             on(join: join)
-        case let .create(create): break
+        case let .create(create):
+            on(create: create)
         case let .negotiate(negotiate):
             on(negotiate: negotiate)
         case let .trickle(trickle):
@@ -194,6 +225,14 @@ class Room {
         completion = nil
 
         receivedOffer(join.answer.sdp)
+    }
+    
+    private func on(create: CreateReply) {
+        completion(.success(()))
+        completion = nil
+        
+        id = Int(create.id)
+        receivedOffer(create.answer.sdp)
     }
 
     private func on(trickle: Trickle) {
