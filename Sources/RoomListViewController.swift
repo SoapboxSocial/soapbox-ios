@@ -112,7 +112,7 @@ class RoomListViewController: UIViewController {
 
                 self.roomsData = []
                 switch result {
-                case let .failure(err):
+                case .failure:
                     let banner = FloatingNotificationBanner(
                         title: NSLocalizedString("failed_to_load_rooms", comment: ""),
                         subtitle: NSLocalizedString("please_try_again_later", comment: ""),
