@@ -278,7 +278,7 @@ extension NavigationViewController: RoomCreationDelegate {
 
                 switch result {
                 case .failure:
-                    // @toodo investigate error type
+                    self.createRoomButton.isHidden = false
                     return self.showNetworkError()
                 case .success:
                     return self.presentCurrentRoom()

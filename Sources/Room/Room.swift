@@ -1,5 +1,6 @@
 import Foundation
 import GRPC
+import KeychainAccess
 import WebRTC
 
 protocol RoomDelegate {
@@ -18,6 +19,15 @@ enum RoomError: Error {
 }
 
 class Room {
+    private var token: String? {
+        guard let identifier = Bundle.main.bundleIdentifier else {
+            fatalError("no identifier")
+        }
+
+        let keychain = Keychain(service: identifier)
+        return keychain[string: "token"]
+    }
+
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
 
@@ -64,9 +74,14 @@ class Room {
     func join(id: Int, completion: @escaping (Result<Void, Error>) -> Void) {
         self.completion = completion
 
+        guard let token = self.token else {
+            return completion(.failure(RoomError.general))
+        }
+
         _ = stream.sendMessage(SignalRequest.with {
             $0.join = JoinRequest.with {
                 $0.room = Int64(id)
+                $0.session = token
             }
         })
 
@@ -94,9 +109,14 @@ class Room {
         self.name = name
         self.completion = completion
 
+        guard let token = self.token else {
+            return completion(.failure(RoomError.general))
+        }
+
         _ = stream.sendMessage(SignalRequest.with {
             $0.create = CreateRequest.with {
                 $0.name = name ?? ""
+                $0.session = token
             }
         })
 
