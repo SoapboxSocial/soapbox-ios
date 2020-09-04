@@ -69,7 +69,15 @@ class RoomView: UIView {
         addSubview(muteButton)
 
         let label = UILabel(frame: CGRect(x: safeAreaInsets.left + 15, y: 0, width: muteButton.frame.origin.x - (safeAreaInsets.left + 30), height: 20))
-        label.text = room.name ?? ""
+
+        label.text = {
+            if let name = room.name, name != "" {
+                return name
+            }
+
+            return NSLocalizedString("current_room", comment: "")
+        }()
+
         label.font = UIFont(name: "HelveticaNeue-Bold", size: label.font.pointSize)
         label.center = CGPoint(x: label.center.x, y: exitButton.center.y)
         topBar.addSubview(label)
