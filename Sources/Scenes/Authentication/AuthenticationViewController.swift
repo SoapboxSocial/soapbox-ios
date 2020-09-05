@@ -194,6 +194,7 @@ extension AuthenticationViewController {
         pinTextField = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: label.frame.size.height + 20, width: 330, height: 40))
         pinTextField.keyboardType = .numberPad
         pinTextField.placeholder = NSLocalizedString("pin", comment: "")
+        pinTextField.textContentType = .oneTimeCode
         view.addSubview(pinTextField)
 
         return view
