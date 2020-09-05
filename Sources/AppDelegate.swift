@@ -1,4 +1,5 @@
 import KeychainAccess
+import NotificationBannerSwift
 import UIKit
 import UIWindowTransitions
 import UserNotifications
@@ -12,6 +13,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions options: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
+
+        UNUserNotificationCenter.current().delegate = self
 
         let loggedIn = isLoggedIn()
 
@@ -98,7 +101,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
-extension AppDelegate {
+extension AppDelegate: UNUserNotificationCenterDelegate {
     func application(_: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         NotificationManager.shared.setDeviceToken(deviceToken)
     }
@@ -123,27 +126,53 @@ extension AppDelegate {
                 return
             }
 
+            self.handleNotificationAction(for: category, args: arguments)
+        }
+    }
+
+    func userNotificationCenter(_: UNUserNotificationCenter,
+                                willPresent notification: UNNotification,
+                                withCompletionHandler _: @escaping (UNNotificationPresentationOptions) -> Void) {
+        guard let aps = notification.request.content.userInfo["aps"] as? [String: AnyObject] else {
+            return
+        }
+
+        guard let category = aps["category"] as? String else {
+            return
+        }
+
+        guard let arguments = aps["arguments"] as? [String: AnyObject] else {
+            return
+        }
+
+        let notification = NotificationBanner(title: notification.request.content.body, style: .success)
+
+        notification.onTap = {
+            self.handleNotificationAction(for: category, args: arguments)
+        }
+
+        notification.show()
+    }
+
+    private func handleNotificationAction(for category: String, args: [String: AnyObject]) {
+        DispatchQueue.main.async {
             guard let nav = self.window?.rootViewController as? NavigationViewController else {
                 return
             }
 
             switch category {
             case "NEW_ROOM":
-                guard let id = arguments["id"] as? Int else {
+                guard let id = args["id"] as? Int else {
                     return
                 }
 
-                DispatchQueue.main.async {
-                    nav.didSelectRoom(id: id)
-                }
+                nav.didSelectRoom(id: id)
             case "NEW_FOLLOWER":
-                guard let id = arguments["id"] as? Int else {
+                guard let id = args["id"] as? Int else {
                     return
                 }
 
-                DispatchQueue.main.async {
-                    nav.pushViewController(ProfileViewController(id: id), animated: true)
-                }
+                nav.pushViewController(ProfileViewController(id: id), animated: true)
             default:
                 break
             }
