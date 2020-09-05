@@ -59,7 +59,7 @@ class Room {
 
     private struct Candidate: Codable {
         let candidate: String
-        let sdpMLineIndex: Int32?
+        let sdpMLineIndex: Int32
         let usernameFragment: String?
     }
 
@@ -259,7 +259,7 @@ class Room {
         do {
             debugPrint(trickle.init_p)
             let payload = try decoder.decode(Candidate.self, from: Data(trickle.init_p.utf8))
-            let candidate = RTCIceCandidate(sdp: payload.candidate, sdpMLineIndex: payload.sdpMLineIndex ?? 0, sdpMid: nil)
+            let candidate = RTCIceCandidate(sdp: payload.candidate, sdpMLineIndex: payload.sdpMLineIndex, sdpMid: nil)
             rtc.set(remoteCandidate: candidate)
         } catch {
             debugPrint("failed to decode \(error.localizedDescription)")
