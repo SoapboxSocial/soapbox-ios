@@ -2,6 +2,7 @@
 // Created by Dean Eigenmann on 22.07.20.
 //
 
+import AlamofireImage
 import NotificationBannerSwift
 import SwiftProtobuf
 import UIKit
@@ -31,6 +32,8 @@ class RoomListViewController: UIViewController {
 
     var roomsData = [RoomState]()
     var users = [APIClient.User]()
+
+    let downloader = ImageDownloader()
 
     var currentRoom: Int?
 
@@ -68,9 +71,29 @@ class RoomListViewController: UIViewController {
 
         view.addSubview(rooms)
 
-        let item = UIBarButtonItem(title: "@" + UserDefaults.standard.string(forKey: "username")!, style: .plain, target: self, action: #selector(openProfile))
-        item.tintColor = .black
-        navigationItem.leftBarButtonItem = item
+        let containView = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        containView.backgroundColor = .background
+        containView.layer.cornerRadius = 40 / 2
+        containView.clipsToBounds = true
+        containView.addTarget(self, action: #selector(openProfile), for: .touchUpInside)
+
+        let barButtonItem = UIBarButtonItem(customView: containView)
+        navigationItem.leftBarButtonItem = barButtonItem
+
+        // @todo find a better place to put this
+        let urlRequest = URLRequest(url: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: "image")!))
+
+        downloader.download(urlRequest) { response in
+            switch response.result {
+            case let .success(image):
+                let imageview = UIImageView(frame: containView.frame)
+                imageview.image = image
+                imageview.contentMode = .scaleAspectFit
+                containView.addSubview(imageview)
+            case .failure:
+                break
+            }
+        }
 
         searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
