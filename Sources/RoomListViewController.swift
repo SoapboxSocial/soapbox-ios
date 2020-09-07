@@ -101,7 +101,6 @@ class RoomListViewController: UIViewController {
         searchController.obscuresBackgroundDuringPresentation = false
 
         let scb = searchController.searchBar
-        scb.tintColor = UIColor.secondaryBackground
         scb.returnKeyType = .default
         scb.delegate = self
 
