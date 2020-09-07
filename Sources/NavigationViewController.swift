@@ -53,6 +53,7 @@ class NavigationViewController: UINavigationController {
         navigationBar.isHidden = false
         navigationBar.isTranslucent = true
         navigationBar.backgroundColor = .clear
+        navigationBar.tintColor = .secondaryBackground
     }
 
     @objc func didTapCreateRoom() {
