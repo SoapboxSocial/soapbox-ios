@@ -24,11 +24,11 @@ class RoomCell: UICollectionViewCell {
         content.layer.masksToBounds = true
         addSubview(content)
 
-        titleLabel = UILabel(frame: CGRect(x: 15, y: 15, width: contentView.frame.size.width - 30, height: 30))
+        titleLabel = UILabel(frame: CGRect(x: 15, y: 15, width: content.frame.size.width - 30, height: 30))
         titleLabel.font = UIFont(name: "HelveticaNeue-Bold", size: titleLabel.font.pointSize)
         content.addSubview(titleLabel)
 
-        countLabel = UILabel(frame: CGRect(x: 15, y: 45, width: contentView.frame.size.width - 30, height: 30))
+        countLabel = UILabel(frame: CGRect(x: 15, y: 45, width: content.frame.size.width - 30, height: 30))
         countLabel.textColor = .secondaryBackground
         content.addSubview(countLabel)
     }
