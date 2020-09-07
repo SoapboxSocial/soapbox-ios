@@ -67,11 +67,11 @@ class RoomMemberCell: UICollectionViewCell {
         reactionView = ReactionView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.width))
         contentView.addSubview(reactionView)
 
-        if image == "" {
-            return profileImage.image = nil
-        }
+        profileImage.image = nil
 
-        profileImage.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
+        if image != "" {
+            profileImage.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
+        }
     }
 
     func setup(member: APIClient.Member) {
