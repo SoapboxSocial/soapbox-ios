@@ -257,7 +257,6 @@ class Room {
 
     private func on(trickle: Trickle) {
         do {
-            debugPrint(trickle.init_p)
             let payload = try decoder.decode(Candidate.self, from: Data(trickle.init_p.utf8))
             let candidate = RTCIceCandidate(sdp: payload.candidate, sdpMLineIndex: payload.sdpMLineIndex, sdpMid: nil)
             rtc.set(remoteCandidate: candidate)
