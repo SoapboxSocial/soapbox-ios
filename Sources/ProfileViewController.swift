@@ -17,6 +17,7 @@ class ProfileViewController: UIViewController {
     private var username: UILabel!
 
     private var editButton: Button!
+    private var currentRoom: CurrentRoomView!
 
     init(id: Int) {
         self.id = id
@@ -62,6 +63,13 @@ class ProfileViewController: UIViewController {
 
         followingLabel.text = String(user.following) + " " + NSLocalizedString("following", comment: "")
         image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + user.image))
+
+        currentRoom.displayName = user.displayName
+
+        if user.currentRoom != nil, user.currentRoom != 0 {
+            currentRoom.isHidden = false
+            currentRoom.isUserInteractionEnabled = true
+        }
 
         if self.user.id != UserDefaults.standard.integer(forKey: "id") {
             editButton.isHidden = true
@@ -150,6 +158,25 @@ class ProfileViewController: UIViewController {
         editButton.addTarget(self, action: #selector(editButtonPressed), for: .touchUpInside)
         editButton.setTitle("Edit", for: .normal)
         view.addSubview(editButton)
+
+        currentRoom = CurrentRoomView(frame: CGRect(x: 15, y: followersLabel.frame.origin.y + followersLabel.frame.size.height + 20, width: view.frame.size.width - 30, height: 90))
+        view.addSubview(currentRoom)
+        let currentRoomRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapCurrentRoom))
+        currentRoom.addGestureRecognizer(currentRoomRecognizer)
+        currentRoom.isHidden = true
+        currentRoom.isUserInteractionEnabled = false
+    }
+
+    @objc private func didTapCurrentRoom() {
+        guard let navigation = navigationController as? NavigationViewController else {
+            return
+        }
+
+        guard let room = user.currentRoom else {
+            return
+        }
+
+        navigation.didSelectRoom(id: room)
     }
 
     @objc private func editButtonPressed() {

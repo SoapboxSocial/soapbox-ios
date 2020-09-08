@@ -57,7 +57,7 @@ class RoomMemberCell: UICollectionViewCell {
         user = 0
         muteView.isHidden = true
 
-        nameLabel.text = first(name)
+        nameLabel.text = name.firstName()
         roleLabel.text = emoji(for: role)
 
         if reactionView != nil {
@@ -99,9 +99,5 @@ class RoomMemberCell: UICollectionViewCell {
         case .speaker:
             return "🎙️"
         }
-    }
-
-    private func first(_ name: String) -> String {
-        return name.components(separatedBy: " ")[0]
     }
 }
