@@ -212,9 +212,10 @@ extension APIClient {
         let followedBy: Bool?
         var isFollowing: Bool?
         let image: String
+        let currentRoom: Int?
 
         private enum CodingKeys: String, CodingKey {
-            case id, displayName = "display_name", username, followers, following, followedBy = "followed_by", isFollowing = "is_following", image
+            case id, displayName = "display_name", username, followers, following, followedBy = "followed_by", isFollowing = "is_following", image, currentRoom = "current_room"
         }
     }
 

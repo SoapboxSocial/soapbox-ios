@@ -74,3 +74,6 @@
 
 "room_is_full" = "This room is full!";
 "why_not_create_a_new_room" = "Why not create a new room?";
+
+"is_currently_in_room" = "%@ is currently in a room!";
+"click_to_join" = "Click to join";

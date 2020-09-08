@@ -39,7 +39,7 @@ class UserCell: UICollectionViewCell {
     public func setup(user: APIClient.User) {
         nameLabel.text = user.displayName
         usernameLabel.text = "@" + user.username
-        
+
         profilePicture.image = nil
         if let image = user.image, image != "" {
             profilePicture.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
