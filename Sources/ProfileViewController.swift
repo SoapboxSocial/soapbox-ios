@@ -66,11 +66,6 @@ class ProfileViewController: UIViewController {
 
         currentRoom.displayName = user.displayName
 
-        if user.currentRoom != nil, user.currentRoom != 0 {
-            currentRoom.isHidden = false
-            currentRoom.isUserInteractionEnabled = true
-        }
-
         if self.user.id != UserDefaults.standard.integer(forKey: "id") {
             editButton.isHidden = true
 
@@ -79,6 +74,11 @@ class ProfileViewController: UIViewController {
 
             if user.followedBy ?? false {
                 followsYou.isHidden = false
+            }
+
+            if user.currentRoom != nil, user.currentRoom != 0 {
+                currentRoom.isHidden = false
+                currentRoom.isUserInteractionEnabled = true
             }
         } else {
             // @todo this is a hacky way to refresh the user after update.
