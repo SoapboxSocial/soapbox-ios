@@ -1,5 +1,7 @@
 import UIKit
 
+// @TODO: Probably wanna change the text if you're on your own room.
+
 class CurrentRoomView: UIView {
     var displayName: String! {
         didSet {
