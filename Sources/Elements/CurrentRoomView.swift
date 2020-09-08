@@ -5,7 +5,7 @@ import UIKit
 class CurrentRoomView: UIView {
     var displayName: String! {
         didSet {
-            currentNameLabel.text = String(format: NSLocalizedString("is_currently_in_room", comment: ""), displayName)
+            currentNameLabel.text = String(format: NSLocalizedString("is_currently_in_room", comment: ""), displayName.firstName())
         }
     }
 
