@@ -39,7 +39,12 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
     }
 
     func login(email: String?) {
-        guard let input = email, isValidEmail(input) else {
+        guard var input = email else {
+            return output.present(error: .invalidEmail)
+        }
+
+        input = input.trimmingCharacters(in: .whitespaces)
+        guard isValidEmail(input) else {
             return output.present(error: .invalidEmail)
         }
 
