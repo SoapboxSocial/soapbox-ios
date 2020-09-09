@@ -73,6 +73,7 @@ class Room {
 
     func join(id: Int, completion: @escaping (Result<Void, Error>) -> Void) {
         self.completion = completion
+        self.id = id
 
         guard let token = self.token else {
             return completion(.failure(RoomError.general))
