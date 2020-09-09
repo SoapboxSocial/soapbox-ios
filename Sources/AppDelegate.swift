@@ -1,3 +1,4 @@
+import AlamofireNetworkActivityIndicator
 import KeychainAccess
 import NotificationBannerSwift
 import UIKit
@@ -13,6 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions options: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
+
+        NetworkActivityIndicatorManager.shared.isEnabled = true
 
         UNUserNotificationCenter.current().delegate = self
 

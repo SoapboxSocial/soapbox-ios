@@ -2,6 +2,8 @@ PODS:
   - Alamofire (5.2.2)
   - AlamofireImage (4.1.0):
     - Alamofire (~> 5.1)
+  - AlamofireNetworkActivityIndicator (3.1.0):
+    - Alamofire (~> 5.1)
   - CGRPCZlib (1.0.0-alpha.19)
   - CNIOAtomics (2.22.0)
   - CNIOBoringSSL (2.9.1)
@@ -72,6 +74,7 @@ PODS:
 DEPENDENCIES:
   - Alamofire
   - AlamofireImage
+  - AlamofireNetworkActivityIndicator
   - DrawerView
   - GoogleWebRTC
   - gRPC-Swift (~> 1.0.0-alpha.18)
@@ -85,6 +88,7 @@ SPEC REPOS:
   trunk:
     - Alamofire
     - AlamofireImage
+    - AlamofireNetworkActivityIndicator
     - CGRPCZlib
     - CNIOAtomics
     - CNIOBoringSSL
@@ -117,6 +121,7 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   Alamofire: 814429acc853c6c54ff123fc3d2ef66803823ce0
   AlamofireImage: c4a2ba349885fb3064feb74d2e547bd42ce9be10
+  AlamofireNetworkActivityIndicator: 6564782bd7b9e6c430ae67d9277af01907b01ca4
   CGRPCZlib: befd9b92013c647f18aa9b7d9e9231d52e1ced1b
   CNIOAtomics: fc22c21538d19cd55cce438146ce0388684601b4
   CNIOBoringSSL: ee7722e4355434b420eb06b3ca7535a6cfb09cf2
@@ -146,6 +151,6 @@ SPEC CHECKSUMS:
   SwiftProtobuf: f889fe5772f90ef7d7b8aac352d1fddf39650713
   UIWindowTransitions: cb662e2ae9e2d1060fcdbe3eb3de9232bedb7612
 
-PODFILE CHECKSUM: cda2319ab8086ebb12f1deb80bfc461d154dff7a
+PODFILE CHECKSUM: 987854282960a9cc6f28fb6c22a4bfef36c007d5
 
 COCOAPODS: 1.9.1
