@@ -54,7 +54,7 @@ class RoomView: UIView {
         recognizerView.addGestureRecognizer(recognizer)
         topBar.addSubview(recognizerView)
 
-        let exitButton = UIButton(
+        let exitButton = EmojiButton(
             frame: CGRect(x: frame.size.width - (30 + 15 + safeAreaInsets.left), y: (frame.size.height - inset) / 2 - 15, width: 30, height: 30)
         )
         exitButton.center = CGPoint(x: exitButton.center.x, y: topBar.center.y - (inset / 2))
@@ -62,7 +62,7 @@ class RoomView: UIView {
         exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         addSubview(exitButton)
 
-        muteButton = UIButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        muteButton = EmojiButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
         muteButton.setTitle("🔊", for: .normal)
         muteButton.center = CGPoint(x: exitButton.center.x - (15 + exitButton.frame.size.width), y: exitButton.center.y)
         muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
@@ -95,9 +95,10 @@ class RoomView: UIView {
 
         var origin = CGPoint(x: exitButton.frame.origin.x, y: frame.size.height - (exitButton.frame.size.height + 10 + safeAreaInsets.bottom))
         for reaction in Room.Reaction.allCases {
-            let button = ReactionButton(frame: CGRect(origin: origin, size: exitButton.frame.size), reaction: reaction)
+            let button = EmojiButton(frame: CGRect(origin: origin, size: exitButton.frame.size))
+            button.setTitle(reaction.rawValue, for: .normal)
+            button.addTarget(self, action: #selector(reactionTapped), for: .touchUpInside)
             origin.x = origin.x - (button.frame.size.width + 10)
-            button.delegate = self
             addSubview(button)
         }
 
@@ -155,10 +156,20 @@ class RoomView: UIView {
             parent.setPosition(.open, animated: true)
         }
     }
-}
-
-extension RoomView: ReactionButtonDelegate {
-    func didTap(reaction: Room.Reaction) {
+    
+    @objc private func reactionTapped(_ sender: UIButton) {
+        guard let button = sender as? EmojiButton else {
+            return
+        }
+        
+        guard let label = button.title(for: .normal) else {
+            return
+        }
+        
+        guard let reaction = Room.Reaction(rawValue: label) else {
+            return
+        }
+        
         room.react(with: reaction)
     }
 }
