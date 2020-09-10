@@ -54,16 +54,21 @@ class RoomView: UIView {
         recognizerView.addGestureRecognizer(recognizer)
         topBar.addSubview(recognizerView)
 
+        let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
+
         let exitButton = EmojiButton(
             frame: CGRect(x: frame.size.width - (35 + 15 + safeAreaInsets.left), y: (frame.size.height - inset) / 2 - 17.5, width: 35, height: 35)
         )
         exitButton.center = CGPoint(x: exitButton.center.x, y: topBar.center.y - (inset / 2))
-        exitButton.setTitle("🚪", for: .normal)
+        exitButton.setImage(UIImage(systemName: "xmark", withConfiguration: iconConfig), for: .normal)
+        exitButton.tintColor = .secondaryBackground
         exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         addSubview(exitButton)
 
         muteButton = EmojiButton(frame: CGRect(x: 0, y: 0, width: 35, height: 35))
-        muteButton.setTitle("🔊", for: .normal)
+        muteButton.setImage(UIImage(systemName: "mic", withConfiguration: iconConfig), for: .normal)
+        muteButton.setImage(UIImage(systemName: "mic.slash", withConfiguration: iconConfig), for: .selected)
+        muteButton.tintColor = .secondaryBackground
         muteButton.center = CGPoint(x: exitButton.center.x - (15 + exitButton.frame.size.width), y: exitButton.center.y)
         muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
         addSubview(muteButton)
@@ -118,11 +123,11 @@ class RoomView: UIView {
     }
 
     @objc private func muteTapped() {
+        muteButton.isSelected.toggle()
+
         if room.isMuted {
-            muteButton!.setTitle("🔊", for: .normal)
             room.unmute()
         } else {
-            muteButton!.setTitle("🔇", for: .normal)
             room.mute()
         }
     }
@@ -157,20 +162,20 @@ class RoomView: UIView {
             parent.setPosition(.open, animated: true)
         }
     }
-    
+
     @objc private func reactionTapped(_ sender: UIButton) {
         guard let button = sender as? EmojiButton else {
             return
         }
-        
+
         guard let label = button.title(for: .normal) else {
             return
         }
-        
+
         guard let reaction = Room.Reaction(rawValue: label) else {
             return
         }
-        
+
         room.react(with: reaction)
     }
 }
