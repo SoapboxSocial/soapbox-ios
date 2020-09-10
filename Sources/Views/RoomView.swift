@@ -55,14 +55,14 @@ class RoomView: UIView {
         topBar.addSubview(recognizerView)
 
         let exitButton = EmojiButton(
-            frame: CGRect(x: frame.size.width - (30 + 15 + safeAreaInsets.left), y: (frame.size.height - inset) / 2 - 15, width: 30, height: 30)
+            frame: CGRect(x: frame.size.width - (35 + 15 + safeAreaInsets.left), y: (frame.size.height - inset) / 2 - 17.5, width: 35, height: 35)
         )
         exitButton.center = CGPoint(x: exitButton.center.x, y: topBar.center.y - (inset / 2))
         exitButton.setTitle("🚪", for: .normal)
         exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         addSubview(exitButton)
 
-        muteButton = EmojiButton(frame: CGRect(x: 0, y: 0, width: 30, height: 30))
+        muteButton = EmojiButton(frame: CGRect(x: 0, y: 0, width: 35, height: 35))
         muteButton.setTitle("🔊", for: .normal)
         muteButton.center = CGPoint(x: exitButton.center.x - (15 + exitButton.frame.size.width), y: exitButton.center.y)
         muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
@@ -93,9 +93,10 @@ class RoomView: UIView {
         members!.backgroundColor = .clear
         addSubview(members)
 
-        var origin = CGPoint(x: exitButton.frame.origin.x, y: frame.size.height - (exitButton.frame.size.height + 10 + safeAreaInsets.bottom))
+        let reactSize = CGFloat(30)
+        var origin = CGPoint(x: exitButton.frame.origin.x, y: frame.size.height - (reactSize + 10 + safeAreaInsets.bottom))
         for reaction in Room.Reaction.allCases {
-            let button = EmojiButton(frame: CGRect(origin: origin, size: exitButton.frame.size))
+            let button = EmojiButton(frame: CGRect(origin: origin, size: CGSize(width: reactSize, height: reactSize)))
             button.setTitle(reaction.rawValue, for: .normal)
             button.addTarget(self, action: #selector(reactionTapped), for: .touchUpInside)
             origin.x = origin.x - (button.frame.size.width + 10)
