@@ -1,6 +1,8 @@
 // Release.xcconfig
 #include "../Pods/Target Support Files/Pods-Soapbox/Pods-Soapbox.release.xcconfig"
 
+PRODUCT_BUNDLE_IDENTIFIER = app.social.soapbox
+
 // Server URL
 ROOT_URL = https:/$()/api.soapbox.social
 

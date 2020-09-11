@@ -1,6 +1,8 @@
 // Debug.xcconfig
 #include "../Pods/Target Support Files/Pods-Soapbox/Pods-Soapbox.debug.xcconfig"
 
+PRODUCT_BUNDLE_IDENTIFIER = app.social.soapbox-test
+
 // Server URL
 ROOT_URL = http:/$()/192.168.33.16
 

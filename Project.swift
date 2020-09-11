@@ -27,7 +27,7 @@ let project = Project(
             name: "Soapbox",
             platform: .iOS,
             product: .app,
-            bundleId: "app.social.soapbox",
+            bundleId: "$(PRODUCT_BUNDLE_IDENTIFIER)",
             deploymentTarget: .iOS(targetVersion: "13.0", devices: .iphone),
             infoPlist: "Info.plist",
             sources: ["Sources/**"],
