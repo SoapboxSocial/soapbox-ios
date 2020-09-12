@@ -12,7 +12,7 @@ import WebRTC
 protocol WebRTCClientDelegate: class {
     func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate)
     func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState)
-//    func webRTCClient(_ client: WebRTCClient, didChangeAudioLevel delta: Float)
+    func webRTCClient(_ client: WebRTCClient, didChangeAudioLevel delta: Float, track ssrc: UInt32)
 }
 
 final class WebRTCClient: NSObject {
@@ -32,7 +32,7 @@ final class WebRTCClient: NSObject {
         kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueFalse,
     ]
 
-    private var audioLevels = [String: Float]()
+    private var audioLevels = [UInt32: Float]()
 
     @available(*, unavailable)
     override init() {
@@ -128,6 +128,8 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
                     guard let track = $0.receiver.track as? RTCAudioTrack else {
                         return
                     }
+                    
+                    var called = [UInt32: Bool]()
 
                     self.peerConnection.stats(for: track, statsOutputLevel: .standard, completionHandler: { stats in
                         stats.forEach { stat in
@@ -139,9 +141,19 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
                                 return
                             }
 
-                            guard let ssrc = stat.values["ssrc"] else {
+                            guard let s = stat.values["ssrc"] else {
                                 return
                             }
+                            
+                            guard let ssrc = UInt32(s) else {
+                                return
+                            }
+                            
+                            if let c = called[ssrc], c == true {
+                                return
+                            }
+                            
+                            called[ssrc] = true
 
                             var level = Float(0.0)
                             if let l = self.audioLevels[ssrc] {
@@ -149,11 +161,8 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
                             }
 
                             let delta = energy - level
-                            if delta >= 0.001 {
-                                self.audioLevels[ssrc] = energy
-//                                self.delegate?.webRTCClient(self, didChangeAudioLevel: delta)
-                                debugPrint("\(ssrc) = \(delta)")
-                            }
+                            self.audioLevels[ssrc] = energy
+                            self.delegate?.webRTCClient(self, didChangeAudioLevel: delta, track: ssrc)
                         }
                     })
                 }

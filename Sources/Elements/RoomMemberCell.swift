@@ -10,6 +10,8 @@ class RoomMemberCell: UICollectionViewCell {
     private var profileImage: UIImageView!
 
     private var reactionView: ReactionView!
+    
+    private var roleView: UIView!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -24,10 +26,11 @@ class RoomMemberCell: UICollectionViewCell {
         nameLabel.textAlignment = .center
         addSubview(nameLabel)
 
-        let roleView = UIView(frame: CGRect(x: 66 - 20, y: 0, width: 20, height: 20))
+        roleView = UIView(frame: CGRect(x: 66 - 20, y: 0, width: 20, height: 20))
         roleView.backgroundColor = .background
         roleView.layer.cornerRadius = 10
         roleView.clipsToBounds = true
+        roleView.isHidden = true
         contentView.addSubview(roleView)
 
         roleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
@@ -53,7 +56,7 @@ class RoomMemberCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setup(name: String, image: String, role: APIClient.MemberRole) {
+    func setup(name: String, image: String, role: Room.MemberRole) {
         user = 0
         muteView.isHidden = true
 
@@ -74,12 +77,12 @@ class RoomMemberCell: UICollectionViewCell {
         }
     }
 
-    func setup(member: APIClient.Member) {
+    func setup(member: Room.Member) {
         setup(name: member.displayName, image: member.image, role: member.role)
 
         user = member.id
 
-        if member.role != APIClient.MemberRole.audience, member.isMuted {
+        if member.role != Room.MemberRole.audience, member.isMuted {
             muteView.isHidden = false
         } else {
             muteView.isHidden = true
@@ -89,8 +92,18 @@ class RoomMemberCell: UICollectionViewCell {
     func didReact(with: Room.Reaction) {
         reactionView.react(with)
     }
+    
+    func didChangeSpeakVolume(_ delta: Float) {
+        if delta <= 0.001 {
+            roleView.isHidden = true
+            return
+        }
+        
+        // @TODO CHANGE THIS FROM ROLE VIEW TO SPEAKIGN VIEW?
+        roleView.isHidden = false
+    }
 
-    private func emoji(for role: APIClient.MemberRole) -> String {
+    private func emoji(for role: Room.MemberRole) -> String {
         switch role {
         case .audience:
             return "👂"

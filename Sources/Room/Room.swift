@@ -10,7 +10,7 @@ protocol RoomDelegate {
     func userDidReact(user: Int, reaction: Room.Reaction)
     func didChangeMemberMuteState(user: Int, isMuted: Bool)
     func roomWasClosedByRemote()
-//    func userAudioDeltaDidChange(user: Int, delta: Float)
+    func didChangeSpeakVolume(user: Int, volume: Float)
 }
 
 // @todo
@@ -32,7 +32,7 @@ class Room {
         let image: String
         var role: MemberRole
         var isMuted: Bool
-        var ssrc: Int32
+        var ssrc: UInt32
 
         private enum CodingKeys: String, CodingKey {
             case id, role, displayName = "display_name", image, isMuted = "is_muted", ssrc
@@ -255,7 +255,8 @@ class Room {
                     displayName: member.displayName,
                     image: member.image,
                     role: MemberRole(rawValue: member.role) ?? .speaker,
-                    isMuted: member.muted
+                    isMuted: member.muted,
+                    ssrc: member.ssrc
                 )
             )
         }
@@ -420,6 +421,16 @@ extension Room {
 }
 
 extension Room: WebRTCClientDelegate {
+    func webRTCClient(_ client: WebRTCClient, didChangeAudioLevel delta: Float, track ssrc: UInt32) {
+        DispatchQueue.main.async {
+            guard let user = self.members.first(where: { $0.ssrc == ssrc }) else {
+                return
+            }
+                        
+            self.delegate?.didChangeSpeakVolume(user: user.id, volume: delta)
+        }
+    }
+    
     
     func webRTCClient(_: WebRTCClient, didDiscoverLocalCandidate local: RTCIceCandidate) {
         let candidate = Candidate(candidate: local.sdp, sdpMLineIndex: local.sdpMLineIndex, usernameFragment: "")
