@@ -12,6 +12,7 @@ import WebRTC
 protocol WebRTCClientDelegate: class {
     func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate)
     func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState)
+//    func webRTCClient(_ client: WebRTCClient, didChangeAudioLevel delta: Float)
 }
 
 final class WebRTCClient: NSObject {
@@ -30,6 +31,8 @@ final class WebRTCClient: NSObject {
         kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue,
         kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueFalse,
     ]
+
+    private var audioLevels = [String: Float]()
 
     @available(*, unavailable)
     override init() {
@@ -118,6 +121,46 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     }
 
     func peerConnection(_: RTCPeerConnection, didAdd _: RTCMediaStream) {
+        DispatchQueue.main.async {
+            Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true, block: { _ in
+
+                self.peerConnection.transceivers.forEach {
+                    guard let track = $0.receiver.track as? RTCAudioTrack else {
+                        return
+                    }
+
+                    self.peerConnection.stats(for: track, statsOutputLevel: .standard, completionHandler: { stats in
+                        stats.forEach { stat in
+                            guard let e = stat.values["totalAudioEnergy"] else {
+                                return
+                            }
+
+                            guard let energy = Float(e) else {
+                                return
+                            }
+
+                            guard let ssrc = stat.values["ssrc"] else {
+                                return
+                            }
+
+                            var level = Float(0.0)
+                            if let l = self.audioLevels[ssrc] {
+                                level = l
+                            }
+
+                            let delta = energy - level
+                            if delta >= 0.001 {
+                                self.audioLevels[ssrc] = energy
+//                                self.delegate?.webRTCClient(self, didChangeAudioLevel: delta)
+                                debugPrint("\(ssrc) = \(delta)")
+                            }
+                        }
+                    })
+                }
+
+            })
+        }
+
         debugPrint("peerConnection did add stream")
     }
 
