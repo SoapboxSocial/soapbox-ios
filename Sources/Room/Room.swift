@@ -421,17 +421,16 @@ extension Room {
 }
 
 extension Room: WebRTCClientDelegate {
-    func webRTCClient(_ client: WebRTCClient, didChangeAudioLevel delta: Float, track ssrc: UInt32) {
+    func webRTCClient(_: WebRTCClient, didChangeAudioLevel delta: Float, track ssrc: UInt32) {
         DispatchQueue.main.async {
             guard let user = self.members.first(where: { $0.ssrc == ssrc }) else {
                 return
             }
-                        
+
             self.delegate?.didChangeSpeakVolume(user: user.id, volume: delta)
         }
     }
-    
-    
+
     func webRTCClient(_: WebRTCClient, didDiscoverLocalCandidate local: RTCIceCandidate) {
         let candidate = Candidate(candidate: local.sdp, sdpMLineIndex: local.sdpMLineIndex, usernameFragment: "")
 

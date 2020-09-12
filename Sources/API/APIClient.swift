@@ -21,7 +21,7 @@ class APIClient {
         let keychain = Keychain(service: identifier)
         return keychain[string: "token"]
     }
-    
+
     enum ErrorCode: Int, Decodable {
         case invalidRequestBody = 0
         case missingParameter = 1

@@ -217,7 +217,7 @@ extension RoomView: RoomDelegate {
             self.members.reloadData()
         }
     }
-    
+
     func didChangeSpeakVolume(user: Int, volume: Float) {
         DispatchQueue.main.async {
             if let cell = (self.members.visibleCells as! [RoomMemberCell]).first(where: { $0.user == user }) {

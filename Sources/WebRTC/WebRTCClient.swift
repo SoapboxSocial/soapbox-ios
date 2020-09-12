@@ -59,6 +59,46 @@ final class WebRTCClient: NSObject {
         createMediaSenders()
         configureAudioSession()
         peerConnection.delegate = self
+
+        DispatchQueue.main.async {
+            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { _ in
+                self.peerConnection.transceivers.forEach { transceiver in
+
+                    guard let track = transceiver.receiver.track as? RTCAudioTrack else {
+                        return
+                    }
+
+                    self.peerConnection.stats(for: track, statsOutputLevel: .standard, completionHandler: { stats in
+                        stats.forEach { stat in
+                            guard let e = stat.values["totalAudioEnergy"] else {
+                                return
+                            }
+
+                            guard let energy = Float(e) else {
+                                return
+                            }
+
+                            guard let s = stat.values["ssrc"] else {
+                                return
+                            }
+
+                            guard let ssrc = UInt32(s) else {
+                                return
+                            }
+
+                            var level = Float(0.0)
+                            if let l = self.audioLevels[ssrc] {
+                                level = l
+                            }
+
+                            let delta = energy - level
+                            self.audioLevels[ssrc] = energy
+                            self.delegate?.webRTCClient(self, didChangeAudioLevel: delta, track: ssrc)
+                        }
+                    })
+                }
+            })
+        }
     }
 
     // MARK: Signaling
@@ -120,58 +160,7 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
         debugPrint("peerConnection new signaling state: \(stateChanged)")
     }
 
-    func peerConnection(_: RTCPeerConnection, didAdd _: RTCMediaStream) {
-        DispatchQueue.main.async {
-            Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true, block: { _ in
-
-                self.peerConnection.transceivers.forEach {
-                    guard let track = $0.receiver.track as? RTCAudioTrack else {
-                        return
-                    }
-                    
-                    var called = [UInt32: Bool]()
-
-                    self.peerConnection.stats(for: track, statsOutputLevel: .standard, completionHandler: { stats in
-                        stats.forEach { stat in
-                            guard let e = stat.values["totalAudioEnergy"] else {
-                                return
-                            }
-
-                            guard let energy = Float(e) else {
-                                return
-                            }
-
-                            guard let s = stat.values["ssrc"] else {
-                                return
-                            }
-                            
-                            guard let ssrc = UInt32(s) else {
-                                return
-                            }
-                            
-                            if let c = called[ssrc], c == true {
-                                return
-                            }
-                            
-                            called[ssrc] = true
-
-                            var level = Float(0.0)
-                            if let l = self.audioLevels[ssrc] {
-                                level = l
-                            }
-
-                            let delta = energy - level
-                            self.audioLevels[ssrc] = energy
-                            self.delegate?.webRTCClient(self, didChangeAudioLevel: delta, track: ssrc)
-                        }
-                    })
-                }
-
-            })
-        }
-
-        debugPrint("peerConnection did add stream")
-    }
+    func peerConnection(_: RTCPeerConnection, didAdd _: RTCMediaStream) {}
 
     func peerConnection(_: RTCPeerConnection, didRemove _: RTCMediaStream) {
         debugPrint("peerConnection did remove stream")

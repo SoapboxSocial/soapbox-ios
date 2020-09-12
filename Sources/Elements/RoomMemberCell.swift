@@ -10,7 +10,7 @@ class RoomMemberCell: UICollectionViewCell {
     private var profileImage: UIImageView!
 
     private var reactionView: ReactionView!
-    
+
     private var roleView: UIView!
 
     override init(frame: CGRect) {
@@ -92,13 +92,13 @@ class RoomMemberCell: UICollectionViewCell {
     func didReact(with: Room.Reaction) {
         reactionView.react(with)
     }
-    
+
     func didChangeSpeakVolume(_ delta: Float) {
         if delta <= 0.001 {
             roleView.isHidden = true
             return
         }
-        
+
         // @TODO CHANGE THIS FROM ROLE VIEW TO SPEAKIGN VIEW?
         roleView.isHidden = false
     }
