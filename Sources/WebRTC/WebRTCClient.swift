@@ -60,45 +60,7 @@ final class WebRTCClient: NSObject {
         configureAudioSession()
         peerConnection.delegate = self
 
-        DispatchQueue.main.async {
-            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { _ in
-                self.peerConnection.transceivers.forEach { transceiver in
-
-                    guard let track = transceiver.receiver.track as? RTCAudioTrack else {
-                        return
-                    }
-
-                    self.peerConnection.stats(for: track, statsOutputLevel: .standard, completionHandler: { stats in
-                        stats.forEach { stat in
-                            guard let e = stat.values["totalAudioEnergy"] else {
-                                return
-                            }
-
-                            guard let energy = Float(e) else {
-                                return
-                            }
-
-                            guard let s = stat.values["ssrc"] else {
-                                return
-                            }
-
-                            guard let ssrc = UInt32(s) else {
-                                return
-                            }
-
-                            var level = Float(0.0)
-                            if let l = self.audioLevels[ssrc] {
-                                level = l
-                            }
-
-                            let delta = energy - level
-                            self.audioLevels[ssrc] = energy
-                            self.delegate?.webRTCClient(self, didChangeAudioLevel: delta, track: ssrc)
-                        }
-                    })
-                }
-            })
-        }
+        createAudioLevelUpdater()
     }
 
     // MARK: Signaling
@@ -152,6 +114,49 @@ final class WebRTCClient: NSObject {
         let audioConstrains = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
         let audioSource = WebRTCClient.factory.audioSource(with: audioConstrains)
         return WebRTCClient.factory.audioTrack(with: audioSource, trackId: "audio0")
+    }
+
+    private func createAudioLevelUpdater() {
+        DispatchQueue.main.async {
+            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { _ in
+                self.peerConnection.transceivers.forEach { transceiver in
+
+                    guard let track = transceiver.receiver.track as? RTCAudioTrack else {
+                        return
+                    }
+
+                    self.peerConnection.stats(for: track, statsOutputLevel: .standard, completionHandler: { stats in
+                        stats.forEach { stat in
+                            guard let e = stat.values["totalAudioEnergy"] else {
+                                return
+                            }
+
+                            guard let energy = Float(e) else {
+                                return
+                            }
+
+                            guard let s = stat.values["ssrc"] else {
+                                return
+                            }
+
+                            guard let ssrc = UInt32(s) else {
+                                return
+                            }
+
+                            var level = Float(0.0)
+                            if let l = self.audioLevels[ssrc] {
+                                level = l
+                            }
+
+                            // @todo probably worth finding a way to not send changes if delta has alreadyy been called a bunch of times
+                            let delta = energy - level
+                            self.audioLevels[ssrc] = energy
+                            self.delegate?.webRTCClient(self, didChangeAudioLevel: delta, track: ssrc)
+                        }
+                    })
+                }
+            })
+        }
     }
 }
 
