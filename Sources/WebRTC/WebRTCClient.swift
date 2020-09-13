@@ -33,6 +33,7 @@ final class WebRTCClient: NSObject {
     ]
 
     private var audioLevels = [UInt32: Float]()
+    private var timer: Timer!
 
     @available(*, unavailable)
     override init() {
@@ -68,6 +69,7 @@ final class WebRTCClient: NSObject {
     func close() {
         // @todo remove audio track? peerConnection.removeTrack()
         peerConnection.close()
+        timer.invalidate()
     }
 
     func answer(completion: @escaping (_ sdp: RTCSessionDescription) -> Void) {
@@ -118,7 +120,8 @@ final class WebRTCClient: NSObject {
 
     private func createAudioLevelUpdater() {
         DispatchQueue.main.async {
-            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { _ in
+            // @todo maybe start and stop timer based on if room is open
+            self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { _ in
                 self.peerConnection.transceivers.forEach { transceiver in
 
                     guard let track = transceiver.receiver.track as? RTCAudioTrack else {
