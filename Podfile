@@ -6,7 +6,7 @@ target 'Soapbox' do
   use_frameworks!
 
   # Pods for trollbox
-  pod 'GoogleWebRTC'
+  pod 'JitsiMeetSDK', '~> 2.8.1'
   pod 'Alamofire'
   pod 'SwiftProtobuf'
   pod "DrawerView"

@@ -212,9 +212,17 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func didChangeUserRole(user _: Int, role _: APIClient.MemberRole) {
+    func didChangeUserRole(user _: Int, role _: Room.MemberRole) {
         DispatchQueue.main.async {
             self.members.reloadData()
+        }
+    }
+
+    func didChangeSpeakVolume(user: Int, volume: Float) {
+        DispatchQueue.main.async {
+            if let cell = (self.members.visibleCells as! [RoomMemberCell]).first(where: { $0.user == user }) {
+                cell.didChangeSpeakVolume(volume)
+            }
         }
     }
 }
@@ -240,7 +248,7 @@ extension RoomView: UICollectionViewDelegate {
         showMemberAction(for: room.members[indexPath.item - 1])
     }
 
-    private func showMemberAction(for member: APIClient.Member) {
+    private func showMemberAction(for member: Room.Member) {
         let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
 //        @TODO: requires server fix.

@@ -22,24 +22,6 @@ class APIClient {
         return keychain[string: "token"]
     }
 
-    enum MemberRole: String, Decodable {
-        case owner
-        case audience
-        case speaker
-    }
-
-    struct Member: Decodable {
-        let id: Int
-        let displayName: String
-        let image: String
-        var role: MemberRole
-        var isMuted: Bool
-
-        private enum CodingKeys: String, CodingKey {
-            case id, role, displayName = "display_name", image, isMuted = "is_muted"
-        }
-    }
-
     enum ErrorCode: Int, Decodable {
         case invalidRequestBody = 0
         case missingParameter = 1

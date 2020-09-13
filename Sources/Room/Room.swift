@@ -6,10 +6,11 @@ import WebRTC
 protocol RoomDelegate {
     func userDidJoinRoom(user: Int)
     func userDidLeaveRoom(user: Int)
-    func didChangeUserRole(user: Int, role: APIClient.MemberRole)
+    func didChangeUserRole(user: Int, role: Room.MemberRole)
     func userDidReact(user: Int, reaction: Room.Reaction)
     func didChangeMemberMuteState(user: Int, isMuted: Bool)
     func roomWasClosedByRemote()
+    func didChangeSpeakVolume(user: Int, volume: Float)
 }
 
 // @todo
@@ -19,6 +20,25 @@ enum RoomError: Error {
 }
 
 class Room {
+    enum MemberRole: String, Decodable {
+        case owner
+        case audience
+        case speaker
+    }
+
+    struct Member: Decodable {
+        let id: Int
+        let displayName: String
+        let image: String
+        var role: MemberRole
+        var isMuted: Bool
+        var ssrc: UInt32
+
+        private enum CodingKeys: String, CodingKey {
+            case id, role, displayName = "display_name", image, isMuted = "is_muted", ssrc
+        }
+    }
+
     private var token: String? {
         guard let identifier = Bundle.main.bundleIdentifier else {
             fatalError("no identifier")
@@ -42,12 +62,12 @@ class Room {
     var id: Int?
     var isClosed = false
 
-    private(set) var role = APIClient.MemberRole.speaker
+    private(set) var role = MemberRole.speaker
 
     // @todo think about this for when users join and are muted by default
     private(set) var isMuted = false
 
-    private(set) var members = [APIClient.Member]()
+    private(set) var members = [Member]()
 
     private let rtc: WebRTCClient
     private let grpc: RoomServiceClient
@@ -222,7 +242,7 @@ class Room {
     }
 
     private func on(join: JoinReply) {
-        guard let r = APIClient.MemberRole(rawValue: join.room.role) else {
+        guard let r = MemberRole(rawValue: join.room.role) else {
             return completion(.failure(RoomError.general))
         }
 
@@ -230,12 +250,13 @@ class Room {
 
         for member in join.room.members {
             members.append(
-                APIClient.Member(
+                Member(
                     id: Int(member.id),
                     displayName: member.displayName,
                     image: member.image,
-                    role: APIClient.MemberRole(rawValue: member.role) ?? .speaker,
-                    isMuted: member.muted
+                    role: MemberRole(rawValue: member.role) ?? .speaker,
+                    isMuted: member.muted,
+                    ssrc: member.ssrc
                 )
             )
         }
@@ -325,7 +346,7 @@ class Room {
 extension Room {
     private func didReceiveJoin(_ event: SignalReply.Event) {
         do {
-            let member = try decoder.decode(APIClient.Member.self, from: event.data)
+            let member = try decoder.decode(Member.self, from: event.data)
             if !members.contains(where: { $0.id == member.id }) {
                 members.append(member)
                 delegate?.userDidJoinRoom(user: Int(event.from))
@@ -384,7 +405,7 @@ extension Room {
         delegate?.didChangeMemberMuteState(user: user, isMuted: isMuted)
     }
 
-    private func updateMemberRole(user: Int, role: APIClient.MemberRole) {
+    private func updateMemberRole(user: Int, role: MemberRole) {
         DispatchQueue.main.async {
             let index = self.members.firstIndex(where: { $0.id == user })
             if index != nil {
@@ -400,6 +421,16 @@ extension Room {
 }
 
 extension Room: WebRTCClientDelegate {
+    func webRTCClient(_: WebRTCClient, didChangeAudioLevel delta: Float, track ssrc: UInt32) {
+        DispatchQueue.main.async {
+            guard let user = self.members.first(where: { $0.ssrc == ssrc }) else {
+                return
+            }
+
+            self.delegate?.didChangeSpeakVolume(user: user.id, volume: delta)
+        }
+    }
+
     func webRTCClient(_: WebRTCClient, didDiscoverLocalCandidate local: RTCIceCandidate) {
         let candidate = Candidate(candidate: local.sdp, sdpMLineIndex: local.sdpMLineIndex, usernameFragment: "")
 

@@ -401,6 +401,8 @@ struct RoomState {
 
     var muted: Bool = false
 
+    var ssrc: UInt32 = 0
+
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
     init() {}
@@ -892,6 +894,7 @@ extension RoomState.RoomMember: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     3: .same(proto: "image"),
     4: .same(proto: "role"),
     5: .same(proto: "muted"),
+    6: .same(proto: "ssrc"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -902,6 +905,7 @@ extension RoomState.RoomMember: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
       case 3: try decoder.decodeSingularStringField(value: &self.image)
       case 4: try decoder.decodeSingularStringField(value: &self.role)
       case 5: try decoder.decodeSingularBoolField(value: &self.muted)
+      case 6: try decoder.decodeSingularUInt32Field(value: &self.ssrc)
       default: break
       }
     }
@@ -923,6 +927,9 @@ extension RoomState.RoomMember: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     if self.muted != false {
       try visitor.visitSingularBoolField(value: self.muted, fieldNumber: 5)
     }
+    if self.ssrc != 0 {
+      try visitor.visitSingularUInt32Field(value: self.ssrc, fieldNumber: 6)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -932,6 +939,7 @@ extension RoomState.RoomMember: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     if lhs.image != rhs.image {return false}
     if lhs.role != rhs.role {return false}
     if lhs.muted != rhs.muted {return false}
+    if lhs.ssrc != rhs.ssrc {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
