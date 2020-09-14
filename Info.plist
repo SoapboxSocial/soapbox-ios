@@ -61,8 +61,6 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
-	<key>NSCalendarsUsageDescription</key>
-	<string>We don&apos;t use this, must investigate further</string>
 	<key>UIUserInterfaceStyle</key>
 	<string>Light</string>
 </dict>
