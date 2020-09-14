@@ -121,7 +121,7 @@ final class WebRTCClient: NSObject {
     private func createAudioLevelUpdater() {
         DispatchQueue.main.async {
             // @todo maybe start and stop timer based on if room is open
-            self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { _ in
+            self.timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { _ in
                 self.peerConnection.transceivers.forEach { transceiver in
 
                     guard let track = transceiver.receiver.track as? RTCAudioTrack else {
