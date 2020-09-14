@@ -168,7 +168,9 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
         debugPrint("peerConnection new signaling state: \(stateChanged)")
     }
 
-    func peerConnection(_: RTCPeerConnection, didAdd _: RTCMediaStream) {}
+    func peerConnection(_: RTCPeerConnection, didAdd _: RTCMediaStream) {
+        debugPrint("peerConnection did add stream")
+    }
 
     func peerConnection(_: RTCPeerConnection, didRemove _: RTCMediaStream) {
         debugPrint("peerConnection did remove stream")
