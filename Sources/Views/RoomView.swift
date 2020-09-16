@@ -188,9 +188,7 @@ class RoomView: UIView {
     }
 
     @objc private func inviteTapped() {
-        let view = UIViewController()
-        view.view.backgroundColor = .red
-
+        let view = InviteFriendsListViewController()
         UIApplication.shared.keyWindow?.rootViewController!.present(view, animated: true)
     }
 }
