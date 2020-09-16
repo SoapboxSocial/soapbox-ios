@@ -60,10 +60,12 @@
 
 "welcome" = "Welcome to Soapbox!";
 
+/* Notifications */
 "new_room_notification" = "%@ started a room, why not join them?";
 "new_room_with_name_notification" = "%@ started the room \"%@\", why not join them?";
-
 "new_follower_notification" = "%@ started following you!";
+"room_joined_notification" = "%@ joined a room, why not join them?";
+"room_joined_with_name_notification" = "%@ joined the room \"%@\", why not join them?";
 
 "save" = "Save";
 "invalid_display_name" = "Valid display name required";
