@@ -206,10 +206,10 @@ class Room {
         updateMemberRole(user: speaker, role: .speaker)
     }
 
-    func invite(user _: Int) {
+    func invite(user: Int) {
         stream.sendMessage(SignalRequest.with {
             $0.invite = Invite.with {
-                $0.id = Int64(id)
+                $0.id = Int64(user)
             }
         })
     }
