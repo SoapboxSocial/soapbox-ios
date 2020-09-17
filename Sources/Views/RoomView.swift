@@ -108,6 +108,14 @@ class RoomView: UIView {
             addSubview(button)
         }
 
+        let inviteButton = EmojiButton(
+            frame: CGRect(x: safeAreaInsets.left + 15, y: frame.size.height - (reactSize + 10 + safeAreaInsets.bottom), width: 35, height: 35)
+        )
+        inviteButton.setImage(UIImage(systemName: "person.badge.plus", withConfiguration: iconConfig), for: .normal)
+        inviteButton.tintColor = .secondaryBackground
+        inviteButton.addTarget(self, action: #selector(inviteTapped), for: .touchUpInside)
+        addSubview(inviteButton)
+
         DispatchQueue.main.async {
             self.members.reloadData()
         }
@@ -177,6 +185,16 @@ class RoomView: UIView {
         }
 
         room.react(with: reaction)
+    }
+
+    @objc private func inviteTapped() {
+        // @todo this needs to be elsewhere
+        let view = InviteFriendsListViewController()
+        let presenter = InviteFriendsListPresenter(output: view)
+        let interactor = InviteFriendsListInteractor(output: presenter, api: APIClient(), room: room)
+        view.output = interactor
+
+        UIApplication.shared.keyWindow?.rootViewController!.present(view, animated: true)
     }
 }
 

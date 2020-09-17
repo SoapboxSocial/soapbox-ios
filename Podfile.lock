@@ -12,7 +12,7 @@ PODS:
   - CNIOLinux (2.22.0)
   - CNIOSHA1 (2.22.0)
   - DrawerView (1.3.1)
-  - GoogleWebRTC (1.1.29400)
+  - GoogleWebRTC (1.1.31999)
   - gRPC-Swift (1.0.0-alpha.19):
     - CGRPCZlib (= 1.0.0-alpha.19)
     - Logging (< 2, >= 1.2.0)
@@ -66,7 +66,7 @@ PODS:
     - SwiftNIOConcurrencyHelpers (< 3, >= 2.22.0)
     - SwiftNIOFoundationCompat (< 3, >= 2.22.0)
     - SwiftNIOTLS (< 3, >= 2.22.0)
-  - SwiftProtobuf (1.11.0)
+  - SwiftProtobuf (1.12.0)
   - UIWindowTransitions (0.2.0)
 
 DEPENDENCIES:
@@ -126,7 +126,7 @@ SPEC CHECKSUMS:
   CNIOLinux: 11f69f76c12087a0752fa8a53f32f9853ef3f4f2
   CNIOSHA1: ff4d77269adcb89f9a962abcbee55256a29b8a36
   DrawerView: 0c7e6c40e5076b2fb64c394fa5fc8166ff917eff
-  GoogleWebRTC: cfb83bc346435a17fe06bb05f04ad826b858a7fb
+  GoogleWebRTC: b39a78c4f5cc6b0323415b9233db03a2faa7b0f0
   gRPC-Swift: 75a7a8d7cd08177165ef971159afb84e5130cfc9
   KeychainAccess: 3f760109aa99b05d0f231e28b22642da7153e38a
   Logging: beeb016c9c80cf77042d62e83495816847ef108b
@@ -143,9 +143,9 @@ SPEC CHECKSUMS:
   SwiftNIOSSL: 2967e874b40d05904edde5c540c3157621e5ecc4
   SwiftNIOTLS: 46bb3a0ff37d6b52ae6baf5207ec3cd411da327c
   SwiftNIOTransportServices: 801923921fbecdcde1e1c1ff38e812167d01ead1
-  SwiftProtobuf: f889fe5772f90ef7d7b8aac352d1fddf39650713
+  SwiftProtobuf: 4ef85479c18ca85b5482b343df9c319c62bda699
   UIWindowTransitions: cb662e2ae9e2d1060fcdbe3eb3de9232bedb7612
 
-PODFILE CHECKSUM: cda2319ab8086ebb12f1deb80bfc461d154dff7a
+PODFILE CHECKSUM: 4bf489a9f11a725249a07bebfca9142f839e70dd
 
 COCOAPODS: 1.9.1

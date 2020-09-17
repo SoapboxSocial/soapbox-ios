@@ -79,3 +79,6 @@
 
 "is_currently_in_room" = "%@ is currently in a room!";
 "click_to_join" = "Click to join";
+
+"room_invite_with_name_notification" = "%@ invited you to join the room \"%@\"";
+"room_invite_notification" = "%@ invited you to join a room";
