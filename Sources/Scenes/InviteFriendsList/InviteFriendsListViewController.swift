@@ -97,6 +97,7 @@ extension InviteFriendsListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
+        // @TODO THIS SHOULD BE PART OF THE VIPER CYCLE
         output.didSelect(user: friends[indexPath.item].id)
         invited.append(friends[indexPath.item].id)
 

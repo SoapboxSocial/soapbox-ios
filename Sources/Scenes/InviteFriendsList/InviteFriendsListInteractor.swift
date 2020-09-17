@@ -7,10 +7,12 @@ protocol InviteFriendsListInteractorOutput {
 class InviteFriendsListInteractor: InviteFriendsListViewControllerOutput {
     private let output: InviteFriendsListInteractorOutput
     private let api: APIClient
+    private let room: Room
 
-    init(output: InviteFriendsListInteractorOutput, api: APIClient) {
+    init(output: InviteFriendsListInteractorOutput, api: APIClient, room: Room) {
         self.output = output
         self.api = api
+        self.room = room
     }
 
     func fetchFriends() {
@@ -23,5 +25,7 @@ class InviteFriendsListInteractor: InviteFriendsListViewControllerOutput {
         }
     }
 
-    func didSelect(user _: Int) {}
+    func didSelect(user: Int) {
+        room.invite(user: user)
+    }
 }

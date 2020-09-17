@@ -191,7 +191,7 @@ class RoomView: UIView {
         // @todo this needs to be elsewhere
         let view = InviteFriendsListViewController()
         let presenter = InviteFriendsListPresenter(output: view)
-        let interactor = InviteFriendsListInteractor(output: presenter, api: APIClient())
+        let interactor = InviteFriendsListInteractor(output: presenter, api: APIClient(), room: room)
         view.output = interactor
 
         UIApplication.shared.keyWindow?.rootViewController!.present(view, animated: true)
