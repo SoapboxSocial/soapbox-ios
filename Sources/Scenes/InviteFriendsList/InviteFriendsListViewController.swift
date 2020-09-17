@@ -36,7 +36,18 @@ class InviteFriendsListViewController: UIViewController {
         friendsList.separatorStyle = .none
         view.addSubview(friendsList)
 
+        // @todo probably use emoji button?
+        let button = UIButton(type: .close)
+        button.center = CGPoint(x: 0, y: 44 / 2)
+        button.frame.origin = CGPoint(x: view.frame.size.width - (button.frame.size.width + 10), y: button.frame.origin.y)
+        button.addTarget(self, action: #selector(close), for: .touchUpInside)
+        view.addSubview(button)
+
         output.fetchFriends()
+    }
+
+    @objc private func close() {
+        dismiss(animated: true)
     }
 }
 
