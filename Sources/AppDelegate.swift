@@ -56,9 +56,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func createLoggedIn() -> UIViewController {
-        let viewController = RoomListViewController(api: APIClient(), service: ServiceFactory.createRoomService())
+        let viewController = HomeViewController()
+        let presenter = HomePresenter()
+        let interactor = HomeInteractor(output: presenter)
+        presenter.output = viewController
+        viewController.output = interactor
+
+//        let viewController = RoomListViewController(api: APIClient(), service: ServiceFactory.createRoomService())
         let nav = NavigationViewController(rootViewController: viewController)
-        viewController.delegate = nav
+//        viewController.delegate = nav
 
         return nav
     }
