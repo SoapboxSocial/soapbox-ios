@@ -111,13 +111,4 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForHeaderInSection _: Int) -> CGSize {
         return CGSize(width: collectionView.frame.width, height: 40)
     }
-
-    private func getEmptyHeight() -> CGFloat {
-        var inset = CGFloat(0.0)
-        if #available(iOS 11.0, *) {
-            inset = view.safeAreaInsets.bottom + view.safeAreaInsets.top
-        }
-
-        return view.frame.height - (inset + 40)
-    }
 }
