@@ -103,6 +103,7 @@ class RoomListViewController: UIViewController {
         let scb = searchController.searchBar
         scb.returnKeyType = .default
         scb.delegate = self
+        scb.placeholder = NSLocalizedString("search_for_friends", comment: "")
 
         navigationItem.titleView = scb
         navigationItem.hidesSearchBarWhenScrolling = false

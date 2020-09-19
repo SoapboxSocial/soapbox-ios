@@ -82,3 +82,5 @@
 
 "room_invite_with_name_notification" = "%@ invited you to join the room \"%@\"";
 "room_invite_notification" = "%@ invited you to join a room";
+
+"search_for_friends" = "Search for friends";
