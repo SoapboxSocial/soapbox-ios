@@ -1,5 +1,7 @@
 import Foundation
 
-class HomePresenter {
-    
+protocol HomePresenterOutput {}
+
+class HomePresenter: HomeInteractorOutput {
+    var output: HomePresenterOutput
 }
