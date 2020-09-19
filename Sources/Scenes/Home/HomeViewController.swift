@@ -1,11 +1,18 @@
+import NotificationBannerSwift
 import UIKit
 
-protocol HomeViewControllerOutput {}
+protocol HomeViewControllerOutput {
+    func fetchRooms()
+}
 
 class HomeViewController: UIViewController {
+    private let refresh = UIRefreshControl()
+
     var collection: UICollectionView!
 
     var output: HomeViewControllerOutput!
+
+    private var rooms = [RoomState]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,17 +30,39 @@ class HomeViewController: UIViewController {
         collection.register(cellWithClass: EmptyRoomCollectionViewCell.self)
         collection.register(cellWithClass: RoomCellV2.self)
 
-        let refresh = UIRefreshControl()
         collection.refreshControl = refresh
-//        .addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
+        refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
 
         view.addSubview(collection)
 
-        collection.reloadData()
+        loadData()
+    }
+
+    @objc private func loadData() {
+        refresh.beginRefreshing()
+        output.fetchRooms()
     }
 }
 
-extension HomeViewController: HomePresenterOutput {}
+extension HomeViewController: HomePresenterOutput {
+    func didFetchRooms(rooms: [RoomState]) {
+        self.rooms = rooms
+
+        DispatchQueue.main.async {
+            self.refresh.endRefreshing()
+            self.collection.reloadData()
+        }
+    }
+
+    func displayError(title: String, description: String?) {
+        let banner = FloatingNotificationBanner(
+            title: title,
+            subtitle: description,
+            style: .danger
+        )
+        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+    }
+}
 
 extension HomeViewController: UICollectionViewDelegate {}
 
@@ -43,19 +72,30 @@ extension HomeViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        return 2
+        if rooms.count > 0 {
+            return rooms.count
+        }
+
+        return 1
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withClass: RoomCellV2.self, for: indexPath)
-        if indexPath.item == 0 {
-            cell.style = .current
-            cell.images = 4
-        } else {
-            cell.images = 3
+        if rooms.count == 0 {
+            return collectionView.dequeueReusableCell(withClass: EmptyRoomCollectionViewCell.self, for: indexPath)
         }
 
-        cell.title.text = "Room #\(indexPath.item)"
+        let room = rooms[indexPath.item]
+
+        let cell = collectionView.dequeueReusableCell(withClass: RoomCellV2.self, for: indexPath)
+        cell.members = room.members
+
+        cell.title.text = {
+            if room.name != "" {
+                return room.name
+            }
+
+            return NSLocalizedString("listen_in", comment: "")
+        }()
 
         return cell
     }

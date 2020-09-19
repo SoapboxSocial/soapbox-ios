@@ -28,10 +28,10 @@ class RoomCellV2: UICollectionViewCell {
         return label
     }()
 
-    var images: Int = 3 {
+    var members = [RoomState.RoomMember]() {
         didSet {
             imageViews.forEach { $0.removeFromSuperview() }
-            createImageView(images)
+            createImageViews()
         }
     }
 
@@ -87,6 +87,8 @@ class RoomCellV2: UICollectionViewCell {
 
         for view in imageViews {
             view.layer.cornerRadius = view.frame.size.height / 2
+            view.layer.masksToBounds = true
+            view.clipsToBounds = true
         }
     }
 
@@ -94,8 +96,10 @@ class RoomCellV2: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func createImageView(_ count: Int) {
+    private func createImageViews() {
         var previousView = roomView
+
+        var count = members.count
 
         for i in 0 ..< min(4, count) {
             var view: UIView = {
