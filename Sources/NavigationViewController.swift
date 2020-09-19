@@ -213,7 +213,11 @@ extension NavigationViewController: RoomViewDelegate {
     }
 }
 
-extension NavigationViewController: RoomListViewDelegate {
+extension NavigationViewController: RoomController {
+    func didSelect(room _: Int) {}
+}
+
+extension NavigationViewController {
     func currentRoom() -> Int? {
         return room?.id
     }

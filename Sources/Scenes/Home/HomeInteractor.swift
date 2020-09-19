@@ -1,6 +1,8 @@
 import Foundation
 import SwiftProtobuf
 
+protocol RoomController {}
+
 protocol HomeInteractorOutput {
     func didFailToFetchRooms()
     func didFetchRooms(rooms: RoomList)
@@ -9,10 +11,12 @@ protocol HomeInteractorOutput {
 class HomeInteractor: HomeViewControllerOutput {
     private let output: HomeInteractorOutput
     private let roomService: RoomServiceClient
+    private let controller: RoomController
 
-    init(output: HomeInteractorOutput, service: RoomServiceClient) {
+    init(output: HomeInteractorOutput, service: RoomServiceClient, controller: RoomController) {
         self.output = output
         roomService = service
+        self.controller = controller
     }
 
     func fetchRooms() {
