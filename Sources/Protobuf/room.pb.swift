@@ -67,6 +67,14 @@ struct SignalRequest {
     set {payload = .command(newValue)}
   }
 
+  var invite: Invite {
+    get {
+      if case .invite(let v)? = payload {return v}
+      return Invite()
+    }
+    set {payload = .invite(newValue)}
+  }
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum OneOf_Payload: Equatable {
@@ -75,6 +83,7 @@ struct SignalRequest {
     case negotiate(SessionDescription)
     case trickle(Trickle)
     case command(SignalRequest.Command)
+    case invite(Invite)
 
   #if !swift(>=4.1)
     static func ==(lhs: SignalRequest.OneOf_Payload, rhs: SignalRequest.OneOf_Payload) -> Bool {
@@ -84,6 +93,7 @@ struct SignalRequest {
       case (.negotiate(let l), .negotiate(let r)): return l == r
       case (.trickle(let l), .trickle(let r)): return l == r
       case (.command(let l), .command(let r)): return l == r
+      case (.invite(let l), .invite(let r)): return l == r
       default: return false
       }
     }
@@ -401,6 +411,8 @@ struct RoomState {
 
     var muted: Bool = false
 
+    var ssrc: UInt32 = 0
+
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
     init() {}
@@ -473,6 +485,18 @@ struct SessionDescription {
   init() {}
 }
 
+struct Invite {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var id: Int64 = 0
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
@@ -483,6 +507,7 @@ extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     3: .same(proto: "negotiate"),
     4: .same(proto: "trickle"),
     5: .same(proto: "command"),
+    6: .same(proto: "invite"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -528,6 +553,14 @@ extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .command(v)}
+      case 6:
+        var v: Invite?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .invite(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .invite(v)}
       default: break
       }
     }
@@ -545,6 +578,8 @@ extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
       try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
     case .command(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+    case .invite(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -892,6 +927,7 @@ extension RoomState.RoomMember: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     3: .same(proto: "image"),
     4: .same(proto: "role"),
     5: .same(proto: "muted"),
+    6: .same(proto: "ssrc"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -902,6 +938,7 @@ extension RoomState.RoomMember: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
       case 3: try decoder.decodeSingularStringField(value: &self.image)
       case 4: try decoder.decodeSingularStringField(value: &self.role)
       case 5: try decoder.decodeSingularBoolField(value: &self.muted)
+      case 6: try decoder.decodeSingularUInt32Field(value: &self.ssrc)
       default: break
       }
     }
@@ -923,6 +960,9 @@ extension RoomState.RoomMember: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     if self.muted != false {
       try visitor.visitSingularBoolField(value: self.muted, fieldNumber: 5)
     }
+    if self.ssrc != 0 {
+      try visitor.visitSingularUInt32Field(value: self.ssrc, fieldNumber: 6)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -932,6 +972,7 @@ extension RoomState.RoomMember: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     if lhs.image != rhs.image {return false}
     if lhs.role != rhs.role {return false}
     if lhs.muted != rhs.muted {return false}
+    if lhs.ssrc != rhs.ssrc {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1066,6 +1107,35 @@ extension SessionDescription: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
   static func ==(lhs: SessionDescription, rhs: SessionDescription) -> Bool {
     if lhs.type != rhs.type {return false}
     if lhs.sdp != rhs.sdp {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Invite: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "Invite"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.id != 0 {
+      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Invite, rhs: Invite) -> Bool {
+    if lhs.id != rhs.id {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

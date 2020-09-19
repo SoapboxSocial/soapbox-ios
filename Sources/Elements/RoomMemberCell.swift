@@ -4,12 +4,13 @@ import UIKit
 class RoomMemberCell: UICollectionViewCell {
     private(set) var user: Int?
 
-    private var roleLabel: UILabel!
     private var nameLabel: UILabel!
     private var muteView: UIView!
     private var profileImage: UIImageView!
 
     private var reactionView: ReactionView!
+
+    private var speakingView: UIView!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -24,16 +25,18 @@ class RoomMemberCell: UICollectionViewCell {
         nameLabel.textAlignment = .center
         addSubview(nameLabel)
 
-        let roleView = UIView(frame: CGRect(x: 66 - 20, y: 0, width: 20, height: 20))
-        roleView.backgroundColor = .background
-        roleView.layer.cornerRadius = 10
-        roleView.clipsToBounds = true
-        contentView.addSubview(roleView)
+        speakingView = UIView(frame: CGRect(x: 66 - 20, y: 0, width: 20, height: 20))
+        speakingView.backgroundColor = .background
+        speakingView.layer.cornerRadius = 10
+        speakingView.clipsToBounds = true
+        speakingView.isHidden = true
+        contentView.addSubview(speakingView)
 
-        roleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-        roleLabel.textAlignment = .center
-        roleLabel.font = roleLabel.font.withSize(10)
-        roleView.addSubview(roleLabel)
+        let speakingLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+        speakingLabel.textAlignment = .center
+        speakingLabel.font = speakingLabel.font.withSize(10)
+        speakingLabel.text = "🎙️"
+        speakingView.addSubview(speakingLabel)
 
         muteView = UIView(frame: CGRect(x: 66 - 20, y: 66 - 20, width: 20, height: 20))
         muteView.backgroundColor = .background
@@ -53,12 +56,12 @@ class RoomMemberCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setup(name: String, image: String, role: APIClient.MemberRole) {
+    func setup(name: String, image: String, role _: Room.MemberRole) {
         user = 0
         muteView.isHidden = true
+        speakingView.isHidden = true
 
         nameLabel.text = name.firstName()
-        roleLabel.text = emoji(for: role)
 
         if reactionView != nil {
             reactionView.removeFromSuperview()
@@ -74,12 +77,12 @@ class RoomMemberCell: UICollectionViewCell {
         }
     }
 
-    func setup(member: APIClient.Member) {
+    func setup(member: Room.Member) {
         setup(name: member.displayName, image: member.image, role: member.role)
 
         user = member.id
 
-        if member.role != APIClient.MemberRole.audience, member.isMuted {
+        if member.role != Room.MemberRole.audience, member.isMuted {
             muteView.isHidden = false
         } else {
             muteView.isHidden = true
@@ -90,14 +93,12 @@ class RoomMemberCell: UICollectionViewCell {
         reactionView.react(with)
     }
 
-    private func emoji(for role: APIClient.MemberRole) -> String {
-        switch role {
-        case .audience:
-            return "👂"
-        case .owner:
-            return "👑"
-        case .speaker:
-            return "🎙️"
+    func didChangeSpeakVolume(_ delta: Float) {
+        if delta <= 0.001 {
+            speakingView.isHidden = true
+            return
         }
+
+        speakingView.isHidden = false
     }
 }

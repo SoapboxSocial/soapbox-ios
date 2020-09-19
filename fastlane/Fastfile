@@ -24,7 +24,7 @@ platform :ios do
   end
 
   lane :beta do
-    disable_automatic_code_signing(path: "Soapbox.xcodeproj")
+    update_code_signing_settings(use_automatic_signing: false, path: "Soapbox.xcodeproj")
 
     match(
       app_identifier: "app.social.soapbox",
