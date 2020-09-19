@@ -1,11 +1,10 @@
 import UIKit
 
 class RoomBadge: UIView {
-
     enum Style {
         case normal, current
     }
-    
+
     var style: Style = .normal {
         didSet {
             switch style {
@@ -20,7 +19,7 @@ class RoomBadge: UIView {
             }
         }
     }
-    
+
     private var label: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -34,7 +33,7 @@ class RoomBadge: UIView {
         super.init(frame: frame)
 
         translatesAutoresizingMaskIntoConstraints = false
-        
+
         backgroundColor = .brandColor
         layer.cornerRadius = 15
 

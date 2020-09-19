@@ -52,9 +52,9 @@ extension HomeViewController: UICollectionViewDataSource {
         if indexPath.item == 0 {
             cell.style = .current
         }
-        
-        cell.title.text = "Test"
-        
+
+        cell.title.text = "Room #\(indexPath.item)"
+
         return cell
     }
 

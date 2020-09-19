@@ -6,7 +6,7 @@ class EmptyRoomCollectionViewCell: UICollectionViewCell {
 
         widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.width).isActive = true
         heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.height).isActive = true
-        
+
         let titleLabel = UILabel()
         let messageLabel = UILabel()
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
