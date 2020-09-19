@@ -11,7 +11,9 @@ class RoomCellV2: UICollectionViewCell {
             switch style {
             case .normal:
                 roomView.backgroundColor = .systemGray6
+                badge.style = .normal
             case .current:
+                badge.style = .current
                 roomView.backgroundColor = .brandColor
             }
         }
@@ -32,6 +34,12 @@ class RoomCellV2: UICollectionViewCell {
         view.layer.cornerRadius = 30
         return view
     }()
+    
+    private var badge: RoomBadge = {
+        let badge = RoomBadge(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        badge.translatesAutoresizingMaskIntoConstraints = false
+        return badge
+    }()
 
     private var profileImage: UIImageView!
     private var secondProfileImage: UIImageView!
@@ -48,8 +56,6 @@ class RoomCellV2: UICollectionViewCell {
  
         roomView.addSubview(title)
 
-        let badge = Badge(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-        badge.translatesAutoresizingMaskIntoConstraints = false
         roomView.addSubview(badge)
         
         profileImage = UIImageView(image: nil)
