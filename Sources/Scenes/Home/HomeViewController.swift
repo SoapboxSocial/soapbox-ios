@@ -14,10 +14,15 @@ class HomeViewController: UIViewController {
         collection.automaticallyAdjustsScrollIndicatorInsets = false
         collection.delegate = self
         collection.dataSource = self
-        collection.backgroundColor = .systemBackground
+        collection.backgroundColor = .clear
 
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
-        collection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "test")
+        collection.register(cellWithClass: EmptyRoomCollectionViewCell.self)
+//        collection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "test")
+
+        let refresh = UIRefreshControl()
+        collection.refreshControl = refresh
+//        .addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
 
         view.addSubview(collection)
 
@@ -39,7 +44,7 @@ extension HomeViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        return collectionView.dequeueReusableCell(withReuseIdentifier: "test", for: indexPath)
+        return collectionView.dequeueReusableCell(withClass: EmptyRoomCollectionViewCell.self, for: indexPath)
     }
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -56,5 +61,18 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForHeaderInSection _: Int) -> CGSize {
         return CGSize(width: collectionView.frame.width, height: 40)
+    }
+
+    private func getEmptyHeight() -> CGFloat {
+        var inset = CGFloat(0.0)
+        if #available(iOS 11.0, *) {
+            inset = view.safeAreaInsets.bottom + view.safeAreaInsets.top
+        }
+
+        return view.frame.height - (inset + 40)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
+        return CGSize(width: collectionView.frame.width, height: getEmptyHeight())
     }
 }

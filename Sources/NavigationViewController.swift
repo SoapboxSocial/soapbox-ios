@@ -36,7 +36,7 @@ class NavigationViewController: UINavigationController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        view.backgroundColor = .background
+        view.backgroundColor = .systemBackground
 
         createRoomButton.addTarget(self, action: #selector(didTapCreateRoom), for: .touchUpInside)
         view.addSubview(createRoomButton)
