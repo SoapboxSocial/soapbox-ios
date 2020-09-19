@@ -22,7 +22,6 @@ class HomeViewController: UIViewController {
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
         collection.register(cellWithClass: EmptyRoomCollectionViewCell.self)
         collection.register(cellWithClass: RoomCellV2.self)
-//        collection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "test")
 
         let refresh = UIRefreshControl()
         collection.refreshControl = refresh
