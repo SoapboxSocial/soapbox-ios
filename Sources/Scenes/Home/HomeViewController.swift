@@ -51,6 +51,9 @@ extension HomeViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withClass: RoomCellV2.self, for: indexPath)
         if indexPath.item == 0 {
             cell.style = .current
+            cell.images = 4
+        } else {
+            cell.images = 3
         }
 
         cell.title.text = "Room #\(indexPath.item)"

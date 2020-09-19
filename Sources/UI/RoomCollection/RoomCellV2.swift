@@ -12,12 +12,10 @@ class RoomCellV2: UICollectionViewCell {
                 roomView.backgroundColor = .systemGray6
                 badge.style = .normal
                 title.textColor = .black
-                updateImageColors(border: UIColor.systemGray6.cgColor, background: UIColor.brandColor)
             case .current:
                 badge.style = .current
                 roomView.backgroundColor = .brandColor
                 title.textColor = .white
-                updateImageColors(border: UIColor.brandColor.cgColor, background: UIColor.systemGray6)
             }
         }
     }
@@ -82,8 +80,6 @@ class RoomCellV2: UICollectionViewCell {
             badge.rightAnchor.constraint(equalTo: roomView.rightAnchor, constant: -20),
             badge.bottomAnchor.constraint(equalTo: roomView.bottomAnchor, constant: -20),
         ])
-
-        createImageView(4)
     }
 
     override func layoutSubviews() {
@@ -101,12 +97,54 @@ class RoomCellV2: UICollectionViewCell {
     private func createImageView(_ count: Int) {
         var previousView = roomView
 
-        for i in 0 ..< count {
-            let view = UIImageView(image: nil)
-            view.backgroundColor = .brandColor
-            view.translatesAutoresizingMaskIntoConstraints = false
-            view.layer.borderWidth = 4.0
-            view.layer.borderColor = roomView.backgroundColor?.cgColor
+        for i in 0 ..< min(4, count) {
+            var view: UIView = {
+                if i == 3, count > 3 {
+                    let view = UIView()
+                    if style == .current {
+                        view.backgroundColor = .brandColor
+                    } else {
+                        view.backgroundColor = .systemGray6
+                    }
+
+                    view.translatesAutoresizingMaskIntoConstraints = false
+                    view.layer.borderWidth = 4.0
+                    view.layer.borderColor = roomView.backgroundColor?.cgColor
+
+                    let label = UILabel()
+                    label.translatesAutoresizingMaskIntoConstraints = false
+
+                    label.textColor = .label
+                    if style == .current {
+                        label.textColor = .white
+                    }
+
+                    label.font = .rounded(forTextStyle: .body, weight: .bold)
+                    label.text = "+" + String(min(count - 3, 9))
+                    view.addSubview(label)
+
+                    NSLayoutConstraint.activate([
+                        label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                        label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+                    ])
+
+                    return view
+                } else {
+                    let view = UIImageView(image: nil)
+
+                    if style == .current {
+                        view.backgroundColor = .systemGray6
+                    } else {
+                        view.backgroundColor = .brandColor
+                    }
+
+                    view.translatesAutoresizingMaskIntoConstraints = false
+                    view.layer.borderWidth = 4.0
+                    view.layer.borderColor = roomView.backgroundColor?.cgColor
+                    return view
+                }
+            }()
+
             roomView.addSubview(view)
 
             NSLayoutConstraint.activate([
@@ -124,18 +162,6 @@ class RoomCellV2: UICollectionViewCell {
 
             imageViews.append(view)
             previousView = view
-        }
-    }
-
-    private func updateImageColors(border: CGColor, background: UIColor) {
-        for (i, view) in imageViews.enumerated() {
-            view.layer.borderColor = border
-
-            if i == imageViews.count - 1 {
-                view.backgroundColor = roomView.backgroundColor
-            } else {
-                view.backgroundColor = background
-            }
         }
     }
 }
