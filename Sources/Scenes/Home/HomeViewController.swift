@@ -10,7 +10,10 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        collection = UICollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout())
+        let layout = UICollectionViewFlowLayout()
+        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+
+        collection = UICollectionView(frame: view.frame, collectionViewLayout: layout)
         collection.automaticallyAdjustsScrollIndicatorInsets = false
         collection.delegate = self
         collection.dataSource = self
@@ -18,6 +21,7 @@ class HomeViewController: UIViewController {
 
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
         collection.register(cellWithClass: EmptyRoomCollectionViewCell.self)
+        collection.register(cellWithClass: RoomCellV2.self)
 //        collection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "test")
 
         let refresh = UIRefreshControl()
@@ -40,11 +44,18 @@ extension HomeViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        return 1
+        return 2
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        return collectionView.dequeueReusableCell(withClass: EmptyRoomCollectionViewCell.self, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withClass: RoomCellV2.self, for: indexPath)
+        if indexPath.item == 0 {
+            cell.style = .current
+        }
+        
+        cell.title.text = "Test"
+        
+        return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -55,10 +66,6 @@ extension HomeViewController: UICollectionViewDataSource {
 }
 
 extension HomeViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, insetForSectionAt _: Int) -> UIEdgeInsets {
-        UIEdgeInsets(top: 0, left: 20, bottom: 20, right: 20)
-    }
-
     func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, referenceSizeForHeaderInSection _: Int) -> CGSize {
         return CGSize(width: collectionView.frame.width, height: 40)
     }
@@ -70,9 +77,5 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
         }
 
         return view.frame.height - (inset + 40)
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.frame.width, height: getEmptyHeight())
     }
 }

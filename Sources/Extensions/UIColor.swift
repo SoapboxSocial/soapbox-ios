@@ -1,6 +1,10 @@
 import UIKit
 
 extension UIColor {
+    static var brandColor: UIColor {
+        UIColor(red: 133 / 255, green: 90 / 255, blue: 255 / 255, alpha: 1)
+    }
+
     static var secondaryBackground: UIColor {
         UIColor(red: 133 / 255, green: 90 / 255, blue: 255 / 255, alpha: 1)
     }
