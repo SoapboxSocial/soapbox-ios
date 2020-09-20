@@ -1,3 +1,4 @@
+import AlamofireImage
 import NotificationBannerSwift
 import UIKit
 
@@ -7,15 +8,15 @@ protocol HomeViewControllerOutput {
 }
 
 class HomeViewController: UIViewController {
-    private var currentRoom: Int?
-
     private let refresh = UIRefreshControl()
+    private let downloader = ImageDownloader()
 
-    var collection: UICollectionView!
-
-    var output: HomeViewControllerOutput!
-
+    private var currentRoom: Int?
+    
+    private var collection: UICollectionView!
     private var rooms = [RoomState]()
+    
+    var output: HomeViewControllerOutput!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,7 +39,41 @@ class HomeViewController: UIViewController {
 
         view.addSubview(collection)
 
+        let containView = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        containView.backgroundColor = .secondaryBackground
+        containView.layer.cornerRadius = 40 / 2
+        containView.clipsToBounds = true
+        containView.addTarget(self, action: #selector(openProfile), for: .touchUpInside)
+
+        let barButtonItem = UIBarButtonItem(customView: containView)
+        navigationItem.leftBarButtonItem = barButtonItem
+
+        // @todo find a better place to put this
+        let urlRequest = URLRequest(url: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: "image")!))
+
+        downloader.download(urlRequest, completion: { response in
+            switch response.result {
+            case let .success(image):
+                let imageview = UIImageView(frame: containView.frame)
+                imageview.image = image
+                imageview.contentMode = .scaleAspectFit
+                containView.addSubview(imageview)
+            case .failure:
+                break
+            }
+        })
+
         loadData()
+    }
+
+    @objc private func openProfile() {
+        let id = UserDefaults.standard.integer(forKey: "id")
+        if id == 0 {
+            return (UIApplication.shared.delegate as! AppDelegate).transitionToLoginView()
+        }
+
+        let profile = ProfileViewController(id: id)
+        navigationController?.pushViewController(profile, animated: true)
     }
 
     @objc private func loadData() {
@@ -88,7 +123,7 @@ extension HomeViewController: UICollectionViewDelegate {
         if rooms.count == 0 {
             return
         }
-        
+
         let room = rooms[indexPath.item]
         output.didSelectRoom(room: Int(room.id))
     }
