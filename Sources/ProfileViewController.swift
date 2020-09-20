@@ -176,7 +176,7 @@ class ProfileViewController: UIViewController {
             return
         }
 
-        navigation.didSelectRoom(id: room)
+        navigation.didSelect(room: id)
     }
 
     @objc private func editButtonPressed() {

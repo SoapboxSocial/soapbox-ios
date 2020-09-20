@@ -4,6 +4,8 @@ import NotificationBannerSwift
 import UIKit
 
 class NavigationViewController: UINavigationController {
+    var roomControllerDelegate: RoomControllerDelegate?
+
     var activityIndicator = UIActivityIndicatorView(style: .large)
 
     private var room: Room?
@@ -36,7 +38,7 @@ class NavigationViewController: UINavigationController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        view.backgroundColor = .background
+        view.backgroundColor = .systemBackground
 
         createRoomButton.addTarget(self, action: #selector(didTapCreateRoom), for: .touchUpInside)
         view.addSubview(createRoomButton)
@@ -202,6 +204,7 @@ extension NavigationViewController: RoomViewDelegate {
     }
 
     func shutdownRoom() {
+        roomControllerDelegate?.didLeaveRoom()
         roomDrawer?.removeFromSuperview()
         roomDrawer = nil
 
@@ -213,12 +216,8 @@ extension NavigationViewController: RoomViewDelegate {
     }
 }
 
-extension NavigationViewController: RoomListViewDelegate {
-    func currentRoom() -> Int? {
-        return room?.id
-    }
-
-    func didSelectRoom(id: Int) {
+extension NavigationViewController: RoomController {
+    func didSelect(room id: Int) {
         if activityIndicator.isAnimating {
             return
         }
@@ -244,22 +243,11 @@ extension NavigationViewController: RoomListViewDelegate {
                     // @toodo investigate error type
                     return self.showNetworkError()
                 case .success:
+                    self.roomControllerDelegate?.didJoin(room: id)
                     return self.presentCurrentRoom()
                 }
             }
         }
-    }
-
-    func didBeginSearching() {
-        createRoomButton.isHidden = true
-    }
-
-    func didEndSearching() {
-        if room != nil {
-            return
-        }
-
-        createRoomButton.isHidden = false
     }
 }
 
@@ -282,6 +270,10 @@ extension NavigationViewController: RoomCreationDelegate {
                     self.createRoomButton.isHidden = false
                     return self.showNetworkError()
                 case .success:
+                    if let id = self.room?.id {
+                        self.roomControllerDelegate?.didJoin(room: id)
+                    }
+
                     return self.presentCurrentRoom()
                 }
             }

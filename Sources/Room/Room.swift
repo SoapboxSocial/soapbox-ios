@@ -278,10 +278,12 @@ class Room {
     }
 
     private func on(create: CreateReply) {
+        // @todo may wanna do some delegate call stuff around this.
+        id = Int(create.id)
+
         completion(.success(()))
         completion = nil
 
-        id = Int(create.id)
         receivedOffer(create.answer.sdp)
     }
 

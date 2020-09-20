@@ -56,9 +56,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func createLoggedIn() -> UIViewController {
-        let viewController = RoomListViewController(api: APIClient(), service: ServiceFactory.createRoomService())
+        let viewController = HomeViewController()
+        let presenter = HomePresenter()
+        presenter.output = viewController
+
         let nav = NavigationViewController(rootViewController: viewController)
-        viewController.delegate = nav
+        let interactor = HomeInteractor(output: presenter, service: ServiceFactory.createRoomService(), controller: nav)
+        viewController.output = interactor
+
+        nav.roomControllerDelegate = interactor
 
         return nav
     }
@@ -166,7 +172,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                     return
                 }
 
-                nav.didSelectRoom(id: id)
+                nav.didSelect(room: id)
             case "NEW_FOLLOWER":
                 guard let id = args["id"] as? Int else {
                     return
