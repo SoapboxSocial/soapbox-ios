@@ -30,6 +30,7 @@ class HomeViewController: UIViewController {
         collection.dataSource = self
         collection.backgroundColor = .clear
 
+        // @TODO PROBABLY NEED TO ADD FOOTER VIEW
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
         collection.register(cellWithClass: EmptyRoomCollectionViewCell.self)
         collection.register(cellWithClass: RoomCell.self)
