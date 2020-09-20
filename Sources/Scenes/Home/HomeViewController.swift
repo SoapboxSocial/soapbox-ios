@@ -11,6 +11,7 @@ class HomeViewController: UIViewController {
     private let refresh = UIRefreshControl()
     private let downloader = ImageDownloader()
 
+    private var searchController: UISearchController!
     private var currentRoom: Int?
 
     private var collection: UICollectionView!
@@ -62,6 +63,24 @@ class HomeViewController: UIViewController {
                 break
             }
         })
+
+        let searchViewController = SearchViewController()
+        searchController = UISearchController(searchResultsController: searchViewController)
+        searchController.searchResultsUpdater = searchViewController
+        searchController.delegate = searchViewController
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.showsSearchResultsController = true
+        definesPresentationContext = true
+
+        let scb = searchController.searchBar
+        searchController.hidesNavigationBarDuringPresentation = false
+        scb.returnKeyType = .default
+        scb.delegate = searchViewController
+        scb.placeholder = NSLocalizedString("search_for_friends", comment: "")
+
+        navigationItem.titleView = scb
+        navigationItem.hidesSearchBarWhenScrolling = false
+        searchController.hidesNavigationBarDuringPresentation = false
 
         loadData()
     }
