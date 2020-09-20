@@ -1,4 +1,5 @@
 import UIKit
+import AlamofireImage
 
 protocol SearchViewControllerOutput {}
 
@@ -31,13 +32,14 @@ extension SearchViewController: UICollectionViewDelegate {}
 
 extension SearchViewController: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        return 1
+        return 10
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withClass: UserCellV2.self, for: indexPath)
         cell.displayName.text = "Bob"
         cell.username.text = "@test"
+        cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: "image")!))
         return cell
     }
 }
