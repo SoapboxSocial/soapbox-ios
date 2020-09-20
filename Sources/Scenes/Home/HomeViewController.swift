@@ -65,6 +65,8 @@ class HomeViewController: UIViewController {
             }
         })
 
+        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).defaultTextAttributes = [NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .title3, weight: .bold)]
+
         let searchViewController = SearchViewController()
         searchController = UISearchController(searchResultsController: searchViewController)
         searchController.searchResultsUpdater = searchViewController

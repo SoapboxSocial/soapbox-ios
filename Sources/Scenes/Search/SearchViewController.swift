@@ -1,5 +1,5 @@
-import UIKit
 import AlamofireImage
+import UIKit
 
 protocol SearchViewControllerOutput {}
 
