@@ -66,6 +66,7 @@ class HomeViewController: UIViewController {
         loadData()
     }
 
+    // @todo this needs to be in the interactor
     @objc private func openProfile() {
         let id = UserDefaults.standard.integer(forKey: "id")
         if id == 0 {
