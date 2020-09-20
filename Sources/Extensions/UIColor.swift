@@ -4,7 +4,7 @@ extension UIColor {
     static var brandColor: UIColor {
         UIColor(red: 133 / 255, green: 90 / 255, blue: 255 / 255, alpha: 1)
     }
-    
+
     static var background: UIColor {
         return UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
             if UITraitCollection.userInterfaceStyle == .dark {
@@ -14,7 +14,7 @@ extension UIColor {
             }
         }
     }
-    
+
     static var foreground: UIColor {
         return UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
             if UITraitCollection.userInterfaceStyle == .dark {

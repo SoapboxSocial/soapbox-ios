@@ -6,12 +6,12 @@ class SearchViewController: UIViewController {
     var output: SearchViewControllerOutput!
 
     private var collection: UICollectionView!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         view.backgroundColor = .background
-        
+
         let layout = UICollectionViewFlowLayout()
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
 
@@ -20,28 +20,25 @@ class SearchViewController: UIViewController {
         collection.delegate = self
         collection.dataSource = self
         collection.backgroundColor = .clear
-        
+
         collection.register(cellWithClass: UserCellV2.self)
-        
+
         view.addSubview(collection)
     }
 }
 
-extension SearchViewController: UICollectionViewDelegate {
-    
-}
+extension SearchViewController: UICollectionViewDelegate {}
 
 extension SearchViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         return 1
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withClass: UserCellV2.self, for: indexPath)
         cell.displayName.text = "Bob"
         cell.username.text = "@test"
         return cell
-
     }
 }
 
