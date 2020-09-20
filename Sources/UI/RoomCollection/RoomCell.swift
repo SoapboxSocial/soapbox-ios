@@ -37,7 +37,7 @@ class RoomCell: UICollectionViewCell {
 
     private var roomView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemGray6
+        view.backgroundColor = .foreground
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 30
         return view
