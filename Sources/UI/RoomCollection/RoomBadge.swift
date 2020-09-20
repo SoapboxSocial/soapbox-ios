@@ -14,7 +14,7 @@ class RoomBadge: UIView {
                 label.textColor = .white
             case .current:
                 backgroundColor = .white
-                label.text = NSLocalizedString("join_in", comment: "")
+                label.text = NSLocalizedString("current", comment: "")
                 label.textColor = .black
             }
         }

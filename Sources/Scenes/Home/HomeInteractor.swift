@@ -1,11 +1,20 @@
 import Foundation
 import SwiftProtobuf
 
-protocol RoomController {}
+protocol RoomController {
+    func didSelect(room id: Int)
+}
+
+protocol RoomControllerDelegate {
+    func didJoin(room: Int)
+    func didLeaveRoom()
+}
 
 protocol HomeInteractorOutput {
     func didFailToFetchRooms()
     func didFetchRooms(rooms: RoomList)
+    func didJoin(room: Int)
+    func didLeaveRoom()
 }
 
 class HomeInteractor: HomeViewControllerOutput {
@@ -32,5 +41,19 @@ class HomeInteractor: HomeViewControllerOutput {
                 }
             }
         }
+    }
+
+    func didSelectRoom(room: Int) {
+        controller.didSelect(room: room)
+    }
+}
+
+extension HomeInteractor: RoomControllerDelegate {
+    func didJoin(room: Int) {
+        output.didJoin(room: room)
+    }
+
+    func didLeaveRoom() {
+        output.didLeaveRoom()
     }
 }

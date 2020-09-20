@@ -4,6 +4,8 @@ import NotificationBannerSwift
 import UIKit
 
 class NavigationViewController: UINavigationController {
+    var roomControllerDelegate: RoomControllerDelegate?
+
     var activityIndicator = UIActivityIndicatorView(style: .large)
 
     private var room: Room?
@@ -202,6 +204,7 @@ extension NavigationViewController: RoomViewDelegate {
     }
 
     func shutdownRoom() {
+        roomControllerDelegate?.didLeaveRoom()
         roomDrawer?.removeFromSuperview()
         roomDrawer = nil
 
@@ -214,15 +217,7 @@ extension NavigationViewController: RoomViewDelegate {
 }
 
 extension NavigationViewController: RoomController {
-    func didSelect(room _: Int) {}
-}
-
-extension NavigationViewController {
-    func currentRoom() -> Int? {
-        return room?.id
-    }
-
-    func didSelectRoom(id: Int) {
+    func didSelect(room id: Int) {
         if activityIndicator.isAnimating {
             return
         }
@@ -248,22 +243,11 @@ extension NavigationViewController {
                     // @toodo investigate error type
                     return self.showNetworkError()
                 case .success:
+                    self.roomControllerDelegate?.didJoin(room: id)
                     return self.presentCurrentRoom()
                 }
             }
         }
-    }
-
-    func didBeginSearching() {
-        createRoomButton.isHidden = true
-    }
-
-    func didEndSearching() {
-        if room != nil {
-            return
-        }
-
-        createRoomButton.isHidden = false
     }
 }
 

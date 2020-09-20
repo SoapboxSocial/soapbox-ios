@@ -1,6 +1,6 @@
 import UIKit
 
-class RoomCellV2: UICollectionViewCell {
+class RoomCell: UICollectionViewCell {
     enum RoomStyle {
         case normal, current
     }
@@ -165,6 +165,7 @@ class RoomCellV2: UICollectionViewCell {
             }
 
             imageViews.append(view)
+            view.layer.cornerRadius = view.frame.height / 2
             previousView = view
         }
     }

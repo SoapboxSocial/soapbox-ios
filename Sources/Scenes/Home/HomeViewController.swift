@@ -3,9 +3,12 @@ import UIKit
 
 protocol HomeViewControllerOutput {
     func fetchRooms()
+    func didSelectRoom(room: Int)
 }
 
 class HomeViewController: UIViewController {
+    private var currentRoom: Int?
+
     private let refresh = UIRefreshControl()
 
     var collection: UICollectionView!
@@ -28,7 +31,7 @@ class HomeViewController: UIViewController {
 
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
         collection.register(cellWithClass: EmptyRoomCollectionViewCell.self)
-        collection.register(cellWithClass: RoomCellV2.self)
+        collection.register(cellWithClass: RoomCell.self)
 
         collection.refreshControl = refresh
         refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -62,9 +65,30 @@ extension HomeViewController: HomePresenterOutput {
         )
         banner.show(cornerRadius: 10, shadowBlurRadius: 15)
     }
+
+    func displayCurrentRoom(_ id: Int) {
+        currentRoom = id
+
+        DispatchQueue.main.async {
+            self.collection.reloadData()
+        }
+    }
+
+    func removeCurrentRoom() {
+        currentRoom = nil
+
+        DispatchQueue.main.async {
+            self.collection.reloadData()
+        }
+    }
 }
 
-extension HomeViewController: UICollectionViewDelegate {}
+extension HomeViewController: UICollectionViewDelegate {
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let room = rooms[indexPath.item]
+        output.didSelectRoom(room: Int(room.id))
+    }
+}
 
 extension HomeViewController: UICollectionViewDataSource {
     func numberOfSections(in _: UICollectionView) -> Int {
@@ -86,7 +110,7 @@ extension HomeViewController: UICollectionViewDataSource {
 
         let room = rooms[indexPath.item]
 
-        let cell = collectionView.dequeueReusableCell(withClass: RoomCellV2.self, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withClass: RoomCell.self, for: indexPath)
         cell.members = room.members
 
         cell.title.text = {
@@ -96,6 +120,12 @@ extension HomeViewController: UICollectionViewDataSource {
 
             return NSLocalizedString("listen_in", comment: "")
         }()
+
+        if let id = currentRoom, room.id == id {
+            cell.style = .current
+        } else {
+            cell.style = .normal
+        }
 
         return cell
     }
