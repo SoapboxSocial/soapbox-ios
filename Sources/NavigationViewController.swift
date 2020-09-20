@@ -50,12 +50,11 @@ class NavigationViewController: UINavigationController {
         activityIndicator.center = view.center
         view.addSubview(activityIndicator)
 
-        navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationBar.shadowImage = UIImage()
         navigationBar.isHidden = false
         navigationBar.isTranslucent = true
-        navigationBar.backgroundColor = .clear
-        navigationBar.tintColor = .secondaryBackground
+        navigationBar.barTintColor = .background
+        navigationBar.tintColor = .brandColor
     }
 
     @objc func didTapCreateRoom() {
