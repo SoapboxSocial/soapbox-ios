@@ -80,6 +80,9 @@ class HomeViewController: UIViewController {
         scb.returnKeyType = .default
         scb.delegate = searchViewController
         scb.placeholder = NSLocalizedString("search_for_friends", comment: "")
+        scb.searchTextField.layer.cornerRadius = 15
+        scb.searchTextField.layer.masksToBounds = true
+        scb.searchTextField.leftView = nil
 
         navigationItem.titleView = scb
         navigationItem.hidesSearchBarWhenScrolling = false
