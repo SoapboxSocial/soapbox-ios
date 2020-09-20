@@ -11,7 +11,7 @@ class RoomCell: UICollectionViewCell {
             case .normal:
                 roomView.backgroundColor = .systemGray6
                 badge.style = .normal
-                title.textColor = .black
+                title.textColor = .label
             case .current:
                 badge.style = .current
                 roomView.backgroundColor = .brandColor
