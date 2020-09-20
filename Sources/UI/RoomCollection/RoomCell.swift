@@ -30,8 +30,8 @@ class RoomCell: UICollectionViewCell {
 
     var members = [RoomState.RoomMember]() {
         didSet {
-            imageViews.forEach { $0.removeFromSuperview() }
-            createImageViews()
+//            imageViews.forEach { $0.removeFromSuperview() }
+//            createImageViews()
         }
     }
 
@@ -49,7 +49,7 @@ class RoomCell: UICollectionViewCell {
         return badge
     }()
 
-    private var imageViews = [UIView]()
+//    private var imageViews = [UIView]()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -85,88 +85,88 @@ class RoomCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        for view in imageViews {
-            view.layer.cornerRadius = view.frame.size.height / 2
-            view.layer.masksToBounds = true
-            view.clipsToBounds = true
-        }
+//        for view in imageViews {
+//            view.layer.cornerRadius = view.frame.size.height / 2
+//            view.layer.masksToBounds = true
+//            view.clipsToBounds = true
+//        }
     }
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func createImageViews() {
-        var previousView = roomView
-
-        var count = members.count
-
-        for i in 0 ..< min(4, count) {
-            var view: UIView = {
-                if i == 3, count > 3 {
-                    let view = UIView()
-                    if style == .current {
-                        view.backgroundColor = .brandColor
-                    } else {
-                        view.backgroundColor = .systemGray6
-                    }
-
-                    view.translatesAutoresizingMaskIntoConstraints = false
-                    view.layer.borderWidth = 4.0
-                    view.layer.borderColor = roomView.backgroundColor?.cgColor
-
-                    let label = UILabel()
-                    label.translatesAutoresizingMaskIntoConstraints = false
-
-                    label.textColor = .label
-                    if style == .current {
-                        label.textColor = .white
-                    }
-
-                    label.font = .rounded(forTextStyle: .body, weight: .bold)
-                    label.text = "+" + String(min(count - 3, 9))
-                    view.addSubview(label)
-
-                    NSLayoutConstraint.activate([
-                        label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                        label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-                    ])
-
-                    return view
-                } else {
-                    let view = UIImageView(image: nil)
-
-                    if style == .current {
-                        view.backgroundColor = .systemGray6
-                    } else {
-                        view.backgroundColor = .brandColor
-                    }
-
-                    view.translatesAutoresizingMaskIntoConstraints = false
-                    view.layer.borderWidth = 4.0
-                    view.layer.borderColor = roomView.backgroundColor?.cgColor
-                    return view
-                }
-            }()
-
-            roomView.addSubview(view)
-
-            NSLayoutConstraint.activate([
-                view.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 20),
-                view.bottomAnchor.constraint(equalTo: roomView.bottomAnchor, constant: -20),
-                view.heightAnchor.constraint(equalTo: badge.heightAnchor),
-                view.widthAnchor.constraint(equalTo: badge.heightAnchor),
-            ])
-
-            if i == 0 {
-                NSLayoutConstraint.activate([view.leftAnchor.constraint(equalTo: roomView.leftAnchor, constant: 20)])
-            } else {
-                NSLayoutConstraint.activate([view.leftAnchor.constraint(equalTo: previousView.rightAnchor, constant: -8)])
-            }
-
-            imageViews.append(view)
-            view.layer.cornerRadius = view.frame.height / 2
-            previousView = view
-        }
-    }
+//    private func createImageViews() {
+//        var previousView = roomView
+//
+//        var count = members.count
+//
+//        for i in 0 ..< min(4, count) {
+//            var view: UIView = {
+//                if i == 3, count > 3 {
+//                    let view = UIView()
+//                    if style == .current {
+//                        view.backgroundColor = .brandColor
+//                    } else {
+//                        view.backgroundColor = .systemGray6
+//                    }
+//
+//                    view.translatesAutoresizingMaskIntoConstraints = false
+//                    view.layer.borderWidth = 4.0
+//                    view.layer.borderColor = roomView.backgroundColor?.cgColor
+//
+//                    let label = UILabel()
+//                    label.translatesAutoresizingMaskIntoConstraints = false
+//
+//                    label.textColor = .label
+//                    if style == .current {
+//                        label.textColor = .white
+//                    }
+//
+//                    label.font = .rounded(forTextStyle: .body, weight: .bold)
+//                    label.text = "+" + String(min(count - 3, 9))
+//                    view.addSubview(label)
+//
+//                    NSLayoutConstraint.activate([
+//                        label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//                        label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+//                    ])
+//
+//                    return view
+//                } else {
+//                    let view = UIImageView(image: nil)
+//
+//                    if style == .current {
+//                        view.backgroundColor = .systemGray6
+//                    } else {
+//                        view.backgroundColor = .brandColor
+//                    }
+//
+//                    view.translatesAutoresizingMaskIntoConstraints = false
+//                    view.layer.borderWidth = 4.0
+//                    view.layer.borderColor = roomView.backgroundColor?.cgColor
+//                    return view
+//                }
+//            }()
+//
+//            roomView.addSubview(view)
+//
+//            NSLayoutConstraint.activate([
+//                view.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 20),
+//                view.bottomAnchor.constraint(equalTo: roomView.bottomAnchor, constant: -20),
+//                view.heightAnchor.constraint(equalTo: badge.heightAnchor),
+//                view.widthAnchor.constraint(equalTo: badge.heightAnchor),
+//            ])
+//
+//            if i == 0 {
+//                NSLayoutConstraint.activate([view.leftAnchor.constraint(equalTo: roomView.leftAnchor, constant: 20)])
+//            } else {
+//                NSLayoutConstraint.activate([view.leftAnchor.constraint(equalTo: previousView.rightAnchor, constant: -8)])
+//            }
+//
+//            imageViews.append(view)
+//            view.layer.cornerRadius = view.frame.height / 2
+//            previousView = view
+//        }
+//    }
 }

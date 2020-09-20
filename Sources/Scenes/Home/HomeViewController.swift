@@ -85,6 +85,10 @@ extension HomeViewController: HomePresenterOutput {
 
 extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if rooms.count == 0 {
+            return
+        }
+        
         let room = rooms[indexPath.item]
         output.didSelectRoom(room: Int(room.id))
     }
