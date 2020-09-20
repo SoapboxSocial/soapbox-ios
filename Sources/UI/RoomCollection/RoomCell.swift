@@ -9,7 +9,7 @@ class RoomCell: UICollectionViewCell {
         didSet {
             switch style {
             case .normal:
-                roomView.backgroundColor = .systemGray6
+                roomView.backgroundColor = .foreground
                 badge.style = .normal
                 title.textColor = .label
             case .current:
