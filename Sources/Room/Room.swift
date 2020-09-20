@@ -278,10 +278,11 @@ class Room {
     }
 
     private func on(create: CreateReply) {
+        id = Int(create.id)
+
         completion(.success(()))
         completion = nil
 
-        id = Int(create.id)
         receivedOffer(create.answer.sdp)
     }
 

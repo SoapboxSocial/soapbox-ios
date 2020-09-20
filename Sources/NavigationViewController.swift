@@ -270,6 +270,10 @@ extension NavigationViewController: RoomCreationDelegate {
                     self.createRoomButton.isHidden = false
                     return self.showNetworkError()
                 case .success:
+                    if let id = self.room?.id {
+                        self.roomControllerDelegate?.didJoin(room: id)
+                    }
+
                     return self.presentCurrentRoom()
                 }
             }

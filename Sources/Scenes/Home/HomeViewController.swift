@@ -12,10 +12,10 @@ class HomeViewController: UIViewController {
     private let downloader = ImageDownloader()
 
     private var currentRoom: Int?
-    
+
     private var collection: UICollectionView!
     private var rooms = [RoomState]()
-    
+
     var output: HomeViewControllerOutput!
 
     override func viewDidLoad() {
