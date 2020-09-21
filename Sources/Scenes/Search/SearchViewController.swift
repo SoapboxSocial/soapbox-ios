@@ -26,6 +26,7 @@ class SearchViewController: UIViewController {
         collection.delegate = self
         collection.dataSource = self
         collection.backgroundColor = .clear
+        collection.keyboardDismissMode = .onDrag
 
         collection.refreshControl = refresh
         refresh.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
