@@ -101,7 +101,7 @@ class HomeViewController: UIViewController {
             return (UIApplication.shared.delegate as! AppDelegate).transitionToLoginView()
         }
 
-        let profile = ProfileViewController(id: id)
+        let profile = SceneFactory.createProfileViewController(id: id)
         navigationController?.pushViewController(profile, animated: true)
     }
 

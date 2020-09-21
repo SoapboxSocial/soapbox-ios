@@ -1,6 +1,22 @@
+import AlamofireImage
 import UIKit
 
+protocol ProfileViewControllerOutput {
+    func loadData()
+}
+
 class ProfileViewControllerV2: UIViewController {
+    var output: ProfileViewControllerOutput!
+
+    private let image: UIImageView = {
+        let image = UIImageView()
+        image.backgroundColor = .brandColor
+        image.layer.cornerRadius = 80 / 2
+        image.clipsToBounds = true
+        image.translatesAutoresizingMaskIntoConstraints = false
+        return image
+    }()
+
     private let displayName: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -15,16 +31,34 @@ class ProfileViewControllerV2: UIViewController {
         return label
     }()
 
+    private let followersCountLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .rounded(forTextStyle: .body, weight: .semibold)
+        return label
+    }()
+
+    private let followingCountLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .rounded(forTextStyle: .body, weight: .semibold)
+        return label
+    }()
+
+    private let followsYouBadge: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemGray5
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 5
+        return view
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let image = UIImageView()
-        image.backgroundColor = .brandColor
-        image.layer.cornerRadius = 80 / 2
-        image.clipsToBounds = true
-        image.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(image)
+        output.loadData()
 
+        view.addSubview(image)
         view.addSubview(displayName)
         view.addSubview(username)
 
@@ -34,10 +68,6 @@ class ProfileViewControllerV2: UIViewController {
         followButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(followButton)
 
-        let followsYouBadge = UIView()
-        followsYouBadge.backgroundColor = .systemGray5
-        followsYouBadge.translatesAutoresizingMaskIntoConstraints = false
-        followsYouBadge.layer.cornerRadius = 5
         view.addSubview(followsYouBadge)
 
         let followsYouLabel = UILabel()
@@ -51,9 +81,6 @@ class ProfileViewControllerV2: UIViewController {
         followersView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(followersView)
 
-        let followersCountLabel = UILabel()
-        followersCountLabel.translatesAutoresizingMaskIntoConstraints = false
-        followersCountLabel.font = .rounded(forTextStyle: .body, weight: .semibold)
         followersView.addSubview(followersCountLabel)
 
         let followersLabel = UILabel()
@@ -65,9 +92,6 @@ class ProfileViewControllerV2: UIViewController {
         followingView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(followingView)
 
-        let followingCountLabel = UILabel()
-        followingCountLabel.translatesAutoresizingMaskIntoConstraints = false
-        followingCountLabel.font = .rounded(forTextStyle: .body, weight: .semibold)
         followingView.addSubview(followingCountLabel)
 
         let followingLabel = UILabel()
@@ -77,11 +101,6 @@ class ProfileViewControllerV2: UIViewController {
         followingView.addSubview(followingLabel)
 
         followersLabel.text = NSLocalizedString("followers", comment: "")
-
-        displayName.text = "Dean Eigenmann"
-        username.text = "@dean"
-        followersCountLabel.text = "35.3K"
-        followingCountLabel.text = "1"
 
         NSLayoutConstraint.activate([
             image.heightAnchor.constraint(equalToConstant: 80),
@@ -150,5 +169,23 @@ class ProfileViewControllerV2: UIViewController {
             followingLabel.topAnchor.constraint(equalTo: followingCountLabel.bottomAnchor, constant: 0),
             followingLabel.leftAnchor.constraint(equalTo: followingCountLabel.leftAnchor, constant: 0),
         ])
+    }
+}
+
+extension ProfileViewControllerV2: ProfilePresenterOutput {
+    func display(profile: APIClient.Profile) {
+        displayName.text = profile.displayName
+        username.text = "@" + profile.username
+        followersCountLabel.text = String(profile.followers)
+        followingCountLabel.text = String(profile.following)
+
+        if profile.image != "" {
+            image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + profile.image))
+        }
+
+        followsYouBadge.isHidden = true
+        if let followed = profile.followedBy {
+            followsYouBadge.isHidden = !followed
+        }
     }
 }
