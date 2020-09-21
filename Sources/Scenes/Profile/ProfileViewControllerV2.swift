@@ -53,6 +53,14 @@ class ProfileViewControllerV2: UIViewController {
         return view
     }()
 
+    private let followButton: SoapButton = {
+        let button = SoapButton(size: .regular)
+        button.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
+        button.setTitle(NSLocalizedString("unfollow", comment: ""), for: .selected)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -62,10 +70,6 @@ class ProfileViewControllerV2: UIViewController {
         view.addSubview(displayName)
         view.addSubview(username)
 
-        let followButton = SoapButton(size: .regular)
-        followButton.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
-        followButton.setTitle(NSLocalizedString("unfollow", comment: ""), for: .selected)
-        followButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(followButton)
 
         view.addSubview(followsYouBadge)
@@ -181,6 +185,10 @@ extension ProfileViewControllerV2: ProfilePresenterOutput {
 
         if profile.image != "" {
             image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + profile.image))
+        }
+
+        if let following = profile.isFollowing, following == true {
+            followButton.isSelected.toggle()
         }
 
         followsYouBadge.isHidden = true
