@@ -71,7 +71,7 @@ class HomeViewController: UIViewController {
         let searchViewController = SceneFactory.createSearchViewController()
         searchController = UISearchController(searchResultsController: searchViewController)
         searchController.searchResultsUpdater = searchViewController
-        searchController.delegate = searchViewController
+        searchController.delegate = searchViewController // @TODO: PROBABLY NEEDS TO BE SELF SO WE CAN HIDE AND SHOW CREATE ROOM BUTTON.
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.showsSearchResultsController = true
         definesPresentationContext = true
