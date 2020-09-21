@@ -18,7 +18,7 @@ extension SearchInteractor: SearchViewControllerOutput {
     func search(_ keyword: String) {
         api.search(keyword, callback: { result in
             switch result {
-            case .failure:
+            case .failure: // @TODO
                 break
             case let .success(users):
                 self.output.didFetch(users: users)
