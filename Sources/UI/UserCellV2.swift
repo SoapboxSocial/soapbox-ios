@@ -3,7 +3,7 @@ import UIKit
 class UserCellV2: UICollectionViewCell {
     var image: UIImageView = {
         let view = UIImageView()
-        view.layer.cornerRadius = 64 / 2
+        view.layer.cornerRadius = 48 / 2
         view.backgroundColor = .brandColor
         view.clipsToBounds = true
         view.layer.masksToBounds = true
@@ -14,7 +14,7 @@ class UserCellV2: UICollectionViewCell {
     var displayName: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .rounded(forTextStyle: .title2, weight: .bold)
+        label.font = .rounded(forTextStyle: .title3, weight: .bold)
         label.textColor = .label
         return label
     }()
@@ -55,8 +55,8 @@ class UserCellV2: UICollectionViewCell {
         userView.addSubview(image)
 
         NSLayoutConstraint.activate([
-            image.heightAnchor.constraint(equalToConstant: 64),
-            image.widthAnchor.constraint(equalToConstant: 64),
+            image.heightAnchor.constraint(equalToConstant: 48),
+            image.widthAnchor.constraint(equalToConstant: 48),
             image.topAnchor.constraint(equalTo: userView.topAnchor, constant: 20),
             image.leftAnchor.constraint(equalTo: userView.leftAnchor, constant: 20),
             image.bottomAnchor.constraint(equalTo: userView.bottomAnchor, constant: -20),
