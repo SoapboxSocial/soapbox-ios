@@ -6,13 +6,13 @@ class EditProfileViewController: UIViewController {
     private var activityIndicator = UIActivityIndicatorView(style: .large)
 
     private var user: APIClient.Profile
-    private let parentVC: ProfileViewController
+    private let parentVC: ProfileViewControllerV2
     private var imageView: EditProfileImageButton!
     private var imagePicker: ImagePicker!
 
     private var image: UIImage?
 
-    init(user: APIClient.Profile, parent: ProfileViewController) {
+    init(user: APIClient.Profile, parent: ProfileViewControllerV2) {
         parentVC = parent
         self.user = user
         super.init(nibName: nil, bundle: nil)
@@ -94,7 +94,7 @@ class EditProfileViewController: UIViewController {
                 banner.show(cornerRadius: 10, shadowBlurRadius: 15)
             case .success:
                 DispatchQueue.main.async {
-                    self.parentVC.loadData()
+                    self.parentVC.output.loadData()
                     self.dismiss(animated: true)
                 }
             }

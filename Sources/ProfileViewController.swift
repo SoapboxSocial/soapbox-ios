@@ -180,9 +180,9 @@ class ProfileViewController: UIViewController {
     }
 
     @objc private func editButtonPressed() {
-        let vc = EditProfileViewController(user: user, parent: self)
-        vc.modalPresentationStyle = .fullScreen
-        present(vc, animated: true)
+//        let vc = EditProfileViewController(user: user, parent: self)
+//        vc.modalPresentationStyle = .fullScreen
+//        present(vc, animated: true)
     }
 
     @objc private func didTapFollowingLabel() {

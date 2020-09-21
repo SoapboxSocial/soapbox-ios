@@ -6,7 +6,7 @@ protocol ProfileViewControllerOutput {
 }
 
 class ProfileViewControllerV2: UIViewController {
-    var id: Int!
+    private var user: APIClient.Profile!
 
     var output: ProfileViewControllerOutput!
 
@@ -188,13 +188,19 @@ class ProfileViewControllerV2: UIViewController {
 
     // @TODO THIS SHOULD BE DONE THROUGH INTERACTOR FLOW
     @objc private func didTapFollowersLabel() {
-        let list = SceneFactory.createFollowerViewController(id: id, userListFunc: APIClient().followers)
+        let list = SceneFactory.createFollowerViewController(id: user.id, userListFunc: APIClient().followers)
         navigationController?.pushViewController(list, animated: true)
     }
 
     @objc private func didTapFollowingLabel() {
-        let list = SceneFactory.createFollowerViewController(id: id, userListFunc: APIClient().following)
+        let list = SceneFactory.createFollowerViewController(id: user.id, userListFunc: APIClient().following)
         navigationController?.pushViewController(list, animated: true)
+    }
+    
+    @objc private func editPressed() {
+        let vc = EditProfileViewController(user: user, parent: self)
+        vc.modalPresentationStyle = .fullScreen
+        present(vc, animated: true)
     }
 }
 
@@ -216,11 +222,12 @@ extension ProfileViewControllerV2: ProfilePresenterOutput {
         setBasicInfo(profile)
 
         followButton.setTitle(NSLocalizedString("edit", comment: ""), for: .normal)
+        followButton.addTarget(self, action: #selector(editPressed), for: .touchUpInside)
         followsYouBadge.isHidden = true
     }
 
     private func setBasicInfo(_ profile: APIClient.Profile) {
-        id = profile.id
+        user = profile
         displayName.text = profile.displayName
         username.text = "@" + profile.username
         followersCountLabel.text = String(profile.followers)
