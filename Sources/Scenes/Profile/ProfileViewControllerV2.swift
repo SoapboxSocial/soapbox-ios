@@ -1,6 +1,20 @@
 import UIKit
 
 class ProfileViewControllerV2: UIViewController {
+    private let displayName: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .rounded(forTextStyle: .title2, weight: .bold)
+        return label
+    }()
+
+    private let username: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .rounded(forTextStyle: .title3, weight: .regular)
+        return label
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -11,20 +25,13 @@ class ProfileViewControllerV2: UIViewController {
         image.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(image)
 
-        let displayName = UILabel()
-        displayName.translatesAutoresizingMaskIntoConstraints = false
-        displayName.font = .rounded(forTextStyle: .title2, weight: .bold)
         view.addSubview(displayName)
+        view.addSubview(username)
 
         let followButton = SoapButton(size: .regular)
         followButton.setTitle("Unfollow", for: .normal)
         followButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(followButton)
-
-        let username = UILabel()
-        username.translatesAutoresizingMaskIntoConstraints = false
-        username.font = .rounded(forTextStyle: .title3, weight: .regular)
-        view.addSubview(username)
 
         let followsYouBadge = UIView()
         followsYouBadge.backgroundColor = .systemGray5
@@ -35,7 +42,7 @@ class ProfileViewControllerV2: UIViewController {
         let followsYouLabel = UILabel()
         followsYouLabel.translatesAutoresizingMaskIntoConstraints = false
         followsYouLabel.font = .rounded(forTextStyle: .body, weight: .semibold)
-        followsYouLabel.textColor = .systemGray3
+        followsYouLabel.textColor = .systemGray2
         followsYouLabel.text = NSLocalizedString("follows_you", comment: "")
         followsYouBadge.addSubview(followsYouLabel)
 
