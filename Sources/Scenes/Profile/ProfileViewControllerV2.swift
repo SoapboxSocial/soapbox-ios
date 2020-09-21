@@ -64,6 +64,8 @@ class ProfileViewControllerV2: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        view.backgroundColor = .background
+
         output.loadData()
 
         view.addSubview(image)
