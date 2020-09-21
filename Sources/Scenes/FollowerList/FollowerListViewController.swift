@@ -23,7 +23,7 @@ class FollowerListViewController: UIViewController {
         collection.dataSource = self
         collection.backgroundColor = .clear
 
-        collection.register(cellWithClass: UserCellV2.self)
+        collection.register(cellWithClass: UserCell.self)
 
         output.loadFollowers()
 
@@ -57,7 +57,7 @@ extension FollowerListViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withClass: UserCellV2.self, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withClass: UserCell.self, for: indexPath)
 
         let user = users[indexPath.item]
 

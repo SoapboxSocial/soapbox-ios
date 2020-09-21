@@ -1,6 +1,6 @@
 import UIKit
 
-class UserCellV2: UICollectionViewCell {
+class UserCell: UICollectionViewCell {
     var image: UIImageView = {
         let view = UIImageView()
         view.layer.cornerRadius = 48 / 2

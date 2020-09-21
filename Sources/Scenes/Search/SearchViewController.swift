@@ -31,7 +31,7 @@ class SearchViewController: UIViewController {
         collection.refreshControl = refresh
         refresh.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
 
-        collection.register(cellWithClass: UserCellV2.self)
+        collection.register(cellWithClass: UserCell.self)
 
         output.search("*")
 
@@ -57,7 +57,7 @@ extension SearchViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withClass: UserCellV2.self, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withClass: UserCell.self, for: indexPath)
 
         let user = users[indexPath.item]
 
