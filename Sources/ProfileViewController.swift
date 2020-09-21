@@ -186,12 +186,12 @@ class ProfileViewController: UIViewController {
     }
 
     @objc private func didTapFollowingLabel() {
-        let list = FollowerListViewController(id: id, userListFunc: api.following)
+        let list = SceneFactory.createFollowerViewController(id: id, userListFunc: api.following)
         navigationController?.pushViewController(list, animated: true)
     }
 
     @objc private func didTapFollowersLabel() {
-        let list = FollowerListViewController(id: id, userListFunc: api.followers)
+        let list = SceneFactory.createFollowerViewController(id: id, userListFunc: api.followers)
         navigationController?.pushViewController(list, animated: true)
     }
 
