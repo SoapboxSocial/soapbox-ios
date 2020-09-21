@@ -15,7 +15,7 @@ class FollowerListPresenter: FollowerListInteractorOutput {
     func present(users: [APIClient.User]) {
         output.display(users: users)
     }
-    
+
     func presentGeneralError() {
         output.displayError(
             title: NSLocalizedString("something_went_wrong", comment: ""),

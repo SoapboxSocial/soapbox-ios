@@ -1,5 +1,5 @@
-import UIKit
 import NotificationBannerSwift
+import UIKit
 
 protocol FollowerListViewControllerOutput {
     func loadFollowers()
@@ -38,10 +38,10 @@ extension FollowerListViewController: FollowerListPresenterOutput {
             subtitle: description,
             style: .danger
         )
-        
+
         banner.show(cornerRadius: 10, shadowBlurRadius: 15)
     }
-    
+
     func display(users: [APIClient.User]) {
         self.users = users
 
