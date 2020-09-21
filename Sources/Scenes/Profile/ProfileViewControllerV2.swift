@@ -6,6 +6,8 @@ protocol ProfileViewControllerOutput {
 }
 
 class ProfileViewControllerV2: UIViewController {
+    var id: Int!
+
     var output: ProfileViewControllerOutput!
 
     private let image: UIImageView = {
@@ -81,8 +83,12 @@ class ProfileViewControllerV2: UIViewController {
         followsYouLabel.text = NSLocalizedString("follows_you", comment: "")
         followsYouBadge.addSubview(followsYouLabel)
 
+        let followersRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapFollowersLabel))
+
         let followersView = UIView()
         followersView.translatesAutoresizingMaskIntoConstraints = false
+        followersView.addGestureRecognizer(followersRecognizer)
+        followersView.isUserInteractionEnabled = true
         view.addSubview(followersView)
 
         followersView.addSubview(followersCountLabel)
@@ -92,8 +98,12 @@ class ProfileViewControllerV2: UIViewController {
         followersLabel.font = .rounded(forTextStyle: .body, weight: .regular)
         followersView.addSubview(followersLabel)
 
+        let followingRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapFollowingLabel))
+
         let followingView = UIView()
         followingView.translatesAutoresizingMaskIntoConstraints = false
+        followingView.addGestureRecognizer(followingRecognizer)
+        followingView.isUserInteractionEnabled = true
         view.addSubview(followingView)
 
         followingView.addSubview(followingCountLabel)
@@ -161,6 +171,7 @@ class ProfileViewControllerV2: UIViewController {
         NSLayoutConstraint.activate([
             followingView.topAnchor.constraint(equalTo: username.bottomAnchor, constant: 20),
             followingView.leftAnchor.constraint(equalTo: followersView.rightAnchor, constant: 40),
+            followingView.rightAnchor.constraint(equalTo: followingLabel.rightAnchor),
             followingView.bottomAnchor.constraint(equalTo: followersLabel.bottomAnchor),
         ])
 
@@ -173,6 +184,17 @@ class ProfileViewControllerV2: UIViewController {
             followingLabel.topAnchor.constraint(equalTo: followingCountLabel.bottomAnchor, constant: 0),
             followingLabel.leftAnchor.constraint(equalTo: followingCountLabel.leftAnchor, constant: 0),
         ])
+    }
+
+    // @TODO THIS SHOULD BE DONE THROUGH INTERACTOR FLOW
+    @objc private func didTapFollowersLabel() {
+        let list = SceneFactory.createFollowerViewController(id: id, userListFunc: APIClient().followers)
+        navigationController?.pushViewController(list, animated: true)
+    }
+
+    @objc private func didTapFollowingLabel() {
+        let list = SceneFactory.createFollowerViewController(id: id, userListFunc: APIClient().following)
+        navigationController?.pushViewController(list, animated: true)
     }
 }
 
@@ -198,6 +220,7 @@ extension ProfileViewControllerV2: ProfilePresenterOutput {
     }
 
     private func setBasicInfo(_ profile: APIClient.Profile) {
+        id = profile.id
         displayName.text = profile.displayName
         username.text = "@" + profile.username
         followersCountLabel.text = String(profile.followers)
