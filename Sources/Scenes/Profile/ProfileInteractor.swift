@@ -23,6 +23,7 @@ extension ProfileInteractor: ProfileViewControllerOutput {
             switch result {
             case .failure:
                 break
+                // @TODO
 //                DispatchQueue.main.async {
 //                    self.displayErrorBanner()
 //                }
@@ -32,7 +33,6 @@ extension ProfileInteractor: ProfileViewControllerOutput {
                     return
                 }
 
-                // @TODO IF ID == CURRENT USER DISPLAY PERSONAL
                 self.output.display(profile: user)
             }
         }
