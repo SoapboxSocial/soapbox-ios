@@ -9,8 +9,9 @@ class SearchViewController: UIViewController {
     var output: SearchViewControllerOutput!
 
     private var collection: UICollectionView!
-
     private var users = [APIClient.User]()
+
+    private let refresh = UIRefreshControl()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,6 +27,8 @@ class SearchViewController: UIViewController {
         collection.dataSource = self
         collection.backgroundColor = .clear
 
+        collection.refreshControl = refresh
+
         collection.register(cellWithClass: UserCellV2.self)
 
         output.search("*")
@@ -34,7 +37,12 @@ class SearchViewController: UIViewController {
     }
 }
 
-extension SearchViewController: UICollectionViewDelegate {}
+extension SearchViewController: UICollectionViewDelegate {
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        view.endEditing(true)
+        presentingViewController?.navigationController?.pushViewController(ProfileViewController(id: users[indexPath.item].id), animated: true)
+    }
+}
 
 extension SearchViewController: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
@@ -63,13 +71,22 @@ extension SearchViewController: SearchPresenterOutput {
         self.users = users
 
         DispatchQueue.main.async {
+            self.collection.refreshControl?.endRefreshing()
             self.collection.reloadData()
         }
     }
 }
 
 extension SearchViewController: UISearchResultsUpdating {
-    func updateSearchResults(for _: UISearchController) {}
+    func updateSearchResults(for searchController: UISearchController) {
+        var text = "*"
+        if let input = searchController.searchBar.text, input != "" {
+            text = input
+        }
+
+        collection.refreshControl?.beginRefreshing()
+        output.search(text)
+    }
 }
 
 extension SearchViewController: UISearchControllerDelegate {}
