@@ -178,14 +178,7 @@ class ProfileViewControllerV2: UIViewController {
 
 extension ProfileViewControllerV2: ProfilePresenterOutput {
     func display(profile: APIClient.Profile) {
-        displayName.text = profile.displayName
-        username.text = "@" + profile.username
-        followersCountLabel.text = String(profile.followers)
-        followingCountLabel.text = String(profile.following)
-
-        if profile.image != "" {
-            image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + profile.image))
-        }
+        setBasicInfo(profile)
 
         if let following = profile.isFollowing, following == true {
             followButton.isSelected.toggle()
@@ -198,6 +191,13 @@ extension ProfileViewControllerV2: ProfilePresenterOutput {
     }
 
     func display(personal profile: APIClient.Profile) {
+        setBasicInfo(profile)
+
+        followButton.setTitle(NSLocalizedString("edit", comment: ""), for: .normal)
+        followsYouBadge.isHidden = true
+    }
+
+    private func setBasicInfo(_ profile: APIClient.Profile) {
         displayName.text = profile.displayName
         username.text = "@" + profile.username
         followersCountLabel.text = String(profile.followers)
@@ -206,8 +206,5 @@ extension ProfileViewControllerV2: ProfilePresenterOutput {
         if profile.image != "" {
             image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + profile.image))
         }
-
-        followButton.setTitle(NSLocalizedString("edit", comment: ""), for: .normal)
-        followsYouBadge.isHidden = true
     }
 }
