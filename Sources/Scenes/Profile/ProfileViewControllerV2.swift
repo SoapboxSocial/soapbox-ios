@@ -29,7 +29,8 @@ class ProfileViewControllerV2: UIViewController {
         view.addSubview(username)
 
         let followButton = SoapButton(size: .regular)
-        followButton.setTitle("Unfollow", for: .normal)
+        followButton.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
+        followButton.setTitle(NSLocalizedString("unfollow", comment: ""), for: .selected)
         followButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(followButton)
 
