@@ -16,6 +16,11 @@ class ProfileViewControllerV2: UIViewController {
         displayName.font = .rounded(forTextStyle: .title2, weight: .bold)
         view.addSubview(displayName)
 
+        let followButton = SoapButton(size: .regular)
+        followButton.setTitle("Unfollow", for: .normal)
+        followButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(followButton)
+
         let username = UILabel()
         username.translatesAutoresizingMaskIntoConstraints = false
         username.font = .rounded(forTextStyle: .title3, weight: .regular)
@@ -75,6 +80,11 @@ class ProfileViewControllerV2: UIViewController {
             image.widthAnchor.constraint(equalToConstant: 80),
             image.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             image.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            followButton.centerYAnchor.constraint(equalTo: image.centerYAnchor),
+            followButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
 
         NSLayoutConstraint.activate([
