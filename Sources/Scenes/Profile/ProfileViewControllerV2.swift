@@ -21,6 +21,19 @@ class ProfileViewControllerV2: UIViewController {
         username.font = .rounded(forTextStyle: .title3, weight: .regular)
         view.addSubview(username)
 
+        let followsYouBadge = UIView()
+        followsYouBadge.backgroundColor = .systemGray5
+        followsYouBadge.translatesAutoresizingMaskIntoConstraints = false
+        followsYouBadge.layer.cornerRadius = 5
+        view.addSubview(followsYouBadge)
+
+        let followsYouLabel = UILabel()
+        followsYouLabel.translatesAutoresizingMaskIntoConstraints = false
+        followsYouLabel.font = .rounded(forTextStyle: .body, weight: .semibold)
+        followsYouLabel.textColor = .systemGray3
+        followsYouLabel.text = NSLocalizedString("follows_you", comment: "")
+        followsYouBadge.addSubview(followsYouLabel)
+
         let followersView = UIView()
         followersView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(followersView)
@@ -73,6 +86,18 @@ class ProfileViewControllerV2: UIViewController {
         NSLayoutConstraint.activate([
             username.topAnchor.constraint(equalTo: displayName.bottomAnchor, constant: 5),
             username.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            followsYouBadge.centerYAnchor.constraint(equalTo: username.centerYAnchor),
+            followsYouBadge.leftAnchor.constraint(equalTo: username.rightAnchor, constant: 10),
+        ])
+
+        NSLayoutConstraint.activate([
+            followsYouLabel.topAnchor.constraint(equalTo: followsYouBadge.topAnchor),
+            followsYouLabel.leftAnchor.constraint(equalTo: followsYouBadge.leftAnchor, constant: 8),
+            followsYouLabel.rightAnchor.constraint(equalTo: followsYouBadge.rightAnchor, constant: -8),
+            followsYouLabel.bottomAnchor.constraint(equalTo: followsYouBadge.bottomAnchor),
         ])
 
         NSLayoutConstraint.activate([
