@@ -71,9 +71,7 @@ class ProfileViewControllerV2: UIViewController {
         view.addSubview(image)
         view.addSubview(displayName)
         view.addSubview(username)
-
         view.addSubview(followButton)
-
         view.addSubview(followsYouBadge)
 
         let followsYouLabel = UILabel()
