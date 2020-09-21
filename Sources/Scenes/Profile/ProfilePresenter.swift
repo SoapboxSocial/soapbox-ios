@@ -3,6 +3,8 @@ import Foundation
 protocol ProfilePresenterOutput {
     func display(profile: APIClient.Profile)
     func display(personal profile: APIClient.Profile)
+    func didUnfollow()
+    func didFollow()
 }
 
 class ProfilePresenter: ProfileInteractorOutput {

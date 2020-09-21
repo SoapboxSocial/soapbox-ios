@@ -203,7 +203,9 @@ class ProfileViewControllerV2: UIViewController {
         present(vc, animated: true)
     }
 
-    @objc private func followPressed() {}
+    @objc private func followPressed() {
+        followButton.isUserInteractionEnabled = false
+    }
 }
 
 extension ProfileViewControllerV2: ProfilePresenterOutput {
@@ -231,6 +233,7 @@ extension ProfileViewControllerV2: ProfilePresenterOutput {
     }
 
     func didFollow() {
+        followButton.isUserInteractionEnabled = true
         followButton.isSelected.toggle()
         user.isFollowing = true
         user.followers += 1
@@ -238,6 +241,7 @@ extension ProfileViewControllerV2: ProfilePresenterOutput {
     }
 
     func didUnfollow() {
+        followButton.isUserInteractionEnabled = true
         followButton.isSelected.toggle()
         user.isFollowing = false
         user.followers -= 1
