@@ -38,7 +38,7 @@ class RoomView: UIView {
             return
         }
 
-        backgroundColor = .elementBackground
+        backgroundColor = .foreground
 
         roundCorners(corners: [.topLeft, .topRight], radius: 25.0)
 

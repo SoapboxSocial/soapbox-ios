@@ -94,7 +94,7 @@ class EditProfileViewController: UIViewController {
                 banner.show(cornerRadius: 10, shadowBlurRadius: 15)
             case .success:
                 DispatchQueue.main.async {
-                    self.parentVC.loadData()
+                    self.parentVC.output.loadData()
                     self.dismiss(animated: true)
                 }
             }

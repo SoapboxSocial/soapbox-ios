@@ -188,7 +188,7 @@ extension NavigationViewController: RoomViewDelegate {
     func didSelectViewProfile(id: Int) {
         roomDrawer?.setPosition(.collapsed, animated: true) { _ in
             DispatchQueue.main.async {
-                let profile = ProfileViewController(id: id)
+                let profile = SceneFactory.createProfileViewController(id: id)
                 self.pushViewController(profile, animated: true)
             }
         }
