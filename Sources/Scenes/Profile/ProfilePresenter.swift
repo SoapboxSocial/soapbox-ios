@@ -2,6 +2,7 @@ import Foundation
 
 protocol ProfilePresenterOutput {
     func display(profile: APIClient.Profile)
+    func display(personal profile: APIClient.Profile)
 }
 
 class ProfilePresenter: ProfileInteractorOutput {
@@ -11,7 +12,9 @@ class ProfilePresenter: ProfileInteractorOutput {
         self.output = output
     }
 
-    func displayPersonal(profile _: APIClient.Profile) {}
+    func displayPersonal(profile: APIClient.Profile) {
+        output.display(personal: profile)
+    }
 
     func display(profile: APIClient.Profile) {
         output.display(profile: profile)

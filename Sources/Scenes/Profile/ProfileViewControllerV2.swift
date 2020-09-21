@@ -196,4 +196,18 @@ extension ProfileViewControllerV2: ProfilePresenterOutput {
             followsYouBadge.isHidden = !followed
         }
     }
+
+    func display(personal profile: APIClient.Profile) {
+        displayName.text = profile.displayName
+        username.text = "@" + profile.username
+        followersCountLabel.text = String(profile.followers)
+        followingCountLabel.text = String(profile.following)
+
+        if profile.image != "" {
+            image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + profile.image))
+        }
+
+        followButton.setTitle(NSLocalizedString("edit", comment: ""), for: .normal)
+        followsYouBadge.isHidden = true
+    }
 }

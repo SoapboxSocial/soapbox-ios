@@ -45,9 +45,11 @@ class SearchViewController: UIViewController {
 
 extension SearchViewController: UICollectionViewDelegate {
     // @TODO probably needs to be in the interactor?
-    func collectionView(_: UICollectionView, didSelectItemAt _: IndexPath) {
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         view.endEditing(true)
-        presentingViewController?.navigationController?.pushViewController(ProfileViewControllerV2(), animated: true)
+
+        let id = users[indexPath.item].id
+        presentingViewController?.navigationController?.pushViewController(SceneFactory.createProfileViewController(id: id), animated: true)
     }
 }
 

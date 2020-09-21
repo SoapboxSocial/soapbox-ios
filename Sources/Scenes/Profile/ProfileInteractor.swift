@@ -1,7 +1,7 @@
 import Foundation
 
 protocol ProfileInteractorOutput {
-    func displayPersonal(profile _: APIClient.Profile)
+    func displayPersonal(profile: APIClient.Profile)
     func display(profile: APIClient.Profile)
 }
 
@@ -27,6 +27,10 @@ extension ProfileInteractor: ProfileViewControllerOutput {
 //                    self.displayErrorBanner()
 //                }
             case let .success(user):
+                if self.user == UserDefaults.standard.integer(forKey: "id") {
+                    self.output.displayPersonal(profile: user)
+                    return
+                }
 
                 // @TODO IF ID == CURRENT USER DISPLAY PERSONAL
                 self.output.display(profile: user)
