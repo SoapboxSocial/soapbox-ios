@@ -28,12 +28,17 @@ class SearchViewController: UIViewController {
         collection.backgroundColor = .clear
 
         collection.refreshControl = refresh
+        refresh.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
 
         collection.register(cellWithClass: UserCellV2.self)
 
         output.search("*")
 
         view.addSubview(collection)
+    }
+
+    @objc private func didPullToRefresh() {
+        refresh.endRefreshing()
     }
 }
 
