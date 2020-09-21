@@ -196,6 +196,10 @@ extension HomeViewController: UICollectionViewDataSource {
                 return room.name
             }
 
+            if let id = currentRoom, room.id == id {
+                NSLocalizedString("current_room", comment: "")
+            }
+
             return NSLocalizedString("listen_in", comment: "")
         }()
 
