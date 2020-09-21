@@ -76,6 +76,6 @@ extension FollowerListViewController: UICollectionViewDataSource {
 extension FollowerListViewController: UICollectionViewDelegate {
     // @TODO probably needs to be in the interactor?
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        navigationController?.pushViewController(ProfileViewController(id: users[indexPath.item].id), animated: true)
+        navigationController?.pushViewController(SceneFactory.createProfileViewController(id: users[indexPath.item].id), animated: true)
     }
 }

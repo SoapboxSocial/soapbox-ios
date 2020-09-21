@@ -196,12 +196,14 @@ class ProfileViewControllerV2: UIViewController {
         let list = SceneFactory.createFollowerViewController(id: user.id, userListFunc: APIClient().following)
         navigationController?.pushViewController(list, animated: true)
     }
-    
+
     @objc private func editPressed() {
         let vc = EditProfileViewController(user: user, parent: self)
         vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true)
     }
+
+    @objc private func followPressed() {}
 }
 
 extension ProfileViewControllerV2: ProfilePresenterOutput {
@@ -216,6 +218,8 @@ extension ProfileViewControllerV2: ProfilePresenterOutput {
         if let followed = profile.followedBy {
             followsYouBadge.isHidden = !followed
         }
+
+        followButton.addTarget(self, action: #selector(followPressed), for: .touchUpInside)
     }
 
     func display(personal profile: APIClient.Profile) {
@@ -224,6 +228,20 @@ extension ProfileViewControllerV2: ProfilePresenterOutput {
         followButton.setTitle(NSLocalizedString("edit", comment: ""), for: .normal)
         followButton.addTarget(self, action: #selector(editPressed), for: .touchUpInside)
         followsYouBadge.isHidden = true
+    }
+
+    func didFollow() {
+        followButton.isSelected.toggle()
+        user.isFollowing = true
+        user.followers += 1
+        followersCountLabel.text = String(user.followers)
+    }
+
+    func didUnfollow() {
+        followButton.isSelected.toggle()
+        user.isFollowing = false
+        user.followers -= 1
+        followersCountLabel.text = String(user.followers)
     }
 
     private func setBasicInfo(_ profile: APIClient.Profile) {

@@ -23,7 +23,7 @@ extension ProfileInteractor: ProfileViewControllerOutput {
             switch result {
             case .failure:
                 break
-                // @TODO
+            // @TODO
 //                DispatchQueue.main.async {
 //                    self.displayErrorBanner()
 //                }
