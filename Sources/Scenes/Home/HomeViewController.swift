@@ -68,7 +68,7 @@ class HomeViewController: UIViewController {
         UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).defaultTextAttributes = [NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .title3, weight: .bold)]
         UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .title3, weight: .bold)], for: .normal)
 
-        let searchViewController = SearchViewController()
+        let searchViewController = SceneFactory.createSearchViewController()
         searchController = UISearchController(searchResultsController: searchViewController)
         searchController.searchResultsUpdater = searchViewController
         searchController.delegate = searchViewController

@@ -1,12 +1,16 @@
 import AlamofireImage
 import UIKit
 
-protocol SearchViewControllerOutput {}
+protocol SearchViewControllerOutput {
+    func search(_ keyword: String)
+}
 
 class SearchViewController: UIViewController {
     var output: SearchViewControllerOutput!
 
     private var collection: UICollectionView!
+
+    private var users = [APIClient.User]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,6 +28,8 @@ class SearchViewController: UIViewController {
 
         collection.register(cellWithClass: UserCellV2.self)
 
+        output.search("*")
+
         view.addSubview(collection)
     }
 }
@@ -32,15 +38,33 @@ extension SearchViewController: UICollectionViewDelegate {}
 
 extension SearchViewController: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        return 10
+        return users.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withClass: UserCellV2.self, for: indexPath)
-        cell.displayName.text = "Bob"
-        cell.username.text = "@test"
-        cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: "image")!))
+
+        let user = users[indexPath.item]
+
+        cell.displayName.text = user.displayName
+        cell.username.text = "@" + user.username
+
+        cell.image.image = nil
+        if let image = user.image, image != "" {
+            cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
+        }
+
         return cell
+    }
+}
+
+extension SearchViewController: SearchPresenterOutput {
+    func display(users: [APIClient.User]) {
+        self.users = users
+
+        DispatchQueue.main.async {
+            self.collection.reloadData()
+        }
     }
 }
 
