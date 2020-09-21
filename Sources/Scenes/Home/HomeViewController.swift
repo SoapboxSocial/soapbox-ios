@@ -5,12 +5,15 @@ import UIKit
 protocol HomeViewControllerOutput {
     func fetchRooms()
     func didSelectRoom(room: Int)
+    func didEndSearching()
+    func didBeginSearching()
 }
 
 class HomeViewController: UIViewController {
     private let refresh = UIRefreshControl()
     private let downloader = ImageDownloader()
 
+    private var searchController: UISearchController!
     private var currentRoom: Int?
 
     private var collection: UICollectionView!
@@ -63,6 +66,30 @@ class HomeViewController: UIViewController {
                 break
             }
         })
+
+        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).defaultTextAttributes = [NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .title3, weight: .bold)]
+        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .title3, weight: .bold)], for: .normal)
+
+        let searchViewController = SceneFactory.createSearchViewController()
+        searchController = UISearchController(searchResultsController: searchViewController)
+        searchController.searchResultsUpdater = searchViewController
+        searchController.delegate = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.showsSearchResultsController = true
+        definesPresentationContext = true
+
+        let scb = searchController.searchBar
+        searchController.hidesNavigationBarDuringPresentation = false
+        scb.returnKeyType = .default
+        scb.delegate = searchViewController
+        scb.placeholder = NSLocalizedString("search_for_friends", comment: "")
+        scb.searchTextField.layer.cornerRadius = 15
+        scb.searchTextField.layer.masksToBounds = true
+        scb.searchTextField.leftView = nil
+
+        navigationItem.titleView = scb
+        navigationItem.hidesSearchBarWhenScrolling = false
+        searchController.hidesNavigationBarDuringPresentation = false
 
         loadData()
     }
@@ -117,6 +144,16 @@ extension HomeViewController: HomePresenterOutput {
         DispatchQueue.main.async {
             self.collection.reloadData()
         }
+    }
+}
+
+extension HomeViewController: UISearchControllerDelegate {
+    func didDismissSearchController(_: UISearchController) {
+        output.didEndSearching()
+    }
+
+    func didPresentSearchController(_: UISearchController) {
+        output.didBeginSearching()
     }
 }
 
