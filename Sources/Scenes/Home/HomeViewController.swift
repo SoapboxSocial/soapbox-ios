@@ -5,6 +5,8 @@ import UIKit
 protocol HomeViewControllerOutput {
     func fetchRooms()
     func didSelectRoom(room: Int)
+    func didEndSearching()
+    func didBeginSearching()
 }
 
 class HomeViewController: UIViewController {
@@ -71,7 +73,7 @@ class HomeViewController: UIViewController {
         let searchViewController = SceneFactory.createSearchViewController()
         searchController = UISearchController(searchResultsController: searchViewController)
         searchController.searchResultsUpdater = searchViewController
-        searchController.delegate = searchViewController // @TODO: PROBABLY NEEDS TO BE SELF SO WE CAN HIDE AND SHOW CREATE ROOM BUTTON.
+        searchController.delegate = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.showsSearchResultsController = true
         definesPresentationContext = true
@@ -142,6 +144,16 @@ extension HomeViewController: HomePresenterOutput {
         DispatchQueue.main.async {
             self.collection.reloadData()
         }
+    }
+}
+
+extension HomeViewController: UISearchControllerDelegate {
+    func didDismissSearchController(_: UISearchController) {
+        output.didEndSearching()
+    }
+
+    func didPresentSearchController(_: UISearchController) {
+        output.didBeginSearching()
     }
 }
 

@@ -3,6 +3,8 @@ import SwiftProtobuf
 
 protocol RoomController {
     func didSelect(room id: Int)
+    func didBeginSearching()
+    func didEndSearching()
 }
 
 protocol RoomControllerDelegate {
@@ -45,6 +47,14 @@ class HomeInteractor: HomeViewControllerOutput {
 
     func didSelectRoom(room: Int) {
         controller.didSelect(room: room)
+    }
+
+    func didEndSearching() {
+        controller.didEndSearching()
+    }
+
+    func didBeginSearching() {
+        controller.didBeginSearching()
     }
 }
 

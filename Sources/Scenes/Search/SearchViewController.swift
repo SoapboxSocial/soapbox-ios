@@ -89,8 +89,6 @@ extension SearchViewController: UISearchResultsUpdating {
     }
 }
 
-extension SearchViewController: UISearchControllerDelegate {}
-
 extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_: UISearchBar) {
         view.endEditing(true)
