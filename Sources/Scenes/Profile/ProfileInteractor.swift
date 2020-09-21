@@ -3,6 +3,9 @@ import Foundation
 protocol ProfileInteractorOutput {
     func displayPersonal(profile: APIClient.Profile)
     func display(profile: APIClient.Profile)
+    func displayUnfollowed()
+    func displayFollowed()
+    func displayError()
 }
 
 class ProfileInteractor {
@@ -22,11 +25,7 @@ extension ProfileInteractor: ProfileViewControllerOutput {
         api.user(id: user) { result in
             switch result {
             case .failure:
-                break
-            // @TODO
-//                DispatchQueue.main.async {
-//                    self.displayErrorBanner()
-//                }
+                self.output.displayError()
             case let .success(user):
                 if self.user == UserDefaults.standard.integer(forKey: "id") {
                     self.output.displayPersonal(profile: user)
@@ -36,5 +35,27 @@ extension ProfileInteractor: ProfileViewControllerOutput {
                 self.output.display(profile: user)
             }
         }
+    }
+
+    func follow() {
+        api.follow(id: user, callback: { result in
+            switch result {
+            case .failure:
+                self.output.displayError()
+            case .success:
+                self.output.displayFollowed()
+            }
+        })
+    }
+
+    func unfollow() {
+        api.unfollow(id: user, callback: { result in
+            switch result {
+            case .failure:
+                self.output.displayError()
+            case .success:
+                self.output.displayUnfollowed()
+            }
+        })
     }
 }

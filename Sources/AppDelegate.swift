@@ -178,7 +178,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                     return
                 }
 
-                nav.pushViewController(ProfileViewController(id: id), animated: true)
+                nav.pushViewController(SceneFactory.createProfileViewController(id: id), animated: true)
             default:
                 break
             }

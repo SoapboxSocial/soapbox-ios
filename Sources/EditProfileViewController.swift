@@ -6,13 +6,13 @@ class EditProfileViewController: UIViewController {
     private var activityIndicator = UIActivityIndicatorView(style: .large)
 
     private var user: APIClient.Profile
-    private let parentVC: ProfileViewControllerV2
+    private let parentVC: ProfileViewController
     private var imageView: EditProfileImageButton!
     private var imagePicker: ImagePicker!
 
     private var image: UIImage?
 
-    init(user: APIClient.Profile, parent: ProfileViewControllerV2) {
+    init(user: APIClient.Profile, parent: ProfileViewController) {
         parentVC = parent
         self.user = user
         super.init(nibName: nil, bundle: nil)

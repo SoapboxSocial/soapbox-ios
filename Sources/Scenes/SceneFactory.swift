@@ -21,8 +21,8 @@ class SceneFactory {
         return viewController
     }
 
-    static func createProfileViewController(id: Int) -> ProfileViewControllerV2 {
-        let viewController = ProfileViewControllerV2()
+    static func createProfileViewController(id: Int) -> ProfileViewController {
+        let viewController = ProfileViewController()
         let presenter = ProfilePresenter(output: viewController)
 
         let interactor = ProfileInteractor(output: presenter, api: APIClient(), user: id)

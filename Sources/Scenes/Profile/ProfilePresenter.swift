@@ -5,6 +5,7 @@ protocol ProfilePresenterOutput {
     func display(personal profile: APIClient.Profile)
     func didUnfollow()
     func didFollow()
+    func displayError(title: String, description: String?)
 }
 
 class ProfilePresenter: ProfileInteractorOutput {
@@ -20,5 +21,20 @@ class ProfilePresenter: ProfileInteractorOutput {
 
     func display(profile: APIClient.Profile) {
         output.display(profile: profile)
+    }
+
+    func displayFollowed() {
+        output.didFollow()
+    }
+
+    func displayUnfollowed() {
+        output.didUnfollow()
+    }
+
+    func displayError() {
+        output.displayError(
+            title: NSLocalizedString("something_went_wrong", comment: ""),
+            description: NSLocalizedString("please_try_again_later", comment: "")
+        )
     }
 }

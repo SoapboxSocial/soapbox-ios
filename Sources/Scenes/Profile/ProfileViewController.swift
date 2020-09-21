@@ -1,11 +1,14 @@
 import AlamofireImage
+import NotificationBannerSwift
 import UIKit
 
 protocol ProfileViewControllerOutput {
     func loadData()
+    func follow()
+    func unfollow()
 }
 
-class ProfileViewControllerV2: UIViewController {
+class ProfileViewController: UIViewController {
     private var user: APIClient.Profile!
 
     var output: ProfileViewControllerOutput!
@@ -63,6 +66,13 @@ class ProfileViewControllerV2: UIViewController {
         return button
     }()
 
+    private let followersLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .rounded(forTextStyle: .body, weight: .regular)
+        return label
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -92,10 +102,6 @@ class ProfileViewControllerV2: UIViewController {
         view.addSubview(followersView)
 
         followersView.addSubview(followersCountLabel)
-
-        let followersLabel = UILabel()
-        followersLabel.translatesAutoresizingMaskIntoConstraints = false
-        followersLabel.font = .rounded(forTextStyle: .body, weight: .regular)
         followersView.addSubview(followersLabel)
 
         let followingRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapFollowingLabel))
@@ -205,10 +211,26 @@ class ProfileViewControllerV2: UIViewController {
 
     @objc private func followPressed() {
         followButton.isUserInteractionEnabled = false
+
+        if user.isFollowing ?? false {
+            output.unfollow()
+        } else {
+            output.follow()
+        }
     }
 }
 
-extension ProfileViewControllerV2: ProfilePresenterOutput {
+extension ProfileViewController: ProfilePresenterOutput {
+    func displayError(title: String, description: String?) {
+        let banner = FloatingNotificationBanner(
+            title: title,
+            subtitle: description,
+            style: .danger
+        )
+
+        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+    }
+
     func display(profile: APIClient.Profile) {
         setBasicInfo(profile)
 
@@ -237,7 +259,7 @@ extension ProfileViewControllerV2: ProfilePresenterOutput {
         followButton.isSelected.toggle()
         user.isFollowing = true
         user.followers += 1
-        followersCountLabel.text = String(user.followers)
+        updateFollowerLabels()
     }
 
     func didUnfollow() {
@@ -245,15 +267,25 @@ extension ProfileViewControllerV2: ProfilePresenterOutput {
         followButton.isSelected.toggle()
         user.isFollowing = false
         user.followers -= 1
+        updateFollowerLabels()
+    }
+
+    private func updateFollowerLabels() {
         followersCountLabel.text = String(user.followers)
+        if user.followers == 1 {
+            followersLabel.text = NSLocalizedString("follower", comment: "")
+        } else {
+            followersLabel.text = NSLocalizedString("followers", comment: "")
+        }
     }
 
     private func setBasicInfo(_ profile: APIClient.Profile) {
         user = profile
         displayName.text = profile.displayName
         username.text = "@" + profile.username
-        followersCountLabel.text = String(profile.followers)
         followingCountLabel.text = String(profile.following)
+
+        updateFollowerLabels()
 
         if profile.image != "" {
             image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + profile.image))
