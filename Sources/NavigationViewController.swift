@@ -75,7 +75,11 @@ class NavigationViewController: UINavigationController {
         }
 
         func showCreationDrawer() {
-            creationDrawer = DrawerView()
+            let roomView = RoomCreationView()
+            roomView.delegate = self
+            roomView.translatesAutoresizingMaskIntoConstraints = false
+
+            creationDrawer = DrawerView(withView: roomView)
             creationDrawer!.delegate = self
             creationDrawer!.attachTo(view: view)
             creationDrawer!.backgroundEffect = nil
@@ -87,11 +91,10 @@ class NavigationViewController: UINavigationController {
 
             creationDrawer!.contentVisibilityBehavior = .allowPartial
 
-            let roomView = RoomCreationView()
-            roomView.delegate = self
-            roomView.translatesAutoresizingMaskIntoConstraints = false
-            creationDrawer!.addSubview(roomView)
-            roomView.autoPinEdgesToSuperview()
+//            creationDrawer!.addSubview(roomView)
+//            roomView.autoPinEdgesToSuperview()
+
+//            creationDrawer!.embed(view: roomView)
 
             creationDrawer!.setPosition(.open, animated: true) { _ in
                 self.createRoomButton.isHidden = true

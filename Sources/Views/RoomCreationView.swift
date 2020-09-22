@@ -15,49 +15,70 @@ class RoomCreationView: UIView, UITextFieldDelegate {
 
         if textField != nil { return }
 
-        backgroundColor = .secondaryBackground
         roundCorners(corners: [.topLeft, .topRight], radius: 25.0)
 
-        let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        backgroundColor = .brandColor
 
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tap.cancelsTouchesInView = false
-        addGestureRecognizer(tap)
+        let title = UILabel()
+        title.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
+        title.text = NSLocalizedString("create_a_room", comment: "")
+        title.textColor = .white
+        title.sizeToFit()
+        title.frame = CGRect(origin: CGPoint(x: 20, y: 60), size: title.frame.size)
+        addSubview(title)
 
-        contentView = UIView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height / 3))
-        contentView.center = center
-        addSubview(contentView)
-
-        let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: 30))
-        titleLabel.font = titleLabel.font.withSize(20)
-        titleLabel.text = NSLocalizedString("name_room", comment: "")
-        titleLabel.textAlignment = .center
-        titleLabel.textColor = .white
-        contentView.addSubview(titleLabel)
-
-        let margin = (frame.size.width - 330) / 2
-
-        textField = TextField(frame: CGRect(x: margin, y: titleLabel.frame.size.height + 20, width: 330, height: 40))
-        textField.placeholder = NSLocalizedString("enter_name", comment: "")
+        textField = UITextField(frame: CGRect(x: 20, y: title.frame.origin.y + title.frame.size.height + 30, width: frame.size.width - 50, height: 56))
+        textField.backgroundColor = .white
+        textField.font = .rounded(forTextStyle: .title3, weight: .bold)
+        textField.attributedPlaceholder = NSAttributedString(string: NSLocalizedString("enter_name", comment: ""), attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+        textField.textColor = .black
         textField.delegate = self
-        contentView.addSubview(textField)
+        textField.layer.cornerRadius = 15
+        addSubview(textField)
 
-        let buttonWidth = (frame.size.width - (margin * 3)) / 2
-
-        let skip = Button(frame: CGRect(x: margin, y: contentView.frame.size.height - 80, width: buttonWidth, height: 60))
-        skip.setTitle(NSLocalizedString("skip", comment: ""), for: .normal)
-        skip.addTarget(self, action: #selector(skipPressed), for: .touchUpInside)
-        contentView.addSubview(skip)
-
-        let create = Button(
-            frame: CGRect(x: (margin * 2) + buttonWidth, y: contentView.frame.size.height - 80, width: buttonWidth, height: 60),
-            style: .light
-        )
-        create.setTitle(NSLocalizedString("create", comment: ""), for: .normal)
-        create.addTarget(self, action: #selector(createPressed), for: .touchUpInside)
-        contentView.addSubview(create)
+//        backgroundColor = .secondaryBackground
+//        roundCorners(corners: [.topLeft, .topRight], radius: 25.0)
+//
+//        let notificationCenter = NotificationCenter.default
+//        notificationCenter.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+//        notificationCenter.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+//
+//        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+//        tap.cancelsTouchesInView = false
+//        addGestureRecognizer(tap)
+//
+//        contentView = UIView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height / 3))
+//        contentView.center = center
+//        addSubview(contentView)
+//
+//        let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: 30))
+//        titleLabel.font = titleLabel.font.withSize(20)
+//        titleLabel.text = NSLocalizedString("name_room", comment: "")
+//        titleLabel.textAlignment = .center
+//        titleLabel.textColor = .white
+//        contentView.addSubview(titleLabel)
+//
+//        let margin = (frame.size.width - 330) / 2
+//
+//        textField = TextField(frame: CGRect(x: margin, y: titleLabel.frame.size.height + 20, width: 330, height: 40))
+//        textField.placeholder = NSLocalizedString("enter_name", comment: "")
+//        textField.delegate = self
+//        contentView.addSubview(textField)
+//
+//        let buttonWidth = (frame.size.width - (margin * 3)) / 2
+//
+//        let skip = Button(frame: CGRect(x: margin, y: contentView.frame.size.height - 80, width: buttonWidth, height: 60))
+//        skip.setTitle(NSLocalizedString("skip", comment: ""), for: .normal)
+//        skip.addTarget(self, action: #selector(skipPressed), for: .touchUpInside)
+//        contentView.addSubview(skip)
+//
+//        let create = Button(
+//            frame: CGRect(x: (margin * 2) + buttonWidth, y: contentView.frame.size.height - 80, width: buttonWidth, height: 60),
+//            style: .light
+//        )
+//        create.setTitle(NSLocalizedString("create", comment: ""), for: .normal)
+//        create.addTarget(self, action: #selector(createPressed), for: .touchUpInside)
+//        contentView.addSubview(create)
     }
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
