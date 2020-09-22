@@ -23,8 +23,6 @@ class NavigationViewController: UINavigationController {
 
         super.init(rootViewController: rootViewController)
 
-        navigationBar.isHidden = true
-
         createRoomButton.frame = CGRect(
             origin: CGPoint(x: view.frame.size.width / 2 - (70 / 2), y: view.frame.size.height - 100),
             size: createRoomButton.frame.size
