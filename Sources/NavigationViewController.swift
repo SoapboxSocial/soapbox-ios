@@ -254,6 +254,10 @@ extension NavigationViewController: RoomController {
     }
 
     func didEndSearching() {
+        if room != nil {
+            return
+        }
+
         createRoomButton.isHidden = false
     }
 }
