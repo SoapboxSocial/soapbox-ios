@@ -1,7 +1,3 @@
-/* These labels should be more encouraging and positive */
-"no_active_rooms" = "There are currently no active rooms.";
-"start_room_tip" = "Why not start one?\n\n👇";
-
 "are_you_sure" = "Are you sure?";
 "exit_will_close_room" = "You are the only person in the room, leaving will close it.";
 
@@ -15,9 +11,6 @@
 "microphone_permission_denied" = "You'll need to turn on your microphone for that!";
 "to_settings" = "To settings";
 
-"participants" = "Participants";
-"participant" = "Participant";
-
 "make_speaker" = "Make a speaker";
 "move_to_audience" = "Move to audience";
 "cancel" = "Cancel";
@@ -27,9 +20,7 @@
 
 "failed_to_load_rooms" = "Failed to load rooms!";
 
-"name_room" = "Name your room";
 "enter_name" = "Enter a name";
-"skip" = "Skip";
 "submit" = "Submit";
 "create" = "Create";
 "create_account" = "Create Account";
@@ -66,6 +57,8 @@
 "new_follower_notification" = "%@ started following you!";
 "room_joined_notification" = "%@ joined a room, why not join them?";
 "room_joined_with_name_notification" = "%@ joined the room \"%@\", why not join them?";
+"room_invite_with_name_notification" = "%@ invited you to join the room \"%@\"";
+"room_invite_notification" = "%@ invited you to join a room";
 
 "save" = "Save";
 "invalid_display_name" = "Valid display name required";
@@ -79,9 +72,6 @@
 
 "is_currently_in_room" = "%@ is currently in a room!";
 "click_to_join" = "Click to join";
-
-"room_invite_with_name_notification" = "%@ invited you to join the room \"%@\"";
-"room_invite_notification" = "%@ invited you to join a room";
 
 "search_for_friends" = "Search for friends";
 
