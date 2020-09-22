@@ -83,7 +83,7 @@ class RoomView: UIView {
             return NSLocalizedString("current_room", comment: "")
         }()
 
-        label.font = UIFont(name: "HelveticaNeue-Bold", size: label.font.pointSize)
+        label.font = .rounded(forTextStyle: .title3, weight: .bold)
         label.center = CGPoint(x: label.center.x, y: exitButton.center.y)
         topBar.addSubview(label)
 

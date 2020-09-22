@@ -22,6 +22,7 @@ class RoomMemberCell: UICollectionViewCell {
         contentView.addSubview(profileImage)
 
         nameLabel = UILabel(frame: CGRect(x: 0, y: 66, width: 66, height: frame.size.height - 66))
+        nameLabel.font = .rounded(forTextStyle: .body, weight: .regular)
         nameLabel.textAlignment = .center
         addSubview(nameLabel)
 
