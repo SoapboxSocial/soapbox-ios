@@ -75,7 +75,11 @@ class NavigationViewController: UINavigationController {
         }
 
         func showCreationDrawer() {
-            creationDrawer = DrawerView()
+            let roomView = RoomCreationView()
+            roomView.delegate = self
+            roomView.translatesAutoresizingMaskIntoConstraints = false
+
+            creationDrawer = DrawerView(withView: roomView)
             creationDrawer!.delegate = self
             creationDrawer!.attachTo(view: view)
             creationDrawer!.backgroundEffect = nil
@@ -86,12 +90,6 @@ class NavigationViewController: UINavigationController {
             view.addSubview(creationDrawer!)
 
             creationDrawer!.contentVisibilityBehavior = .allowPartial
-
-            let roomView = RoomCreationView()
-            roomView.delegate = self
-            roomView.translatesAutoresizingMaskIntoConstraints = false
-            creationDrawer!.addSubview(roomView)
-            roomView.autoPinEdgesToSuperview()
 
             creationDrawer!.setPosition(.open, animated: true) { _ in
                 self.createRoomButton.isHidden = true
@@ -263,7 +261,21 @@ extension NavigationViewController: RoomController {
 }
 
 extension NavigationViewController: RoomCreationDelegate {
-    func createRoom(name: String?) {
+    func didCancelRoomCreation() {
+        creationDrawer?.setPosition(.closed, animated: true) { _ in
+            self.creationDrawer = nil
+        }
+    }
+
+    func didEnterWithName(_ name: String?) {
+        DispatchQueue.main.async {
+            self.creationDrawer?.setPosition(.closed, animated: true) { _ in
+                self.createRoom(name: name)
+            }
+        }
+    }
+
+    private func createRoom(name: String?) {
         DispatchQueue.main.async {
             self.createRoomButton.isHidden = true
             self.activityIndicator.startAnimating()
@@ -287,14 +299,6 @@ extension NavigationViewController: RoomCreationDelegate {
 
                     return self.presentCurrentRoom()
                 }
-            }
-        }
-    }
-
-    func didEnterWithName(_ name: String?) {
-        DispatchQueue.main.async {
-            self.creationDrawer?.setPosition(.closed, animated: true) { _ in
-                self.createRoom(name: name)
             }
         }
     }

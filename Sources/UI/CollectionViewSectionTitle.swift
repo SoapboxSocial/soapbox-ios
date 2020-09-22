@@ -15,7 +15,7 @@ class CollectionViewSectionTitle: UICollectionReusableView {
         addSubview(label)
 
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.topAnchor.constraint(equalTo: topAnchor, constant: 20).isActive = true
+        label.topAnchor.constraint(equalTo: topAnchor, constant: 10).isActive = true
         label.leftAnchor.constraint(equalTo: leftAnchor, constant: 20).isActive = true
         label.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
     }
