@@ -91,11 +91,6 @@ class NavigationViewController: UINavigationController {
 
             creationDrawer!.contentVisibilityBehavior = .allowPartial
 
-//            creationDrawer!.addSubview(roomView)
-//            roomView.autoPinEdgesToSuperview()
-
-//            creationDrawer!.embed(view: roomView)
-
             creationDrawer!.setPosition(.open, animated: true) { _ in
                 self.createRoomButton.isHidden = true
                 UIApplication.shared.isIdleTimerDisabled = true
@@ -266,7 +261,21 @@ extension NavigationViewController: RoomController {
 }
 
 extension NavigationViewController: RoomCreationDelegate {
-    func createRoom(name: String?) {
+    func didCancelRoomCreation() {
+        creationDrawer?.setPosition(.closed, animated: true) { _ in
+            self.creationDrawer = nil
+        }
+    }
+
+    func didEnterWithName(_ name: String?) {
+        DispatchQueue.main.async {
+            self.creationDrawer?.setPosition(.closed, animated: true) { _ in
+                self.createRoom(name: name)
+            }
+        }
+    }
+
+    private func createRoom(name: String?) {
         DispatchQueue.main.async {
             self.createRoomButton.isHidden = true
             self.activityIndicator.startAnimating()
@@ -290,14 +299,6 @@ extension NavigationViewController: RoomCreationDelegate {
 
                     return self.presentCurrentRoom()
                 }
-            }
-        }
-    }
-
-    func didEnterWithName(_ name: String?) {
-        DispatchQueue.main.async {
-            self.creationDrawer?.setPosition(.closed, animated: true) { _ in
-                self.createRoom(name: name)
             }
         }
     }
