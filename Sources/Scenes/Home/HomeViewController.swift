@@ -94,6 +94,22 @@ class HomeViewController: UIViewController {
         loadData()
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        if searchController.isActive {
+            output.didEndSearching()
+        }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if searchController.isActive {
+            output.didBeginSearching()
+        }
+    }
+
     // @todo this needs to be in the interactor
     @objc private func openProfile() {
         let id = UserDefaults.standard.integer(forKey: "id")
