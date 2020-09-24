@@ -129,6 +129,7 @@ class NavigationViewController: UINavigationController {
         roomDrawer!.snapPositions = [.collapsed, .open]
         roomDrawer!.backgroundColor = .elementBackground
         roomDrawer!.setPosition(.closed, animated: false)
+        roomDrawer!.delegate = self
         view.addSubview(roomDrawer!)
 
         roomDrawer!.contentVisibilityBehavior = .allowPartial
@@ -294,6 +295,8 @@ extension NavigationViewController: RoomCreationDelegate {
                     if let id = self.room?.id {
                         self.roomControllerDelegate?.didJoin(room: id)
                     }
+                    
+                    self.roomControllerDelegate?.reloadRooms()
 
                     return self.presentCurrentRoom()
                 }
@@ -308,6 +311,10 @@ extension NavigationViewController: DrawerViewDelegate {
             drawerView.removeFromSuperview(animated: false)
             createRoomButton.isHidden = false
             view.endEditing(true)
+        }
+
+        if position == .collapsed {
+            roomControllerDelegate?.reloadRooms()
         }
     }
 }
