@@ -1,4 +1,5 @@
 import Foundation
+import KeychainAccess
 import SwiftProtobuf
 
 protocol RoomController {
@@ -24,6 +25,15 @@ class HomeInteractor: HomeViewControllerOutput {
     private let output: HomeInteractorOutput
     private let roomService: RoomServiceClient
     private let controller: RoomController
+    
+    private var token: String? {
+        guard let identifier = Bundle.main.bundleIdentifier else {
+            fatalError("no identifier")
+        }
+
+        let keychain = Keychain(service: identifier)
+        return keychain[string: "token"]
+    }
 
     init(output: HomeInteractorOutput, service: RoomServiceClient, controller: RoomController) {
         self.output = output
@@ -34,7 +44,9 @@ class HomeInteractor: HomeViewControllerOutput {
     func fetchRooms() {
         // @TODO probably want to start refresh control.
 
-        let call = roomService.listRooms(Google_Protobuf_Empty())
+        let call = roomService.listRoomsV2(Auth.with {
+            $0.session = token!
+        })
 
         call.response.whenComplete { result in
             DispatchQueue.main.async {
