@@ -10,6 +10,7 @@ protocol RoomController {
 protocol RoomControllerDelegate {
     func didJoin(room: Int)
     func didLeaveRoom()
+    func reloadRooms()
 }
 
 protocol HomeInteractorOutput {
@@ -31,6 +32,8 @@ class HomeInteractor: HomeViewControllerOutput {
     }
 
     func fetchRooms() {
+        // @TODO probably want to start refresh control.
+
         let call = roomService.listRooms(Google_Protobuf_Empty())
 
         call.response.whenComplete { result in
@@ -65,5 +68,9 @@ extension HomeInteractor: RoomControllerDelegate {
 
     func didLeaveRoom() {
         output.didLeaveRoom()
+    }
+
+    func reloadRooms() {
+        fetchRooms()
     }
 }

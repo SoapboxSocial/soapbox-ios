@@ -87,8 +87,6 @@ class HomeViewController: UIViewController {
         navigationItem.titleView = scb
         navigationItem.hidesSearchBarWhenScrolling = false
         searchController.hidesNavigationBarDuringPresentation = false
-
-        loadData()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -104,7 +102,10 @@ class HomeViewController: UIViewController {
 
         if searchController.isActive {
             output.didBeginSearching()
+            return
         }
+
+        loadData()
     }
 
     // @todo this needs to be in the interactor
