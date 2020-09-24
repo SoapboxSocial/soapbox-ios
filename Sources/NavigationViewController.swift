@@ -237,6 +237,7 @@ extension NavigationViewController: RoomController {
                 switch result {
                 case .failure:
                     // @toodo investigate error type
+                    self.room = nil
                     return self.showNetworkError()
                 case .success:
                     self.roomControllerDelegate?.didJoin(room: id)
