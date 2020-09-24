@@ -16,7 +16,7 @@ class HomeViewController: UIViewController {
     private var searchController: UISearchController!
     private var currentRoom: Int?
 
-    private var collection: UICollectionView!
+    private var collection: CollectionView!
     private var rooms = [RoomState]()
 
     var output: HomeViewControllerOutput!
@@ -27,7 +27,7 @@ class HomeViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
 
-        collection = UICollectionView(frame: view.frame, collectionViewLayout: layout)
+        collection = CollectionView(frame: view.frame, collectionViewLayout: layout)
         collection.automaticallyAdjustsScrollIndicatorInsets = false
         collection.delegate = self
         collection.dataSource = self
@@ -226,6 +226,10 @@ extension HomeViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionFooter {
+            return collection.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
+        }
+
         let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
         cell.label.text = NSLocalizedString("rooms", comment: "")
         return cell
@@ -242,5 +246,13 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
             withHorizontalFittingPriority: .required,
             verticalFittingPriority: .fittingSizeLevel
         )
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        if rooms.count == 0 {
+            return CGSize.zero
+        }
+
+        return collection.collectionView(collectionView, layout: layout, referenceSizeForFooterInSection: section)
     }
 }

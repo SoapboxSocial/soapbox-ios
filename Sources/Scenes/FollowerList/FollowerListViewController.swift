@@ -8,7 +8,7 @@ protocol FollowerListViewControllerOutput {
 class FollowerListViewController: UIViewController {
     var output: FollowerListViewControllerOutput!
 
-    private var collection: UICollectionView!
+    private var collection: CollectionView!
     private var users = [APIClient.User]()
 
     override func viewDidLoad() {
@@ -17,7 +17,7 @@ class FollowerListViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
 
-        collection = UICollectionView(frame: view.frame, collectionViewLayout: layout)
+        collection = CollectionView(frame: view.frame, collectionViewLayout: layout)
         collection.automaticallyAdjustsScrollIndicatorInsets = false
         collection.delegate = self
         collection.dataSource = self
@@ -71,11 +71,21 @@ extension FollowerListViewController: UICollectionViewDataSource {
 
         return cell
     }
+
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        return collection.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
+    }
 }
 
 extension FollowerListViewController: UICollectionViewDelegate {
     // @TODO probably needs to be in the interactor?
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         navigationController?.pushViewController(SceneFactory.createProfileViewController(id: users[indexPath.item].id), animated: true)
+    }
+}
+
+extension FollowerListViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_: UICollectionView, layout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        return collection.collectionView(collection, layout: layout, referenceSizeForFooterInSection: section)
     }
 }
