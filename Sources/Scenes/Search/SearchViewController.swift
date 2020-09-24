@@ -8,7 +8,7 @@ protocol SearchViewControllerOutput {
 class SearchViewController: UIViewController {
     var output: SearchViewControllerOutput!
 
-    private var collection: UICollectionView!
+    private var collection: CollectionView!
     private var users = [APIClient.User]()
 
     private let refresh = UIRefreshControl()
@@ -21,7 +21,7 @@ class SearchViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
 
-        collection = UICollectionView(frame: view.frame, collectionViewLayout: layout)
+        collection = CollectionView(frame: view.frame, collectionViewLayout: layout)
         collection.automaticallyAdjustsScrollIndicatorInsets = false
         collection.delegate = self
         collection.dataSource = self
@@ -53,6 +53,12 @@ extension SearchViewController: UICollectionViewDelegate {
     }
 }
 
+extension SearchViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_: UICollectionView, layout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        return collection.collectionView(collection, layout: layout, referenceSizeForFooterInSection: section)
+    }
+}
+
 extension SearchViewController: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         return users.count
@@ -72,6 +78,10 @@ extension SearchViewController: UICollectionViewDataSource {
         }
 
         return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        return collection.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
     }
 }
 
