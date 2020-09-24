@@ -77,7 +77,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
     @objc private func didPressLock() {
         lock.isSelected.toggle()
     }
-    
+
     @objc private func createPressed() {
         delegate?.didEnterWithName(textField.text, isPrivate: lock.isSelected)
     }
