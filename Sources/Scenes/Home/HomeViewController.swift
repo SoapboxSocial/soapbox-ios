@@ -164,6 +164,7 @@ extension HomeViewController: HomePresenterOutput {
 extension HomeViewController: UISearchControllerDelegate {
     func didDismissSearchController(_: UISearchController) {
         output.didEndSearching()
+        loadData()
     }
 
     func didPresentSearchController(_: UISearchController) {
