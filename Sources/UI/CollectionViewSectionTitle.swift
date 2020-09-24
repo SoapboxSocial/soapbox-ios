@@ -15,10 +15,12 @@ class CollectionViewSectionTitle: UICollectionReusableView {
 
         addSubview(label)
 
-        label.topAnchor.constraint(equalTo: topAnchor, constant: 10).isActive = true
-        label.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10).isActive = true
-        label.leftAnchor.constraint(equalTo: leftAnchor, constant: 20).isActive = true
-        label.rightAnchor.constraint(equalTo: rightAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            label.topAnchor.constraint(equalTo: topAnchor, constant: 10),
+            label.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
+            label.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            label.rightAnchor.constraint(equalTo: rightAnchor),
+        ])
     }
 
     required init?(coder _: NSCoder) {
