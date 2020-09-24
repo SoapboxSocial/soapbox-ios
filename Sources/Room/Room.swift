@@ -126,7 +126,7 @@ class Room {
         }
     }
 
-    func create(name: String?, completion: @escaping (Result<Void, Error>) -> Void) {
+    func create(name: String?, isPrivate: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
         self.name = name
         self.completion = completion
 
@@ -134,10 +134,16 @@ class Room {
             return completion(.failure(RoomError.general))
         }
 
+        var visibility = CreateRequest.Visibility.public
+        if isPrivate {
+            visibility = CreateRequest.Visibility.private
+        }
+
         _ = stream.sendMessage(SignalRequest.with {
             $0.create = CreateRequest.with {
                 $0.name = name ?? ""
                 $0.session = token
+                $0.visibility = visibility
             }
         })
 
