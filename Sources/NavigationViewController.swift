@@ -266,15 +266,15 @@ extension NavigationViewController: RoomCreationDelegate {
         }
     }
 
-    func didEnterWithName(_ name: String?) {
+    func didEnterWithName(_ name: String?, isPrivate: Bool) {
         DispatchQueue.main.async {
             self.creationDrawer?.setPosition(.closed, animated: true) { _ in
-                self.createRoom(name: name)
+                self.createRoom(name: name, isPrivate: isPrivate)
             }
         }
     }
 
-    private func createRoom(name: String?) {
+    private func createRoom(name: String?, isPrivate: Bool) {
         DispatchQueue.main.async {
             self.createRoomButton.isHidden = true
             self.activityIndicator.startAnimating()
@@ -282,7 +282,7 @@ extension NavigationViewController: RoomCreationDelegate {
         }
 
         room = RoomFactory.createRoom()
-        room?.create(name: name, isPrivate: false) { result in
+        room?.create(name: name, isPrivate: isPrivate) { result in
             DispatchQueue.main.async {
                 self.activityIndicator.stopAnimating()
                 self.activityIndicator.isHidden = true

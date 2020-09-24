@@ -2,12 +2,13 @@ import UIKit
 
 protocol RoomCreationDelegate {
     func didCancelRoomCreation()
-    func didEnterWithName(_ name: String?)
+    func didEnterWithName(_ name: String?, isPrivate: Bool)
 }
 
 class RoomCreationView: UIView, UITextFieldDelegate {
     var delegate: RoomCreationDelegate?
 
+    private var lock: UIButton!
     private var textField: UITextField!
 
     override func layoutSubviews() {
@@ -40,13 +41,14 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         addSubview(title)
 
         let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
-        let lock = UIButton(frame: CGRect(x: frame.size.width - 56, y: 0, width: 36, height: 36))
+        lock = UIButton(frame: CGRect(x: frame.size.width - 56, y: 0, width: 36, height: 36))
         lock.tintColor = .white
         lock.backgroundColor = UIColor.white.withAlphaComponent(0.3)
         lock.layer.cornerRadius = 36 / 2
         lock.center = CGPoint(x: lock.center.x, y: title.center.y)
         lock.setImage(UIImage(systemName: "lock.open", withConfiguration: iconConfig), for: .normal)
         lock.setImage(UIImage(systemName: "lock", withConfiguration: iconConfig), for: .selected)
+        lock.addTarget(self, action: #selector(didPressLock), for: .touchUpInside)
         addSubview(lock)
 
         textField = SoapTextField(frame: CGRect(x: 20, y: title.frame.origin.y + title.frame.size.height + 30, width: frame.size.width - 40, height: 56))
@@ -72,8 +74,12 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         return true
     }
 
+    @objc private func didPressLock() {
+        lock.isSelected.toggle()
+    }
+    
     @objc private func createPressed() {
-        delegate?.didEnterWithName(textField.text)
+        delegate?.didEnterWithName(textField.text, isPrivate: lock.isSelected)
     }
 
     @objc private func cancelPressed() {
