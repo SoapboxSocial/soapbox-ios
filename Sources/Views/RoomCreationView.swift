@@ -39,6 +39,16 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         title.frame = CGRect(origin: CGPoint(x: 20, y: cancel.frame.size.height + cancel.frame.origin.y + 20), size: title.frame.size)
         addSubview(title)
 
+        let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
+        let lock = UIButton(frame: CGRect(x: frame.size.width - 56, y: 0, width: 36, height: 36))
+        lock.tintColor = .white
+        lock.backgroundColor = UIColor.white.withAlphaComponent(0.3)
+        lock.layer.cornerRadius = 36 / 2
+        lock.center = CGPoint(x: lock.center.x, y: title.center.y)
+        lock.setImage(UIImage(systemName: "lock.open", withConfiguration: iconConfig), for: .normal)
+        lock.setImage(UIImage(systemName: "lock", withConfiguration: iconConfig), for: .selected)
+        addSubview(lock)
+
         textField = SoapTextField(frame: CGRect(x: 20, y: title.frame.origin.y + title.frame.size.height + 30, width: frame.size.width - 40, height: 56))
         textField.placeholder = NSLocalizedString("enter_name", comment: "")
         textField.delegate = self

@@ -282,7 +282,7 @@ extension NavigationViewController: RoomCreationDelegate {
         }
 
         room = RoomFactory.createRoom()
-        room?.create(name: name) { result in
+        room?.create(name: name, isPrivate: false) { result in
             DispatchQueue.main.async {
                 self.activityIndicator.stopAnimating()
                 self.activityIndicator.isHidden = true
