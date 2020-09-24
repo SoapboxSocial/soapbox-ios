@@ -295,7 +295,7 @@ extension NavigationViewController: RoomCreationDelegate {
                     if let id = self.room?.id {
                         self.roomControllerDelegate?.didJoin(room: id)
                     }
-                    
+
                     self.roomControllerDelegate?.reloadRooms()
 
                     return self.presentCurrentRoom()
@@ -312,7 +312,7 @@ extension NavigationViewController: DrawerViewDelegate {
             createRoomButton.isHidden = false
             view.endEditing(true)
         }
-        
+
         if position == .collapsed || position == .closed {
             roomControllerDelegate?.reloadRooms()
         }
