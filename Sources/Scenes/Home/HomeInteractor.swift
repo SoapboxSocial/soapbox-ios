@@ -25,7 +25,7 @@ class HomeInteractor: HomeViewControllerOutput {
     private let output: HomeInteractorOutput
     private let roomService: RoomServiceClient
     private let controller: RoomController
-    
+
     private var token: String? {
         guard let identifier = Bundle.main.bundleIdentifier else {
             fatalError("no identifier")
