@@ -312,8 +312,8 @@ extension NavigationViewController: DrawerViewDelegate {
             createRoomButton.isHidden = false
             view.endEditing(true)
         }
-
-        if position == .collapsed {
+        
+        if position == .collapsed || position == .closed {
             roomControllerDelegate?.reloadRooms()
         }
     }
