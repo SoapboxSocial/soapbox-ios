@@ -430,10 +430,52 @@ struct CreateRequest {
 
   var session: String = String()
 
+  var visibility: CreateRequest.Visibility = .public
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  enum Visibility: SwiftProtobuf.Enum {
+    typealias RawValue = Int
+    case `public` // = 0
+    case `private` // = 1
+    case UNRECOGNIZED(Int)
+
+    init() {
+      self = .public
+    }
+
+    init?(rawValue: Int) {
+      switch rawValue {
+      case 0: self = .public
+      case 1: self = .private
+      default: self = .UNRECOGNIZED(rawValue)
+      }
+    }
+
+    var rawValue: Int {
+      switch self {
+      case .public: return 0
+      case .private: return 1
+      case .UNRECOGNIZED(let i): return i
+      }
+    }
+
+  }
 
   init() {}
 }
+
+#if swift(>=4.2)
+
+extension CreateRequest.Visibility: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  static var allCases: [CreateRequest.Visibility] = [
+    .public,
+    .private,
+  ]
+}
+
+#endif  // swift(>=4.2)
 
 struct CreateReply {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
@@ -983,6 +1025,7 @@ extension CreateRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "name"),
     2: .same(proto: "session"),
+    3: .same(proto: "visibility"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -990,6 +1033,7 @@ extension CreateRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
       switch fieldNumber {
       case 1: try decoder.decodeSingularStringField(value: &self.name)
       case 2: try decoder.decodeSingularStringField(value: &self.session)
+      case 3: try decoder.decodeSingularEnumField(value: &self.visibility)
       default: break
       }
     }
@@ -1002,15 +1046,26 @@ extension CreateRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     if !self.session.isEmpty {
       try visitor.visitSingularStringField(value: self.session, fieldNumber: 2)
     }
+    if self.visibility != .public {
+      try visitor.visitSingularEnumField(value: self.visibility, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: CreateRequest, rhs: CreateRequest) -> Bool {
     if lhs.name != rhs.name {return false}
     if lhs.session != rhs.session {return false}
+    if lhs.visibility != rhs.visibility {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
+}
+
+extension CreateRequest.Visibility: SwiftProtobuf._ProtoNameProviding {
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "PUBLIC"),
+    1: .same(proto: "PRIVATE"),
+  ]
 }
 
 extension CreateReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
