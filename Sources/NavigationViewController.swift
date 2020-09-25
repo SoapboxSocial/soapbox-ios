@@ -291,6 +291,7 @@ extension NavigationViewController: RoomCreationDelegate {
                 switch result {
                 case .failure:
                     self.createRoomButton.isHidden = false
+                    self.room = nil
                     return self.showNetworkError()
                 case .success:
                     if let id = self.room?.id {
