@@ -96,7 +96,7 @@ class RoomCell: UICollectionViewCell {
         let count = members.count
 
         for i in 0 ..< min(4, count) {
-            var view: UIView = {
+            let view: UIView = {
                 if i == 3, count > 3 {
                     let view = UIView()
                     if style == .current {
