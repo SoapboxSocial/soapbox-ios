@@ -20,10 +20,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import Foundation
 import GRPC
 import NIO
-import NIOHTTP1
 import SwiftProtobuf
 
 
@@ -38,6 +36,11 @@ internal protocol RoomServiceClientProtocol: GRPCClient {
     _ request: SwiftProtobuf.Google_Protobuf_Empty,
     callOptions: CallOptions?
   ) -> UnaryCall<SwiftProtobuf.Google_Protobuf_Empty, RoomList>
+
+  func listRoomsV2(
+    _ request: Auth,
+    callOptions: CallOptions?
+  ) -> UnaryCall<Auth, RoomList>
 
 }
 
@@ -75,6 +78,23 @@ extension RoomServiceClientProtocol {
   ) -> UnaryCall<SwiftProtobuf.Google_Protobuf_Empty, RoomList> {
     return self.makeUnaryCall(
       path: "/RoomService/ListRooms",
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions
+    )
+  }
+
+  /// @TODO ONCE WE FIGURE OUT AUTHENTICATION
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to ListRoomsV2.
+  ///   - callOptions: Call options.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func listRoomsV2(
+    _ request: Auth,
+    callOptions: CallOptions? = nil
+  ) -> UnaryCall<Auth, RoomList> {
+    return self.makeUnaryCall(
+      path: "/RoomService/ListRoomsV2",
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions
     )
