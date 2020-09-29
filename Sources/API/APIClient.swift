@@ -189,6 +189,7 @@ extension APIClient {
         let id: Int
         var displayName: String
         let username: String
+        let bio: String
         var followers: Int
         let following: Int
         let followedBy: Bool?
@@ -197,7 +198,7 @@ extension APIClient {
         let currentRoom: Int?
 
         private enum CodingKeys: String, CodingKey {
-            case id, displayName = "display_name", username, followers, following, followedBy = "followed_by", isFollowing = "is_following", image, currentRoom = "current_room"
+            case id, displayName = "display_name", username, followers, following, followedBy = "followed_by", isFollowing = "is_following", image, currentRoom = "current_room", bio
         }
     }
 
