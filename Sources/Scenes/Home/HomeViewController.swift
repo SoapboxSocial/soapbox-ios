@@ -7,6 +7,7 @@ protocol HomeViewControllerOutput {
     func didSelectRoom(room: Int)
     func didEndSearching()
     func didBeginSearching()
+    func fetchSelf()
 }
 
 class HomeViewController: UIViewController {
@@ -18,6 +19,8 @@ class HomeViewController: UIViewController {
 
     private var collection: CollectionView!
     private var rooms = [RoomState]()
+
+    private var profileImageView: UIImageView!
 
     var output: HomeViewControllerOutput!
 
@@ -52,20 +55,12 @@ class HomeViewController: UIViewController {
         let barButtonItem = UIBarButtonItem(customView: containView)
         navigationItem.leftBarButtonItem = barButtonItem
 
-        // @todo find a better place to put this
-        let urlRequest = URLRequest(url: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: "image")!))
-
-        downloader.download(urlRequest, completion: { response in
-            switch response.result {
-            case let .success(image):
-                let imageview = UIImageView(frame: containView.frame)
-                imageview.image = image
-                imageview.contentMode = .scaleAspectFit
-                containView.addSubview(imageview)
-            case .failure:
-                break
-            }
-        })
+        profileImageView = UIImageView(frame: containView.frame)
+        profileImageView.layer.cornerRadius = containView.frame.size.height / 2
+        profileImageView.backgroundColor = .brandColor
+        profileImageView.clipsToBounds = true
+        profileImageView.layer.masksToBounds = true
+        containView.addSubview(profileImageView!)
 
         let searchViewController = SceneFactory.createSearchViewController()
         searchController = UISearchController(searchResultsController: searchViewController)
@@ -99,6 +94,9 @@ class HomeViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        // @TODO probably not best to do this all the time?
+        output.fetchSelf()
 
         if searchController.isActive {
             output.didBeginSearching()
@@ -158,6 +156,19 @@ extension HomeViewController: HomePresenterOutput {
         DispatchQueue.main.async {
             self.collection.reloadData()
         }
+    }
+
+    func updateProfileImage() {
+        let urlRequest = URLRequest(url: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: "image")!))
+
+        downloader.download(urlRequest, completion: { response in
+            switch response.result {
+            case let .success(image):
+                self.profileImageView!.image = image
+            case .failure:
+                break
+            }
+        })
     }
 }
 
