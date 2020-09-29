@@ -95,6 +95,7 @@ class HomeViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
+        // @TODO probably not best to do this all the time?
         output.fetchSelf()
 
         if searchController.isActive {
