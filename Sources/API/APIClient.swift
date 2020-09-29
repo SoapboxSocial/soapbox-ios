@@ -224,7 +224,7 @@ extension APIClient {
             }
     }
 
-    func editProfile(displayName: String, image: UIImage?, callback: @escaping (Result<Bool, APIError>) -> Void) {
+    func editProfile(displayName: String, image: UIImage?, bio: String, callback: @escaping (Result<Bool, APIError>) -> Void) {
         AF.upload(
             multipartFormData: { multipartFormData in
                 if let uploadImage = image {
@@ -236,6 +236,7 @@ extension APIClient {
                 }
 
                 multipartFormData.append(displayName.data(using: String.Encoding.utf8)!, withName: "display_name")
+                multipartFormData.append(bio.data(using: String.Encoding.utf8)!, withName: "bio")
             },
             to: Configuration.rootURL.appendingPathComponent("/v1/users/edit"),
             headers: ["Authorization": token!]
