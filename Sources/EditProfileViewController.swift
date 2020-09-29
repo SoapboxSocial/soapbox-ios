@@ -9,6 +9,7 @@ class EditProfileViewController: UIViewController {
     private let parentVC: ProfileViewController
     private var imageView: EditProfileImageButton!
     private var imagePicker: ImagePicker!
+    private var bioTextField: UITextView!
 
     private var image: UIImage?
 
@@ -56,6 +57,12 @@ class EditProfileViewController: UIViewController {
         displayNameTextField.text = user.displayName
         view.addSubview(displayNameTextField)
 
+        bioTextField = UITextView(frame: CGRect(x: 20, y: displayNameTextField.frame.origin.y + displayNameTextField.frame.size.height + 20, width: view.frame.size.width - 40, height: 60))
+        bioTextField.backgroundColor = .white
+        bioTextField.textColor = .black
+        bioTextField.attributedText = NSAttributedString(string: user.bio)
+        view.addSubview(bioTextField)
+
         activityIndicator.isHidden = true
         activityIndicator.hidesWhenStopped = true
         activityIndicator.color = .black
@@ -78,7 +85,12 @@ class EditProfileViewController: UIViewController {
         activityIndicator.startAnimating()
         activityIndicator.isHidden = false
 
-        APIClient().editProfile(displayName: displayName, image: image) { result in
+        var bio = ""
+        if bioTextField.text != "" {
+            bio = bioTextField.text
+        }
+
+        APIClient().editProfile(displayName: displayName, image: image, bio: bio) { result in
             DispatchQueue.main.async {
                 self.activityIndicator.stopAnimating()
                 self.activityIndicator.isHidden = true

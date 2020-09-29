@@ -189,6 +189,7 @@ extension APIClient {
         let id: Int
         var displayName: String
         let username: String
+        let bio: String
         var followers: Int
         let following: Int
         let followedBy: Bool?
@@ -197,7 +198,7 @@ extension APIClient {
         let currentRoom: Int?
 
         private enum CodingKeys: String, CodingKey {
-            case id, displayName = "display_name", username, followers, following, followedBy = "followed_by", isFollowing = "is_following", image, currentRoom = "current_room"
+            case id, displayName = "display_name", username, followers, following, followedBy = "followed_by", isFollowing = "is_following", image, currentRoom = "current_room", bio
         }
     }
 
@@ -223,7 +224,7 @@ extension APIClient {
             }
     }
 
-    func editProfile(displayName: String, image: UIImage?, callback: @escaping (Result<Bool, APIError>) -> Void) {
+    func editProfile(displayName: String, image: UIImage?, bio: String, callback: @escaping (Result<Bool, APIError>) -> Void) {
         AF.upload(
             multipartFormData: { multipartFormData in
                 if let uploadImage = image {
@@ -235,6 +236,7 @@ extension APIClient {
                 }
 
                 multipartFormData.append(displayName.data(using: String.Encoding.utf8)!, withName: "display_name")
+                multipartFormData.append(bio.data(using: String.Encoding.utf8)!, withName: "bio")
             },
             to: Configuration.rootURL.appendingPathComponent("/v1/users/edit"),
             headers: ["Authorization": token!]

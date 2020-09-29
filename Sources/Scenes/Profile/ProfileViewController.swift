@@ -73,6 +73,15 @@ class ProfileViewController: UIViewController {
         return label
     }()
 
+    private let bioLabel: UILabel = {
+        let label = UILabel()
+        label.font = .rounded(forTextStyle: .body, weight: .regular)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
+        return label
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -121,6 +130,8 @@ class ProfileViewController: UIViewController {
         followingView.addSubview(followingLabel)
 
         followersLabel.text = NSLocalizedString("followers", comment: "")
+
+        view.addSubview(bioLabel)
 
         NSLayoutConstraint.activate([
             image.heightAnchor.constraint(equalToConstant: 80),
@@ -189,6 +200,12 @@ class ProfileViewController: UIViewController {
         NSLayoutConstraint.activate([
             followingLabel.topAnchor.constraint(equalTo: followingCountLabel.bottomAnchor, constant: 0),
             followingLabel.leftAnchor.constraint(equalTo: followingCountLabel.leftAnchor, constant: 0),
+        ])
+
+        NSLayoutConstraint.activate([
+            bioLabel.topAnchor.constraint(equalTo: followingView.bottomAnchor, constant: 20),
+            bioLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            bioLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
     }
 
@@ -284,6 +301,7 @@ extension ProfileViewController: ProfilePresenterOutput {
         displayName.text = profile.displayName
         username.text = "@" + profile.username
         followingCountLabel.text = String(profile.following)
+        bioLabel.text = profile.bio
 
         updateFollowerLabels()
 
