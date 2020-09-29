@@ -9,4 +9,9 @@ class UserStore {
         UserDefaults.standard.set(user.email, forKey: "email")
         UserDefaults.standard.set(user.image, forKey: "image")
     }
+
+    public static func store(image: String, displayName: String) {
+        UserDefaults.standard.set(displayName, forKey: "display")
+        UserDefaults.standard.set(image, forKey: "image")
+    }
 }

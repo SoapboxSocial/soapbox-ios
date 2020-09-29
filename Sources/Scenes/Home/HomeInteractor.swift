@@ -19,12 +19,14 @@ protocol HomeInteractorOutput {
     func didFetchRooms(rooms: RoomList)
     func didJoin(room: Int)
     func didLeaveRoom()
+    func didFetchImage()
 }
 
 class HomeInteractor: HomeViewControllerOutput {
     private let output: HomeInteractorOutput
     private let roomService: RoomServiceClient
     private let controller: RoomController
+    private let api: APIClient
 
     private var token: String? {
         guard let identifier = Bundle.main.bundleIdentifier else {
@@ -35,10 +37,11 @@ class HomeInteractor: HomeViewControllerOutput {
         return keychain[string: "token"]
     }
 
-    init(output: HomeInteractorOutput, service: RoomServiceClient, controller: RoomController) {
+    init(output: HomeInteractorOutput, service: RoomServiceClient, controller: RoomController, api: APIClient) {
         self.output = output
         roomService = service
         self.controller = controller
+        self.api = api
     }
 
     func fetchRooms() {
@@ -58,6 +61,21 @@ class HomeInteractor: HomeViewControllerOutput {
                 }
             }
         }
+    }
+
+    func fetchSelf() {
+        // @TODO: Probably want to create a me api?
+        api.user(id: UserDefaults.standard.integer(forKey: "id"), callback: { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .failure:
+                    break // @TODO
+                case let .success(profile):
+                    UserStore.store(image: profile.image, displayName: profile.displayName)
+                    self.output.didFetchImage()
+                }
+            }
+        })
     }
 
     func didSelectRoom(room: Int) {
