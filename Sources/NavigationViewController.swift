@@ -146,6 +146,14 @@ class NavigationViewController: UINavigationController {
         }
     }
 
+    private func showClosedError() {
+        let banner = FloatingNotificationBanner(
+            title: NSLocalizedString("room_was_closed", comment: ""),
+            style: .danger
+        )
+        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+    }
+
     private func showNetworkError() {
         let banner = FloatingNotificationBanner(
             title: NSLocalizedString("something_went_wrong", comment: ""),
@@ -235,10 +243,16 @@ extension NavigationViewController: RoomController {
                 self.activityIndicator.isHidden = true
 
                 switch result {
-                case .failure:
+                case let .failure(error):
                     // @toodo investigate error type
                     self.room = nil
-                    return self.showNetworkError()
+
+                    switch error {
+                    case .closed:
+                        return self.showClosedError()
+                    default:
+                        return self.showNetworkError()
+                    }
                 case .success:
                     self.roomControllerDelegate?.didJoin(room: id)
                     return self.presentCurrentRoom()

@@ -13,11 +13,13 @@ protocol RoomDelegate {
     func didChangeSpeakVolume(user: Int, volume: Float)
 }
 
-// @todo
 enum RoomError: Error {
     case general
     case fullRoom
+    case closed
 }
+
+// @TODO THIS ENTIRE THING SHOULD BE REFACTORED SO WE HANDLE WEBRTC AND GRPC NICER, EG ERRORS.
 
 class Room {
     enum MemberRole: String, Decodable {
@@ -73,7 +75,7 @@ class Room {
     private let grpc: RoomServiceClient
     private var stream: BidirectionalStreamingCall<SignalRequest, SignalReply>!
 
-    private var completion: ((Result<Void, Error>) -> Void)!
+    private var completion: ((Result<Void, RoomError>) -> Void)!
 
     var delegate: RoomDelegate?
 
@@ -91,12 +93,12 @@ class Room {
         rtc.delegate = self
     }
 
-    func join(id: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+    func join(id: Int, completion: @escaping (Result<Void, RoomError>) -> Void) {
         self.completion = completion
         self.id = id
 
         guard let token = self.token else {
-            return completion(.failure(RoomError.general))
+            return completion(.failure(.general))
         }
 
         _ = stream.sendMessage(SignalRequest.with {
@@ -108,14 +110,18 @@ class Room {
 
         stream.status.whenComplete { result in
             switch result {
-            case let .failure(error):
-                completion(.failure(error))
+            case .failure:
+                completion(.failure(.general))
             case let .success(status):
                 switch status.code {
                 case .ok: break
                 default:
                     if let c = self.completion {
-                        return c(.failure(RoomError.general))
+                        if let message = status.message, message == "join error room closed" {
+                            return c(.failure(.closed))
+                        }
+
+                        return c(.failure(.general))
                     }
 
                     if !self.isClosed {
@@ -126,7 +132,7 @@ class Room {
         }
     }
 
-    func create(name: String?, isPrivate: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+    func create(name: String?, isPrivate: Bool, completion: @escaping (Result<Void, RoomError>) -> Void) {
         self.name = name
         self.completion = completion
 
@@ -150,13 +156,13 @@ class Room {
         stream.status.whenComplete { result in
             switch result {
             case let .failure(error):
-                completion(.failure(error))
+                completion(.failure(.general))
             case let .success(status):
                 switch status.code {
                 case .ok: break
                 default:
                     if let c = self.completion {
-                        return c(.failure(RoomError.general))
+                        return c(.failure(.general))
                     }
 
                     if !self.isClosed {
@@ -471,7 +477,7 @@ extension Room: WebRTCClientDelegate {
     }
 
     func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
-        if state == .failed {
+        if state == .failed || state == .closed {
             delegate?.roomWasClosedByRemote()
         }
     }
