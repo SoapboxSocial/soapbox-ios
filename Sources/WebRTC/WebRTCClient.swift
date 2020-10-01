@@ -102,6 +102,8 @@ final class WebRTCClient: NSObject {
             debugPrint("Error changeing AVAudioSession category: \(error)")
         }
         rtcAudioSession.unlockForConfiguration()
+
+        rtcAudioSession.add(self)
     }
 
     private func createMediaSenders() {
@@ -203,6 +205,16 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
 
     func peerConnection(_: RTCPeerConnection, didOpen _: RTCDataChannel) {
         debugPrint("peerConnection did open data channel")
+    }
+}
+
+extension WebRTCClient: RTCAudioSessionDelegate {
+    func audioSessionDidBeginInterruption(_: RTCAudioSession) {
+        muteAudio()
+    }
+
+    func audioSessionDidEndInterruption(_: RTCAudioSession, shouldResumeSession _: Bool) {
+        unmuteAudio()
     }
 }
 
