@@ -13,6 +13,8 @@ protocol WebRTCClientDelegate: AnyObject {
     func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate)
     func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState)
     func webRTCClient(_ client: WebRTCClient, didChangeAudioLevel delta: Float, track ssrc: UInt32)
+    func webRTCClientBeginInterrupted()
+    func webRTCClientEndInterrupted()
 }
 
 final class WebRTCClient: NSObject {
@@ -210,11 +212,11 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
 
 extension WebRTCClient: RTCAudioSessionDelegate {
     func audioSessionDidBeginInterruption(_: RTCAudioSession) {
-        muteAudio()
+        delegate?.webRTCClientBeginInterrupted()
     }
 
     func audioSessionDidEndInterruption(_: RTCAudioSession, shouldResumeSession _: Bool) {
-        unmuteAudio()
+        delegate?.webRTCClientEndInterrupted()
     }
 }
 

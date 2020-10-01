@@ -475,4 +475,12 @@ extension Room: WebRTCClientDelegate {
             delegate?.roomWasClosedByRemote()
         }
     }
+
+    func webRTCClientBeginInterrupted() {
+        mute()
+    }
+
+    func webRTCClientEndInterrupted() {
+        unmute()
+    }
 }
