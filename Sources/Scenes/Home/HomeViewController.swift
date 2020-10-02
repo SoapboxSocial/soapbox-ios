@@ -7,7 +7,7 @@ protocol HomeViewControllerOutput {
     func didSelectRoom(room: Int)
     func didEndSearching()
     func didBeginSearching()
-    func fetchSelf()
+    func fetchMe()
 }
 
 class HomeViewController: UIViewController {
@@ -96,7 +96,7 @@ class HomeViewController: UIViewController {
         super.viewWillAppear(animated)
 
         // @TODO probably not best to do this all the time?
-        output.fetchSelf()
+        output.fetchMe()
 
         if searchController.isActive {
             output.didBeginSearching()

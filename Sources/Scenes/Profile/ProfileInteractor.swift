@@ -29,7 +29,6 @@ extension ProfileInteractor: ProfileViewControllerOutput {
             case let .success(user):
                 if self.user == UserDefaults.standard.integer(forKey: "id") {
                     self.output.displayPersonal(profile: user)
-                    UserStore.store(image: user.image, displayName: user.displayName)
                     return
                 }
 

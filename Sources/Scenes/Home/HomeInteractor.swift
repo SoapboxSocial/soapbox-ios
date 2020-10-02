@@ -63,15 +63,14 @@ class HomeInteractor: HomeViewControllerOutput {
         }
     }
 
-    func fetchSelf() {
-        // @TODO: Probably want to create a me api?
-        api.user(id: UserDefaults.standard.integer(forKey: "id"), callback: { result in
+    func fetchMe() {
+        api.me(callback: { result in
             DispatchQueue.main.async {
                 switch result {
                 case .failure:
                     break // @TODO
-                case let .success(profile):
-                    UserStore.store(image: profile.image, displayName: profile.displayName)
+                case let .success(user):
+                    UserStore.store(user: user)
                     self.output.didFetchImage()
                 }
             }

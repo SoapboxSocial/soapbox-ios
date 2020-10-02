@@ -259,6 +259,27 @@ extension APIClient {
             return callback(.failure(.decode))
         }
     }
+
+    func me(callback: @escaping (Result<User, APIError>) -> Void) {
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/me"), method: .get, headers: ["Authorization": token!])
+            .validate()
+            .response { result in
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
+
+                do {
+                    let resp = try self.decoder.decode(User.self, from: data)
+                    callback(.success(resp))
+                } catch {
+                    return callback(.failure(.decode))
+                }
+            }
+    }
 }
 
 extension APIClient {
