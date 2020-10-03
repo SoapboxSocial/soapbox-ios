@@ -127,7 +127,7 @@ class HomeViewController: UIViewController {
     }
 
     @objc private func openNotifications() {
-        let notifications = NotificationsViewController()
+        let notifications = SceneFactory.createNotificationsViewController()
         navigationController?.pushViewController(notifications, animated: true)
     }
 
