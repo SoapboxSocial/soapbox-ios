@@ -70,7 +70,7 @@ class SoapTextField: UITextField {
     private func colors() -> ThemeColors {
         if colorTheme == .light {
             return ThemeColors(text: .black, background: .white, placeholder: .lightGray)
-        } m
+        }
 
         return ThemeColors(text: .white, background: .systemGray6, placeholder: .secondaryLabel)
     }
