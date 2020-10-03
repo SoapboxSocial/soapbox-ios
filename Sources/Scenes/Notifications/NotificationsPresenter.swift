@@ -2,6 +2,7 @@ import Foundation
 
 protocol NotificationsPresenterOutput {
     func display(notifications: [APIClient.Notification])
+    func displayError()
 }
 
 class NotificationsPresenter: NotificationsInteractorOutput {
@@ -9,6 +10,10 @@ class NotificationsPresenter: NotificationsInteractorOutput {
 
     init(output: NotificationsPresenterOutput) {
         self.output = output
+    }
+    
+    func presentError() {
+        output.displayError()
     }
 
     func present(notifications: [APIClient.Notification]) {

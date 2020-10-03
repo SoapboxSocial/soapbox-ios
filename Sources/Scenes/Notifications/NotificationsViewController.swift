@@ -1,4 +1,5 @@
 import UIKit
+import NotificationBannerSwift
 
 protocol NotificationsViewControllerOutput {
     func loadNotifications()
@@ -16,7 +17,7 @@ class NotificationsViewController: UIViewController {
 
         view.backgroundColor = .background
 
-        title = "Notifications"
+        title = NSLocalizedString("notifications", comment: "")
 
         navigationController?.navigationBar.titleTextAttributes = [
             NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .body, weight: .medium),
@@ -38,6 +39,15 @@ extension NotificationsViewController: NotificationsPresenterOutput {
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
+    }
+    
+    func displayError() {
+        let banner = FloatingNotificationBanner(
+            title: NSLocalizedString("something_went_wrong", comment: ""),
+            subtitle: NSLocalizedString("please_try_again_later", comment: ""),
+            style: .danger
+        )
+        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
     }
 }
 

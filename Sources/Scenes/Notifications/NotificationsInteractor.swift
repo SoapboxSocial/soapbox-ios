@@ -1,6 +1,7 @@
 import Foundation
 
 protocol NotificationsInteractorOutput {
+    func presentError()
     func present(notifications: [APIClient.Notification])
 }
 
@@ -18,7 +19,7 @@ class NotificationsInteractor: NotificationsViewControllerOutput {
         api.notifications(callback: { result in
             switch result {
             case .failure:
-                break
+                self.output.presentError()
             case let .success(notifications):
                 self.output.present(notifications: notifications)
             }
