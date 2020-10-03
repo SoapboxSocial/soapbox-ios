@@ -117,13 +117,13 @@ class EditProfileViewController: UIViewController {
             bioTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             bioTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
-//
-//        activityIndicator.isHidden = true
-//        activityIndicator.hidesWhenStopped = true
-//        activityIndicator.color = .black
-//
-//        activityIndicator.center = view.center
-//        view.addSubview(activityIndicator)
+
+        activityIndicator.isHidden = true
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.color = .black
+
+        activityIndicator.center = view.center
+        view.addSubview(activityIndicator)
     }
 
     @objc private func selectImage() {
