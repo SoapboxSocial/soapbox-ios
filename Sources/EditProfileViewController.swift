@@ -88,17 +88,17 @@ class EditProfileViewController: UIViewController {
         view.addSubview(activityIndicator)
 
         NSLayoutConstraint.activate([
-            saveButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            saveButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            cancelButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            cancelButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
         ])
 
         NSLayoutConstraint.activate([
-            cancelButton.topAnchor.constraint(equalTo: saveButton.topAnchor),
-            cancelButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            saveButton.topAnchor.constraint(equalTo: cancelButton.topAnchor),
+            saveButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
 
         NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: saveButton.bottomAnchor, constant: 40),
+            imageView.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 40),
             imageView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             imageView.heightAnchor.constraint(equalToConstant: 80),
             imageView.widthAnchor.constraint(equalToConstant: 80),

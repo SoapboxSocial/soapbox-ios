@@ -28,6 +28,7 @@ class TextView: UITextView {
         layer.borderColor = UIColor.clear.cgColor
 
         layer.masksToBounds = false
+        clipsToBounds = true
 
         textContainerInset = UIEdgeInsets(top: 16, left: 20, bottom: 16, right: 20)
     }
