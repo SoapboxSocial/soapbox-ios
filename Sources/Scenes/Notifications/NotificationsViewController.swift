@@ -1,5 +1,5 @@
-import UIKit
 import NotificationBannerSwift
+import UIKit
 
 protocol NotificationsViewControllerOutput {
     func loadNotifications()
@@ -40,7 +40,7 @@ extension NotificationsViewController: NotificationsPresenterOutput {
             self.tableView.reloadData()
         }
     }
-    
+
     func displayError() {
         let banner = FloatingNotificationBanner(
             title: NSLocalizedString("something_went_wrong", comment: ""),

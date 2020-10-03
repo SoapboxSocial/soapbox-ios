@@ -1,5 +1,7 @@
 import UIKit
 
+// @TODO USE CONSTRAINTS
+
 class EditProfileImageButton: UIImageView {
     override init(frame: CGRect) {
         super.init(frame: frame)

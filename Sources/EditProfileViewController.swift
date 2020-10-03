@@ -31,7 +31,7 @@ class EditProfileViewController: UIViewController {
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
-        
+
         let saveButton = UIButton()
         saveButton.translatesAutoresizingMaskIntoConstraints = false
         saveButton.titleLabel?.font = .rounded(forTextStyle: .body, weight: .semibold)
@@ -39,84 +39,46 @@ class EditProfileViewController: UIViewController {
         saveButton.setTitleColor(.secondaryBackground, for: .normal)
         saveButton.addTarget(self, action: #selector(savePressed), for: .touchUpInside)
         view.addSubview(saveButton)
-        
+
         let cancelButton = UIButton()
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
-        cancelButton.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
         cancelButton.titleLabel?.font = .rounded(forTextStyle: .body, weight: .semibold)
+        cancelButton.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
         cancelButton.setTitleColor(.secondaryBackground, for: .normal)
         cancelButton.addTarget(self, action: #selector(cancelPressed), for: .touchUpInside)
         view.addSubview(cancelButton)
-        
-        NSLayoutConstraint.activate([
-            saveButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            saveButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-        ])
-        
-        NSLayoutConstraint.activate([
-            cancelButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            cancelButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-        ])
-        
+
         imagePicker = ImagePicker()
         imagePicker.delegate = self
-        
-        imageView = EditProfileImageButton(frame: CGRect(x: 20, y: 100, width: 80, height: 80))
+
+        imageView = EditProfileImageButton(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
+        imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.addTarget(self, action: #selector(selectImage))
         imageView.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + user.image))
         view.addSubview(imageView)
-        
-        NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: saveButton.bottomAnchor, constant: 40),
-            imageView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-        ])
-        
+
         let nameLabel = UILabel()
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.text = NSLocalizedString("name", comment: "")
         nameLabel.font = .rounded(forTextStyle: .title3, weight: .bold)
         view.addSubview(nameLabel)
-        
-        NSLayoutConstraint.activate([
-            nameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20),
-            nameLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-        ])
 
         displayNameTextField = SoapTextField(frame: CGRect.zero, theme: .normal)
         displayNameTextField.translatesAutoresizingMaskIntoConstraints = false
         displayNameTextField.placeholder = NSLocalizedString("enter_name", comment: "")
         displayNameTextField.text = user.displayName
         view.addSubview(displayNameTextField)
-        
-        NSLayoutConstraint.activate([
-            displayNameTextField.heightAnchor.constraint(equalToConstant: 56),
-            displayNameTextField.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 10),
-            displayNameTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            displayNameTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-        ])
-        
+
         let bioLabel = UILabel()
         bioLabel.translatesAutoresizingMaskIntoConstraints = false
         bioLabel.text = NSLocalizedString("bio", comment: "")
         bioLabel.font = .rounded(forTextStyle: .title3, weight: .bold)
         view.addSubview(bioLabel)
-        
-        NSLayoutConstraint.activate([
-            bioLabel.topAnchor.constraint(equalTo: displayNameTextField.bottomAnchor, constant: 20),
-            bioLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-        ])
-        
+
         bioTextField = TextView()
         bioTextField.translatesAutoresizingMaskIntoConstraints = false
         bioTextField.text = user.bio
         view.addSubview(bioTextField)
-
-        NSLayoutConstraint.activate([
-            bioTextField.heightAnchor.constraint(equalToConstant: 112),
-            bioTextField.topAnchor.constraint(equalTo: bioLabel.bottomAnchor, constant: 10),
-            bioTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            bioTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-        ])
 
         activityIndicator.isHidden = true
         activityIndicator.hidesWhenStopped = true
@@ -124,6 +86,47 @@ class EditProfileViewController: UIViewController {
 
         activityIndicator.center = view.center
         view.addSubview(activityIndicator)
+
+        NSLayoutConstraint.activate([
+            saveButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            saveButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            cancelButton.topAnchor.constraint(equalTo: saveButton.topAnchor),
+            cancelButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+        ])
+
+        NSLayoutConstraint.activate([
+            imageView.topAnchor.constraint(equalTo: saveButton.bottomAnchor, constant: 40),
+            imageView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            imageView.heightAnchor.constraint(equalToConstant: 80),
+            imageView.widthAnchor.constraint(equalToConstant: 80),
+        ])
+
+        NSLayoutConstraint.activate([
+            nameLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20),
+            nameLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            displayNameTextField.heightAnchor.constraint(equalToConstant: 56),
+            displayNameTextField.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 10),
+            displayNameTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            displayNameTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+        ])
+
+        NSLayoutConstraint.activate([
+            bioLabel.topAnchor.constraint(equalTo: displayNameTextField.bottomAnchor, constant: 20),
+            bioLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            bioTextField.heightAnchor.constraint(equalToConstant: 112),
+            bioTextField.topAnchor.constraint(equalTo: bioLabel.bottomAnchor, constant: 10),
+            bioTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            bioTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+        ])
     }
 
     @objc private func selectImage() {

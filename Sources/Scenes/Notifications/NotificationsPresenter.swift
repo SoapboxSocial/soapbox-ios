@@ -11,7 +11,7 @@ class NotificationsPresenter: NotificationsInteractorOutput {
     init(output: NotificationsPresenterOutput) {
         self.output = output
     }
-    
+
     func presentError() {
         output.displayError()
     }
