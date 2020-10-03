@@ -51,7 +51,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         lock.addTarget(self, action: #selector(didPressLock), for: .touchUpInside)
         addSubview(lock)
 
-        textField = SoapTextField(frame: CGRect(x: 20, y: title.frame.origin.y + title.frame.size.height + 30, width: frame.size.width - 40, height: 56))
+        textField = SoapTextField(frame: CGRect(x: 20, y: title.frame.origin.y + title.frame.size.height + 30, width: frame.size.width - 40, height: 56), theme: .light)
         textField.placeholder = NSLocalizedString("enter_name", comment: "")
         textField.delegate = self
         addSubview(textField)

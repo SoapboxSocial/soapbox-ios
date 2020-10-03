@@ -1,17 +1,38 @@
 import UIKit
 
 class SoapTextField: UITextField {
+    struct ThemeColors {
+        let text: UIColor
+        let background: UIColor
+        let placeholder: UIColor
+    }
+
+    enum Theme {
+        case normal, light
+    }
+
+    private var theme: Theme
+
+    private var colorTheme: UIUserInterfaceStyle {
+        if theme == .light {
+            return .light
+        }
+
+        return UIScreen.main.traitCollection.userInterfaceStyle
+    }
+
     override var placeholder: String? {
         willSet(value) {
             guard let text = value else { return }
             attributedPlaceholder = NSAttributedString(
                 string: text,
-                attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray]
+                attributes: [NSAttributedString.Key.foregroundColor: colors().placeholder]
             )
         }
     }
 
-    override init(frame: CGRect) {
+    init(frame: CGRect, theme: Theme) {
+        self.theme = theme
         super.init(frame: frame)
         setup()
     }
@@ -25,9 +46,10 @@ class SoapTextField: UITextField {
 
         font = .rounded(forTextStyle: .title3, weight: .bold)
 
-        // @todo theme
-        backgroundColor = .white
-        textColor = .black
+        let theme = colors()
+
+        backgroundColor = theme.background
+        textColor = theme.text
 
         layer.cornerRadius = 15
 
@@ -43,5 +65,13 @@ class SoapTextField: UITextField {
 
     override func editingRect(forBounds bounds: CGRect) -> CGRect {
         return bounds.insetBy(dx: 20, dy: 0)
+    }
+
+    private func colors() -> ThemeColors {
+        if colorTheme == .light {
+            return ThemeColors(text: .black, background: .white, placeholder: .lightGray)
+        }
+
+        return ThemeColors(text: .white, background: .systemGray6, placeholder: .secondaryLabel)
     }
 }
