@@ -4,11 +4,11 @@
 PRODUCT_BUNDLE_IDENTIFIER = app.social.soapbox-test
 
 // Server URL
-ROOT_URL = http:/$()/192.168.2.111:8080
+ROOT_URL = http:/$()/192.168.33.16
 
 // Room Service
-ROOM_SERVICE_URL = 192.168.2.111:8080
+ROOM_SERVICE_URL = 192.168.33.16
 ROOM_SERVICE_PORT = 50051
 
 // CDN URL
-CDN_URL = http:/$()/192.168.2.111:8080/cdn
+CDN_URL = http:/$()/192.168.33.16/cdn
