@@ -83,3 +83,8 @@
 
 "create_a_room" = "Create a room";
 "room_was_closed" = "This room was already closed!";
+
+"name" = "Name";
+"enter_name" = "Enter name";
+
+"bio" = "Bio";
