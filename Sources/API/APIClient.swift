@@ -66,6 +66,21 @@ extension APIClient {
         }
     }
 
+    struct Alert: Decodable {
+        let key: String
+        let arguments: [String]
+
+        private enum CodingKeys: String, CodingKey {
+            case key = "loc-key", arguments = "loc-args"
+        }
+    }
+
+    struct Notification: Decodable {
+        let category: String
+        let alert: Alert
+        let arguments: [String: Int] // @TODO THIS IS DANGEROUS
+    }
+
     private struct PinEntryResponse: Decodable {
         let state: LoginState
         let expiresIn: Int?
@@ -276,6 +291,28 @@ extension APIClient {
                     let resp = try self.decoder.decode(User.self, from: data)
                     callback(.success(resp))
                 } catch {
+                    return callback(.failure(.decode))
+                }
+            }
+    }
+
+    func notifications(callback: @escaping (Result<[Notification], APIError>) -> Void) {
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/me/notifications"), method: .get, headers: ["Authorization": token!])
+            .validate()
+            .response { result in
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
+
+                do {
+                    let resp = try self.decoder.decode([Notification].self, from: data)
+                    callback(.success(resp))
+                } catch {
+                    debugPrint("\(error)")
                     return callback(.failure(.decode))
                 }
             }

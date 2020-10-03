@@ -30,4 +30,14 @@ class SceneFactory {
 
         return viewController
     }
+
+    static func createNotificationsViewController() -> NotificationsViewController {
+        let viewController = NotificationsViewController()
+        let presenter = NotificationsPresenter(output: viewController)
+
+        let interactor = NotificationsInteractor(output: presenter, api: APIClient())
+        viewController.output = interactor
+
+        return viewController
+    }
 }
