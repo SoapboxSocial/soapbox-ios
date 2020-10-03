@@ -62,6 +62,15 @@ class HomeViewController: UIViewController {
         profileImageView.layer.masksToBounds = true
         containView.addSubview(profileImageView!)
 
+        let iconConfig = UIImage.SymbolConfiguration(weight: .bold)
+        let rightbarButton = UIBarButtonItem(
+            image: UIImage(systemName: "bell", withConfiguration: iconConfig),
+            style: .plain,
+            target: self,
+            action: #selector(openNotifications)
+        )
+        navigationItem.rightBarButtonItem = rightbarButton
+
         let searchViewController = SceneFactory.createSearchViewController()
         searchController = UISearchController(searchResultsController: searchViewController)
         searchController.searchResultsUpdater = searchViewController
@@ -115,6 +124,11 @@ class HomeViewController: UIViewController {
 
         let profile = SceneFactory.createProfileViewController(id: id)
         navigationController?.pushViewController(profile, animated: true)
+    }
+
+    @objc private func openNotifications() {
+        let notifications = NotificationsViewController()
+        navigationController?.pushViewController(notifications, animated: true)
     }
 
     @objc private func loadData() {
