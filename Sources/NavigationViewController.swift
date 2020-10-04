@@ -4,7 +4,7 @@ import FloatingPanel
 import NotificationBannerSwift
 import UIKit
 
-class NavigationViewController: UINavigationController {
+class NavigationViewController: UINavigationController, FloatingPanelControllerDelegate {
     var roomControllerDelegate: RoomControllerDelegate?
 
     var activityIndicator = UIActivityIndicatorView(style: .large)
@@ -59,37 +59,29 @@ class NavigationViewController: UINavigationController {
 
     @objc func didTapCreateRoom() {
         requestMicrophone {
-            let roomView = RoomCreationView()
-            roomView.delegate = self
-            roomView.translatesAutoresizingMaskIntoConstraints = false
+            let appearance = SurfaceAppearance()
+            appearance.cornerRadius = 16.0
+            appearance.backgroundColor = .secondaryBackground
+
+            let shadow = SurfaceAppearance.Shadow()
+            shadow.color = UIColor.black
+            shadow.offset = CGSize(width: 0, height: 16)
+            shadow.radius = 16
+            shadow.spread = 8
+            appearance.shadows = [shadow]
 
             self.creationDrawerV2 = FloatingPanelController()
-            let contentVC = UIViewController()
+            let contentVC = RoomCreationViewController()
+            contentVC.delegate = self
             self.creationDrawerV2!.set(contentViewController: contentVC)
+            self.creationDrawerV2!.surfaceView.appearance = appearance
+            self.creationDrawerV2!.surfaceView.grabberHandle.isHidden = true
+            self.creationDrawerV2!.delegate = contentVC
+            self.creationDrawerV2!.layout = RoomCreationLayout()
 
             self.creationDrawerV2!.addPanel(toParent: self)
-            self.creationDrawerV2!.panGestureRecognizer.isEnabled = false
 
-            self.creationDrawerV2!.move(to: .half, animated: true)
-
-//            self.present(self.creationDrawerV2!, animated: true)
-
-//            self.creationDrawer = DrawerView(withView: roomView)
-//            self.creationDrawer!.delegate = self
-//            self.creationDrawer!.attachTo(view: self.view)
-//            self.creationDrawer!.backgroundEffect = nil
-//            self.creationDrawer!.snapPositions = [.open, .closed]
-//            self.creationDrawer!.cornerRadius = 25
-//            self.creationDrawer!.backgroundColor = .secondaryBackground
-//            self.creationDrawer!.setPosition(.closed, animated: false)
-//            self.view.addSubview(self.creationDrawer!)
-//
-//            self.creationDrawer!.contentVisibilityBehavior = .allowPartial
-//
-//            self.creationDrawer!.setPosition(.open, animated: true) { _ in
-//                self.createRoomButton.isHidden = true
-//                UIApplication.shared.isIdleTimerDisabled = true
-//            }
+            self.creationDrawerV2!.move(to: .full, animated: true)
         }
     }
 
@@ -290,9 +282,9 @@ extension NavigationViewController: RoomController {
 
 extension NavigationViewController: RoomCreationDelegate {
     func didCancelRoomCreation() {
-        creationDrawer?.setPosition(.closed, animated: true) { _ in
-            self.creationDrawer = nil
-        }
+        creationDrawerV2!.move(to: .hidden, animated: true, completion: {
+            self.creationDrawerV2 = nil
+        })
     }
 
     func didEnterWithName(_ name: String?, isPrivate: Bool) {
