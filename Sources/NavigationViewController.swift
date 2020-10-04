@@ -16,9 +16,8 @@ class NavigationViewController: UINavigationController, FloatingPanelControllerD
     private var client: APIClient
 
     private var roomDrawer: DrawerView?
-    private var creationDrawer: DrawerView?
 
-    private var creationDrawerV2: FloatingPanelController?
+    private var creationDrawer: FloatingPanelController?
 
     override init(rootViewController: UIViewController) {
         createRoomButton = CreateRoomButton()
@@ -70,18 +69,18 @@ class NavigationViewController: UINavigationController, FloatingPanelControllerD
             shadow.spread = 8
             appearance.shadows = [shadow]
 
-            self.creationDrawerV2 = FloatingPanelController()
+            self.creationDrawer = FloatingPanelController()
             let contentVC = RoomCreationViewController()
             contentVC.delegate = self
-            self.creationDrawerV2!.set(contentViewController: contentVC)
-            self.creationDrawerV2!.surfaceView.appearance = appearance
-            self.creationDrawerV2!.surfaceView.grabberHandle.isHidden = true
-            self.creationDrawerV2!.delegate = contentVC
-            self.creationDrawerV2!.layout = RoomCreationLayout()
+            self.creationDrawer!.set(contentViewController: contentVC)
+            self.creationDrawer!.surfaceView.appearance = appearance
+            self.creationDrawer!.surfaceView.grabberHandle.isHidden = true
+            self.creationDrawer!.delegate = contentVC
+            self.creationDrawer!.layout = RoomCreationLayout()
 
-            self.creationDrawerV2!.addPanel(toParent: self)
+            self.creationDrawer!.addPanel(toParent: self)
 
-            self.creationDrawerV2!.move(to: .full, animated: true)
+            self.creationDrawer!.move(to: .full, animated: true)
         }
     }
 
@@ -282,18 +281,21 @@ extension NavigationViewController: RoomController {
 
 extension NavigationViewController: RoomCreationDelegate {
     func didCancelRoomCreation() {
-        creationDrawerV2!.move(to: .hidden, animated: true, completion: {
-            self.creationDrawerV2!.view.removeFromSuperview()
-            self.creationDrawerV2!.removeFromParent()
-            self.creationDrawerV2 = nil
+        creationDrawer!.move(to: .hidden, animated: true, completion: {
+            self.creationDrawer!.view.removeFromSuperview()
+            self.creationDrawer!.removeFromParent()
+            self.creationDrawer = nil
         })
     }
 
     func didEnterWithName(_ name: String?, isPrivate: Bool) {
         DispatchQueue.main.async {
-            self.creationDrawer?.setPosition(.closed, animated: true) { _ in
+            self.creationDrawer!.move(to: .hidden, animated: true, completion: {
                 self.createRoom(name: name, isPrivate: isPrivate)
-            }
+                self.creationDrawer!.view.removeFromSuperview()
+                self.creationDrawer!.removeFromParent()
+                self.creationDrawer = nil
+            })
         }
     }
 
