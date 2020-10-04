@@ -54,11 +54,11 @@
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>
-		<string>SplashBackground</string>
+		<string>LaunchScreenBackground</string>
 		<key>UIImageName</key>
-		<string>SplashImage</string>
+		<string>LaunchScreenImage</string>
 		<key>UIImageRespectsSafeAreaInsets</key>
-		<string>YES</string>
+		<string>NO</string>
 	</dict>
 	<key>UIRequiresFullScreen</key>
 	<true/>
