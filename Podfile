@@ -16,7 +16,7 @@ target 'Soapbox' do
   pod 'UIWindowTransitions'
   pod 'AlamofireImage'
   pod 'gRPC-Swift', '~> 1.0.0-alpha.18'
-  pod 'FloatingPanel' '~> 2.0.0'
+  pod 'FloatingPanel', :git => 'https://github.com/SoapboxSocial/FloatingPanel.git'
 
   target 'SoapboxTests' do
     inherit! :search_paths

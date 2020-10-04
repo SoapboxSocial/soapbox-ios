@@ -2,6 +2,7 @@ import AVFoundation
 import DrawerView
 import NotificationBannerSwift
 import UIKit
+import FloatingPanel
 
 class NavigationViewController: UINavigationController {
     var roomControllerDelegate: RoomControllerDelegate?
@@ -16,6 +17,8 @@ class NavigationViewController: UINavigationController {
 
     private var roomDrawer: DrawerView?
     private var creationDrawer: DrawerView?
+    
+    private var creationDrawerV2: FloatingPanelController?
 
     override init(rootViewController: UIViewController) {
         createRoomButton = CreateRoomButton()
@@ -59,23 +62,36 @@ class NavigationViewController: UINavigationController {
             let roomView = RoomCreationView()
             roomView.delegate = self
             roomView.translatesAutoresizingMaskIntoConstraints = false
+            
+            self.creationDrawerV2 = FloatingPanelController()
+            let contentVC = UIViewController()
+            self.creationDrawerV2!.set(contentViewController: contentVC)
 
-            self.creationDrawer = DrawerView(withView: roomView)
-            self.creationDrawer!.delegate = self
-            self.creationDrawer!.attachTo(view: self.view)
-            self.creationDrawer!.backgroundEffect = nil
-            self.creationDrawer!.snapPositions = [.open, .closed]
-            self.creationDrawer!.cornerRadius = 25
-            self.creationDrawer!.backgroundColor = .secondaryBackground
-            self.creationDrawer!.setPosition(.closed, animated: false)
-            self.view.addSubview(self.creationDrawer!)
+            self.creationDrawerV2!.addPanel(toParent: self)
+            self.creationDrawerV2!.panGestureRecognizer.isEnabled = false
+            self.creationDrawerV2!.behavior = FloatingPanelBehavior()
+                        
+            self.creationDrawerV2!.move(to: .half, animated: true)
+            
+//            self.present(self.creationDrawerV2!, animated: true)
 
-            self.creationDrawer!.contentVisibilityBehavior = .allowPartial
 
-            self.creationDrawer!.setPosition(.open, animated: true) { _ in
-                self.createRoomButton.isHidden = true
-                UIApplication.shared.isIdleTimerDisabled = true
-            }
+//            self.creationDrawer = DrawerView(withView: roomView)
+//            self.creationDrawer!.delegate = self
+//            self.creationDrawer!.attachTo(view: self.view)
+//            self.creationDrawer!.backgroundEffect = nil
+//            self.creationDrawer!.snapPositions = [.open, .closed]
+//            self.creationDrawer!.cornerRadius = 25
+//            self.creationDrawer!.backgroundColor = .secondaryBackground
+//            self.creationDrawer!.setPosition(.closed, animated: false)
+//            self.view.addSubview(self.creationDrawer!)
+//
+//            self.creationDrawer!.contentVisibilityBehavior = .allowPartial
+//
+//            self.creationDrawer!.setPosition(.open, animated: true) { _ in
+//                self.createRoomButton.isHidden = true
+//                UIApplication.shared.isIdleTimerDisabled = true
+//            }
         }
     }
 

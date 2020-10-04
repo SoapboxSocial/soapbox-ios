@@ -12,6 +12,7 @@ PODS:
   - CNIOLinux (2.22.1)
   - CNIOSHA1 (2.22.1)
   - DrawerView (1.3.1)
+  - FloatingPanel (2.0.0)
   - GoogleWebRTC (1.1.31999)
   - gRPC-Swift (1.0.0-alpha.19):
     - CGRPCZlib (= 1.0.0-alpha.19)
@@ -73,6 +74,7 @@ DEPENDENCIES:
   - Alamofire
   - AlamofireImage
   - DrawerView
+  - FloatingPanel (from `https://github.com/SoapboxSocial/FloatingPanel.git`)
   - GoogleWebRTC
   - gRPC-Swift (~> 1.0.0-alpha.18)
   - KeychainAccess
@@ -114,6 +116,15 @@ SPEC REPOS:
     - SwiftProtobuf
     - UIWindowTransitions
 
+EXTERNAL SOURCES:
+  FloatingPanel:
+    :git: https://github.com/SoapboxSocial/FloatingPanel.git
+
+CHECKOUT OPTIONS:
+  FloatingPanel:
+    :commit: 743205faf3bb33484d7f85242cb0c88a29067b8a
+    :git: https://github.com/SoapboxSocial/FloatingPanel.git
+
 SPEC CHECKSUMS:
   Alamofire: 814429acc853c6c54ff123fc3d2ef66803823ce0
   AlamofireImage: c4a2ba349885fb3064feb74d2e547bd42ce9be10
@@ -126,6 +137,7 @@ SPEC CHECKSUMS:
   CNIOLinux: 896c5715ebe479fbfcdac5340717bbbd7936901b
   CNIOSHA1: fd4d38fb42778ed971a75d87530f842106d4b4f4
   DrawerView: 0c7e6c40e5076b2fb64c394fa5fc8166ff917eff
+  FloatingPanel: b0d4f9b2312b21741a18b659ddfa206b60d3b97a
   GoogleWebRTC: b39a78c4f5cc6b0323415b9233db03a2faa7b0f0
   gRPC-Swift: 75a7a8d7cd08177165ef971159afb84e5130cfc9
   KeychainAccess: 9b07f665298d13c3a85881bd3171f6f49b8151c1
@@ -146,6 +158,6 @@ SPEC CHECKSUMS:
   SwiftProtobuf: 4ef85479c18ca85b5482b343df9c319c62bda699
   UIWindowTransitions: cb662e2ae9e2d1060fcdbe3eb3de9232bedb7612
 
-PODFILE CHECKSUM: f39411aadcaf969016ffa9782b72659a3bfab919
+PODFILE CHECKSUM: 478dee9a87380717337c5b9d93948910d7d12e7b
 
 COCOAPODS: 1.9.1
