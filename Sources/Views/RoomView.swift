@@ -243,6 +243,18 @@ extension RoomView: RoomDelegate {
             }
         }
     }
+
+    func didReceiveLink(from _: Int, link: URL) {
+        let option = UIAlertController(title: "X shared a link", message: "Would you like to open it?", preferredStyle: .alert)
+
+        option.addAction(UIAlertAction(title: "Yes", style: .default, handler: { _ in
+            UIApplication.shared.openURL(link)
+        }))
+
+        option.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+
+        UIApplication.shared.keyWindow?.rootViewController!.present(option, animated: true)
+    }
 }
 
 extension RoomView: UICollectionViewDelegate {
