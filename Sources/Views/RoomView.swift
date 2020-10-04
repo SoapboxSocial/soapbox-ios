@@ -54,6 +54,10 @@ class RoomView: UIView {
         recognizerView.addGestureRecognizer(recognizer)
         topBar.addSubview(recognizerView)
 
+        let pasteLinkRecognizer = UITapGestureRecognizer(target: self, action: #selector(pasteLink))
+        pasteLinkRecognizer.numberOfTapsRequired = 2
+        addGestureRecognizer(pasteLinkRecognizer)
+
         let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
 
         let exitButton = EmojiButton(
@@ -119,6 +123,30 @@ class RoomView: UIView {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
+    }
+
+    @objc private func pasteLink() {
+        if room.role == .audience {
+            return
+        }
+
+        guard let url = UIPasteboard.general.url else {
+            return
+        }
+
+        let alert = UIAlertController(
+            title: "Would you like to share?",
+            message: url.absoluteString,
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .default, handler: { _ in
+            self.room.share(link: url)
+        }))
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel, handler: nil))
+
+        UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
     }
 
     @objc private func exitTapped() {
