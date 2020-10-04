@@ -234,6 +234,13 @@ class Room {
 
         delegate?.userDidReact(user: 0, reaction: reaction)
     }
+    
+    func share(link: URL) {
+        send(command: SignalRequest.Command.with {
+            $0.type = SignalRequest.Command.TypeEnum.linkShare
+            $0.data = Data(link.absoluteString)
+        })
+    }
 
     private func handle(_ reply: SignalReply) {
         switch reply.payload {

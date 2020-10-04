@@ -119,6 +119,7 @@ struct SignalRequest {
       case muteSpeaker // = 2
       case unmuteSpeaker // = 3
       case reaction // = 4
+      case linkShare // = 5
       case UNRECOGNIZED(Int)
 
       init() {
@@ -132,6 +133,7 @@ struct SignalRequest {
         case 2: self = .muteSpeaker
         case 3: self = .unmuteSpeaker
         case 4: self = .reaction
+        case 5: self = .linkShare
         default: self = .UNRECOGNIZED(rawValue)
         }
       }
@@ -143,6 +145,7 @@ struct SignalRequest {
         case .muteSpeaker: return 2
         case .unmuteSpeaker: return 3
         case .reaction: return 4
+        case .linkShare: return 5
         case .UNRECOGNIZED(let i): return i
         }
       }
@@ -165,6 +168,7 @@ extension SignalRequest.Command.TypeEnum: CaseIterable {
     .muteSpeaker,
     .unmuteSpeaker,
     .reaction,
+    .linkShare,
   ]
 }
 
@@ -263,6 +267,7 @@ struct SignalReply {
       case mutedSpeaker // = 5
       case unmutedSpeaker // = 6
       case reacted // = 7
+      case linkShared // = 8
       case UNRECOGNIZED(Int)
 
       init() {
@@ -279,6 +284,7 @@ struct SignalReply {
         case 5: self = .mutedSpeaker
         case 6: self = .unmutedSpeaker
         case 7: self = .reacted
+        case 8: self = .linkShared
         default: self = .UNRECOGNIZED(rawValue)
         }
       }
@@ -293,6 +299,7 @@ struct SignalReply {
         case .mutedSpeaker: return 5
         case .unmutedSpeaker: return 6
         case .reacted: return 7
+        case .linkShared: return 8
         case .UNRECOGNIZED(let i): return i
         }
       }
@@ -318,6 +325,7 @@ extension SignalReply.Event.TypeEnum: CaseIterable {
     .mutedSpeaker,
     .unmutedSpeaker,
     .reacted,
+    .linkShared,
   ]
 }
 
@@ -688,6 +696,7 @@ extension SignalRequest.Command.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     2: .same(proto: "MUTE_SPEAKER"),
     3: .same(proto: "UNMUTE_SPEAKER"),
     4: .same(proto: "REACTION"),
+    5: .same(proto: "LINK_SHARE"),
   ]
 }
 
@@ -824,6 +833,7 @@ extension SignalReply.Event.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     5: .same(proto: "MUTED_SPEAKER"),
     6: .same(proto: "UNMUTED_SPEAKER"),
     7: .same(proto: "REACTED"),
+    8: .same(proto: "LINK_SHARED"),
   ]
 }
 
