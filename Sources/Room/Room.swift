@@ -335,6 +335,8 @@ class Room {
             didReceiveUnmuteSpeaker(event)
         case .reacted:
             didReceiveReacted(event)
+        case .linkShared:
+            break // @TODO
         case .UNRECOGNIZED:
             return
         }
