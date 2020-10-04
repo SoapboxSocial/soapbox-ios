@@ -283,6 +283,8 @@ extension NavigationViewController: RoomController {
 extension NavigationViewController: RoomCreationDelegate {
     func didCancelRoomCreation() {
         creationDrawerV2!.move(to: .hidden, animated: true, completion: {
+            self.creationDrawerV2!.view.removeFromSuperview()
+            self.creationDrawerV2!.removeFromParent()
             self.creationDrawerV2 = nil
         })
     }
