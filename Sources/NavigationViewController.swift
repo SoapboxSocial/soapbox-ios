@@ -56,62 +56,26 @@ class NavigationViewController: UINavigationController {
     }
 
     @objc func didTapCreateRoom() {
-        func showWarning() {
-            let alert = UIAlertController(
-                title: NSLocalizedString("microphone_permission_denied", comment: ""),
-                message: nil, preferredStyle: .alert
-            )
-
-            alert.addAction(UIAlertAction(title: NSLocalizedString("ok", comment: ""), style: .default, handler: nil))
-            alert.addAction(UIAlertAction(title: NSLocalizedString("to_settings", comment: ""), style: .default, handler: { _ in
-                DispatchQueue.main.async {
-                    UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-                }
-            }))
-
-            present(alert, animated: true)
-        }
-
-        func showCreationDrawer() {
+        requestMicrophone {
             let roomView = RoomCreationView()
             roomView.delegate = self
             roomView.translatesAutoresizingMaskIntoConstraints = false
 
-            creationDrawer = DrawerView(withView: roomView)
-            creationDrawer!.delegate = self
-            creationDrawer!.attachTo(view: view)
-            creationDrawer!.backgroundEffect = nil
-            creationDrawer!.snapPositions = [.open, .closed]
-            creationDrawer!.cornerRadius = 25
-            creationDrawer!.backgroundColor = .secondaryBackground
-            creationDrawer!.setPosition(.closed, animated: false)
-            view.addSubview(creationDrawer!)
+            self.creationDrawer = DrawerView(withView: roomView)
+            self.creationDrawer!.delegate = self
+            self.creationDrawer!.attachTo(view: self.view)
+            self.creationDrawer!.backgroundEffect = nil
+            self.creationDrawer!.snapPositions = [.open, .closed]
+            self.creationDrawer!.cornerRadius = 25
+            self.creationDrawer!.backgroundColor = .secondaryBackground
+            self.creationDrawer!.setPosition(.closed, animated: false)
+            self.view.addSubview(self.creationDrawer!)
 
-            creationDrawer!.contentVisibilityBehavior = .allowPartial
+            self.creationDrawer!.contentVisibilityBehavior = .allowPartial
 
-            creationDrawer!.setPosition(.open, animated: true) { _ in
+            self.creationDrawer!.setPosition(.open, animated: true) { _ in
                 self.createRoomButton.isHidden = true
                 UIApplication.shared.isIdleTimerDisabled = true
-            }
-        }
-
-        // @todo this should be requested on app launch.
-        // @todo we also need to ask on joining
-        switch AVAudioSession.sharedInstance().recordPermission {
-        case .granted:
-            showCreationDrawer()
-        case .denied:
-            showWarning()
-            return
-        case .undetermined:
-            AVAudioSession.sharedInstance().requestRecordPermission { granted in
-                DispatchQueue.main.async {
-                    if granted {
-                        showCreationDrawer()
-                    } else {
-                        showWarning()
-                    }
-                }
             }
         }
     }
@@ -170,6 +134,22 @@ class NavigationViewController: UINavigationController {
             style: .danger
         )
         banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+    }
+
+    private func showMicrophoneWarning() {
+        let alert = UIAlertController(
+            title: NSLocalizedString("microphone_permission_denied", comment: ""),
+            message: nil, preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("ok", comment: ""), style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("to_settings", comment: ""), style: .default, handler: { _ in
+            DispatchQueue.main.async {
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+            }
+        }))
+
+        present(alert, animated: true)
     }
 }
 
@@ -233,29 +213,31 @@ extension NavigationViewController: RoomController {
 
         shutdownRoom()
 
-        activityIndicator.startAnimating()
-        activityIndicator.isHidden = false
+        requestMicrophone {
+            self.activityIndicator.startAnimating()
+            self.activityIndicator.isHidden = false
 
-        room = RoomFactory.createRoom()
-        room?.join(id: id) { result in
-            DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-                self.activityIndicator.isHidden = true
+            self.room = RoomFactory.createRoom()
+            self.room?.join(id: id) { result in
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                    self.activityIndicator.isHidden = true
 
-                switch result {
-                case let .failure(error):
-                    // @toodo investigate error type
-                    self.room = nil
+                    switch result {
+                    case let .failure(error):
+                        // @toodo investigate error type
+                        self.room = nil
 
-                    switch error {
-                    case .closed:
-                        return self.showClosedError()
-                    default:
-                        return self.showNetworkError()
+                        switch error {
+                        case .closed:
+                            return self.showClosedError()
+                        default:
+                            return self.showNetworkError()
+                        }
+                    case .success:
+                        self.roomControllerDelegate?.didJoin(room: id)
+                        return self.presentCurrentRoom()
                     }
-                case .success:
-                    self.roomControllerDelegate?.didJoin(room: id)
-                    return self.presentCurrentRoom()
                 }
             }
         }
@@ -271,6 +253,25 @@ extension NavigationViewController: RoomController {
         }
 
         createRoomButton.isHidden = false
+    }
+
+    private func requestMicrophone(callback: @escaping () -> Void) {
+        switch AVAudioSession.sharedInstance().recordPermission {
+        case .granted:
+            callback()
+        case .denied:
+            return showMicrophoneWarning()
+        case .undetermined:
+            AVAudioSession.sharedInstance().requestRecordPermission { granted in
+                DispatchQueue.main.async {
+                    if granted {
+                        callback()
+                    } else {
+                        self.showMicrophoneWarning()
+                    }
+                }
+            }
+        }
     }
 }
 
