@@ -1,8 +1,8 @@
 import AVFoundation
 import DrawerView
+import FloatingPanel
 import NotificationBannerSwift
 import UIKit
-import FloatingPanel
 
 class NavigationViewController: UINavigationController {
     var roomControllerDelegate: RoomControllerDelegate?
@@ -17,7 +17,7 @@ class NavigationViewController: UINavigationController {
 
     private var roomDrawer: DrawerView?
     private var creationDrawer: DrawerView?
-    
+
     private var creationDrawerV2: FloatingPanelController?
 
     override init(rootViewController: UIViewController) {
@@ -62,19 +62,17 @@ class NavigationViewController: UINavigationController {
             let roomView = RoomCreationView()
             roomView.delegate = self
             roomView.translatesAutoresizingMaskIntoConstraints = false
-            
+
             self.creationDrawerV2 = FloatingPanelController()
             let contentVC = UIViewController()
             self.creationDrawerV2!.set(contentViewController: contentVC)
 
             self.creationDrawerV2!.addPanel(toParent: self)
             self.creationDrawerV2!.panGestureRecognizer.isEnabled = false
-            self.creationDrawerV2!.behavior = FloatingPanelBehavior()
-                        
-            self.creationDrawerV2!.move(to: .half, animated: true)
-            
-//            self.present(self.creationDrawerV2!, animated: true)
 
+            self.creationDrawerV2!.move(to: .half, animated: true)
+
+//            self.present(self.creationDrawerV2!, animated: true)
 
 //            self.creationDrawer = DrawerView(withView: roomView)
 //            self.creationDrawer!.delegate = self
