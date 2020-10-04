@@ -273,12 +273,18 @@ extension RoomView: RoomDelegate {
     }
 
     func didReceiveLink(from: Int, link: URL) {
-        let message = NSLocalizedString("shared_link", comment: "")
         guard let user = room.members.first(where: { $0.id == from }) else {
             return
         }
 
-        let option = UIAlertController(title: String(format: message, user.displayName.firstName()), message: NSLocalizedString("would_you_like_to_open", comment: ""), preferredStyle: .alert)
+        let message = NSLocalizedString("shared_link", comment: "")
+        let description = NSLocalizedString("would_you_like_to_open_link", comment: "")
+
+        let option = UIAlertController(
+            title: String(format: message, user.displayName.firstName()),
+            message: String(format: description, link.absoluteString),
+            preferredStyle: .alert
+        )
 
         option.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .default, handler: { _ in
             UIApplication.shared.openURL(link)
