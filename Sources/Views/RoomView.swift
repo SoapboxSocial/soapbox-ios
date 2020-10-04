@@ -54,10 +54,9 @@ class RoomView: UIView {
         recognizerView.addGestureRecognizer(recognizer)
         topBar.addSubview(recognizerView)
 
-//        let pasteLinkRecognizer = UITapGestureRecognizer(target: self, action: #selector(pasteLink))
-//        pasteLinkRecognizer.numberOfTapsRequired = 2
-//        pasteLinkRecognizer.numberOfTouchesRequired = 2
-//        topBar.addGestureRecognizer(pasteLinkRecognizer)
+        let pasteLinkRecognizer = UITapGestureRecognizer(target: self, action: #selector(pasteLink))
+        pasteLinkRecognizer.numberOfTapsRequired = 2
+        addGestureRecognizer(pasteLinkRecognizer)
 
         let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
 
@@ -127,18 +126,16 @@ class RoomView: UIView {
     }
 
     @objc private func pasteLink() {
-//        if room.role == .audience {
-//            return
-//        }
+        if room.role == .audience {
+            return
+        }
 
-        debugPrint("mother fuck")
-        
         guard let url = UIPasteboard.general.url else {
             return
         }
 
         let alert = UIAlertController(
-            title: "Would you like to share?",
+            title: NSLocalizedString("would_you_like_to_share_link", comment: ""),
             message: url.absoluteString,
             preferredStyle: .alert
         )
@@ -275,14 +272,19 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func didReceiveLink(from _: Int, link: URL) {
-        let option = UIAlertController(title: "X shared a link", message: "Would you like to open it?", preferredStyle: .alert)
+    func didReceiveLink(from: Int, link: URL) {
+        let message = NSLocalizedString("shared_link", comment: "")
+        guard let user = room.members.first(where: { $0.id == from }) else {
+            return
+        }
 
-        option.addAction(UIAlertAction(title: "Yes", style: .default, handler: { _ in
+        let option = UIAlertController(title: String(format: message, user.displayName.firstName()), message: NSLocalizedString("would_you_like_to_open", comment: ""), preferredStyle: .alert)
+
+        option.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .default, handler: { _ in
             UIApplication.shared.openURL(link)
         }))
 
-        option.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
+        option.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel, handler: nil))
 
         DispatchQueue.main.async {
             UIApplication.shared.keyWindow?.rootViewController!.present(option, animated: true)

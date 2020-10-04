@@ -90,3 +90,7 @@
 "enter_name" = "Enter name";
 
 "bio" = "Bio";
+
+"would_you_like_to_share_link" = "Would you like to share a link?";
+"shared_link" = "%@ shared a link!";
+"would_you_like_to_open" = "Would you like to open it?";
