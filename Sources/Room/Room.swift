@@ -11,6 +11,7 @@ protocol RoomDelegate {
     func didChangeMemberMuteState(user: Int, isMuted: Bool)
     func roomWasClosedByRemote()
     func didChangeSpeakVolume(user: Int, volume: Float)
+    func didReceiveLink(from: Int, link: URL)
 }
 
 enum RoomError: Error {
@@ -235,6 +236,13 @@ class Room {
         delegate?.userDidReact(user: 0, reaction: reaction)
     }
 
+    func share(link: URL) {
+        send(command: SignalRequest.Command.with {
+            $0.type = SignalRequest.Command.TypeEnum.linkShare
+            $0.data = Data(link.absoluteString.utf8)
+        })
+    }
+
     private func handle(_ reply: SignalReply) {
         switch reply.payload {
         case let .join(join):
@@ -328,6 +336,8 @@ class Room {
             didReceiveUnmuteSpeaker(event)
         case .reacted:
             didReceiveReacted(event)
+        case .linkShared:
+            didReceiveLinkShare(event)
         case .UNRECOGNIZED:
             return
         }
@@ -413,6 +423,18 @@ extension Room {
         }
 
         delegate?.userDidReact(user: Int(event.from), reaction: reaction)
+    }
+
+    private func didReceiveLinkShare(_ event: SignalReply.Event) {
+        guard let value = String(bytes: event.data, encoding: .utf8) else {
+            return
+        }
+
+        guard let url = URL(string: value) else {
+            return
+        }
+
+        delegate?.didReceiveLink(from: Int(event.from), link: url)
     }
 
     private func updateMemberMuteState(user: Int, isMuted: Bool) {
