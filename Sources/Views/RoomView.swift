@@ -54,9 +54,10 @@ class RoomView: UIView {
         recognizerView.addGestureRecognizer(recognizer)
         topBar.addSubview(recognizerView)
 
-        let pasteLinkRecognizer = UITapGestureRecognizer(target: self, action: #selector(pasteLink))
-        pasteLinkRecognizer.numberOfTapsRequired = 2
-        addGestureRecognizer(pasteLinkRecognizer)
+//        let pasteLinkRecognizer = UITapGestureRecognizer(target: self, action: #selector(pasteLink))
+//        pasteLinkRecognizer.numberOfTapsRequired = 2
+//        pasteLinkRecognizer.numberOfTouchesRequired = 2
+//        topBar.addGestureRecognizer(pasteLinkRecognizer)
 
         let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
 
@@ -126,10 +127,12 @@ class RoomView: UIView {
     }
 
     @objc private func pasteLink() {
-        if room.role == .audience {
-            return
-        }
+//        if room.role == .audience {
+//            return
+//        }
 
+        debugPrint("mother fuck")
+        
         guard let url = UIPasteboard.general.url else {
             return
         }
@@ -281,7 +284,9 @@ extension RoomView: RoomDelegate {
 
         option.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
 
-        UIApplication.shared.keyWindow?.rootViewController!.present(option, animated: true)
+        DispatchQueue.main.async {
+            UIApplication.shared.keyWindow?.rootViewController!.present(option, animated: true)
+        }
     }
 }
 
