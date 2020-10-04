@@ -6,6 +6,8 @@
 	<string>$(CDN_URL)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Soapbox</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIcons</key>
@@ -32,7 +34,7 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>We don't use this, must investigate further</string>
+	<string>We don&apos;t use this, must investigate further</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone is required</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -49,8 +51,15 @@
 		<string>bluetooth-central</string>
 		<string>voip</string>
 	</array>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>SplashBackground</string>
+		<key>UIImageName</key>
+		<string>SplashImage</string>
+		<key>UIImageRespectsSafeAreaInsets</key>
+		<string>YES</string>
+	</dict>
 	<key>UIRequiresFullScreen</key>
 	<true/>
 	<key>UIStatusBarHidden</key>
