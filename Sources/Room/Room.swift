@@ -238,7 +238,7 @@ class Room {
     func share(link: URL) {
         send(command: SignalRequest.Command.with {
             $0.type = SignalRequest.Command.TypeEnum.linkShare
-            $0.data = Data(link.absoluteString)
+            $0.data = Data(link.absoluteString.utf8)
         })
     }
 
