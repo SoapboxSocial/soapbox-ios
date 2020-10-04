@@ -135,22 +135,6 @@ class NavigationViewController: UINavigationController {
         )
         banner.show(cornerRadius: 10, shadowBlurRadius: 15)
     }
-
-    private func showMicrophoneWarning() {
-        let alert = UIAlertController(
-            title: NSLocalizedString("microphone_permission_denied", comment: ""),
-            message: nil, preferredStyle: .alert
-        )
-
-        alert.addAction(UIAlertAction(title: NSLocalizedString("ok", comment: ""), style: .default, handler: nil))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("to_settings", comment: ""), style: .default, handler: { _ in
-            DispatchQueue.main.async {
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-            }
-        }))
-
-        present(alert, animated: true)
-    }
 }
 
 extension NavigationViewController: RoomViewDelegate {
@@ -256,6 +240,22 @@ extension NavigationViewController: RoomController {
     }
 
     private func requestMicrophone(callback: @escaping () -> Void) {
+        func showMicrophoneWarning() {
+            let alert = UIAlertController(
+                title: NSLocalizedString("microphone_permission_denied", comment: ""),
+                message: nil, preferredStyle: .alert
+            )
+
+            alert.addAction(UIAlertAction(title: NSLocalizedString("ok", comment: ""), style: .default, handler: nil))
+            alert.addAction(UIAlertAction(title: NSLocalizedString("to_settings", comment: ""), style: .default, handler: { _ in
+                DispatchQueue.main.async {
+                    UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                }
+            }))
+
+            present(alert, animated: true)
+        }
+
         switch AVAudioSession.sharedInstance().recordPermission {
         case .granted:
             callback()
@@ -267,7 +267,7 @@ extension NavigationViewController: RoomController {
                     if granted {
                         callback()
                     } else {
-                        self.showMicrophoneWarning()
+                        showMicrophoneWarning()
                     }
                 }
             }
