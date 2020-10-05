@@ -9,7 +9,7 @@ protocol RoomCreationDelegate {
 class RoomCreationController: FloatingPanelController {
     private class Layout: FloatingPanelLayout {
         let position: FloatingPanelPosition = .bottom
-        let initialState: FloatingPanelState = .full
+        let initialState: FloatingPanelState = .hidden
 
         var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
             return [
