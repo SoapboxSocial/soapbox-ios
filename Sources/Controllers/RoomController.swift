@@ -9,8 +9,16 @@ class RoomController: FloatingPanelController {
         var anchors: [FloatingPanelState: FloatingPanelLayoutAnchoring] {
             return [
                 .full: FloatingPanelLayoutAnchor(absoluteInset: 68, edge: .top, referenceGuide: .superview),
-                .tip: FloatingPanelLayoutAnchor(absoluteInset: 68.0, edge: .bottom, referenceGuide: .superview),
+                .tip: FloatingPanelLayoutAnchor(absoluteInset: 68.0 + safeBottomArea(), edge: .bottom, referenceGuide: .superview),
             ]
+        }
+
+        private func safeBottomArea() -> CGFloat {
+            guard let window = UIApplication.shared.keyWindow else {
+                return 0.0
+            }
+
+            return window.safeAreaInsets.bottom
         }
     }
 

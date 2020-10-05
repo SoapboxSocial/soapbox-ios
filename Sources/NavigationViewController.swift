@@ -72,12 +72,13 @@ class NavigationViewController: UINavigationController {
         }
 
         roomDrawer = RoomController()
-        roomDrawer!.delegate = self
         roomDrawer!.addPanel(toParent: self)
         roomDrawer!.move(to: .full, animated: true, completion: {
             self.createRoomButton.isHidden = true
             UIApplication.shared.isIdleTimerDisabled = true
         })
+
+        roomDrawer!.delegate = self
     }
 
     private func showClosedError() {
@@ -298,15 +299,16 @@ extension NavigationViewController: RoomCreationDelegate {
     }
 }
 
+// @TODO THIS CAN PROABBLY SOMEWHAT BE IN THE CONTROLLER
 extension NavigationViewController: FloatingPanelControllerDelegate {
     func floatingPanelDidMove(_ fpc: FloatingPanelController) {
-//        if fpc.state == .hidden {
-//            roomDrawer!.view.removeFromSuperview()
-//            roomDrawer!.removeFromParent()
-//            roomDrawer = nil
-//            createRoomButton.isHidden = false
-//            view.endEditing(true)
-//        }
+        if fpc.state == .hidden {
+            roomDrawer!.view.removeFromSuperview()
+            roomDrawer!.removeFromParent()
+            roomDrawer = nil
+            createRoomButton.isHidden = false
+            view.endEditing(true)
+        }
 
         if fpc.state == .tip || fpc.state == .hidden {
             roomControllerDelegate?.reloadRooms()
