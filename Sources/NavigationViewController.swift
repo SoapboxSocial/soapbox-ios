@@ -71,29 +71,13 @@ class NavigationViewController: UINavigationController, FloatingPanelControllerD
             return
         }
 
-//        roomDrawer = DrawerView()
-//        roomDrawer!.cornerRadius = 25.0
-//        roomDrawer!.attachTo(view: view)
-//        roomDrawer!.backgroundEffect = nil
-//        roomDrawer!.snapPositions = [.collapsed, .open]
-//        roomDrawer!.backgroundColor = .elementBackground
-//        roomDrawer!.setPosition(.closed, animated: false)
-//        roomDrawer!.delegate = self
-//        view.addSubview(roomDrawer!)
-//
-//        roomDrawer!.contentVisibilityBehavior = .allowPartial
-//
-//        let roomView = RoomView(frame: roomDrawer!.bounds, room: room!, topBarHeight: roomDrawer!.collapsedHeight)
-//        roomView.translatesAutoresizingMaskIntoConstraints = false
-//        roomDrawer!.addSubview(roomView)
-//        roomView.autoPinEdgesToSuperview()
-//        roomView.delegate = self
-//
-//        roomDrawer!.setPosition(.open, animated: true) { _ in
-//            self.createRoomButton.isHidden = true
-//            UIApplication.shared.isIdleTimerDisabled = true
-//        }
-//    }
+        roomDrawer = RoomController()
+        roomDrawer!.addPanel(toParent: self)
+        roomDrawer!.move(to: .full, animated: true, completion: {
+            self.createRoomButton.isHidden = true
+            UIApplication.shared.isIdleTimerDisabled = true
+        })
+    }
 
     private func showClosedError() {
         let banner = FloatingNotificationBanner(
@@ -125,7 +109,7 @@ class NavigationViewController: UINavigationController, FloatingPanelControllerD
 extension NavigationViewController: RoomViewDelegate {
     func roomWasClosedDueToError() {
         DispatchQueue.main.async {
-            self.roomDrawer?.setPosition(.closed, animated: true) { _ in
+            self.roomDrawer?.move(to: .hidden, animated: true, completion: {
                 DispatchQueue.main.async {
                     let banner = FloatingNotificationBanner(
                         title: NSLocalizedString("something_went_wrong", comment: ""),
@@ -135,30 +119,31 @@ extension NavigationViewController: RoomViewDelegate {
 
                     self.shutdownRoom()
                 }
-            }
+            })
         }
     }
 
     func didSelectViewProfile(id: Int) {
-        roomDrawer?.setPosition(.collapsed, animated: true) { _ in
+        roomDrawer?.move(to: .tip, animated: true, completion: {
             DispatchQueue.main.async {
                 let profile = SceneFactory.createProfileViewController(id: id)
                 self.pushViewController(profile, animated: true)
             }
-        }
+        })
     }
 
     func roomDidExit() {
-        roomDrawer?.setPosition(.closed, animated: true) { _ in
+        roomDrawer?.move(to: .hidden, animated: true, completion: {
             DispatchQueue.main.async {
                 self.shutdownRoom()
             }
-        }
+        })
     }
 
     func shutdownRoom() {
         roomControllerDelegate?.didLeaveRoom()
-        roomDrawer?.removeFromSuperview()
+        roomDrawer!.view.removeFromSuperview()
+        roomDrawer!.removeFromParent()
         roomDrawer = nil
 
         room?.close()
