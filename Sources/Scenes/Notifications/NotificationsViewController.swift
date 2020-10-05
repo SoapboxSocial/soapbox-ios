@@ -88,12 +88,25 @@ extension NotificationsViewController: UITableViewDelegate {
         // @TODO MOVE TO INTERACTOR:
         let item = notifications[indexPath.item]
 
-        if item.category == "NEW_FOLLOWER" {
+        guard let nav = navigationController as? NavigationViewController else {
+            return
+        }
+
+        switch item.category {
+        case "NEW_ROOM", "ROOM_JOINED", "ROOM_INVITE":
             guard let id = item.arguments["id"] else {
                 return
             }
 
-            navigationController?.pushViewController(SceneFactory.createProfileViewController(id: id), animated: true)
+            nav.didSelect(room: id)
+        case "NEW_FOLLOWER":
+            guard let id = item.arguments["id"] else {
+                return
+            }
+
+            nav.pushViewController(SceneFactory.createProfileViewController(id: id), animated: true)
+        default:
+            break
         }
     }
 }
