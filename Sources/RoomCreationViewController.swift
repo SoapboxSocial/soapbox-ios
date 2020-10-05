@@ -15,48 +15,75 @@ class RoomCreationViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let recognizer = UITapGestureRecognizer(target: self, action: #selector(cancelPressed))
-
-        let cancel = UILabel()
-        cancel.font = .rounded(forTextStyle: .body, weight: .medium)
-        cancel.text = NSLocalizedString("cancel", comment: "")
-        cancel.textColor = .white
-        cancel.sizeToFit()
-        cancel.frame = CGRect(origin: CGPoint(x: 20, y: 20), size: cancel.frame.size)
-        cancel.addGestureRecognizer(recognizer)
-        cancel.isUserInteractionEnabled = true
+        let cancel = UIButton()
+        cancel.titleLabel?.font = .rounded(forTextStyle: .body, weight: .medium)
+        cancel.setTitleColor(.white, for: .normal)
+        cancel.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
+        cancel.addTarget(self, action: #selector(cancelPressed), for: .touchUpInside)
+        cancel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(cancel)
 
         let title = UILabel()
         title.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
         title.text = NSLocalizedString("create_a_room", comment: "")
         title.textColor = .white
-        title.sizeToFit()
-        title.frame = CGRect(origin: CGPoint(x: 20, y: cancel.frame.size.height + cancel.frame.origin.y + 20), size: title.frame.size)
+        title.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(title)
 
         let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
-        lock = UIButton(frame: CGRect(x: view.frame.size.width - 56, y: 0, width: 36, height: 36))
+        lock = UIButton()
         lock.tintColor = .white
         lock.backgroundColor = UIColor.white.withAlphaComponent(0.3)
         lock.layer.cornerRadius = 36 / 2
-        lock.center = CGPoint(x: lock.center.x, y: title.center.y)
         lock.setImage(UIImage(systemName: "lock.open", withConfiguration: iconConfig), for: .normal)
         lock.setImage(UIImage(systemName: "lock", withConfiguration: iconConfig), for: .selected)
         lock.addTarget(self, action: #selector(didPressLock), for: .touchUpInside)
+        lock.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(lock)
 
-        textField = SoapTextField(frame: CGRect(x: 20, y: title.frame.origin.y + title.frame.size.height + 30, width: view.frame.size.width - 40, height: 56), theme: .light)
+        textField = SoapTextField(frame: CGRect.zero, theme: .light)
         textField.placeholder = NSLocalizedString("enter_name", comment: "")
         textField.delegate = self
+        textField.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(textField)
 
         let button = SoapButton(size: .large)
         button.setTitle(NSLocalizedString("create", comment: ""), for: .normal)
-        button.frame = CGRect(x: 20, y: textField.frame.origin.y + textField.frame.size.height + 10, width: view.frame.size.width - 40, height: 54)
         button.backgroundColor = UIColor.white.withAlphaComponent(0.3)
         button.addTarget(self, action: #selector(createPressed), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(button)
+
+        NSLayoutConstraint.activate([
+            cancel.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            cancel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            title.topAnchor.constraint(equalTo: cancel.bottomAnchor, constant: 20),
+            title.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            lock.topAnchor.constraint(equalTo: title.topAnchor),
+            lock.heightAnchor.constraint(equalToConstant: 36),
+            lock.widthAnchor.constraint(equalToConstant: 36),
+            lock.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+        ])
+
+        NSLayoutConstraint.activate([
+            textField.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 30),
+            textField.heightAnchor.constraint(equalToConstant: 56),
+            textField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            textField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+        ])
+
+        NSLayoutConstraint.activate([
+            button.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 10),
+            button.heightAnchor.constraint(equalToConstant: 56),
+            button.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            button.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+        ])
     }
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {

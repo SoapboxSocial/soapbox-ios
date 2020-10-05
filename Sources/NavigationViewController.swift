@@ -77,6 +77,8 @@ class NavigationViewController: UINavigationController, FloatingPanelControllerD
             self.creationDrawer!.surfaceView.grabberHandle.isHidden = true
             self.creationDrawer!.delegate = contentVC
             self.creationDrawer!.layout = RoomCreationLayout()
+            self.creationDrawer!.panGestureRecognizer.isEnabled = false
+            self.creationDrawer!.panGestureRecognizer.cancelsTouchesInView = false
 
             self.creationDrawer!.addPanel(toParent: self)
 
