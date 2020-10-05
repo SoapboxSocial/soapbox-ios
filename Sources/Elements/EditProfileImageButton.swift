@@ -23,12 +23,17 @@ class EditProfileImageButton: UIImageView {
         backgroundColor = .secondaryBackground
         clipsToBounds = true
 
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height))
-        label.text = NSLocalizedString("edit", comment: "")
-        label.textColor = .white
-        label.textAlignment = .center
-        addSubview(label)
+        let view = UIView(frame: frame)
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        addSubview(view)
 
-        label.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
+        let image = UIImageView(image: UIImage(systemName: "camera.fill", withConfiguration: iconConfig))
+        image.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
+        image.contentMode = .scaleAspectFit
+        image.tintColor = .white
+        image.center = center
+
+        view.addSubview(image)
     }
 }
