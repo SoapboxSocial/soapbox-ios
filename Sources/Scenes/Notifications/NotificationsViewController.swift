@@ -25,7 +25,10 @@ class NotificationsViewController: UIViewController {
 
         tableView = UITableView(frame: view.frame)
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.separatorStyle = .none
+        tableView.estimatedRowHeight = 44.0
+        tableView.rowHeight = UITableView.automaticDimension
         view.addSubview(tableView)
 
         output.loadNotifications()
@@ -63,6 +66,8 @@ extension NotificationsViewController: UITableViewDataSource {
         let title = NSLocalizedString(notification.alert.key, comment: "")
         cell.textLabel?.font = .rounded(forTextStyle: .body, weight: .medium)
         cell.textLabel?.text = String(format: title, arguments: notification.alert.arguments)
+        cell.textLabel?.numberOfLines = 0
+        cell.textLabel?.lineBreakMode = .byWordWrapping
 
         return cell
     }
@@ -73,5 +78,35 @@ extension NotificationsViewController: UITableViewDataSource {
         }
 
         return UITableViewCell(style: .subtitle, reuseIdentifier: "reuseIdentifier")
+    }
+}
+
+extension NotificationsViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+
+        // @TODO MOVE TO INTERACTOR:
+        let item = notifications[indexPath.item]
+
+        guard let nav = navigationController as? NavigationViewController else {
+            return
+        }
+
+        switch item.category {
+        case "NEW_ROOM", "ROOM_JOINED", "ROOM_INVITE":
+            guard let id = item.arguments["id"] else {
+                return
+            }
+
+            nav.didSelect(room: id)
+        case "NEW_FOLLOWER":
+            guard let id = item.arguments["id"] else {
+                return
+            }
+
+            nav.pushViewController(SceneFactory.createProfileViewController(id: id), animated: true)
+        default:
+            break
+        }
     }
 }
