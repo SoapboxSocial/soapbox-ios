@@ -22,111 +22,103 @@ class RoomController: FloatingPanelController {
         }
     }
 
-    private var vc = RoomCreationViewController()
+    private let vc: RoomViewController
 
-    var roomDelegate: RoomViewDelegate?
+    var roomDelegate: RoomViewDelegate? {
+        didSet {
+            vc.delegate = roomDelegate
+        }
+    }
 
-    private class RoomCreationViewController: UIViewController, UITextFieldDelegate {
-        var delegate: RoomCreationDelegate?
+    private class RoomViewController: UIViewController {
+        var delegate: RoomViewDelegate?
+        var room: Room
 
-        private var lock: UIButton!
-        private var textField: UITextField!
+        init(room: Room) {
+            self.room = room
+            super.init(nibName: nil, bundle: nil)
+        }
+
+        required init?(coder _: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
 
         override func viewDidLoad() {
             super.viewDidLoad()
 
-            let cancel = UIButton()
-            cancel.titleLabel?.font = .rounded(forTextStyle: .body, weight: .medium)
-            cancel.setTitleColor(.white, for: .normal)
-            cancel.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
-            cancel.addTarget(self, action: #selector(cancelPressed), for: .touchUpInside)
-            cancel.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(cancel)
-
             let title = UILabel()
-            title.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
-            title.text = NSLocalizedString("create_a_room", comment: "")
-            title.textColor = .white
+            title.font = .rounded(forTextStyle: .title2, weight: .bold)
             title.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview(title)
 
+            title.text = {
+                if let name = room.name, name != "" {
+                    return name
+                }
+
+                return NSLocalizedString("current_room", comment: "")
+            }()
+
             let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
-            lock = UIButton()
-            lock.tintColor = .white
-            lock.backgroundColor = UIColor.white.withAlphaComponent(0.3)
-            lock.layer.cornerRadius = 36 / 2
-            lock.setImage(UIImage(systemName: "lock.open", withConfiguration: iconConfig), for: .normal)
-            lock.setImage(UIImage(systemName: "lock", withConfiguration: iconConfig), for: .selected)
-            lock.addTarget(self, action: #selector(didPressLock), for: .touchUpInside)
-            lock.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(lock)
 
-            textField = SoapTextField(frame: CGRect.zero, theme: .light)
-            textField.placeholder = NSLocalizedString("enter_name", comment: "")
-            textField.delegate = self
-            textField.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(textField)
-
-            let button = SoapButton(size: .large)
-            button.setTitle(NSLocalizedString("create", comment: ""), for: .normal)
-            button.backgroundColor = UIColor.white.withAlphaComponent(0.3)
-            button.addTarget(self, action: #selector(createPressed), for: .touchUpInside)
-            button.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(button)
+            let exitButton = EmojiButton(frame: CGRect.zero)
+            exitButton.setImage(UIImage(systemName: "xmark", withConfiguration: iconConfig), for: .normal)
+            exitButton.tintColor = .secondaryBackground
+            exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
+            exitButton.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(exitButton)
 
             NSLayoutConstraint.activate([
-                cancel.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
-                cancel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            ])
-
-            NSLayoutConstraint.activate([
-                title.topAnchor.constraint(equalTo: cancel.bottomAnchor, constant: 20),
+                title.topAnchor.constraint(equalTo: view.topAnchor, constant: 24),
                 title.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             ])
 
             NSLayoutConstraint.activate([
-                lock.topAnchor.constraint(equalTo: title.topAnchor),
-                lock.heightAnchor.constraint(equalToConstant: 36),
-                lock.widthAnchor.constraint(equalToConstant: 36),
-                lock.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            ])
-
-            NSLayoutConstraint.activate([
-                textField.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 30),
-                textField.heightAnchor.constraint(equalToConstant: 56),
-                textField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-                textField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            ])
-
-            NSLayoutConstraint.activate([
-                button.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 10),
-                button.heightAnchor.constraint(equalToConstant: 56),
-                button.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-                button.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+                exitButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+                exitButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+                exitButton.heightAnchor.constraint(equalToConstant: 36),
+                exitButton.widthAnchor.constraint(equalToConstant: 36),
             ])
         }
 
-        func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-            textField.resignFirstResponder()
-            return true
-        }
+        @objc private func exitTapped() {
+            func shutdown() {
+                room.close()
+                UIApplication.shared.isIdleTimerDisabled = false
+                delegate?.roomDidExit()
+            }
 
-        func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-            textField.resignFirstResponder()
-            return true
-        }
+            func showExitAlert() {
+                let alert = UIAlertController(
+                    title: NSLocalizedString("are_you_sure", comment: ""),
+                    message: NSLocalizedString("exit_will_close_room", comment: ""),
+                    preferredStyle: .alert
+                )
 
-        @objc private func didPressLock() {
-            lock.isSelected.toggle()
-        }
+                alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .default, handler: nil))
+                alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .destructive, handler: { _ in
+                    shutdown()
+                }))
 
-        @objc private func createPressed() {
-            delegate?.didEnterWithName(textField.text, isPrivate: lock.isSelected)
-        }
+                UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
+            }
 
-        @objc private func cancelPressed() {
-            delegate?.didCancelRoomCreation()
+            if room.members.count == 0 {
+                showExitAlert()
+                return
+            }
+
+            shutdown()
         }
+    }
+
+    init(room: Room) {
+        vc = RoomViewController(room: room)
+        super.init(delegate: nil)
+    }
+
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     override func viewDidLoad() {

@@ -71,7 +71,8 @@ class NavigationViewController: UINavigationController {
             return
         }
 
-        roomDrawer = RoomController()
+        roomDrawer = RoomController(room: room!)
+        roomDrawer?.roomDelegate = self
         roomDrawer!.addPanel(toParent: self)
         roomDrawer!.move(to: .full, animated: true, completion: {
             self.createRoomButton.isHidden = true
@@ -144,8 +145,8 @@ extension NavigationViewController: RoomViewDelegate {
 
     func shutdownRoom() {
         roomControllerDelegate?.didLeaveRoom()
-        roomDrawer!.view.removeFromSuperview()
-        roomDrawer!.removeFromParent()
+        roomDrawer?.view.removeFromSuperview()
+        roomDrawer?.removeFromParent()
         roomDrawer = nil
 
         room?.close()
