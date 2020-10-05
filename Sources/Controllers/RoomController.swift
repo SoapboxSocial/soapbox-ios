@@ -16,11 +16,7 @@ class RoomController: FloatingPanelController {
 
     private var vc = RoomCreationViewController()
 
-    var creationDelegate: RoomCreationDelegate? {
-        didSet {
-            vc.delegate = creationDelegate
-        }
-    }
+    var roomDelegate: RoomViewDelegate?
 
     private class RoomCreationViewController: UIViewController, UITextFieldDelegate {
         var delegate: RoomCreationDelegate?

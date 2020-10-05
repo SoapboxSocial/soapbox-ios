@@ -300,13 +300,13 @@ extension NavigationViewController: RoomCreationDelegate {
 
 extension NavigationViewController: FloatingPanelControllerDelegate {
     func floatingPanelDidMove(_ fpc: FloatingPanelController) {
-        if fpc.state == .hidden {
-            roomDrawer!.view.removeFromSuperview()
-            roomDrawer!.removeFromParent()
-            roomDrawer = nil
-            createRoomButton.isHidden = false
-            view.endEditing(true)
-        }
+//        if fpc.state == .hidden {
+//            roomDrawer!.view.removeFromSuperview()
+//            roomDrawer!.removeFromParent()
+//            roomDrawer = nil
+//            createRoomButton.isHidden = false
+//            view.endEditing(true)
+//        }
 
         if fpc.state == .tip || fpc.state == .hidden {
             roomControllerDelegate?.reloadRooms()
