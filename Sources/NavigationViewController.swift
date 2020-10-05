@@ -17,7 +17,7 @@ class NavigationViewController: UINavigationController, FloatingPanelControllerD
 
     private var roomDrawer: DrawerView?
 
-    private var creationDrawer: FloatingPanelController?
+    private var creationDrawer: RoomCreationController?
 
     override init(rootViewController: UIViewController) {
         createRoomButton = CreateRoomButton()
@@ -58,30 +58,9 @@ class NavigationViewController: UINavigationController, FloatingPanelControllerD
 
     @objc func didTapCreateRoom() {
         requestMicrophone {
-            let appearance = SurfaceAppearance()
-            appearance.cornerRadius = 16.0
-            appearance.backgroundColor = .secondaryBackground
-
-            let shadow = SurfaceAppearance.Shadow()
-            shadow.color = UIColor.black
-            shadow.offset = CGSize(width: 0, height: 16)
-            shadow.radius = 16
-            shadow.spread = 8
-            appearance.shadows = [shadow]
-
-            self.creationDrawer = FloatingPanelController()
-            let contentVC = RoomCreationViewController()
-            contentVC.delegate = self
-            self.creationDrawer!.set(contentViewController: contentVC)
-            self.creationDrawer!.surfaceView.appearance = appearance
-            self.creationDrawer!.surfaceView.grabberHandle.isHidden = true
-            self.creationDrawer!.delegate = contentVC
-            self.creationDrawer!.layout = RoomCreationLayout()
-            self.creationDrawer!.panGestureRecognizer.isEnabled = false
-            self.creationDrawer!.panGestureRecognizer.cancelsTouchesInView = false
-
+            self.creationDrawer = RoomCreationController()
+            self.creationDrawer!.creationDelegate = self
             self.creationDrawer!.addPanel(toParent: self)
-
             self.creationDrawer!.move(to: .full, animated: true)
         }
     }
