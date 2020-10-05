@@ -128,7 +128,7 @@ class RoomController: FloatingPanelController {
 
         let appearance = SurfaceAppearance()
         appearance.cornerRadius = 30.0
-        appearance.backgroundColor = .secondaryBackground
+        appearance.backgroundColor = .foreground
 
         let shadow = SurfaceAppearance.Shadow()
         shadow.color = UIColor.black
