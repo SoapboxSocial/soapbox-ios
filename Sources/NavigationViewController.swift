@@ -4,7 +4,7 @@ import FloatingPanel
 import NotificationBannerSwift
 import UIKit
 
-class NavigationViewController: UINavigationController, FloatingPanelControllerDelegate {
+class NavigationViewController: UINavigationController {
     var roomControllerDelegate: RoomNavigationControllerDelegate?
 
     var activityIndicator = UIActivityIndicatorView(style: .large)
@@ -72,6 +72,7 @@ class NavigationViewController: UINavigationController, FloatingPanelControllerD
         }
 
         roomDrawer = RoomController()
+        roomDrawer!.delegate = self
         roomDrawer!.addPanel(toParent: self)
         roomDrawer!.move(to: .full, animated: true, completion: {
             self.createRoomButton.isHidden = true
@@ -297,15 +298,17 @@ extension NavigationViewController: RoomCreationDelegate {
     }
 }
 
-extension NavigationViewController: DrawerViewDelegate {
-    func drawer(_ drawerView: DrawerView, didTransitionTo position: DrawerPosition) {
-        if position == .closed {
-            drawerView.removeFromSuperview(animated: false)
+extension NavigationViewController: FloatingPanelControllerDelegate {
+    func floatingPanelDidMove(_ fpc: FloatingPanelController) {
+        if fpc.state == .hidden {
+            roomDrawer!.view.removeFromSuperview()
+            roomDrawer!.removeFromParent()
+            roomDrawer = nil
             createRoomButton.isHidden = false
             view.endEditing(true)
         }
 
-        if position == .collapsed || position == .closed {
+        if fpc.state == .tip || fpc.state == .hidden {
             roomControllerDelegate?.reloadRooms()
         }
     }

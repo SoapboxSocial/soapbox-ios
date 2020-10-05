@@ -142,16 +142,10 @@ class RoomController: FloatingPanelController {
         appearance.shadows = [shadow]
 
         surfaceView.appearance = appearance
-        surfaceView.grabberHandle.isHidden = true
-        panGestureRecognizer.isEnabled = false
+        surfaceView.grabberHandle.isHidden = false
+        panGestureRecognizer.isEnabled = true
         panGestureRecognizer.cancelsTouchesInView = false
 
         set(contentViewController: vc)
-    }
-}
-
-extension RoomController: FloatingPanelControllerDelegate {
-    func floatingPanelShouldBeginDragging(_: FloatingPanelController) -> Bool {
-        return false
     }
 }
