@@ -122,7 +122,7 @@ class EditProfileViewController: UIViewController {
         ])
 
         NSLayoutConstraint.activate([
-            bioTextField.heightAnchor.constraint(equalToConstant: 112),
+            bioTextField.heightAnchor.constraint(equalToConstant: 80),
             bioTextField.topAnchor.constraint(equalTo: bioLabel.bottomAnchor, constant: 10),
             bioTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             bioTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
