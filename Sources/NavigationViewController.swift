@@ -5,7 +5,7 @@ import NotificationBannerSwift
 import UIKit
 
 class NavigationViewController: UINavigationController, FloatingPanelControllerDelegate {
-    var roomControllerDelegate: RoomControllerDelegate?
+    var roomControllerDelegate: RoomNavigationControllerDelegate?
 
     var activityIndicator = UIActivityIndicatorView(style: .large)
 
@@ -15,7 +15,7 @@ class NavigationViewController: UINavigationController, FloatingPanelControllerD
 
     private var client: APIClient
 
-    private var roomDrawer: DrawerView?
+    private var roomDrawer: RoomController?
 
     private var creationDrawer: RoomCreationController?
 
@@ -66,34 +66,34 @@ class NavigationViewController: UINavigationController, FloatingPanelControllerD
     }
 
     func presentCurrentRoom() {
-        if let drawer = roomDrawer, drawer.position == .collapsed {
-            roomDrawer?.setPosition(.open, animated: true)
+        if let drawer = roomDrawer, drawer.state == .tip {
+            drawer.move(to: .full, animated: true)
             return
         }
 
-        roomDrawer = DrawerView()
-        roomDrawer!.cornerRadius = 25.0
-        roomDrawer!.attachTo(view: view)
-        roomDrawer!.backgroundEffect = nil
-        roomDrawer!.snapPositions = [.collapsed, .open]
-        roomDrawer!.backgroundColor = .elementBackground
-        roomDrawer!.setPosition(.closed, animated: false)
-        roomDrawer!.delegate = self
-        view.addSubview(roomDrawer!)
-
-        roomDrawer!.contentVisibilityBehavior = .allowPartial
-
-        let roomView = RoomView(frame: roomDrawer!.bounds, room: room!, topBarHeight: roomDrawer!.collapsedHeight)
-        roomView.translatesAutoresizingMaskIntoConstraints = false
-        roomDrawer!.addSubview(roomView)
-        roomView.autoPinEdgesToSuperview()
-        roomView.delegate = self
-
-        roomDrawer!.setPosition(.open, animated: true) { _ in
-            self.createRoomButton.isHidden = true
-            UIApplication.shared.isIdleTimerDisabled = true
-        }
-    }
+//        roomDrawer = DrawerView()
+//        roomDrawer!.cornerRadius = 25.0
+//        roomDrawer!.attachTo(view: view)
+//        roomDrawer!.backgroundEffect = nil
+//        roomDrawer!.snapPositions = [.collapsed, .open]
+//        roomDrawer!.backgroundColor = .elementBackground
+//        roomDrawer!.setPosition(.closed, animated: false)
+//        roomDrawer!.delegate = self
+//        view.addSubview(roomDrawer!)
+//
+//        roomDrawer!.contentVisibilityBehavior = .allowPartial
+//
+//        let roomView = RoomView(frame: roomDrawer!.bounds, room: room!, topBarHeight: roomDrawer!.collapsedHeight)
+//        roomView.translatesAutoresizingMaskIntoConstraints = false
+//        roomDrawer!.addSubview(roomView)
+//        roomView.autoPinEdgesToSuperview()
+//        roomView.delegate = self
+//
+//        roomDrawer!.setPosition(.open, animated: true) { _ in
+//            self.createRoomButton.isHidden = true
+//            UIApplication.shared.isIdleTimerDisabled = true
+//        }
+//    }
 
     private func showClosedError() {
         let banner = FloatingNotificationBanner(
@@ -169,7 +169,7 @@ extension NavigationViewController: RoomViewDelegate {
     }
 }
 
-extension NavigationViewController: RoomController {
+extension NavigationViewController: RoomNavigationController {
     func didSelect(room id: Int) {
         if activityIndicator.isAnimating {
             return

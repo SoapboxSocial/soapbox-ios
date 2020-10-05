@@ -2,13 +2,13 @@ import Foundation
 import KeychainAccess
 import SwiftProtobuf
 
-protocol RoomController {
+protocol RoomNavigationController {
     func didSelect(room id: Int)
     func didBeginSearching()
     func didEndSearching()
 }
 
-protocol RoomControllerDelegate {
+protocol RoomNavigationControllerDelegate {
     func didJoin(room: Int)
     func didLeaveRoom()
     func reloadRooms()
@@ -25,7 +25,7 @@ protocol HomeInteractorOutput {
 class HomeInteractor: HomeViewControllerOutput {
     private let output: HomeInteractorOutput
     private let roomService: RoomServiceClient
-    private let controller: RoomController
+    private let controller: RoomNavigationController
     private let api: APIClient
 
     private var token: String? {
@@ -37,7 +37,7 @@ class HomeInteractor: HomeViewControllerOutput {
         return keychain[string: "token"]
     }
 
-    init(output: HomeInteractorOutput, service: RoomServiceClient, controller: RoomController, api: APIClient) {
+    init(output: HomeInteractorOutput, service: RoomServiceClient, controller: RoomNavigationController, api: APIClient) {
         self.output = output
         roomService = service
         self.controller = controller
@@ -90,7 +90,7 @@ class HomeInteractor: HomeViewControllerOutput {
     }
 }
 
-extension HomeInteractor: RoomControllerDelegate {
+extension HomeInteractor: RoomNavigationControllerDelegate {
     func didJoin(room: Int) {
         output.didJoin(room: room)
     }
