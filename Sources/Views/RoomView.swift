@@ -54,42 +54,7 @@ class RoomView: UIView {
         recognizerView.addGestureRecognizer(recognizer)
         topBar.addSubview(recognizerView)
 
-        let pasteLinkRecognizer = UITapGestureRecognizer(target: self, action: #selector(pasteLink))
-        pasteLinkRecognizer.numberOfTapsRequired = 2
-        addGestureRecognizer(pasteLinkRecognizer)
-
         let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
-
-        let exitButton = EmojiButton(
-            frame: CGRect(x: frame.size.width - (35 + 15 + safeAreaInsets.left), y: (frame.size.height - inset) / 2 - 17.5, width: 35, height: 35)
-        )
-        exitButton.center = CGPoint(x: exitButton.center.x, y: topBar.center.y - (inset / 2))
-        exitButton.setImage(UIImage(systemName: "xmark", withConfiguration: iconConfig), for: .normal)
-        exitButton.tintColor = .secondaryBackground
-        exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
-        addSubview(exitButton)
-
-        muteButton = EmojiButton(frame: CGRect(x: 0, y: 0, width: 35, height: 35))
-        muteButton.setImage(UIImage(systemName: "mic", withConfiguration: iconConfig), for: .normal)
-        muteButton.setImage(UIImage(systemName: "mic.slash", withConfiguration: iconConfig), for: .selected)
-        muteButton.tintColor = .secondaryBackground
-        muteButton.center = CGPoint(x: exitButton.center.x - (15 + exitButton.frame.size.width), y: exitButton.center.y)
-        muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
-        addSubview(muteButton)
-
-        let label = UILabel(frame: CGRect(x: safeAreaInsets.left + 15, y: 0, width: muteButton.frame.origin.x - (safeAreaInsets.left + 30), height: 20))
-
-        label.text = {
-            if let name = room.name, name != "" {
-                return name
-            }
-
-            return NSLocalizedString("current_room", comment: "")
-        }()
-
-        label.font = .rounded(forTextStyle: .title3, weight: .bold)
-        label.center = CGPoint(x: label.center.x, y: exitButton.center.y)
-        topBar.addSubview(label)
 
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 0, right: 10)
@@ -102,91 +67,27 @@ class RoomView: UIView {
         members!.backgroundColor = .clear
         addSubview(members)
 
-        let reactSize = CGFloat(30)
-        var origin = CGPoint(x: exitButton.frame.origin.x, y: frame.size.height - (reactSize + 10 + safeAreaInsets.bottom))
-        for reaction in Room.Reaction.allCases {
-            let button = EmojiButton(frame: CGRect(origin: origin, size: CGSize(width: reactSize, height: reactSize)))
-            button.setTitle(reaction.rawValue, for: .normal)
-            button.addTarget(self, action: #selector(reactionTapped), for: .touchUpInside)
-            origin.x = origin.x - (button.frame.size.width + 10)
-            addSubview(button)
-        }
-
-        let inviteButton = EmojiButton(
-            frame: CGRect(x: safeAreaInsets.left + 15, y: frame.size.height - (reactSize + 10 + safeAreaInsets.bottom), width: 35, height: 35)
-        )
-        inviteButton.setImage(UIImage(systemName: "person.badge.plus", withConfiguration: iconConfig), for: .normal)
-        inviteButton.tintColor = .secondaryBackground
-        inviteButton.addTarget(self, action: #selector(inviteTapped), for: .touchUpInside)
-        addSubview(inviteButton)
+//        let reactSize = CGFloat(30)
+//        var origin = CGPoint(x: exitButton.frame.origin.x, y: frame.size.height - (reactSize + 10 + safeAreaInsets.bottom))
+//        for reaction in Room.Reaction.allCases {
+//            let button = EmojiButton(frame: CGRect(origin: origin, size: CGSize(width: reactSize, height: reactSize)))
+//            button.setTitle(reaction.rawValue, for: .normal)
+//            button.addTarget(self, action: #selector(reactionTapped), for: .touchUpInside)
+//            origin.x = origin.x - (button.frame.size.width + 10)
+//            addSubview(button)
+//        }
+//
+//        let inviteButton = EmojiButton(
+//            frame: CGRect(x: safeAreaInsets.left + 15, y: frame.size.height - (reactSize + 10 + safeAreaInsets.bottom), width: 35, height: 35)
+//        )
+//        inviteButton.setImage(UIImage(systemName: "person.badge.plus", withConfiguration: iconConfig), for: .normal)
+//        inviteButton.tintColor = .secondaryBackground
+//        inviteButton.addTarget(self, action: #selector(inviteTapped), for: .touchUpInside)
+//        addSubview(inviteButton)
 
         DispatchQueue.main.async {
             self.members.reloadData()
         }
-    }
-
-    @objc private func pasteLink() {
-        if room.role == .audience {
-            return
-        }
-
-        guard let url = UIPasteboard.general.url else {
-            return
-        }
-
-        let alert = UIAlertController(
-            title: NSLocalizedString("would_you_like_to_share_link", comment: ""),
-            message: url.absoluteString,
-            preferredStyle: .alert
-        )
-
-        alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .default, handler: { _ in
-            self.room.share(link: url)
-        }))
-
-        alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel, handler: nil))
-
-        UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
-    }
-
-    @objc private func exitTapped() {
-        if room.members.count == 0 {
-            showExitAlert()
-            return
-        }
-
-        exitRoom()
-    }
-
-    @objc private func muteTapped() {
-        muteButton.isSelected.toggle()
-
-        if room.isMuted {
-            room.unmute()
-        } else {
-            room.mute()
-        }
-    }
-
-    private func showExitAlert() {
-        let alert = UIAlertController(
-            title: NSLocalizedString("are_you_sure", comment: ""),
-            message: NSLocalizedString("exit_will_close_room", comment: ""),
-            preferredStyle: .alert
-        )
-
-        alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .default, handler: nil))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .destructive, handler: { _ in
-            self.exitRoom()
-        }))
-
-        UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
-    }
-
-    private func exitRoom() {
-        room.close()
-        UIApplication.shared.isIdleTimerDisabled = false
-        delegate?.roomDidExit()
     }
 
     @objc private func openBar() {

@@ -61,12 +61,24 @@ class RoomController: FloatingPanelController {
 
             let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
 
+            let pasteLinkRecognizer = UITapGestureRecognizer(target: self, action: #selector(pasteLink))
+            pasteLinkRecognizer.numberOfTapsRequired = 2
+            view.addGestureRecognizer(pasteLinkRecognizer)
+
             let exitButton = EmojiButton(frame: CGRect.zero)
             exitButton.setImage(UIImage(systemName: "xmark", withConfiguration: iconConfig), for: .normal)
             exitButton.tintColor = .secondaryBackground
             exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
             exitButton.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview(exitButton)
+
+            let muteButton = EmojiButton(frame: CGRect.zero)
+            muteButton.setImage(UIImage(systemName: "mic", withConfiguration: iconConfig), for: .normal)
+            muteButton.setImage(UIImage(systemName: "mic.slash", withConfiguration: iconConfig), for: .selected)
+            muteButton.tintColor = .secondaryBackground
+            muteButton.translatesAutoresizingMaskIntoConstraints = false
+            muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
+            view.addSubview(muteButton)
 
             NSLayoutConstraint.activate([
                 title.topAnchor.constraint(equalTo: view.topAnchor, constant: 24),
@@ -78,6 +90,13 @@ class RoomController: FloatingPanelController {
                 exitButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
                 exitButton.heightAnchor.constraint(equalToConstant: 36),
                 exitButton.widthAnchor.constraint(equalToConstant: 36),
+            ])
+
+            NSLayoutConstraint.activate([
+                muteButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+                muteButton.rightAnchor.constraint(equalTo: exitButton.leftAnchor, constant: -20),
+                muteButton.heightAnchor.constraint(equalToConstant: 36),
+                muteButton.widthAnchor.constraint(equalToConstant: 36),
             ])
         }
 
@@ -109,6 +128,40 @@ class RoomController: FloatingPanelController {
             }
 
             shutdown()
+        }
+
+        @objc private func muteTapped(sender: UIButton) {
+            sender.isSelected.toggle()
+
+            if room.isMuted {
+                room.unmute()
+            } else {
+                room.mute()
+            }
+        }
+
+        @objc private func pasteLink() {
+            if room.role == .audience {
+                return
+            }
+
+            guard let url = UIPasteboard.general.url else {
+                return
+            }
+
+            let alert = UIAlertController(
+                title: NSLocalizedString("would_you_like_to_share_link", comment: ""),
+                message: url.absoluteString,
+                preferredStyle: .alert
+            )
+
+            alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .default, handler: { _ in
+                self.room.share(link: url)
+            }))
+
+            alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel, handler: nil))
+
+            UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
         }
     }
 
