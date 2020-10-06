@@ -1,4 +1,5 @@
 import AlamofireImage
+import FocusableImageView
 import NotificationBannerSwift
 import UIKit
 
@@ -13,8 +14,8 @@ class ProfileViewController: UIViewController {
 
     var output: ProfileViewControllerOutput!
 
-    private let image: UIImageView = {
-        let image = UIImageView()
+    private let image: FocusableImageView = {
+        let image = FocusableImageView()
         image.backgroundColor = .brandColor
         image.layer.cornerRadius = 80 / 2
         image.clipsToBounds = true
@@ -82,8 +83,20 @@ class ProfileViewController: UIViewController {
         return label
     }()
 
+    private let downloader = ImageDownloader()
+    private lazy var manager = FocusableImageViewManager()
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        FocusableImageViewConfiguration.default = .init(
+            backgroundColor: .init(white: 0, alpha: 0.5),
+            animationDuration: 0.5,
+            pageControlConfiguration: .init(hidesForSinglePage: true, pageIndicatorTintColor: nil, currentPageIndicatorTintColor: nil),
+            maximumZoomScale: 2
+        )
+
+        manager.delegate = self
 
         view.backgroundColor = .background
 
@@ -306,7 +319,18 @@ extension ProfileViewController: ProfilePresenterOutput {
         updateFollowerLabels()
 
         if profile.image != "" {
-            image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + profile.image))
+            image.inner.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + profile.image))
+            manager.register(parentViewController: self, imageViews: [image])
         }
+    }
+}
+
+extension ProfileViewController: FocusableImageViewDelegate {
+    func focusableImageViewPresentAnimation(views: [FocusableImageView]) {
+        views.forEach { $0.inner.layer.cornerRadius = 0 }
+    }
+
+    func focusableImageViewDismissAnimation(views: [FocusableImageView]) {
+        views.forEach { $0.inner.layer.cornerRadius = 8 }
     }
 }
