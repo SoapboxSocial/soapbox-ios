@@ -12,6 +12,7 @@ PODS:
   - CNIOLinux (2.22.1)
   - CNIOSHA1 (2.22.1)
   - DrawerView (1.3.1)
+  - FocusableImageView (0.1.0)
   - GoogleWebRTC (1.1.31999)
   - gRPC-Swift (1.0.0-alpha.19):
     - CGRPCZlib (= 1.0.0-alpha.19)
@@ -73,6 +74,7 @@ DEPENDENCIES:
   - Alamofire
   - AlamofireImage
   - DrawerView
+  - FocusableImageView
   - GoogleWebRTC
   - gRPC-Swift (~> 1.0.0-alpha.18)
   - KeychainAccess
@@ -94,6 +96,7 @@ SPEC REPOS:
     - CNIOLinux
     - CNIOSHA1
     - DrawerView
+    - FocusableImageView
     - GoogleWebRTC
     - gRPC-Swift
     - KeychainAccess
@@ -126,6 +129,7 @@ SPEC CHECKSUMS:
   CNIOLinux: 896c5715ebe479fbfcdac5340717bbbd7936901b
   CNIOSHA1: fd4d38fb42778ed971a75d87530f842106d4b4f4
   DrawerView: 0c7e6c40e5076b2fb64c394fa5fc8166ff917eff
+  FocusableImageView: 1af6a7e0ab00bc1677743c30829b867e3d3b84fa
   GoogleWebRTC: b39a78c4f5cc6b0323415b9233db03a2faa7b0f0
   gRPC-Swift: 75a7a8d7cd08177165ef971159afb84e5130cfc9
   KeychainAccess: 9b07f665298d13c3a85881bd3171f6f49b8151c1
@@ -146,6 +150,6 @@ SPEC CHECKSUMS:
   SwiftProtobuf: 4ef85479c18ca85b5482b343df9c319c62bda699
   UIWindowTransitions: cb662e2ae9e2d1060fcdbe3eb3de9232bedb7612
 
-PODFILE CHECKSUM: f39411aadcaf969016ffa9782b72659a3bfab919
+PODFILE CHECKSUM: 2da10be5ae98f17d41f49a1792362494f4018ea2
 
 COCOAPODS: 1.9.1
