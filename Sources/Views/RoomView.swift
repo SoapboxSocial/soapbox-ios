@@ -8,8 +8,6 @@ protocol RoomViewDelegate {
 }
 
 class RoomView: UIView {
-    private let reuseIdentifier = "profileCell"
-
     var delegate: RoomViewDelegate?
 
     let room: Room
@@ -98,7 +96,7 @@ class RoomView: UIView {
         members = UICollectionView(frame: CGRect(x: 0, y: topBar.frame.size.height, width: frame.size.width, height: frame.size.height - topBar.frame.size.height), collectionViewLayout: layout)
         members!.dataSource = self
         members!.delegate = self
-        members!.register(RoomMemberCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        members!.register(cellWithClass: RoomMemberCell.self)
         members!.backgroundColor = .clear
         addSubview(members)
 
@@ -361,7 +359,7 @@ extension RoomView: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! RoomMemberCell
+        let cell = collectionView.dequeueReusableCell(withClass: RoomMemberCell.self, for: indexPath)
         if indexPath.item == 0 {
             // @todo this is a bit ugly
             cell.setup(name: UserDefaults.standard.string(forKey: "display") ?? "", image: UserDefaults.standard.string(forKey: "image") ?? "", role: room.role)
