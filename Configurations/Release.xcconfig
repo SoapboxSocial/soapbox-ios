@@ -12,3 +12,5 @@ ROOM_SERVICE_PORT = 50051
 
 // CDN URL
 CDN_URL = https:/$()/cdn.soapbox.social
+
+URL_SCHEME = soapbox

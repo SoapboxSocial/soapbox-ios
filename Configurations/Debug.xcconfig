@@ -12,3 +12,5 @@ ROOM_SERVICE_PORT = 50051
 
 // CDN URL
 CDN_URL = http:/$()/192.168.33.16/cdn
+
+URL_SCHEME = soapbox-test
