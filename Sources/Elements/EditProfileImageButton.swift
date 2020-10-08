@@ -23,7 +23,7 @@ class EditProfileImageButton: UIImageView {
         backgroundColor = .secondaryBackground
         clipsToBounds = true
 
-        let view = UIView(frame: frame)
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height))
         view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         addSubview(view)
 
@@ -32,7 +32,7 @@ class EditProfileImageButton: UIImageView {
         image.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
         image.contentMode = .scaleAspectFit
         image.tintColor = .white
-        image.center = center
+        image.center = view.center
 
         view.addSubview(image)
     }
