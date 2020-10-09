@@ -192,7 +192,18 @@ class EditProfileViewController: UIViewController {
         let api = APIClient()
 
         if twitterButton.isSelected {
-            twitterButton.isSelected.toggle()
+            api.removeTwitter(callback: { result in
+                switch result {
+                case .failure:
+                    self.displayError()
+                case .success:
+                    DispatchQueue.main.async {
+                        self.twitterButton.isSelected.toggle()
+                    }
+                }
+            })
+            
+            return
         }
 
         TWTRTwitter.sharedInstance().logIn(completion: { session, error in

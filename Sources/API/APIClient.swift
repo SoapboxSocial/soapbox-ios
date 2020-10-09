@@ -344,6 +344,26 @@ extension APIClient {
                 return callback(.failure(.decode))
             }
     }
+
+    func removeTwitter(callback: @escaping (Result<Void, APIError>) -> Void) {
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/me/profiles/twitter"), method: .delete, headers: ["Authorization": token!])
+            .validate()
+            .response { result in
+                guard result.data != nil else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
+
+                if result.response?.statusCode == 200 {
+                    return callback(.success(()))
+                }
+
+                return callback(.failure(.decode))
+            }
+    }
 }
 
 extension APIClient {
