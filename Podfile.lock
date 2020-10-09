@@ -68,6 +68,9 @@ PODS:
     - SwiftNIOFoundationCompat (< 3, >= 2.22.0)
     - SwiftNIOTLS (< 3, >= 2.22.0)
   - SwiftProtobuf (1.12.0)
+  - TwitterCore (3.2.0)
+  - TwitterKit (3.4.2):
+    - TwitterCore (>= 3.2.0)
   - UIWindowTransitions (0.2.0)
 
 DEPENDENCIES:
@@ -81,6 +84,7 @@ DEPENDENCIES:
   - NotificationBannerSwift
   - SwiftConfettiView
   - SwiftProtobuf
+  - TwitterKit
   - UIWindowTransitions
 
 SPEC REPOS:
@@ -115,6 +119,8 @@ SPEC REPOS:
     - SwiftNIOTLS
     - SwiftNIOTransportServices
     - SwiftProtobuf
+    - TwitterCore
+    - TwitterKit
     - UIWindowTransitions
 
 SPEC CHECKSUMS:
@@ -148,8 +154,10 @@ SPEC CHECKSUMS:
   SwiftNIOTLS: 80eed55b4d2a455ba4b387b12cb41962095c713a
   SwiftNIOTransportServices: 801923921fbecdcde1e1c1ff38e812167d01ead1
   SwiftProtobuf: 4ef85479c18ca85b5482b343df9c319c62bda699
+  TwitterCore: 8cbc9ad34d91c63a0035ea05bfbfc0d7ca72a28c
+  TwitterKit: 5e4f41d70b9abdb41df5467f52d7aa2c0fd26ebb
   UIWindowTransitions: cb662e2ae9e2d1060fcdbe3eb3de9232bedb7612
 
-PODFILE CHECKSUM: 2da10be5ae98f17d41f49a1792362494f4018ea2
+PODFILE CHECKSUM: 33fbcf82a6c960747f219a14862e3b1579c4a9b5
 
 COCOAPODS: 1.9.1

@@ -317,6 +317,14 @@ extension APIClient {
                 }
             }
     }
+
+    func addTwitter(token: String, secret: String, callback _: @escaping (Result<Void, APIError>) -> Void) {
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/me/profiles/twitter"), method: .post, parameters: ["token": token, "secret": secret], headers: ["Authorization": self.token!])
+            .validate()
+            .response { result in
+                debugPrint(result)
+            }
+    }
 }
 
 extension APIClient {
