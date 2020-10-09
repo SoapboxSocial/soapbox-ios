@@ -190,6 +190,11 @@ class EditProfileViewController: UIViewController {
 
     @objc private func didTapTwitterButton() {
         let api = APIClient()
+
+        if twitterButton.isSelected {
+            twitterButton.isSelected.toggle()
+        }
+
         TWTRTwitter.sharedInstance().logIn(completion: { session, error in
             if error != nil {
                 if error?.localizedDescription == "User cancelled login flow." {
