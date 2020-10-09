@@ -37,6 +37,14 @@ class Configuration {
         return port
     }()
 
+    static let urlScheme: String = {
+        guard let value = Configuration.infoDictionary["URL_SCHEME"] as? String else {
+            fatalError("ROOM_SERVICE_PORT not set in plist for this environment")
+        }
+
+        return value
+    }()
+
     private static func url(key: String) -> URL {
         guard let urlString = Configuration.infoDictionary[key] as? String else {
             fatalError("\(key) not set in plist for this environment")
