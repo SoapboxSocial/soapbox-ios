@@ -89,7 +89,7 @@ class EditProfileViewController: UIViewController {
         twitterButton.addTarget(self, action: #selector(didTapTwitterButton), for: .touchUpInside)
         view.addSubview(twitterButton)
 
-        if let account = user.linkedAccounts.first(where: { $0.provider == "twitter" }) {
+        if user.linkedAccounts.first(where: { $0.provider == "twitter" }) != nil {
             twitterButton.isSelected = true
         } else {
             twitterButton.isSelected = false
