@@ -1,6 +1,6 @@
 import KeychainAccess
 import NotificationBannerSwift
-import TwitterKit
+import Swifter
 import UIKit
 import UIWindowTransitions
 import UserNotifications
@@ -14,8 +14,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions options: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
-
-        TWTRTwitter.sharedInstance().start(withConsumerKey: "nAzgMi6loUf3cl0hIkkXhZSth", consumerSecret: "sFQEQ2cjJZSJgepUMmNyeTxiGggFXA1EKfSYAXpbARTu3CXBQY")
 
         UNUserNotificationCenter.current().delegate = self
 
@@ -50,8 +48,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        return TWTRTwitter.sharedInstance().application(application, open: url, options: options)
+    func application(_: UIApplication, open url: URL, options _: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        return Swifter.handleOpenURL(url, callbackURL: URL(string: "soapbox://")!)
     }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {

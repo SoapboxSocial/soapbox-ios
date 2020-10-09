@@ -17,7 +17,7 @@ target 'Soapbox' do
   pod 'AlamofireImage'
   pod 'gRPC-Swift', '~> 1.0.0-alpha.18'
   pod 'FocusableImageView'
-  pod 'TwitterKit'
+  pod 'Swifter', git: 'git@github.com:mattdonnelly/Swifter.git'
 
   target 'SoapboxTests' do
     inherit! :search_paths

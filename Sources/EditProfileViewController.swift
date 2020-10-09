@@ -1,5 +1,5 @@
 import NotificationBannerSwift
-import TwitterKit
+import Swifter
 import UIKit
 
 class EditProfileViewController: UIViewController {
@@ -14,6 +14,11 @@ class EditProfileViewController: UIViewController {
     private var twitterButton: SoapButton!
 
     private var image: UIImage?
+
+    private let swifter = Swifter(
+        consumerKey: "nAzgMi6loUf3cl0hIkkXhZSth",
+        consumerSecret: "sFQEQ2cjJZSJgepUMmNyeTxiGggFXA1EKfSYAXpbARTu3CXBQY"
+    )
 
     init(user: APIClient.Profile, parent: ProfileViewController) {
         parentVC = parent
@@ -206,31 +211,31 @@ class EditProfileViewController: UIViewController {
             return
         }
 
-        TWTRTwitter.sharedInstance().logIn(completion: { session, error in
-            if error != nil {
-                if error?.localizedDescription == "User cancelled login flow." {
+        swifter.authorize(
+            withCallback: URL(string: "soapbox://success")!,
+            presentingFrom: self,
+            forceLogin: false,
+            safariDelegate: nil,
+            success: { result, _ in
+                guard let data = result else {
                     return
                 }
 
-                self.displayError()
-                return
-            }
-
-            guard let user = session else {
-                return
-            }
-
-            api.addTwitter(token: user.authToken, secret: user.authTokenSecret, callback: { result in
-                switch result {
-                case .failure:
-                    self.displayError()
-                case .success:
-                    DispatchQueue.main.async {
-                        self.twitterButton.isSelected.toggle()
+                APIClient().addTwitter(token: data.key, secret: data.secret, callback: { result in
+                    switch result {
+                    case .failure:
+                        self.displayError()
+                    case .success:
+                        DispatchQueue.main.async {
+                            self.twitterButton.isSelected.toggle()
+                        }
                     }
-                }
-            })
-        })
+                })
+            },
+            failure: { _ in
+                self.displayError()
+            }
+        )
     }
 
     @objc private func cancelPressed() {
