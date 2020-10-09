@@ -329,7 +329,6 @@ extension APIClient {
         AF.request(Configuration.rootURL.appendingPathComponent("/v1/me/profiles/twitter"), method: .post, parameters: ["token": token, "secret": secret], headers: ["Authorization": self.token!])
             .validate()
             .response { result in
-                debugPrint(result)
                 guard result.data != nil else {
                     return callback(.failure(.requestFailed))
                 }
