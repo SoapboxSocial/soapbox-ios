@@ -84,7 +84,8 @@ class EditProfileViewController: UIViewController {
 
         twitterButton = SoapButton(size: .large)
         twitterButton.translatesAutoresizingMaskIntoConstraints = false
-        twitterButton.setTitle("Connect to Twitter", for: .normal)
+        twitterButton.setTitle(NSLocalizedString("connect_twitter", comment: ""), for: .normal)
+        twitterButton.setTitle(NSLocalizedString("disconnect_twitter", comment: ""), for: .selected)
         twitterButton.addTarget(self, action: #selector(didTapTwitterButton), for: .touchUpInside)
         view.addSubview(twitterButton)
 
@@ -198,7 +199,14 @@ class EditProfileViewController: UIViewController {
             }
 
             api.addTwitter(token: user.authToken, secret: user.authTokenSecret, callback: { result in
-                debugPrint(result)
+                switch result {
+                case .failure:
+                    self.displayError()
+                case .success:
+                    DispatchQueue.main.async {
+                        self.twitterButton.isSelected.toggle()
+                    }
+                }
             })
         })
     }

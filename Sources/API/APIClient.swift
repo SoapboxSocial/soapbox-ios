@@ -200,6 +200,12 @@ extension APIClient {
 }
 
 extension APIClient {
+    struct LinkedAccount: Decodable {
+        let id: UInt64
+        let username: String
+        let provider: String
+    }
+
     struct Profile: Decodable {
         let id: Int
         var displayName: String
@@ -211,9 +217,10 @@ extension APIClient {
         var isFollowing: Bool?
         let image: String
         let currentRoom: Int?
+        let linkedAccounts: [LinkedAccount]
 
         private enum CodingKeys: String, CodingKey {
-            case id, displayName = "display_name", username, followers, following, followedBy = "followed_by", isFollowing = "is_following", image, currentRoom = "current_room", bio
+            case id, displayName = "display_name", username, followers, following, followedBy = "followed_by", isFollowing = "is_following", image, currentRoom = "current_room", bio, linkedAccounts = "linked_accounts"
         }
     }
 
@@ -318,11 +325,24 @@ extension APIClient {
             }
     }
 
-    func addTwitter(token: String, secret: String, callback _: @escaping (Result<Void, APIError>) -> Void) {
+    func addTwitter(token: String, secret: String, callback: @escaping (Result<Void, APIError>) -> Void) {
         AF.request(Configuration.rootURL.appendingPathComponent("/v1/me/profiles/twitter"), method: .post, parameters: ["token": token, "secret": secret], headers: ["Authorization": self.token!])
             .validate()
             .response { result in
                 debugPrint(result)
+                guard result.data != nil else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
+
+                if result.response?.statusCode == 200 {
+                    return callback(.success(()))
+                }
+
+                return callback(.failure(.decode))
             }
     }
 }
