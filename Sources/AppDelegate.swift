@@ -1,5 +1,6 @@
 import KeychainAccess
 import NotificationBannerSwift
+import Swifter
 import UIKit
 import UIWindowTransitions
 import UserNotifications
@@ -45,6 +46,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         return true
+    }
+
+    func application(_: UIApplication, open url: URL, options _: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        return Swifter.handleOpenURL(url, callbackURL: URL(string: "soapbox://")!)
     }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {

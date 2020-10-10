@@ -1,4 +1,5 @@
 import NotificationBannerSwift
+import Swifter
 import UIKit
 
 class EditProfileViewController: UIViewController {
@@ -10,8 +11,14 @@ class EditProfileViewController: UIViewController {
     private var imageView: EditProfileImageButton!
     private var imagePicker: ImagePicker!
     private var bioTextField: UITextView!
+    private var twitterButton: SoapButton!
 
     private var image: UIImage?
+
+    private let swifter = Swifter(
+        consumerKey: "nAzgMi6loUf3cl0hIkkXhZSth",
+        consumerSecret: "sFQEQ2cjJZSJgepUMmNyeTxiGggFXA1EKfSYAXpbARTu3CXBQY"
+    )
 
     init(user: APIClient.Profile, parent: ProfileViewController) {
         parentVC = parent
@@ -80,6 +87,19 @@ class EditProfileViewController: UIViewController {
         bioTextField.text = user.bio
         view.addSubview(bioTextField)
 
+        twitterButton = SoapButton(size: .large)
+        twitterButton.translatesAutoresizingMaskIntoConstraints = false
+        twitterButton.setTitle(NSLocalizedString("connect_twitter", comment: ""), for: .normal)
+        twitterButton.setTitle(NSLocalizedString("disconnect_twitter", comment: ""), for: .selected)
+        twitterButton.addTarget(self, action: #selector(didTapTwitterButton), for: .touchUpInside)
+        view.addSubview(twitterButton)
+
+        if user.linkedAccounts.first(where: { $0.provider == "twitter" }) != nil {
+            twitterButton.isSelected = true
+        } else {
+            twitterButton.isSelected = false
+        }
+
         activityIndicator.isHidden = true
         activityIndicator.hidesWhenStopped = true
         activityIndicator.color = .black
@@ -127,6 +147,13 @@ class EditProfileViewController: UIViewController {
             bioTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             bioTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
+
+        NSLayoutConstraint.activate([
+            twitterButton.heightAnchor.constraint(equalToConstant: 56),
+            twitterButton.topAnchor.constraint(equalTo: bioTextField.bottomAnchor, constant: 20),
+            twitterButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            twitterButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+        ])
     }
 
     @objc private func selectImage() {
@@ -156,12 +183,7 @@ class EditProfileViewController: UIViewController {
 
             switch result {
             case .failure:
-                let banner = FloatingNotificationBanner(
-                    title: NSLocalizedString("something_went_wrong", comment: ""),
-                    subtitle: NSLocalizedString("please_try_again_later", comment: ""),
-                    style: .danger
-                )
-                banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+                self.displayError()
             case .success:
                 DispatchQueue.main.async {
                     self.parentVC.output.loadData()
@@ -171,12 +193,66 @@ class EditProfileViewController: UIViewController {
         }
     }
 
+    @objc private func didTapTwitterButton() {
+        let api = APIClient()
+
+        if twitterButton.isSelected {
+            api.removeTwitter(callback: { result in
+                switch result {
+                case .failure:
+                    self.displayError()
+                case .success:
+                    DispatchQueue.main.async {
+                        self.twitterButton.isSelected.toggle()
+                    }
+                }
+            })
+
+            return
+        }
+
+        swifter.authorize(
+            withCallback: URL(string: "soapbox://success")!,
+            presentingFrom: self,
+            forceLogin: false,
+            safariDelegate: nil,
+            success: { result, _ in
+                guard let data = result else {
+                    return
+                }
+
+                APIClient().addTwitter(token: data.key, secret: data.secret, callback: { result in
+                    switch result {
+                    case .failure:
+                        self.displayError()
+                    case .success:
+                        DispatchQueue.main.async {
+                            self.twitterButton.isSelected.toggle()
+                        }
+                    }
+                })
+            },
+            failure: { _ in
+                self.displayError()
+            }
+        )
+    }
+
     @objc private func cancelPressed() {
         dismiss(animated: true, completion: nil)
     }
 
     @objc private func dismissKeyboard() {
         view.endEditing(true)
+    }
+
+    private func displayError() {
+        let banner = FloatingNotificationBanner(
+            title: NSLocalizedString("something_went_wrong", comment: ""),
+            subtitle: NSLocalizedString("please_try_again_later", comment: ""),
+            style: .danger
+        )
+        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
     }
 }
 

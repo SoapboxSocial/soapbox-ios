@@ -14,9 +14,13 @@ class CreateRoomButton: UIButton {
         layer.shadowOpacity = 0.5
         layer.shadowRadius = 1.0
 
-        setTitle("🎙️", for: .normal)
-        titleLabel?.font = titleLabel?.font.withSize(40)
-        titleLabel?.frame = CGRect(x: 0, y: 0, width: 60, height: 60)
+        setImage(
+            UIImage(systemName: "quote.bubble.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 30, weight: .bold)),
+            for: .normal
+        )
+
+        tintColor = .white
+        imageEdgeInsets = UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 0)
     }
 
     required init?(coder _: NSCoder) {

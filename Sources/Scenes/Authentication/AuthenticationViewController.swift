@@ -17,9 +17,9 @@ class AuthenticationViewController: UIViewController {
 
     private var contentView: UIView!
     private var scrollView: UIScrollView!
-    private var submitButton: Button!
+    private var submitButton: SoapButton!
 
-    private var emailTextField: UITextField!
+    private var emailTextField: SoapTextField!
 
     private var pinTextField: UITextField!
 
@@ -39,11 +39,11 @@ class AuthenticationViewController: UIViewController {
         notificationCenter.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         notificationCenter.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
 
-        contentView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height / 3))
+        contentView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height / 2))
         contentView.center = view.center
 
-        let height = (view.frame.size.height / 3) - 60
-        scrollView = UIScrollView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: contentView.frame.size.height - 60))
+        let height = (view.frame.size.height / 2) - 54
+        scrollView = UIScrollView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: contentView.frame.size.height - 54))
         scrollView.contentSize = CGSize(width: view.frame.size.width * 4, height: scrollView.frame.size.height)
         scrollView.isScrollEnabled = false
         contentView.addSubview(scrollView)
@@ -53,9 +53,11 @@ class AuthenticationViewController: UIViewController {
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
 
-        submitButton = Button(frame: CGRect(x: (view.frame.size.width - 282) / 2, y: scrollView.frame.height, width: 282, height: 60))
+        submitButton = SoapButton(size: .large)
+        submitButton.frame = CGRect(x: 20, y: scrollView.frame.height, width: view.frame.size.width - 40, height: 54)
         submitButton.setTitle(NSLocalizedString("submit", comment: ""), for: .normal)
         submitButton.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
+        submitButton.backgroundColor = UIColor.white.withAlphaComponent(0.3)
         contentView.addSubview(submitButton)
 
         imagePicker = ImagePicker()
@@ -166,14 +168,7 @@ extension AuthenticationViewController {
     private func setupLoginView(height: CGFloat) -> UIView {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: height))
 
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 20))
-        label.textAlignment = .center
-        label.textColor = .white
-        label.text = NSLocalizedString("email_login", comment: "")
-        label.font = label.font.withSize(20)
-        view.addSubview(label)
-
-        emailTextField = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: label.frame.size.height + 20, width: 330, height: 40))
+        emailTextField = SoapTextField(frame: CGRect(x: 20, y: height - (56 + 20), width: view.frame.size.width - 40, height: 56), theme: .light)
         emailTextField.keyboardType = .emailAddress
         emailTextField.textContentType = .emailAddress
         emailTextField.placeholder = "Email"
@@ -182,24 +177,33 @@ extension AuthenticationViewController {
         emailTextField.autocapitalizationType = .none
         view.addSubview(emailTextField)
 
+        let label = UILabel(frame: CGRect(x: 20, y: 0, width: 0, height: 0))
+        label.textColor = .white
+        label.text = NSLocalizedString("email_login", comment: "")
+        label.font = .rounded(forTextStyle: .title1, weight: .bold)
+        label.sizeToFit()
+        label.frame = CGRect(origin: CGPoint(x: 20, y: emailTextField.frame.origin.y - (label.frame.size.height + 20)), size: label.frame.size)
+        view.addSubview(label)
+
         return view
     }
 
     private func setupPinView(height: CGFloat) -> UIView {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: height))
 
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 20))
-        label.textAlignment = .center
-        label.text = NSLocalizedString("enter_your_pin_received_by_mail", comment: "")
-        label.textColor = .white
-        label.font = label.font.withSize(20)
-        view.addSubview(label)
-
-        pinTextField = TextField(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: label.frame.size.height + 20, width: 330, height: 40))
+        pinTextField = SoapTextField(frame: CGRect(x: 20, y: height - (56 + 20), width: view.frame.size.width - 40, height: 56), theme: .light)
         pinTextField.keyboardType = .numberPad
         pinTextField.placeholder = NSLocalizedString("pin", comment: "")
         pinTextField.textContentType = .oneTimeCode
         view.addSubview(pinTextField)
+
+        let label = UILabel(frame: CGRect(x: 20, y: 0, width: 0, height: 0))
+        label.text = NSLocalizedString("enter_your_pin_received_by_mail", comment: "")
+        label.textColor = .white
+        label.font = .rounded(forTextStyle: .title1, weight: .bold)
+        label.sizeToFit()
+        label.frame = CGRect(origin: CGPoint(x: 20, y: pinTextField.frame.origin.y - (label.frame.size.height + 20)), size: label.frame.size)
+        view.addSubview(label)
 
         return view
     }
@@ -207,28 +211,30 @@ extension AuthenticationViewController {
     private func setupRegistrationView(height: CGFloat) -> UIView {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: height))
 
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 20))
-        label.textAlignment = .center
-        label.text = NSLocalizedString("create_account", comment: "")
-        label.textColor = .white
-        label.font = label.font.withSize(20)
-        view.addSubview(label)
+        displayNameTextField = SoapTextField(frame: CGRect(x: 20, y: height - (56 + 20), width: view.frame.size.width - 40, height: 56), theme: .light)
+        displayNameTextField.placeholder = NSLocalizedString("display_name", comment: "")
+        displayNameTextField.delegate = self
+        view.addSubview(displayNameTextField)
 
-        profileImage = EditProfileImageButton(frame: CGRect(x: (view.frame.size.width - 330) / 2, y: label.frame.size.height + 20, width: 90, height: 90))
-        view.addSubview(profileImage)
-        profileImage.addTarget(self, action: #selector(showImagePicker))
-
-        usernameTextField = TextField(frame: CGRect(x: profileImage.frame.origin.x + profileImage.frame.size.width + 10, y: label.frame.size.height + 20, width: view.frame.size.width - ((profileImage.frame.origin.x * 2) + profileImage.frame.size.width + 10), height: 40))
+        usernameTextField = SoapTextField(frame: CGRect(x: 20, y: displayNameTextField.frame.origin.y - (56 + 20), width: view.frame.size.width - 40, height: 56), theme: .light)
         usernameTextField.placeholder = NSLocalizedString("username", comment: "")
         usernameTextField.delegate = self
         usernameTextField.autocorrectionType = .no
         usernameTextField.autocapitalizationType = .none
         view.addSubview(usernameTextField)
 
-        displayNameTextField = TextField(frame: CGRect(x: usernameTextField.frame.origin.x, y: usernameTextField.frame.height + usernameTextField.frame.origin.y + 10, width: usernameTextField.frame.size.width, height: 40))
-        displayNameTextField.placeholder = NSLocalizedString("display_name", comment: "")
-        displayNameTextField.delegate = self
-        view.addSubview(displayNameTextField)
+        let label = UILabel(frame: CGRect(x: 20, y: 0, width: 0, height: 0))
+        label.textAlignment = .center
+        label.text = NSLocalizedString("create_account", comment: "")
+        label.textColor = .white
+        label.font = .rounded(forTextStyle: .title1, weight: .bold)
+        label.sizeToFit()
+        label.frame = CGRect(origin: CGPoint(x: 20, y: usernameTextField.frame.origin.y - (label.frame.size.height + 20)), size: label.frame.size)
+        view.addSubview(label)
+
+        profileImage = EditProfileImageButton(frame: CGRect(x: (view.frame.size.width / 2) - 40, y: label.frame.origin.y - (20 + 80), width: 80, height: 80))
+        view.addSubview(profileImage)
+        profileImage.addTarget(self, action: #selector(showImagePicker))
 
         return view
     }

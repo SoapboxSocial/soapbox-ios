@@ -83,6 +83,15 @@ class ProfileViewController: UIViewController {
         return label
     }()
 
+    private let twitter: UIButton = {
+        let button = UIButton(type: .custom)
+        button.clipsToBounds = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "twitter"), for: .normal)
+        button.addTarget(self, action: #selector(openTwitterProfile), for: .touchUpInside)
+        return button
+    }()
+
     private let downloader = ImageDownloader()
     private lazy var manager = FocusableImageViewManager()
 
@@ -107,6 +116,7 @@ class ProfileViewController: UIViewController {
         view.addSubview(username)
         view.addSubview(followButton)
         view.addSubview(followsYouBadge)
+        view.addSubview(twitter)
 
         let followsYouLabel = UILabel()
         followsYouLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -216,10 +226,32 @@ class ProfileViewController: UIViewController {
         ])
 
         NSLayoutConstraint.activate([
+            twitter.heightAnchor.constraint(equalToConstant: 24),
+            twitter.widthAnchor.constraint(equalToConstant: 24),
+            twitter.centerYAnchor.constraint(equalTo: username.centerYAnchor),
+            twitter.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+        ])
+
+        NSLayoutConstraint.activate([
             bioLabel.topAnchor.constraint(equalTo: followingView.bottomAnchor, constant: 20),
             bioLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             bioLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
+    }
+
+    @objc private func openTwitterProfile() {
+        guard let account = user.linkedAccounts.first(where: { $0.provider == "twitter" }) else {
+            return
+        }
+
+        let appURL = URL(string: "twitter://user?screen_name=\(account.username)")!
+        let webURL = URL(string: "https://twitter.com/\(account.username)")!
+
+        if UIApplication.shared.canOpenURL(appURL) {
+            UIApplication.shared.open(appURL)
+        } else {
+            UIApplication.shared.open(webURL)
+        }
     }
 
     // @TODO THIS SHOULD BE DONE THROUGH INTERACTOR FLOW
@@ -315,6 +347,12 @@ extension ProfileViewController: ProfilePresenterOutput {
         username.text = "@" + profile.username
         followingCountLabel.text = String(profile.following)
         bioLabel.text = profile.bio
+
+        if let account = user.linkedAccounts.first(where: { $0.provider == "twitter" }) {
+            twitter.isHidden = false
+        } else {
+            twitter.isHidden = true
+        }
 
         updateFollowerLabels()
 

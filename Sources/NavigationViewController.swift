@@ -22,11 +22,6 @@ class NavigationViewController: UINavigationController {
         client = APIClient()
 
         super.init(rootViewController: rootViewController)
-
-        createRoomButton.frame = CGRect(
-            origin: CGPoint(x: view.frame.size.width / 2 - (70 / 2), y: view.frame.size.height - 100),
-            size: createRoomButton.frame.size
-        )
     }
 
     required init?(coder _: NSCoder) {
@@ -37,6 +32,11 @@ class NavigationViewController: UINavigationController {
         super.viewDidAppear(animated)
 
         view.backgroundColor = .background
+
+        createRoomButton.frame = CGRect(
+            origin: CGPoint(x: view.frame.size.width / 2 - (70 / 2), y: view.frame.size.height - (90 + view.safeAreaInsets.bottom)),
+            size: createRoomButton.frame.size
+        )
 
         createRoomButton.addTarget(self, action: #selector(didTapCreateRoom), for: .touchUpInside)
         view.addSubview(createRoomButton)

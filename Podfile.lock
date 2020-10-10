@@ -30,6 +30,7 @@ PODS:
     - SnapKit (~> 5.0.0)
   - SnapKit (5.0.1)
   - SwiftConfettiView (0.1.0)
+  - Swifter (2.4.0)
   - SwiftNIO (2.22.1):
     - CNIOAtomics (= 2.22.1)
     - CNIODarwin (= 2.22.1)
@@ -80,6 +81,7 @@ DEPENDENCIES:
   - KeychainAccess
   - NotificationBannerSwift
   - SwiftConfettiView
+  - "Swifter (from `git@github.com:mattdonnelly/Swifter.git`)"
   - SwiftProtobuf
   - UIWindowTransitions
 
@@ -117,6 +119,15 @@ SPEC REPOS:
     - SwiftProtobuf
     - UIWindowTransitions
 
+EXTERNAL SOURCES:
+  Swifter:
+    :git: "git@github.com:mattdonnelly/Swifter.git"
+
+CHECKOUT OPTIONS:
+  Swifter:
+    :commit: 7906c9476f612fc2a77c38f4731d4bc618cea6a8
+    :git: "git@github.com:mattdonnelly/Swifter.git"
+
 SPEC CHECKSUMS:
   Alamofire: 814429acc853c6c54ff123fc3d2ef66803823ce0
   AlamofireImage: c4a2ba349885fb3064feb74d2e547bd42ce9be10
@@ -138,6 +149,7 @@ SPEC CHECKSUMS:
   NotificationBannerSwift: 713e20f21b6105f4a36a00e5d9fa414a930d3d8e
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SwiftConfettiView: 1bdbc2e6913b6b1c76d8070802b212508ad5c352
+  Swifter: 0955a05325dc182fabfb1468305aef887180e0f1
   SwiftNIO: 763188229de166e046cc8975383cca388832e992
   SwiftNIOConcurrencyHelpers: 34d2e9d4d2b7886fa765086e845e6b19417be927
   SwiftNIOFoundationCompat: 990bf137ed31a0907be67a0f80cfa9d3ad66289d
@@ -150,6 +162,6 @@ SPEC CHECKSUMS:
   SwiftProtobuf: 4ef85479c18ca85b5482b343df9c319c62bda699
   UIWindowTransitions: cb662e2ae9e2d1060fcdbe3eb3de9232bedb7612
 
-PODFILE CHECKSUM: 2da10be5ae98f17d41f49a1792362494f4018ea2
+PODFILE CHECKSUM: e6af194553925a9cb34cf67d76b9aa06878947a0
 
 COCOAPODS: 1.9.1
