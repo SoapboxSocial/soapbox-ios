@@ -159,7 +159,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             return
         }
 
-        let notification = NotificationBanner(title: notification.request.content.body, style: .success)
+        let notification = GrowingNotificationBanner(title: notification.request.content.body, style: .success)
 
         notification.onTap = {
             self.handleNotificationAction(for: category, args: arguments)
