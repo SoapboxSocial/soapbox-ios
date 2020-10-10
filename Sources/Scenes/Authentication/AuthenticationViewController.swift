@@ -79,6 +79,7 @@ class AuthenticationViewController: UIViewController {
 
     @objc private func didSubmit() {
         view.endEditing(true)
+        submitButton.isEnabled = false
         switch state {
         case .login:
             return output.login(email: emailTextField.text)
@@ -119,6 +120,7 @@ class AuthenticationViewController: UIViewController {
 extension AuthenticationViewController: AuthenticationPresenterOutput {
     func transitionTo(state: AuthenticationInteractor.AuthenticationState) {
         self.state = state
+        submitButton.isEnabled = true
         scrollView.setContentOffset(CGPoint(x: view.frame.size.width * CGFloat(state.rawValue), y: 0), animated: true)
 
         if state == .requestNotifications {
@@ -139,6 +141,8 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
     }
 
     func displayError(_ style: ErrorStyle, title: String, description: String?) {
+        submitButton.isEnabled = true
+
         switch style {
         case .normal:
             let banner = NotificationBanner(title: title, subtitle: description, style: .danger)
