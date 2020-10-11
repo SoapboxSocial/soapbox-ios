@@ -1,6 +1,6 @@
 import UIKit
 
-class RoomBadge: UIView {
+class RoomBadge: Badge {
     enum Style {
         case normal, current
     }
@@ -32,12 +32,9 @@ class RoomBadge: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        translatesAutoresizingMaskIntoConstraints = false
-
-        backgroundColor = .brandColor
-        layer.cornerRadius = 15
-
         addSubview(label)
+
+        backgroundColor = .white
 
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: topAnchor, constant: 8),

@@ -60,7 +60,7 @@ class ProfileViewController: UIViewController {
     }()
 
     private let followButton: SoapButton = {
-        let button = SoapButton(size: .regular)
+        let button = SoapButton(size: .small)
         button.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
         button.setTitle(NSLocalizedString("unfollow", comment: ""), for: .selected)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -83,13 +83,11 @@ class ProfileViewController: UIViewController {
         return label
     }()
 
-    private let twitter: UIButton = {
-        let button = UIButton(type: .custom)
-        button.clipsToBounds = true
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(named: "twitter"), for: .normal)
-        button.addTarget(self, action: #selector(openTwitterProfile), for: .touchUpInside)
-        return button
+    private let twitter: TwitterBadge = {
+        let badge = TwitterBadge()
+        badge.translatesAutoresizingMaskIntoConstraints = false
+        badge.isUserInteractionEnabled = true
+        return badge
     }()
 
     private let downloader = ImageDownloader()
@@ -117,6 +115,8 @@ class ProfileViewController: UIViewController {
         view.addSubview(followButton)
         view.addSubview(followsYouBadge)
         view.addSubview(twitter)
+
+        twitter.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openTwitterProfile)))
 
         let followsYouLabel = UILabel()
         followsYouLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -164,7 +164,7 @@ class ProfileViewController: UIViewController {
         ])
 
         NSLayoutConstraint.activate([
-            followButton.centerYAnchor.constraint(equalTo: image.centerYAnchor),
+            followButton.bottomAnchor.constraint(equalTo: image.bottomAnchor),
             followButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
 
@@ -185,6 +185,12 @@ class ProfileViewController: UIViewController {
         ])
 
         NSLayoutConstraint.activate([
+            bioLabel.topAnchor.constraint(equalTo: username.bottomAnchor, constant: 20),
+            bioLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            bioLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+        ])
+
+        NSLayoutConstraint.activate([
             followsYouLabel.topAnchor.constraint(equalTo: followsYouBadge.topAnchor),
             followsYouLabel.leftAnchor.constraint(equalTo: followsYouBadge.leftAnchor, constant: 8),
             followsYouLabel.rightAnchor.constraint(equalTo: followsYouBadge.rightAnchor, constant: -8),
@@ -192,7 +198,7 @@ class ProfileViewController: UIViewController {
         ])
 
         NSLayoutConstraint.activate([
-            followersView.topAnchor.constraint(equalTo: username.bottomAnchor, constant: 20),
+            followersView.topAnchor.constraint(equalTo: bioLabel.bottomAnchor, constant: 20),
             followersView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             followersView.bottomAnchor.constraint(equalTo: followersLabel.bottomAnchor),
             followersView.rightAnchor.constraint(equalTo: followersLabel.rightAnchor),
@@ -209,7 +215,7 @@ class ProfileViewController: UIViewController {
         ])
 
         NSLayoutConstraint.activate([
-            followingView.topAnchor.constraint(equalTo: username.bottomAnchor, constant: 20),
+            followingView.topAnchor.constraint(equalTo: bioLabel.bottomAnchor, constant: 20),
             followingView.leftAnchor.constraint(equalTo: followersView.rightAnchor, constant: 40),
             followingView.rightAnchor.constraint(equalTo: followingLabel.rightAnchor),
             followingView.bottomAnchor.constraint(equalTo: followersLabel.bottomAnchor),
@@ -226,16 +232,8 @@ class ProfileViewController: UIViewController {
         ])
 
         NSLayoutConstraint.activate([
-            twitter.heightAnchor.constraint(equalToConstant: 24),
-            twitter.widthAnchor.constraint(equalToConstant: 24),
-            twitter.centerYAnchor.constraint(equalTo: username.centerYAnchor),
-            twitter.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-        ])
-
-        NSLayoutConstraint.activate([
-            bioLabel.topAnchor.constraint(equalTo: followingView.bottomAnchor, constant: 20),
-            bioLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            bioLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            twitter.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            twitter.topAnchor.constraint(equalTo: followersView.bottomAnchor, constant: 20),
         ])
     }
 

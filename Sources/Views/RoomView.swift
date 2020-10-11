@@ -303,7 +303,7 @@ extension RoomView: RoomDelegate {
             let url = URL(fileURLWithPath: path) as CFURL
             var mySound: SystemSoundID = 0
             AudioServicesCreateSystemSoundID(url, &mySound)
-            AudioServicesPlaySystemSound(mySound);
+            AudioServicesPlaySystemSound(mySound)
         }
     }
 }
