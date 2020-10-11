@@ -3,7 +3,7 @@ import Swifter
 import UIKit
 
 class EditProfileViewController: UIViewController {
-    private var displayNameTextField: SoapTextField!
+    private var displayNameTextField: TextField!
     private var activityIndicator = UIActivityIndicatorView(style: .large)
 
     private var user: APIClient.Profile
@@ -11,7 +11,7 @@ class EditProfileViewController: UIViewController {
     private var imageView: EditProfileImageButton!
     private var imagePicker: ImagePicker!
     private var bioTextField: UITextView!
-    private var twitterButton: SoapButton!
+    private var twitterButton: Button!
 
     private var image: UIImage?
 
@@ -70,7 +70,7 @@ class EditProfileViewController: UIViewController {
         nameLabel.font = .rounded(forTextStyle: .title3, weight: .bold)
         view.addSubview(nameLabel)
 
-        displayNameTextField = SoapTextField(frame: CGRect.zero, theme: .normal)
+        displayNameTextField = TextField(frame: CGRect.zero, theme: .normal)
         displayNameTextField.translatesAutoresizingMaskIntoConstraints = false
         displayNameTextField.placeholder = NSLocalizedString("enter_name", comment: "")
         displayNameTextField.text = user.displayName
@@ -87,7 +87,7 @@ class EditProfileViewController: UIViewController {
         bioTextField.text = user.bio
         view.addSubview(bioTextField)
 
-        twitterButton = SoapButton(size: .small)
+        twitterButton = Button(size: .small)
         twitterButton.backgroundColor = .twitter
         twitterButton.translatesAutoresizingMaskIntoConstraints = false
         twitterButton.setTitle(NSLocalizedString("connect_twitter", comment: ""), for: .normal)
