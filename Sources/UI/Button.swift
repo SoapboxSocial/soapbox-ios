@@ -1,6 +1,6 @@
 import UIKit
 
-class SoapButton: UIButton {
+class Button: UIButton {
     enum Size {
         case small, regular, large
     }
