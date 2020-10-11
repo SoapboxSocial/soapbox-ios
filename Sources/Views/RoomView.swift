@@ -304,7 +304,7 @@ extension RoomView: RoomDelegate {
 
         do {
             let audioSession = AVAudioSession()
-            try audioSession.setCategory(.ambient, mode: .default, options: .mixWithOthers)
+            try audioSession.setCategory(.ambient)
             try audioSession.setActive(true)
 
             if let player = audioPlayer, player.isPlaying {
