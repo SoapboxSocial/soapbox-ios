@@ -304,13 +304,10 @@ extension RoomView: RoomDelegate {
         }
 
         do {
-            if let player = audioPlayer, player.isPlaying {
-                return
+            audioPlayer = try AVAudioPlayer(contentsOf: url)
+            DispatchQueue.global(qos: .background).async {
+                self.audioPlayer.play()
             }
-
-            let sound = try AVAudioPlayer(contentsOf: url)
-            audioPlayer = sound
-            audioPlayer.play()
         } catch {
             debugPrint("\(error)")
         }
