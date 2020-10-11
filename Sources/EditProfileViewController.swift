@@ -87,7 +87,8 @@ class EditProfileViewController: UIViewController {
         bioTextField.text = user.bio
         view.addSubview(bioTextField)
 
-        twitterButton = SoapButton(size: .large)
+        twitterButton = SoapButton(size: .small)
+        twitterButton.backgroundColor = .twitter
         twitterButton.translatesAutoresizingMaskIntoConstraints = false
         twitterButton.setTitle(NSLocalizedString("connect_twitter", comment: ""), for: .normal)
         twitterButton.setTitle(NSLocalizedString("disconnect_twitter", comment: ""), for: .selected)

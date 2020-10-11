@@ -38,6 +38,10 @@ extension UIColor {
         UIColor(red: 193 / 255, green: 171 / 255, blue: 255 / 255, alpha: 1.0)
     }
 
+    static var twitter: UIColor {
+        UIColor(red: 29 / 255, green: 161 / 255, blue: 242 / 255, alpha: 1.0)
+    }
+
     static var elementBackground: UIColor {
         return UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
             if UITraitCollection.userInterfaceStyle == .dark {
