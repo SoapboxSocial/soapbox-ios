@@ -302,9 +302,9 @@ extension RoomView: RoomDelegate {
         if let url = Bundle.main.url(forResource: "blop", withExtension: "mp3") {
             var mySound: SystemSoundID = 0
             AudioServicesCreateSystemSoundID(url as CFURL, &mySound)
-            AudioServicesPlaySystemSoundWithCompletion(mySound, {
+            AudioServicesPlaySystemSoundWithCompletion(mySound) {
                 AudioServicesDisposeSystemSoundID(mySound)
-            })
+            }
         }
     }
 }
