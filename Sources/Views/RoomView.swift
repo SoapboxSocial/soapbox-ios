@@ -1,3 +1,4 @@
+import AVFoundation
 import DrawerView
 import UIKit
 
@@ -16,6 +17,8 @@ class RoomView: UIView {
 
     private var muteButton: UIButton!
     private var members: UICollectionView!
+
+    private var audioPlayer: AVAudioPlayer!
 
     init(frame: CGRect, room: Room, topBarHeight: CGFloat) {
         self.room = room
@@ -247,6 +250,7 @@ extension RoomView: RoomDelegate {
     func userDidJoinRoom(user _: Int) {
         DispatchQueue.main.async {
             self.members.reloadData()
+            self.playJoinedSound()
         }
     }
 
@@ -292,6 +296,23 @@ extension RoomView: RoomDelegate {
 
         DispatchQueue.main.async {
             UIApplication.shared.keyWindow?.rootViewController!.present(option, animated: true)
+        }
+    }
+
+    private func playJoinedSound() {
+        let path = Bundle.main.path(forResource: "blop", ofType: "mp3")!
+        let url = URL(fileURLWithPath: path)
+
+        do {
+            let audioSession = AVAudioSession()
+            try audioSession.setCategory(.playback, mode: .default, options: .mixWithOthers)
+            try audioSession.setActive(true)
+
+            let sound = try AVAudioPlayer(contentsOf: url)
+            audioPlayer = sound
+            audioPlayer.play()
+        } catch {
+            debugPrint("\(error)")
         }
     }
 }
