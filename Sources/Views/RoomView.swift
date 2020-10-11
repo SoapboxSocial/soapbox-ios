@@ -291,7 +291,7 @@ extension RoomView: RoomDelegate {
             )
 
             banner.onTap = {
-                UIApplication.shared.openURL(link)
+                UIApplication.shared.open(link)
             }
 
             banner.show()
@@ -303,8 +303,8 @@ extension RoomView: RoomDelegate {
             var mySound: SystemSoundID = 0
             AudioServicesCreateSystemSoundID(url as CFURL, &mySound)
             AudioServicesPlaySystemSoundWithCompletion(mySound, {
-                AudioServicesDisposeSystemSoundID(mySound);
-            });
+                AudioServicesDisposeSystemSoundID(mySound)
+            })
         }
     }
 }
