@@ -17,9 +17,9 @@ class AuthenticationViewController: UIViewController {
 
     private var contentView: UIView!
     private var scrollView: UIScrollView!
-    private var submitButton: SoapButton!
+    private var submitButton: Button!
 
-    private var emailTextField: SoapTextField!
+    private var emailTextField: TextField!
 
     private var pinTextField: UITextField!
 
@@ -53,7 +53,7 @@ class AuthenticationViewController: UIViewController {
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
 
-        submitButton = SoapButton(size: .large)
+        submitButton = Button(size: .large)
         submitButton.frame = CGRect(x: 20, y: scrollView.frame.height, width: view.frame.size.width - 40, height: 54)
         submitButton.setTitle(NSLocalizedString("submit", comment: ""), for: .normal)
         submitButton.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
@@ -168,7 +168,7 @@ extension AuthenticationViewController {
     private func setupLoginView(height: CGFloat) -> UIView {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: height))
 
-        emailTextField = SoapTextField(frame: CGRect(x: 20, y: height - (56 + 20), width: view.frame.size.width - 40, height: 56), theme: .light)
+        emailTextField = TextField(frame: CGRect(x: 20, y: height - (56 + 20), width: view.frame.size.width - 40, height: 56), theme: .light)
         emailTextField.keyboardType = .emailAddress
         emailTextField.textContentType = .emailAddress
         emailTextField.placeholder = "Email"
@@ -191,7 +191,7 @@ extension AuthenticationViewController {
     private func setupPinView(height: CGFloat) -> UIView {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: height))
 
-        pinTextField = SoapTextField(frame: CGRect(x: 20, y: height - (56 + 20), width: view.frame.size.width - 40, height: 56), theme: .light)
+        pinTextField = TextField(frame: CGRect(x: 20, y: height - (56 + 20), width: view.frame.size.width - 40, height: 56), theme: .light)
         pinTextField.keyboardType = .numberPad
         pinTextField.placeholder = NSLocalizedString("pin", comment: "")
         pinTextField.textContentType = .oneTimeCode
@@ -211,12 +211,12 @@ extension AuthenticationViewController {
     private func setupRegistrationView(height: CGFloat) -> UIView {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: height))
 
-        displayNameTextField = SoapTextField(frame: CGRect(x: 20, y: height - (56 + 20), width: view.frame.size.width - 40, height: 56), theme: .light)
+        displayNameTextField = TextField(frame: CGRect(x: 20, y: height - (56 + 20), width: view.frame.size.width - 40, height: 56), theme: .light)
         displayNameTextField.placeholder = NSLocalizedString("display_name", comment: "")
         displayNameTextField.delegate = self
         view.addSubview(displayNameTextField)
 
-        usernameTextField = SoapTextField(frame: CGRect(x: 20, y: displayNameTextField.frame.origin.y - (56 + 20), width: view.frame.size.width - 40, height: 56), theme: .light)
+        usernameTextField = TextField(frame: CGRect(x: 20, y: displayNameTextField.frame.origin.y - (56 + 20), width: view.frame.size.width - 40, height: 56), theme: .light)
         usernameTextField.placeholder = NSLocalizedString("username", comment: "")
         usernameTextField.delegate = self
         usernameTextField.autocorrectionType = .no

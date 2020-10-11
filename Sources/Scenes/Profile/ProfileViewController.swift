@@ -59,8 +59,8 @@ class ProfileViewController: UIViewController {
         return view
     }()
 
-    private let followButton: SoapButton = {
-        let button = SoapButton(size: .small)
+    private let followButton: Button = {
+        let button = Button(size: .small)
         button.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
         button.setTitle(NSLocalizedString("unfollow", comment: ""), for: .selected)
         button.translatesAutoresizingMaskIntoConstraints = false

@@ -1,6 +1,6 @@
 import UIKit
 
-class SoapTextField: UITextField {
+class TextField: UITextField {
     struct ThemeColors {
         let text: UIColor
         let background: UIColor
