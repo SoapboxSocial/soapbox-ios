@@ -299,12 +299,20 @@ extension RoomView: RoomDelegate {
     }
 
     private func playJoinedSound() {
-        if let url = Bundle.main.url(forResource: "blop", withExtension: "mp3") {
-            var mySound: SystemSoundID = 0
-            AudioServicesCreateSystemSoundID(url as CFURL, &mySound)
-            AudioServicesPlaySystemSoundWithCompletion(mySound) {
-                AudioServicesDisposeSystemSoundID(mySound)
+        guard let url = Bundle.main.url(forResource: "blop", withExtension: "mp3") else {
+            return
+        }
+
+        do {
+            if let player = audioPlayer, player.isPlaying {
+                return
             }
+
+            let sound = try AVAudioPlayer(contentsOf: url)
+            audioPlayer = sound
+            audioPlayer.play()
+        } catch {
+            debugPrint("\(error)")
         }
     }
 }
