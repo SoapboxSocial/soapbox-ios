@@ -204,10 +204,6 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     func peerConnection(_: RTCPeerConnection, didOpen _: RTCDataChannel) {
         debugPrint("peerConnection did open data channel")
     }
-
-    func audioSessionDidEndInterruption(_: RTCAudioSession, shouldResumeSession _: Bool) {
-        configureAudioForConnectedState()
-    }
 }
 
 extension WebRTCClient {
