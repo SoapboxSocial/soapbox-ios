@@ -307,10 +307,15 @@ extension RoomView: RoomDelegate {
             let audioSession = AVAudioSession()
             try audioSession.setCategory(.playback, mode: .default, options: .mixWithOthers)
             try audioSession.setActive(true)
+            
+            if audioPlayer != nil {
+                return
+            }
 
             let sound = try AVAudioPlayer(contentsOf: url)
             audioPlayer = sound
             audioPlayer.play()
+            audioPlayer = nil
         } catch {
             debugPrint("\(error)")
         }
