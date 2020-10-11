@@ -93,7 +93,7 @@
 
 "would_you_like_to_share_link" = "Would you like to share a link?";
 "shared_link" = "%@ shared a link!";
-"would_you_like_to_open_link" = "Would you like to open %@?";
+"click_to_open" = "Click to open %@";
 
 "connect_twitter" = "Connect to Twitter";
 "disconnect_twitter" = "Disconnect Twitter";

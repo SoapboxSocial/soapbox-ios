@@ -1,5 +1,6 @@
 import AVFoundation
 import DrawerView
+import NotificationBannerSwift
 import UIKit
 
 protocol RoomViewDelegate {
@@ -280,22 +281,20 @@ extension RoomView: RoomDelegate {
         }
 
         let message = NSLocalizedString("shared_link", comment: "")
-        let description = NSLocalizedString("would_you_like_to_open_link", comment: "")
-
-        let option = UIAlertController(
-            title: String(format: message, user.displayName.firstName()),
-            message: String(format: description, link.absoluteString),
-            preferredStyle: .alert
-        )
-
-        option.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .default, handler: { _ in
-            UIApplication.shared.openURL(link)
-        }))
-
-        option.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel, handler: nil))
+        let description = NSLocalizedString("click_to_open", comment: "")
 
         DispatchQueue.main.async {
-            UIApplication.shared.keyWindow?.rootViewController!.present(option, animated: true)
+            let banner = GrowingNotificationBanner(
+                title: String(format: message, user.displayName.firstName()),
+                subtitle: String(format: description, link.absoluteString),
+                style: .info
+            )
+
+            banner.onTap = {
+                UIApplication.shared.openURL(link)
+            }
+
+            banner.show()
         }
     }
 
