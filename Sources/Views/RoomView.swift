@@ -299,23 +299,11 @@ extension RoomView: RoomDelegate {
     }
 
     private func playJoinedSound() {
-        let path = Bundle.main.path(forResource: "blop", ofType: "mp3")!
-        let url = URL(fileURLWithPath: path)
-
-        do {
-            let audioSession = AVAudioSession()
-            try audioSession.setCategory(.ambient)
-            try audioSession.setActive(true)
-
-            if let player = audioPlayer, player.isPlaying {
-                return
-            }
-
-            let sound = try AVAudioPlayer(contentsOf: url)
-            audioPlayer = sound
-            audioPlayer.play()
-        } catch {
-            debugPrint("\(error)")
+        if let path = Bundle.main.path(forResource: "blop", ofType: "mp3") {
+            let url = URL(fileURLWithPath: path) as CFURL
+            var mySound: SystemSoundID = 0
+            AudioServicesCreateSystemSoundID(url, &mySound)
+            AudioServicesPlaySystemSound(mySound);
         }
     }
 }
