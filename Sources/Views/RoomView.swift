@@ -356,6 +356,14 @@ extension RoomView: UICollectionViewDelegate {
 //            optionMenu.addAction(action)
 //        }
 
+        if room.role == .owner {
+            let action = UIAlertAction(title: NSLocalizedString("kick_user", comment: ""), style: .default, handler: { _ in
+                self.room.kick(user: member.id)
+            })
+
+            optionMenu.addAction(action)
+        }
+
         let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
             DispatchQueue.main.async {
                 self.delegate?.didSelectViewProfile(id: member.id)

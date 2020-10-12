@@ -137,6 +137,8 @@ class Room {
         self.name = name
         self.completion = completion
 
+        role = .owner
+
         guard let token = self.token else {
             return completion(.failure(RoomError.general))
         }
@@ -240,6 +242,14 @@ class Room {
         send(command: SignalRequest.Command.with {
             $0.type = SignalRequest.Command.TypeEnum.linkShare
             $0.data = Data(link.absoluteString.utf8)
+        })
+    }
+
+    func kick(user: Int) {
+        stream.sendMessage(SignalRequest.with {
+            $0.kick = Kick.with {
+                $0.id = Int64(user)
+            }
         })
     }
 
