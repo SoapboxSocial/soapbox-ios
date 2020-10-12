@@ -358,14 +358,14 @@ extension RoomView: UICollectionViewDelegate {
 
         if room.role == .admin {
             optionMenu.addAction(
-                UIAlertAction(title: NSLocalizedString("kick_user", comment: ""), style: .default, handler: { _ in
+                UIAlertAction(title: NSLocalizedString("kick_user", comment: ""), style: .destructive, handler: { _ in
                     self.room.kick(user: member.id)
                 })
             )
 
             if member.role == .admin {
                 optionMenu.addAction(
-                    UIAlertAction(title: NSLocalizedString("remove_admin", comment: ""), style: .default, handler: { _ in
+                    UIAlertAction(title: NSLocalizedString("remove_admin", comment: ""), style: .destructive, handler: { _ in
                         self.room.remove(admin: member.id)
                     })
                 )
