@@ -356,12 +356,26 @@ extension RoomView: UICollectionViewDelegate {
 //            optionMenu.addAction(action)
 //        }
 
-        if room.role == .owner {
-            let action = UIAlertAction(title: NSLocalizedString("kick_user", comment: ""), style: .default, handler: { _ in
-                self.room.kick(user: member.id)
-            })
+        if room.role == .admin {
+            optionMenu.addAction(
+                UIAlertAction(title: NSLocalizedString("kick_user", comment: ""), style: .default, handler: { _ in
+                    self.room.kick(user: member.id)
+                })
+            )
 
-            optionMenu.addAction(action)
+            if member.role == .admin {
+                optionMenu.addAction(
+                    UIAlertAction(title: NSLocalizedString("remove_admin", comment: ""), style: .default, handler: { _ in
+                        self.room.remove(admin: member.id)
+                    })
+                )
+            } else {
+                optionMenu.addAction(
+                    UIAlertAction(title: NSLocalizedString("add_admin", comment: ""), style: .default, handler: { _ in
+                        self.room.add(admin: member.id)
+                    })
+                )
+            }
         }
 
         let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in

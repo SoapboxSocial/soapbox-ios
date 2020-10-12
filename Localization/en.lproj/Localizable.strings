@@ -99,3 +99,6 @@
 "disconnect_twitter" = "Disconnect Twitter";
 
 "kick_user" = "Kick user";
+
+"remove_admin" = "Remove admin";
+"add_admin" = "Make admin";
