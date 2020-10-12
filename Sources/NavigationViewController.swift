@@ -139,17 +139,13 @@ class NavigationViewController: UINavigationController {
 extension NavigationViewController: RoomViewDelegate {
     func roomWasClosedDueToError() {
         DispatchQueue.main.async {
-            self.roomDrawer?.setPosition(.closed, animated: true) { _ in
-                DispatchQueue.main.async {
-                    let banner = FloatingNotificationBanner(
-                        title: NSLocalizedString("something_went_wrong", comment: ""),
-                        style: .danger
-                    )
-                    banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+            let banner = FloatingNotificationBanner(
+                title: NSLocalizedString("something_went_wrong", comment: ""),
+                style: .danger
+            )
+            banner.show(cornerRadius: 10, shadowBlurRadius: 15)
 
-                    self.shutdownRoom()
-                }
-            }
+            self.shutdownRoom()
         }
     }
 
@@ -163,23 +159,24 @@ extension NavigationViewController: RoomViewDelegate {
     }
 
     func roomDidExit() {
-        roomDrawer?.setPosition(.closed, animated: true) { _ in
-            DispatchQueue.main.async {
-                self.shutdownRoom()
-            }
-        }
+        shutdownRoom()
     }
 
-    func shutdownRoom() {
+    private func shutdownRoom() {
         roomControllerDelegate?.didLeaveRoom()
-        roomDrawer?.removeFromSuperview()
-        roomDrawer = nil
 
         room?.close()
         room = nil
 
         createRoomButton.isHidden = false
         UIApplication.shared.isIdleTimerDisabled = false
+
+        roomDrawer?.setPosition(.closed, animated: true) { _ in
+            DispatchQueue.main.async {
+                self.roomDrawer?.removeFromSuperview()
+                self.roomDrawer = nil
+            }
+        }
     }
 }
 
