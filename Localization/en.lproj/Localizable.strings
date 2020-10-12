@@ -97,3 +97,5 @@
 
 "connect_twitter" = "Connect to Twitter";
 "disconnect_twitter" = "Disconnect Twitter";
+
+"kick_user" = "Kick user";

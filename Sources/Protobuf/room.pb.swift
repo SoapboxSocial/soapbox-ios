@@ -75,6 +75,14 @@ struct SignalRequest {
     set {payload = .invite(newValue)}
   }
 
+  var kick: Kick {
+    get {
+      if case .kick(let v)? = payload {return v}
+      return Kick()
+    }
+    set {payload = .kick(newValue)}
+  }
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum OneOf_Payload: Equatable {
@@ -84,6 +92,7 @@ struct SignalRequest {
     case trickle(Trickle)
     case command(SignalRequest.Command)
     case invite(Invite)
+    case kick(Kick)
 
   #if !swift(>=4.1)
     static func ==(lhs: SignalRequest.OneOf_Payload, rhs: SignalRequest.OneOf_Payload) -> Bool {
@@ -94,6 +103,7 @@ struct SignalRequest {
       case (.trickle(let l), .trickle(let r)): return l == r
       case (.command(let l), .command(let r)): return l == r
       case (.invite(let l), .invite(let r)): return l == r
+      case (.kick(let l), .kick(let r)): return l == r
       default: return false
       }
     }
@@ -559,6 +569,18 @@ struct Invite {
   init() {}
 }
 
+struct Kick {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var id: Int64 = 0
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
@@ -570,6 +592,7 @@ extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     4: .same(proto: "trickle"),
     5: .same(proto: "command"),
     6: .same(proto: "invite"),
+    7: .same(proto: "kick"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -623,6 +646,14 @@ extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .invite(v)}
+      case 7:
+        var v: Kick?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .kick(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .kick(v)}
       default: break
       }
     }
@@ -642,6 +673,8 @@ extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
       try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
     case .invite(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
+    case .kick(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -1241,6 +1274,35 @@ extension Invite: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBas
   }
 
   static func ==(lhs: Invite, rhs: Invite) -> Bool {
+    if lhs.id != rhs.id {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Kick: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "Kick"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.id != 0 {
+      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Kick, rhs: Kick) -> Bool {
     if lhs.id != rhs.id {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
