@@ -21,6 +21,24 @@ class RoomView: UIView {
 
     private var audioPlayer: AVAudioPlayer!
 
+    let compositionalLayout: UICollectionViewCompositionalLayout = {
+        let fraction: CGFloat = 1 / 3
+
+        // Item
+        let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(72), heightDimension: .absolute(98))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        // Group
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalWidth(fraction))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        group.interItemSpacing = .fixed(20)
+
+        // Section
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 60, bottom: 0, trailing: 60)
+        return UICollectionViewCompositionalLayout(section: section)
+    }()
+
     init(frame: CGRect, room: Room, topBarHeight: CGFloat) {
         self.room = room
         self.topBarHeight = topBarHeight
@@ -93,11 +111,7 @@ class RoomView: UIView {
         label.center = CGPoint(x: label.center.x, y: exitButton.center.y)
         topBar.addSubview(label)
 
-        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-        layout.sectionInset = UIEdgeInsets(top: 20, left: 10, bottom: 0, right: 10)
-        layout.itemSize = CGSize(width: 66, height: 90)
-
-        members = UICollectionView(frame: CGRect(x: 0, y: topBar.frame.size.height, width: frame.size.width, height: frame.size.height - topBar.frame.size.height), collectionViewLayout: layout)
+        members = UICollectionView(frame: CGRect(x: 0, y: topBar.frame.size.height, width: frame.size.width, height: frame.size.height - topBar.frame.size.height), collectionViewLayout: compositionalLayout)
         members!.dataSource = self
         members!.delegate = self
         members!.register(cellWithClass: RoomMemberCell.self)
