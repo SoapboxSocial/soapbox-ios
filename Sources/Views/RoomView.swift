@@ -81,7 +81,7 @@ class RoomView: UIView {
         let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
 
         let exitButton = EmojiButton(
-            frame: CGRect(x: frame.size.width - (35 + 15 + safeAreaInsets.left), y: (frame.size.height - inset) / 2 - 17.5, width: 35, height: 35)
+            frame: CGRect(x: frame.size.width - (36 + 15 + safeAreaInsets.left), y: (frame.size.height - inset) / 2 - 17.5, width: 36, height: 36)
         )
         exitButton.center = CGPoint(x: exitButton.center.x, y: topBar.center.y - (inset / 2))
         exitButton.setImage(UIImage(systemName: "xmark", withConfiguration: iconConfig), for: .normal)
@@ -89,15 +89,15 @@ class RoomView: UIView {
         exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         addSubview(exitButton)
 
-        muteButton = EmojiButton(frame: CGRect(x: 0, y: 0, width: 35, height: 35))
+        muteButton = EmojiButton(frame: CGRect(x: exitButton.frame.origin.x - 56, y: 0, width: 36, height: 36))
         muteButton.setImage(UIImage(systemName: "mic", withConfiguration: iconConfig), for: .normal)
         muteButton.setImage(UIImage(systemName: "mic.slash", withConfiguration: iconConfig), for: .selected)
         muteButton.tintColor = .secondaryBackground
-        muteButton.center = CGPoint(x: exitButton.center.x - (15 + exitButton.frame.size.width), y: exitButton.center.y)
+        muteButton.center = CGPoint(x: muteButton.center.x, y: exitButton.center.y)
         muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
         addSubview(muteButton)
 
-        let label = UILabel(frame: CGRect(x: safeAreaInsets.left + 15, y: 0, width: muteButton.frame.origin.x - (safeAreaInsets.left + 30), height: 20))
+        let label = UILabel(frame: CGRect(x: safeAreaInsets.left + 15, y: 0, width: muteButton.frame.origin.x - (safeAreaInsets.left + 30), height: 28))
 
         label.text = {
             if let name = room.name, name != "" {
@@ -118,7 +118,7 @@ class RoomView: UIView {
         members!.backgroundColor = .clear
         addSubview(members)
 
-        let reactSize = CGFloat(30)
+        let reactSize = CGFloat(36)
         var origin = CGPoint(x: exitButton.frame.origin.x, y: frame.size.height - (reactSize + 10 + safeAreaInsets.bottom))
         for reaction in Room.Reaction.allCases {
             let button = EmojiButton(frame: CGRect(origin: origin, size: CGSize(width: reactSize, height: reactSize)))
@@ -129,7 +129,7 @@ class RoomView: UIView {
         }
 
         let inviteButton = EmojiButton(
-            frame: CGRect(x: safeAreaInsets.left + 15, y: frame.size.height - (reactSize + 10 + safeAreaInsets.bottom), width: 35, height: 35)
+            frame: CGRect(x: safeAreaInsets.left + 15, y: frame.size.height - (reactSize + 10 + safeAreaInsets.bottom), width: 36, height: 36)
         )
         inviteButton.setImage(UIImage(systemName: "person.badge.plus", withConfiguration: iconConfig), for: .normal)
         inviteButton.tintColor = .secondaryBackground
