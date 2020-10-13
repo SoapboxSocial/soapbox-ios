@@ -100,7 +100,7 @@ class RoomMemberCell: UICollectionViewCell {
     }
 
     func didChangeSpeakVolume(_ delta: Float) {
-        if delta <= 0.001 {
+        if delta <= 0.02 {
             speakingView.isHidden = true
             return
         }
