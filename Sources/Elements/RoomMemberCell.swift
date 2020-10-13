@@ -26,7 +26,7 @@ class RoomMemberCell: UICollectionViewCell {
         nameLabel.textAlignment = .center
         addSubview(nameLabel)
 
-        speakingView = UIView(frame: CGRect(x: 66 - 20, y: 0, width: 20, height: 20))
+        speakingView = UIView(frame: CGRect(x: frame.size.width - 20, y: 0, width: 20, height: 20))
         speakingView.backgroundColor = .background
         speakingView.layer.cornerRadius = 10
         speakingView.clipsToBounds = true
@@ -39,7 +39,7 @@ class RoomMemberCell: UICollectionViewCell {
         speakingLabel.text = "🎙️"
         speakingView.addSubview(speakingLabel)
 
-        muteView = UIView(frame: CGRect(x: 66 - 20, y: 66 - 20, width: 20, height: 20))
+        muteView = UIView(frame: CGRect(x: frame.size.width - 20, y: frame.size.width - 20, width: 20, height: 20))
         muteView.backgroundColor = .background
         muteView.layer.cornerRadius = 10
         muteView.clipsToBounds = true

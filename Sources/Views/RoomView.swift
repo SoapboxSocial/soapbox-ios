@@ -24,18 +24,18 @@ class RoomView: UIView {
     let compositionalLayout: UICollectionViewCompositionalLayout = {
         let fraction: CGFloat = 1 / 3
 
-        // Item
         let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(72), heightDimension: .absolute(98))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         // Group
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalWidth(fraction))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(128))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         group.interItemSpacing = .fixed(20)
+        group.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 30, trailing: 0)
 
         // Section
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 60, bottom: 0, trailing: 60)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 15)
         return UICollectionViewCompositionalLayout(section: section)
     }()
 
