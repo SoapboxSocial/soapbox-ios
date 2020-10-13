@@ -130,6 +130,8 @@ struct SignalRequest {
       case unmuteSpeaker // = 3
       case reaction // = 4
       case linkShare // = 5
+      case addAdmin // = 6
+      case removeAdmin // = 7
       case UNRECOGNIZED(Int)
 
       init() {
@@ -144,6 +146,8 @@ struct SignalRequest {
         case 3: self = .unmuteSpeaker
         case 4: self = .reaction
         case 5: self = .linkShare
+        case 6: self = .addAdmin
+        case 7: self = .removeAdmin
         default: self = .UNRECOGNIZED(rawValue)
         }
       }
@@ -156,6 +160,8 @@ struct SignalRequest {
         case .unmuteSpeaker: return 3
         case .reaction: return 4
         case .linkShare: return 5
+        case .addAdmin: return 6
+        case .removeAdmin: return 7
         case .UNRECOGNIZED(let i): return i
         }
       }
@@ -179,6 +185,8 @@ extension SignalRequest.Command.TypeEnum: CaseIterable {
     .unmuteSpeaker,
     .reaction,
     .linkShare,
+    .addAdmin,
+    .removeAdmin,
   ]
 }
 
@@ -273,11 +281,12 @@ struct SignalReply {
       case left // = 1
       case addedSpeaker // = 2
       case removedSpeaker // = 3
-      case changedOwner // = 4
       case mutedSpeaker // = 5
       case unmutedSpeaker // = 6
       case reacted // = 7
       case linkShared // = 8
+      case addedAdmin // = 9
+      case removedAdmin // = 10
       case UNRECOGNIZED(Int)
 
       init() {
@@ -290,11 +299,12 @@ struct SignalReply {
         case 1: self = .left
         case 2: self = .addedSpeaker
         case 3: self = .removedSpeaker
-        case 4: self = .changedOwner
         case 5: self = .mutedSpeaker
         case 6: self = .unmutedSpeaker
         case 7: self = .reacted
         case 8: self = .linkShared
+        case 9: self = .addedAdmin
+        case 10: self = .removedAdmin
         default: self = .UNRECOGNIZED(rawValue)
         }
       }
@@ -305,11 +315,12 @@ struct SignalReply {
         case .left: return 1
         case .addedSpeaker: return 2
         case .removedSpeaker: return 3
-        case .changedOwner: return 4
         case .mutedSpeaker: return 5
         case .unmutedSpeaker: return 6
         case .reacted: return 7
         case .linkShared: return 8
+        case .addedAdmin: return 9
+        case .removedAdmin: return 10
         case .UNRECOGNIZED(let i): return i
         }
       }
@@ -331,11 +342,12 @@ extension SignalReply.Event.TypeEnum: CaseIterable {
     .left,
     .addedSpeaker,
     .removedSpeaker,
-    .changedOwner,
     .mutedSpeaker,
     .unmutedSpeaker,
     .reacted,
     .linkShared,
+    .addedAdmin,
+    .removedAdmin,
   ]
 }
 
@@ -581,6 +593,54 @@ struct Kick {
   init() {}
 }
 
+struct AddAdmin {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var id: Int64 = 0
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
+struct RemoveAdmin {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var id: Int64 = 0
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
+struct AddedAdmin {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var id: Int64 = 0
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
+struct RemovedAdmin {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var id: Int64 = 0
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
@@ -730,6 +790,8 @@ extension SignalRequest.Command.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     3: .same(proto: "UNMUTE_SPEAKER"),
     4: .same(proto: "REACTION"),
     5: .same(proto: "LINK_SHARE"),
+    6: .same(proto: "ADD_ADMIN"),
+    7: .same(proto: "REMOVE_ADMIN"),
   ]
 }
 
@@ -862,11 +924,12 @@ extension SignalReply.Event.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     1: .same(proto: "LEFT"),
     2: .same(proto: "ADDED_SPEAKER"),
     3: .same(proto: "REMOVED_SPEAKER"),
-    4: .same(proto: "CHANGED_OWNER"),
     5: .same(proto: "MUTED_SPEAKER"),
     6: .same(proto: "UNMUTED_SPEAKER"),
     7: .same(proto: "REACTED"),
     8: .same(proto: "LINK_SHARED"),
+    9: .same(proto: "ADDED_ADMIN"),
+    10: .same(proto: "REMOVED_ADMIN"),
   ]
 }
 
@@ -1303,6 +1366,122 @@ extension Kick: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase,
   }
 
   static func ==(lhs: Kick, rhs: Kick) -> Bool {
+    if lhs.id != rhs.id {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension AddAdmin: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "AddAdmin"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.id != 0 {
+      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: AddAdmin, rhs: AddAdmin) -> Bool {
+    if lhs.id != rhs.id {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension RemoveAdmin: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "RemoveAdmin"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.id != 0 {
+      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: RemoveAdmin, rhs: RemoveAdmin) -> Bool {
+    if lhs.id != rhs.id {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension AddedAdmin: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "AddedAdmin"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.id != 0 {
+      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: AddedAdmin, rhs: AddedAdmin) -> Bool {
+    if lhs.id != rhs.id {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension RemovedAdmin: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "RemovedAdmin"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.id != 0 {
+      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: RemovedAdmin, rhs: RemovedAdmin) -> Bool {
     if lhs.id != rhs.id {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true

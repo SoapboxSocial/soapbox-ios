@@ -24,7 +24,7 @@ enum RoomError: Error {
 
 class Room {
     enum MemberRole: String, Decodable {
-        case owner
+        case admin
         case audience
         case speaker
     }
@@ -137,7 +137,7 @@ class Room {
         self.name = name
         self.completion = completion
 
-        role = .owner
+        role = .admin
 
         guard let token = self.token else {
             return completion(.failure(RoomError.general))
@@ -219,6 +219,24 @@ class Room {
         })
 
         updateMemberRole(user: speaker, role: .speaker)
+    }
+
+    func add(admin: Int) {
+        send(command: SignalRequest.Command.with {
+            $0.type = SignalRequest.Command.TypeEnum.addAdmin
+            $0.data = Data(withUnsafeBytes(of: admin.littleEndian, Array.init))
+        })
+
+        updateMemberRole(user: admin, role: .admin)
+    }
+
+    func remove(admin: Int) {
+        send(command: SignalRequest.Command.with {
+            $0.type = SignalRequest.Command.TypeEnum.removeAdmin
+            $0.data = Data(withUnsafeBytes(of: admin.littleEndian, Array.init))
+        })
+
+        updateMemberRole(user: admin, role: .speaker)
     }
 
     func invite(user: Int) {
@@ -338,8 +356,6 @@ class Room {
             didReceiveAddedSpeaker(event)
         case .removedSpeaker:
             didReceiveRemovedSpeaker(event)
-        case .changedOwner:
-            didReceiveChangedOwner(event)
         case .mutedSpeaker:
             didReceiveMuteSpeaker(event)
         case .unmutedSpeaker:
@@ -348,6 +364,10 @@ class Room {
             didReceiveReacted(event)
         case .linkShared:
             didReceiveLinkShare(event)
+        case .addedAdmin:
+            didReceiveAddedAdmin(event)
+        case .removedAdmin:
+            didReceiveRemovedAdmin(event)
         case .UNRECOGNIZED:
             return
         }
@@ -411,8 +431,12 @@ extension Room {
         updateMemberRole(user: event.data.toInt, role: .audience)
     }
 
-    private func didReceiveChangedOwner(_ event: SignalReply.Event) {
-        updateMemberRole(user: event.data.toInt, role: .owner)
+    private func didReceiveAddedAdmin(_ event: SignalReply.Event) {
+        updateMemberRole(user: event.data.toInt, role: .admin)
+    }
+
+    private func didReceiveRemovedAdmin(_ event: SignalReply.Event) {
+        updateMemberRole(user: event.data.toInt, role: .speaker)
     }
 
     private func didReceiveMuteSpeaker(_ event: SignalReply.Event) {

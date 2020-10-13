@@ -139,17 +139,13 @@ class NavigationViewController: UINavigationController {
 extension NavigationViewController: RoomViewDelegate {
     func roomWasClosedDueToError() {
         DispatchQueue.main.async {
-            self.roomDrawer?.setPosition(.closed, animated: true) { _ in
-                DispatchQueue.main.async {
-                    let banner = FloatingNotificationBanner(
-                        title: NSLocalizedString("something_went_wrong", comment: ""),
-                        style: .danger
-                    )
-                    banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+            let banner = FloatingNotificationBanner(
+                title: NSLocalizedString("something_went_wrong", comment: ""),
+                style: .danger
+            )
+            banner.show(cornerRadius: 10, shadowBlurRadius: 15)
 
-                    self.shutdownRoom()
-                }
-            }
+            self.shutdownRoom()
         }
     }
 
@@ -163,23 +159,28 @@ extension NavigationViewController: RoomViewDelegate {
     }
 
     func roomDidExit() {
-        roomDrawer?.setPosition(.closed, animated: true) { _ in
-            DispatchQueue.main.async {
-                self.shutdownRoom()
-            }
-        }
+        shutdownRoom()
     }
 
-    func shutdownRoom() {
+    private func shutdownRoom(completion: (() -> Void)? = nil) {
         roomControllerDelegate?.didLeaveRoom()
-        roomDrawer?.removeFromSuperview()
-        roomDrawer = nil
 
         room?.close()
         room = nil
 
         createRoomButton.isHidden = false
         UIApplication.shared.isIdleTimerDisabled = false
+
+        roomDrawer?.setPosition(.closed, animated: true) { _ in
+            DispatchQueue.main.async {
+                self.roomDrawer?.removeFromSuperview()
+                self.roomDrawer = nil
+            }
+
+            if let c = completion {
+                c()
+            }
+        }
     }
 }
 
@@ -194,14 +195,12 @@ extension NavigationViewController: RoomController {
             return
         }
 
-        shutdownRoom()
+        func openRoom() {
+            activityIndicator.startAnimating()
+            activityIndicator.isHidden = false
 
-        requestMicrophone {
-            self.activityIndicator.startAnimating()
-            self.activityIndicator.isHidden = false
-
-            self.room = RoomFactory.createRoom()
-            self.room?.join(id: id) { result in
+            room = RoomFactory.createRoom()
+            room?.join(id: id) { result in
                 DispatchQueue.main.async {
                     self.activityIndicator.stopAnimating()
                     self.activityIndicator.isHidden = true
@@ -224,6 +223,14 @@ extension NavigationViewController: RoomController {
                 }
             }
         }
+
+        if room != nil {
+            return shutdownRoom {
+                openRoom()
+            }
+        }
+
+        openRoom()
     }
 
     func didBeginSearching() {

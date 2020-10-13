@@ -182,6 +182,10 @@ class RoomView: UIView {
         } else {
             room.mute()
         }
+
+        DispatchQueue.main.async {
+            self.members.reloadData()
+        }
     }
 
     private func showExitAlert() {
@@ -370,12 +374,26 @@ extension RoomView: UICollectionViewDelegate {
 //            optionMenu.addAction(action)
 //        }
 
-        if room.role == .owner {
-            let action = UIAlertAction(title: NSLocalizedString("kick_user", comment: ""), style: .default, handler: { _ in
-                self.room.kick(user: member.id)
-            })
+        if room.role == .admin {
+            optionMenu.addAction(
+                UIAlertAction(title: NSLocalizedString("kick_user", comment: ""), style: .destructive, handler: { _ in
+                    self.room.kick(user: member.id)
+                })
+            )
 
-            optionMenu.addAction(action)
+            if member.role == .admin {
+                optionMenu.addAction(
+                    UIAlertAction(title: NSLocalizedString("remove_admin", comment: ""), style: .destructive, handler: { _ in
+                        self.room.remove(admin: member.id)
+                    })
+                )
+            } else {
+                optionMenu.addAction(
+                    UIAlertAction(title: NSLocalizedString("add_admin", comment: ""), style: .default, handler: { _ in
+                        self.room.add(admin: member.id)
+                    })
+                )
+            }
         }
 
         let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
@@ -402,7 +420,12 @@ extension RoomView: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withClass: RoomMemberCell.self, for: indexPath)
         if indexPath.item == 0 {
             // @todo this is a bit ugly
-            cell.setup(name: UserDefaults.standard.string(forKey: "display") ?? "", image: UserDefaults.standard.string(forKey: "image") ?? "", role: room.role)
+            cell.setup(
+                name: UserDefaults.standard.string(forKey: "display") ?? "",
+                image: UserDefaults.standard.string(forKey: "image") ?? "",
+                muted: room.isMuted,
+                role: room.role
+            )
         } else {
             cell.setup(member: room.members[indexPath.item - 1])
         }

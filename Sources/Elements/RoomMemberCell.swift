@@ -57,7 +57,7 @@ class RoomMemberCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setup(name: String, image: String, role _: Room.MemberRole) {
+    func setup(name: String, image: String, muted: Bool, role: Room.MemberRole) {
         user = 0
         muteView.isHidden = true
         speakingView.isHidden = true
@@ -76,18 +76,23 @@ class RoomMemberCell: UICollectionViewCell {
         if image != "" {
             profileImage.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
         }
-    }
 
-    func setup(member: Room.Member) {
-        setup(name: member.displayName, image: member.image, role: member.role)
-
-        user = member.id
-
-        if member.role != Room.MemberRole.audience, member.isMuted {
+        if role != Room.MemberRole.audience, muted {
             muteView.isHidden = false
         } else {
             muteView.isHidden = true
         }
+    }
+
+    func setup(member: Room.Member) {
+        setup(
+            name: member.displayName,
+            image: member.image,
+            muted: member.isMuted,
+            role: member.role
+        )
+
+        user = member.id
     }
 
     func didReact(with: Room.Reaction) {
