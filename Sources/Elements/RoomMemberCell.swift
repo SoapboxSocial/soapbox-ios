@@ -21,12 +21,12 @@ class RoomMemberCell: UICollectionViewCell {
         profileImage.backgroundColor = .secondaryBackground
         contentView.addSubview(profileImage)
 
-        nameLabel = UILabel(frame: CGRect(x: 0, y: 66, width: 66, height: frame.size.height - 66))
+        nameLabel = UILabel(frame: CGRect(x: 0, y: profileImage.frame.size.height + 4, width: 66, height: 22))
         nameLabel.font = .rounded(forTextStyle: .body, weight: .regular)
         nameLabel.textAlignment = .center
         addSubview(nameLabel)
 
-        speakingView = UIView(frame: CGRect(x: 66 - 20, y: 0, width: 20, height: 20))
+        speakingView = UIView(frame: CGRect(x: frame.size.width - 20, y: 0, width: 20, height: 20))
         speakingView.backgroundColor = .background
         speakingView.layer.cornerRadius = 10
         speakingView.clipsToBounds = true
@@ -39,7 +39,7 @@ class RoomMemberCell: UICollectionViewCell {
         speakingLabel.text = "🎙️"
         speakingView.addSubview(speakingLabel)
 
-        muteView = UIView(frame: CGRect(x: 66 - 20, y: 66 - 20, width: 20, height: 20))
+        muteView = UIView(frame: CGRect(x: frame.size.width - 20, y: frame.size.width - 20, width: 20, height: 20))
         muteView.backgroundColor = .background
         muteView.layer.cornerRadius = 10
         muteView.clipsToBounds = true
