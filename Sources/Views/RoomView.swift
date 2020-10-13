@@ -374,13 +374,14 @@ extension RoomView: UICollectionViewDelegate {
 //            optionMenu.addAction(action)
 //        }
 
-        if room.role == .admin {
-            optionMenu.addAction(
-                UIAlertAction(title: NSLocalizedString("kick_user", comment: ""), style: .destructive, handler: { _ in
-                    self.room.kick(user: member.id)
-                })
-            )
+        let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
+            DispatchQueue.main.async {
+                self.delegate?.didSelectViewProfile(id: member.id)
+            }
+        })
+        optionMenu.addAction(profileAction)
 
+        if room.role == .admin {
             if member.role == .admin {
                 optionMenu.addAction(
                     UIAlertAction(title: NSLocalizedString("remove_admin", comment: ""), style: .destructive, handler: { _ in
@@ -394,14 +395,13 @@ extension RoomView: UICollectionViewDelegate {
                     })
                 )
             }
-        }
 
-        let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
-            DispatchQueue.main.async {
-                self.delegate?.didSelectViewProfile(id: member.id)
-            }
-        })
-        optionMenu.addAction(profileAction)
+            optionMenu.addAction(
+                UIAlertAction(title: NSLocalizedString("kick_user", comment: ""), style: .destructive, handler: { _ in
+                    self.room.kick(user: member.id)
+                })
+            )
+        }
 
         let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
         optionMenu.addAction(cancel)
