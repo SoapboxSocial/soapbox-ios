@@ -32,7 +32,12 @@ final class WebRTCClient: NSObject {
         kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueFalse,
     ]
 
-    private var audioLevels = [UInt32: Float]()
+    struct AudioSampleData {
+        var duration: Float
+        var energy: Float
+    }
+
+    private var previousAudioSampleData = [UInt32: AudioSampleData]()
     private var timer: Timer!
 
     @available(*, unavailable)
@@ -130,31 +135,32 @@ final class WebRTCClient: NSObject {
 
                     self.peerConnection.stats(for: track, statsOutputLevel: .standard, completionHandler: { stats in
                         stats.forEach { stat in
-                            guard let e = stat.values["totalAudioEnergy"] else {
+                            guard let e = stat.values["totalAudioEnergy"], let energy = Float(e) else {
                                 return
                             }
 
-                            guard let energy = Float(e) else {
+                            guard let s = stat.values["ssrc"], let ssrc = UInt32(s) else {
                                 return
                             }
 
-                            guard let s = stat.values["ssrc"] else {
+                            guard let d = stat.values["totalSamplesDuration"], let duration = Float(d) else {
                                 return
                             }
 
-                            guard let ssrc = UInt32(s) else {
+                            var level: Float
+                            if let previous = self.previousAudioSampleData[ssrc] {
+                                level = Float(sqrt(Double((energy - previous.energy) / (duration - previous.duration))))
+                            } else {
+                                level = Float(sqrt(Double(energy / duration)))
+                            }
+
+                            self.previousAudioSampleData[ssrc] = AudioSampleData(duration: duration, energy: energy)
+
+                            if level.isNaN {
                                 return
                             }
 
-                            var level = Float(0.0)
-                            if let l = self.audioLevels[ssrc] {
-                                level = l
-                            }
-
-                            // @todo probably worth finding a way to not send changes if delta has alreadyy been called a bunch of times
-                            let delta = energy - level
-                            self.audioLevels[ssrc] = energy
-                            self.delegate?.webRTCClient(self, didChangeAudioLevel: delta, track: ssrc)
+                            self.delegate?.webRTCClient(self, didChangeAudioLevel: level, track: ssrc)
                         }
                     })
                 }
