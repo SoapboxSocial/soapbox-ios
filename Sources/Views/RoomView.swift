@@ -168,6 +168,10 @@ class RoomView: UIView {
         } else {
             room.mute()
         }
+
+        DispatchQueue.main.async {
+            self.members.reloadData()
+        }
     }
 
     private func showExitAlert() {
@@ -402,7 +406,12 @@ extension RoomView: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withClass: RoomMemberCell.self, for: indexPath)
         if indexPath.item == 0 {
             // @todo this is a bit ugly
-            cell.setup(name: UserDefaults.standard.string(forKey: "display") ?? "", image: UserDefaults.standard.string(forKey: "image") ?? "", role: room.role)
+            cell.setup(
+                name: UserDefaults.standard.string(forKey: "display") ?? "",
+                image: UserDefaults.standard.string(forKey: "image") ?? "",
+                muted: room.isMuted,
+                role: room.role
+            )
         } else {
             cell.setup(member: room.members[indexPath.item - 1])
         }
