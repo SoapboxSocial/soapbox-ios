@@ -24,7 +24,6 @@ class RoomView: UIView {
     let compositionalLayout: UICollectionViewCompositionalLayout = {
         let fraction: CGFloat = 1 / 3
 
-        // @TODO: THIS HEIGHT CROPS THE ANIMATION
         let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(72), heightDimension: .absolute(98))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 

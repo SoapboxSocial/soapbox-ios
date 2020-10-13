@@ -103,7 +103,7 @@ class ReactionView: UIView {
         let lineFrame = CGRect(
             x: frame.origin.x - frame.width / 4,
             y: frame.origin.y - frame.height / 4,
-            width: frame.width * 1.5,
+            width: frame.width,
             height: frame.height * 1.5
         )
 
