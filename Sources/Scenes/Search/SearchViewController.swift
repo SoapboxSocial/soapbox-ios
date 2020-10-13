@@ -1,4 +1,5 @@
 import AlamofireImage
+import NotificationBannerSwift
 import UIKit
 
 protocol SearchViewControllerOutput {
@@ -93,6 +94,10 @@ extension SearchViewController: SearchPresenterOutput {
             self.collection.refreshControl?.endRefreshing()
             self.collection.reloadData()
         }
+    }
+
+    func displaySearchError() {
+        collection.refreshControl?.endRefreshing()
     }
 }
 
