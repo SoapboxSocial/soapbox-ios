@@ -73,6 +73,7 @@ class HomeViewController: UIViewController {
 
         let searchViewController = SceneFactory.createSearchViewController()
         searchController = UISearchController(searchResultsController: searchViewController)
+        searchController.searchResultsUpdater = searchViewController
         searchController.delegate = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.showsSearchResultsController = true
