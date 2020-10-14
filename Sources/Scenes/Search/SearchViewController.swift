@@ -77,6 +77,13 @@ extension SearchViewController: UICollectionViewDataSource {
     }
 }
 
+extension SearchViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_: UICollectionView, layout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
+        // @TODO ONLY RETURN WHEN IN ROOM?
+        return collection.collectionView(collection, layout: layout, referenceSizeForFooterInSection: section)
+    }
+}
+
 extension SearchViewController: SearchPresenterOutput {
     func display(users: [APIClient.User]) {
         self.users = users
