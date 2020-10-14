@@ -60,6 +60,7 @@ class HomeViewController: UIViewController {
         profileImageView.backgroundColor = .brandColor
         profileImageView.clipsToBounds = true
         profileImageView.layer.masksToBounds = true
+        profileImageView.contentMode = .scaleAspectFill
         containView.addSubview(profileImageView!)
 
         let iconConfig = UIImage.SymbolConfiguration(weight: .bold)
