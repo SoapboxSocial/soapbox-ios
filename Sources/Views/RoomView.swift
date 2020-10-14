@@ -91,11 +91,13 @@ class RoomView: UIView {
         label.center = CGPoint(x: label.center.x, y: exitButton.center.y)
         topBar.addSubview(label)
 
-        let size = (frame.size.width - (20 * 5)) / 4
+        let itemsPerRow = CGFloat(4)
+        let spacing = CGFloat(20)
+        let size = (frame.size.width - (spacing * (itemsPerRow + 1))) / itemsPerRow
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: size, height: size + 30)
-        layout.minimumInteritemSpacing = 20
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        layout.minimumInteritemSpacing = spacing
+        layout.sectionInset = UIEdgeInsets(top: 0, left: spacing, bottom: 0, right: spacing)
 
         members = UICollectionView(frame: CGRect(x: 0, y: topBar.frame.size.height, width: frame.size.width, height: frame.size.height - topBar.frame.size.height), collectionViewLayout: layout)
         members!.dataSource = self
