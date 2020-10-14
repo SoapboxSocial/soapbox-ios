@@ -80,7 +80,7 @@ class RoomView: UIView {
         let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
 
         let exitButton = EmojiButton(
-            frame: CGRect(x: frame.size.width - (36 + 15 + safeAreaInsets.left), y: (frame.size.height - inset) / 2 - 17.5, width: 36, height: 36)
+            frame: CGRect(x: frame.size.width - (36 + 20 + safeAreaInsets.left), y: (frame.size.height - inset) / 2 - 17.5, width: 36, height: 36)
         )
         exitButton.center = CGPoint(x: exitButton.center.x, y: topBar.center.y - (inset / 2))
         exitButton.setImage(UIImage(systemName: "xmark", withConfiguration: iconConfig), for: .normal)
@@ -128,7 +128,7 @@ class RoomView: UIView {
         }
 
         let inviteButton = EmojiButton(
-            frame: CGRect(x: safeAreaInsets.left + 15, y: frame.size.height - (reactSize + 10 + safeAreaInsets.bottom), width: 36, height: 36)
+            frame: CGRect(x: safeAreaInsets.left + 20, y: frame.size.height - (reactSize + 10 + safeAreaInsets.bottom), width: 36, height: 36)
         )
         inviteButton.setImage(UIImage(systemName: "person.badge.plus", withConfiguration: iconConfig), for: .normal)
         inviteButton.tintColor = .secondaryBackground
