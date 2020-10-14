@@ -104,6 +104,7 @@ class RoomView: UIView {
         members!.delegate = self
         members!.register(cellWithClass: RoomMemberCell.self)
         members!.backgroundColor = .clear
+        members!.layer.masksToBounds = false
         addSubview(members)
 
         let reactSize = CGFloat(36)

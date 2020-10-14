@@ -68,9 +68,11 @@ class RoomMemberCell: UICollectionViewCell {
             reactionView.removeFromSuperview()
         }
 
-        reactionView = ReactionView(frame: CGRect(x: 0, y: 0, width: frame.size.width * 0.70, height: frame.size.width * 0.70))
+        reactionView = ReactionView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.width))
         reactionView.center = profileImage.center
         contentView.addSubview(reactionView)
+        contentView.layer.masksToBounds = false
+        layer.masksToBounds = false
 
         profileImage.image = nil
 
