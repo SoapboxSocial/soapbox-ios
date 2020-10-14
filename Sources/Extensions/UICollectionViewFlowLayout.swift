@@ -1,25 +1,22 @@
 import UIKit
 
 extension UICollectionViewFlowLayout {
-    static var usersLayout: UICollectionViewFlowLayout = {
+    static func usersLayout() -> UICollectionViewFlowLayout {
+        return genericLayout(height: 88)
+    }
+
+    static func roomsLayout() -> UICollectionViewFlowLayout {
+        return genericLayout(height: 138, top: 0)
+    }
+
+    private static func genericLayout(height: CGFloat, top: CGFloat = 20) -> UICollectionViewFlowLayout {
         let spacing = CGFloat(20)
 
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: UIScreen.main.bounds.size.width - (spacing * 2), height: 88)
-        layout.sectionInset = UIEdgeInsets(top: spacing, left: spacing, bottom: 0, right: spacing)
+        layout.itemSize = CGSize(width: UIScreen.main.bounds.size.width - (spacing * 2), height: height)
+        layout.sectionInset = UIEdgeInsets(top: top, left: spacing, bottom: 0, right: spacing)
         layout.minimumInteritemSpacing = spacing
         layout.minimumLineSpacing = spacing
         return layout
-    }()
-
-    static var roomsLayout: UICollectionViewFlowLayout = {
-        let spacing = CGFloat(20)
-
-        let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: UIScreen.main.bounds.size.width - (spacing * 2), height: 138)
-        layout.sectionInset = UIEdgeInsets(top: 0, left: spacing, bottom: 0, right: spacing)
-        layout.minimumInteritemSpacing = spacing
-        layout.minimumLineSpacing = spacing
-        return layout
-    }()
+    }
 }

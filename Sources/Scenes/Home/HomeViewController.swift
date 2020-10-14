@@ -27,7 +27,7 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        collection = CollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout.roomsLayout)
+        collection = CollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout.roomsLayout())
         collection.automaticallyAdjustsScrollIndicatorInsets = false
         collection.delegate = self
         collection.dataSource = self

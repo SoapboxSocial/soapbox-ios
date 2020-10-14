@@ -14,7 +14,7 @@ class FollowerListViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .background
 
-        collection = CollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout.usersLayout)
+        collection = CollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout.usersLayout())
         collection.automaticallyAdjustsScrollIndicatorInsets = false
         collection.delegate = self
         collection.dataSource = self
