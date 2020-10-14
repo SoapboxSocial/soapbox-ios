@@ -22,20 +22,19 @@ class RoomView: UIView {
     private var audioPlayer: AVAudioPlayer!
 
     let compositionalLayout: UICollectionViewCompositionalLayout = {
-        let fraction: CGFloat = 1 / 3
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
+        let memberItem = NSCollectionLayoutItem(layoutSize: itemSize)
 
-        let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(72), heightDimension: .absolute(98))
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(NSCollectionLayoutDimension.fractionalWidth(1).dimension + 30)
+        )
 
-        // Group
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(128))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: memberItem, count: 4)
         group.interItemSpacing = .fixed(20)
-        group.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 30, trailing: 0)
 
-        // Section
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 30, bottom: 0, trailing: 30)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
         return UICollectionViewCompositionalLayout(section: section)
     }()
 
@@ -97,7 +96,7 @@ class RoomView: UIView {
         muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
         addSubview(muteButton)
 
-        let label = UILabel(frame: CGRect(x: safeAreaInsets.left + 15, y: 0, width: muteButton.frame.origin.x - (safeAreaInsets.left + 30), height: 28))
+        let label = UILabel(frame: CGRect(x: safeAreaInsets.left + 20, y: 0, width: muteButton.frame.origin.x - (safeAreaInsets.left + 40), height: 28))
 
         label.text = {
             if let name = room.name, name != "" {
