@@ -69,9 +69,7 @@ class RoomView: UIView {
 
         let recognizer = UITapGestureRecognizer(target: self, action: #selector(openBar))
         recognizer.numberOfTapsRequired = 1
-        let recognizerView = UIView(frame: CGRect(x: 0, y: 0, width: topBar.frame.size.width, height: topBar.frame.size.height))
-        recognizerView.addGestureRecognizer(recognizer)
-        topBar.addSubview(recognizerView)
+        topBar.addGestureRecognizer(recognizer)
 
         let pasteLinkRecognizer = UITapGestureRecognizer(target: self, action: #selector(pasteLink))
         pasteLinkRecognizer.numberOfTapsRequired = 2
