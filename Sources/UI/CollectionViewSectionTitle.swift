@@ -2,11 +2,10 @@ import UIKit
 
 class CollectionViewSectionTitle: UICollectionReusableView {
     var label: UILabel = {
-        let label: UILabel = UILabel()
+        let label = UILabel()
         label.textColor = .label
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
-        label.sizeToFit()
         return label
     }()
 
@@ -17,7 +16,7 @@ class CollectionViewSectionTitle: UICollectionReusableView {
 
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: topAnchor, constant: 10),
-            label.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
+            label.bottomAnchor.constraint(equalTo: bottomAnchor),
             label.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
             label.rightAnchor.constraint(equalTo: rightAnchor),
         ])
