@@ -106,7 +106,6 @@ class RoomCell: UICollectionViewCell {
                     }
 
                     view.translatesAutoresizingMaskIntoConstraints = false
-                    view.layer.borderColor = roomView.backgroundColor?.cgColor
 
                     let label = UILabel()
                     label.translatesAutoresizingMaskIntoConstraints = false
@@ -167,6 +166,17 @@ class RoomCell: UICollectionViewCell {
 
             imageViews.append(view)
             previousView = view
+        }
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        updateBorders()
+    }
+
+    private func updateBorders() {
+        for view in imageViews {
+            view.layer.borderColor = roomView.backgroundColor?.cgColor
         }
     }
 }
