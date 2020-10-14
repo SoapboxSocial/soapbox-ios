@@ -21,23 +21,6 @@ class RoomView: UIView {
 
     private var audioPlayer: AVAudioPlayer!
 
-    let compositionalLayout: UICollectionViewCompositionalLayout = {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
-        let memberItem = NSCollectionLayoutItem(layoutSize: itemSize)
-
-        let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .absolute(NSCollectionLayoutDimension.fractionalWidth(1).dimension + 30)
-        )
-
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: memberItem, count: 4)
-        group.interItemSpacing = .fixed(20)
-
-        let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
-        return UICollectionViewCompositionalLayout(section: section)
-    }()
-
     init(frame: CGRect, room: Room, topBarHeight: CGFloat) {
         self.room = room
         self.topBarHeight = topBarHeight
@@ -108,7 +91,13 @@ class RoomView: UIView {
         label.center = CGPoint(x: label.center.x, y: exitButton.center.y)
         topBar.addSubview(label)
 
-        members = UICollectionView(frame: CGRect(x: 0, y: topBar.frame.size.height, width: frame.size.width, height: frame.size.height - topBar.frame.size.height), collectionViewLayout: compositionalLayout)
+        let size = (frame.size.width - (20 * 5)) / 4
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: size, height: size + 30)
+        layout.minimumInteritemSpacing = 20
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+
+        members = UICollectionView(frame: CGRect(x: 0, y: topBar.frame.size.height, width: frame.size.width, height: frame.size.height - topBar.frame.size.height), collectionViewLayout: layout)
         members!.dataSource = self
         members!.delegate = self
         members!.register(cellWithClass: RoomMemberCell.self)
