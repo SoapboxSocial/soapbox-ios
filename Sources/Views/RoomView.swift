@@ -107,9 +107,16 @@ class RoomView: UIView {
         members!.layer.masksToBounds = false
         addSubview(members)
 
+        let userId = UserDefaults.standard.integer(forKey: "id")
+        
         let reactSize = CGFloat(36)
         var origin = CGPoint(x: exitButton.frame.origin.x, y: frame.size.height - (reactSize + 10 + safeAreaInsets.bottom))
         for reaction in Room.Reaction.allCases {
+            // poop emoji, only for Dean & Palley
+            if reaction == .poop, userId != 1, userId != 170 {
+                continue
+            }
+            
             let button = EmojiButton(frame: CGRect(origin: origin, size: CGSize(width: reactSize, height: reactSize)))
             button.setTitle(reaction.rawValue, for: .normal)
             button.addTarget(self, action: #selector(reactionTapped), for: .touchUpInside)

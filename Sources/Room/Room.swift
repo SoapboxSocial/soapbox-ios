@@ -58,6 +58,7 @@ class Room {
         case thumbsUp = "👍"
         case heart = "❤️"
         case flame = "🔥"
+        case poop = "💩"
     }
 
     private(set) var name: String!
