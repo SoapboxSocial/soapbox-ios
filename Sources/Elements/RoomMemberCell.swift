@@ -71,8 +71,6 @@ class RoomMemberCell: UICollectionViewCell {
         reactionView = ReactionView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.width))
         reactionView.center = profileImage.center
         contentView.addSubview(reactionView)
-        contentView.layer.masksToBounds = false
-        layer.masksToBounds = false
 
         profileImage.image = nil
 
