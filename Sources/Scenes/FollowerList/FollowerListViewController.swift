@@ -14,10 +14,7 @@ class FollowerListViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .background
 
-        let layout = UICollectionViewFlowLayout()
-        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
-
-        collection = CollectionView(frame: view.frame, collectionViewLayout: layout)
+        collection = CollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout.usersLayout)
         collection.automaticallyAdjustsScrollIndicatorInsets = false
         collection.delegate = self
         collection.dataSource = self

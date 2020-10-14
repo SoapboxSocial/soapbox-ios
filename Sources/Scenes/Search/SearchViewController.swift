@@ -19,10 +19,7 @@ class SearchViewController: UIViewController {
 
         view.backgroundColor = .background
 
-        let layout = UICollectionViewFlowLayout()
-        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
-
-        collection = CollectionView(frame: view.frame, collectionViewLayout: layout)
+        collection = CollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout.usersLayout)
         collection.automaticallyAdjustsScrollIndicatorInsets = false
         collection.delegate = self
         collection.dataSource = self
@@ -51,12 +48,6 @@ extension SearchViewController: UICollectionViewDelegate {
 
         let id = users[indexPath.item].id
         presentingViewController?.navigationController?.pushViewController(SceneFactory.createProfileViewController(id: id), animated: true)
-    }
-}
-
-extension SearchViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_: UICollectionView, layout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        return collection.collectionView(collection, layout: layout, referenceSizeForFooterInSection: section)
     }
 }
 

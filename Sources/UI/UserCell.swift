@@ -28,51 +28,42 @@ class UserCell: UICollectionViewCell {
         return label
     }()
 
-    private var userView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .foreground
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.cornerRadius = 30
-        return view
-    }()
-
     override init(frame: CGRect) {
         super.init(frame: frame)
 
         backgroundColor = .clear
-        widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.width).isActive = true
 
-        addSubview(userView)
+        contentView.backgroundColor = .foreground
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.layer.cornerRadius = 30
+
+        contentView.addSubview(displayName)
+        contentView.addSubview(username)
+        contentView.addSubview(image)
 
         NSLayoutConstraint.activate([
-            userView.topAnchor.constraint(equalTo: topAnchor, constant: 10), // @TODO THIS SEEMS TO BE TOO BIG?
-            userView.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            userView.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
-            userView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            contentView.leftAnchor.constraint(equalTo: leftAnchor),
+            contentView.rightAnchor.constraint(equalTo: rightAnchor),
         ])
-
-        userView.addSubview(displayName)
-        userView.addSubview(username)
-        userView.addSubview(image)
 
         NSLayoutConstraint.activate([
             image.heightAnchor.constraint(equalToConstant: 48),
             image.widthAnchor.constraint(equalToConstant: 48),
-            image.topAnchor.constraint(equalTo: userView.topAnchor, constant: 20),
-            image.leftAnchor.constraint(equalTo: userView.leftAnchor, constant: 20),
-            image.bottomAnchor.constraint(equalTo: userView.bottomAnchor, constant: -20),
+            image.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
+            image.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
+            image.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
         ])
 
         NSLayoutConstraint.activate([
-            displayName.topAnchor.constraint(equalTo: userView.topAnchor, constant: 20),
+            displayName.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
             displayName.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 20),
-            displayName.rightAnchor.constraint(equalTo: userView.rightAnchor, constant: -20),
+            displayName.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
         ])
 
         NSLayoutConstraint.activate([
             username.topAnchor.constraint(equalTo: displayName.bottomAnchor),
             username.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 20),
-            username.rightAnchor.constraint(equalTo: userView.rightAnchor, constant: -20),
+            username.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
         ])
     }
 

@@ -9,12 +9,12 @@ class RoomCell: UICollectionViewCell {
         didSet {
             switch style {
             case .normal:
-                roomView.backgroundColor = .foreground
+                contentView.backgroundColor = .foreground
                 badge.style = .normal
                 title.textColor = .label
             case .current:
                 badge.style = .current
-                roomView.backgroundColor = .brandColor
+                contentView.backgroundColor = .brandColor
                 title.textColor = .white
             }
 
@@ -36,14 +36,6 @@ class RoomCell: UICollectionViewCell {
         }
     }
 
-    private var roomView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .foreground
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.cornerRadius = 30
-        return view
-    }()
-
     private var badge: RoomBadge = {
         let badge = RoomBadge(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         badge.translatesAutoresizingMaskIntoConstraints = false
@@ -58,28 +50,35 @@ class RoomCell: UICollectionViewCell {
         backgroundColor = .clear
         widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.width).isActive = true
 
-        addSubview(roomView)
+        contentView.backgroundColor = .foreground
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.layer.cornerRadius = 30
 
-        roomView.addSubview(title)
-        roomView.addSubview(badge)
+        contentView.addSubview(title)
+        contentView.addSubview(badge)
 
         NSLayoutConstraint.activate([
-            roomView.topAnchor.constraint(equalTo: topAnchor, constant: 10), // @TODO THIS SEEMS TO BE TOO BIG?
-            roomView.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            roomView.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
-            roomView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            contentView.leftAnchor.constraint(equalTo: leftAnchor),
+            contentView.rightAnchor.constraint(equalTo: rightAnchor),
         ])
 
         NSLayoutConstraint.activate([
-            title.topAnchor.constraint(equalTo: roomView.topAnchor, constant: 20),
-            title.leftAnchor.constraint(equalTo: roomView.leftAnchor, constant: 20),
-            title.rightAnchor.constraint(equalTo: roomView.rightAnchor, constant: -20),
+            contentView.topAnchor.constraint(equalTo: topAnchor, constant: 10), // @TODO THIS SEEMS TO BE TOO BIG?
+            contentView.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            contentView.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            contentView.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            title.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
+            title.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
+            title.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
         ])
 
         NSLayoutConstraint.activate([
             badge.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 20),
-            badge.rightAnchor.constraint(equalTo: roomView.rightAnchor, constant: -20),
-            badge.bottomAnchor.constraint(equalTo: roomView.bottomAnchor, constant: -20),
+            badge.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
+            badge.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
         ])
     }
 
@@ -90,7 +89,7 @@ class RoomCell: UICollectionViewCell {
     private func createImageViews() {
         imageViews.forEach { $0.removeFromSuperview() }
 
-        var previousView = roomView
+        var previousView = contentView
 
         // @todo only use members with images
         let count = members.count
@@ -144,22 +143,22 @@ class RoomCell: UICollectionViewCell {
                 }
             }()
 
-            roomView.addSubview(view)
+            contentView.addSubview(view)
 
             view.layer.borderWidth = 4.0
             view.layer.cornerRadius = 40 / 2
             view.layer.masksToBounds = true
-            view.layer.borderColor = roomView.backgroundColor?.cgColor
+            view.layer.borderColor = contentView.backgroundColor?.cgColor
 
             NSLayoutConstraint.activate([
                 view.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 20),
-                view.bottomAnchor.constraint(equalTo: roomView.bottomAnchor, constant: -20),
+                view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
                 view.heightAnchor.constraint(equalToConstant: 40.0),
                 view.widthAnchor.constraint(equalToConstant: 40.0),
             ])
 
             if i == 0 {
-                NSLayoutConstraint.activate([view.leftAnchor.constraint(equalTo: roomView.leftAnchor, constant: 20)])
+                NSLayoutConstraint.activate([view.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20)])
             } else {
                 NSLayoutConstraint.activate([view.leftAnchor.constraint(equalTo: previousView.rightAnchor, constant: -8)])
             }
@@ -176,7 +175,7 @@ class RoomCell: UICollectionViewCell {
 
     private func updateBorders() {
         for view in imageViews {
-            view.layer.borderColor = roomView.backgroundColor?.cgColor
+            view.layer.borderColor = contentView.backgroundColor?.cgColor
         }
     }
 }
