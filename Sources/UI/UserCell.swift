@@ -7,6 +7,7 @@ class UserCell: UICollectionViewCell {
         view.backgroundColor = .brandColor
         view.clipsToBounds = true
         view.layer.masksToBounds = true
+        view.contentMode = .scaleAspectFill
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()

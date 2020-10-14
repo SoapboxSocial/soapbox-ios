@@ -346,7 +346,7 @@ extension ProfileViewController: ProfilePresenterOutput {
         followingCountLabel.text = String(profile.following)
         bioLabel.text = profile.bio
 
-        if let account = user.linkedAccounts.first(where: { $0.provider == "twitter" }) {
+        if user.linkedAccounts.first(where: { $0.provider == "twitter" }) != nil {
             twitter.isHidden = false
         } else {
             twitter.isHidden = true
@@ -356,6 +356,7 @@ extension ProfileViewController: ProfilePresenterOutput {
 
         if profile.image != "" {
             image.inner.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + profile.image))
+            image.inner.contentMode = .scaleAspectFill
             manager.register(parentViewController: self, imageViews: [image])
         }
     }

@@ -30,7 +30,7 @@ class EditProfileImageButton: UIImageView {
         let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
         let image = UIImageView(image: UIImage(systemName: "camera.fill", withConfiguration: iconConfig))
         image.frame = CGRect(x: 0, y: 0, width: 30, height: 30)
-        image.contentMode = .scaleAspectFit
+        image.contentMode = .scaleAspectFill
         image.tintColor = .white
         image.center = view.center
 
