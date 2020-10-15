@@ -20,6 +20,46 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
+enum Visibility: SwiftProtobuf.Enum {
+  typealias RawValue = Int
+  case `public` // = 0
+  case `private` // = 1
+  case UNRECOGNIZED(Int)
+
+  init() {
+    self = .public
+  }
+
+  init?(rawValue: Int) {
+    switch rawValue {
+    case 0: self = .public
+    case 1: self = .private
+    default: self = .UNRECOGNIZED(rawValue)
+    }
+  }
+
+  var rawValue: Int {
+    switch self {
+    case .public: return 0
+    case .private: return 1
+    case .UNRECOGNIZED(let i): return i
+    }
+  }
+
+}
+
+#if swift(>=4.2)
+
+extension Visibility: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  static var allCases: [Visibility] = [
+    .public,
+    .private,
+  ]
+}
+
+#endif  // swift(>=4.2)
+
 struct SignalRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -436,6 +476,8 @@ struct RoomState {
   /// @TODO THINK ABOUT ENUM
   var role: String = String()
 
+  var visibility: Visibility = .public
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   struct RoomMember {
@@ -472,52 +514,12 @@ struct CreateRequest {
 
   var session: String = String()
 
-  var visibility: CreateRequest.Visibility = .public
+  var visibility: Visibility = .public
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  enum Visibility: SwiftProtobuf.Enum {
-    typealias RawValue = Int
-    case `public` // = 0
-    case `private` // = 1
-    case UNRECOGNIZED(Int)
-
-    init() {
-      self = .public
-    }
-
-    init?(rawValue: Int) {
-      switch rawValue {
-      case 0: self = .public
-      case 1: self = .private
-      default: self = .UNRECOGNIZED(rawValue)
-      }
-    }
-
-    var rawValue: Int {
-      switch self {
-      case .public: return 0
-      case .private: return 1
-      case .UNRECOGNIZED(let i): return i
-      }
-    }
-
-  }
-
   init() {}
 }
-
-#if swift(>=4.2)
-
-extension CreateRequest.Visibility: CaseIterable {
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
-  static var allCases: [CreateRequest.Visibility] = [
-    .public,
-    .private,
-  ]
-}
-
-#endif  // swift(>=4.2)
 
 struct CreateReply {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
@@ -642,6 +644,13 @@ struct RemovedAdmin {
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
+
+extension Visibility: SwiftProtobuf._ProtoNameProviding {
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "PUBLIC"),
+    1: .same(proto: "PRIVATE"),
+  ]
+}
 
 extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "SignalRequest"
@@ -1068,6 +1077,7 @@ extension RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     2: .same(proto: "name"),
     3: .same(proto: "members"),
     4: .same(proto: "role"),
+    5: .same(proto: "visibility"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1077,6 +1087,7 @@ extension RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
       case 2: try decoder.decodeSingularStringField(value: &self.name)
       case 3: try decoder.decodeRepeatedMessageField(value: &self.members)
       case 4: try decoder.decodeSingularStringField(value: &self.role)
+      case 5: try decoder.decodeSingularEnumField(value: &self.visibility)
       default: break
       }
     }
@@ -1095,6 +1106,9 @@ extension RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     if !self.role.isEmpty {
       try visitor.visitSingularStringField(value: self.role, fieldNumber: 4)
     }
+    if self.visibility != .public {
+      try visitor.visitSingularEnumField(value: self.visibility, fieldNumber: 5)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -1103,6 +1117,7 @@ extension RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     if lhs.name != rhs.name {return false}
     if lhs.members != rhs.members {return false}
     if lhs.role != rhs.role {return false}
+    if lhs.visibility != rhs.visibility {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1206,13 +1221,6 @@ extension CreateRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
-}
-
-extension CreateRequest.Visibility: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "PUBLIC"),
-    1: .same(proto: "PRIVATE"),
-  ]
 }
 
 extension CreateReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
