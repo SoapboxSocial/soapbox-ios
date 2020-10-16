@@ -150,7 +150,7 @@ struct SignalRequest {
   #endif
   }
 
-  /// @TODO think about turning these into seperate things
+  /// @TODO think about turning these into separated things
   struct Command {
     // SwiftProtobuf.Message conformance is added in an extension below. See the
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -172,6 +172,7 @@ struct SignalRequest {
       case linkShare // = 5
       case addAdmin // = 6
       case removeAdmin // = 7
+      case renameRoom // = 8
       case UNRECOGNIZED(Int)
 
       init() {
@@ -188,6 +189,7 @@ struct SignalRequest {
         case 5: self = .linkShare
         case 6: self = .addAdmin
         case 7: self = .removeAdmin
+        case 8: self = .renameRoom
         default: self = .UNRECOGNIZED(rawValue)
         }
       }
@@ -202,6 +204,7 @@ struct SignalRequest {
         case .linkShare: return 5
         case .addAdmin: return 6
         case .removeAdmin: return 7
+        case .renameRoom: return 8
         case .UNRECOGNIZED(let i): return i
         }
       }
@@ -227,6 +230,7 @@ extension SignalRequest.Command.TypeEnum: CaseIterable {
     .linkShare,
     .addAdmin,
     .removeAdmin,
+    .renameRoom,
   ]
 }
 
@@ -327,6 +331,7 @@ struct SignalReply {
       case linkShared // = 8
       case addedAdmin // = 9
       case removedAdmin // = 10
+      case renamedRoom // = 11
       case UNRECOGNIZED(Int)
 
       init() {
@@ -345,6 +350,7 @@ struct SignalReply {
         case 8: self = .linkShared
         case 9: self = .addedAdmin
         case 10: self = .removedAdmin
+        case 11: self = .renamedRoom
         default: self = .UNRECOGNIZED(rawValue)
         }
       }
@@ -361,6 +367,7 @@ struct SignalReply {
         case .linkShared: return 8
         case .addedAdmin: return 9
         case .removedAdmin: return 10
+        case .renamedRoom: return 11
         case .UNRECOGNIZED(let i): return i
         }
       }
@@ -388,6 +395,7 @@ extension SignalReply.Event.TypeEnum: CaseIterable {
     .linkShared,
     .addedAdmin,
     .removedAdmin,
+    .renamedRoom,
   ]
 }
 
@@ -801,6 +809,7 @@ extension SignalRequest.Command.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     5: .same(proto: "LINK_SHARE"),
     6: .same(proto: "ADD_ADMIN"),
     7: .same(proto: "REMOVE_ADMIN"),
+    8: .same(proto: "RENAME_ROOM"),
   ]
 }
 
@@ -939,6 +948,7 @@ extension SignalReply.Event.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     8: .same(proto: "LINK_SHARED"),
     9: .same(proto: "ADDED_ADMIN"),
     10: .same(proto: "REMOVED_ADMIN"),
+    11: .same(proto: "RENAMED_ROOM"),
   ]
 }
 
