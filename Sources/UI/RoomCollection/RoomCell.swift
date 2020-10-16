@@ -30,6 +30,22 @@ class RoomCell: UICollectionViewCell {
         return label
     }()
 
+    var visibility = Visibility.private {
+        didSet {
+            if visibility == .private {
+                lock.isHidden = false
+                titleLeftAnchorConstraint.constant = 5
+            } else {
+                lock.isHidden = true
+                titleLeftAnchorConstraint.constant = -20
+            }
+
+            DispatchQueue.main.async {
+                self.layoutIfNeeded()
+            }
+        }
+    }
+
     var members = [RoomState.RoomMember]() {
         didSet {
             createImageViews()
@@ -41,6 +57,15 @@ class RoomCell: UICollectionViewCell {
         badge.translatesAutoresizingMaskIntoConstraints = false
         return badge
     }()
+
+    private var lock: UIImageView = {
+        let lock = UIImageView(image: UIImage(systemName: "lock", withConfiguration: UIImage.SymbolConfiguration(weight: .medium)))
+        lock.tintColor = .label
+        lock.translatesAutoresizingMaskIntoConstraints = false
+        return lock
+    }()
+
+    private var titleLeftAnchorConstraint: NSLayoutConstraint!
 
     private var imageViews = [UIView]()
 
@@ -57,14 +82,25 @@ class RoomCell: UICollectionViewCell {
         contentView.addSubview(title)
         contentView.addSubview(badge)
 
+        contentView.addSubview(lock)
+
+        titleLeftAnchorConstraint = title.leftAnchor.constraint(equalTo: lock.rightAnchor, constant: 5)
+
+        NSLayoutConstraint.activate([
+            lock.heightAnchor.constraint(equalToConstant: 20),
+            lock.widthAnchor.constraint(equalToConstant: 20),
+            lock.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
+            lock.centerYAnchor.constraint(equalTo: title.centerYAnchor),
+        ])
+
         NSLayoutConstraint.activate([
             contentView.leftAnchor.constraint(equalTo: leftAnchor),
             contentView.rightAnchor.constraint(equalTo: rightAnchor),
         ])
-        
+
         NSLayoutConstraint.activate([
             title.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
-            title.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
+            titleLeftAnchorConstraint,
             title.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
         ])
 
