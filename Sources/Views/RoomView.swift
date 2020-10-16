@@ -77,7 +77,17 @@ class RoomView: UIView {
         muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
         addSubview(muteButton)
 
-        let label = UILabel(frame: CGRect(x: safeAreaInsets.left + 20, y: 0, width: muteButton.frame.origin.x - (safeAreaInsets.left + 40), height: 28))
+        var offset = CGFloat(safeAreaInsets.left + 20)
+        if room.visibility == .private {
+            let lock = UIImageView(image: UIImage(systemName: "lock", withConfiguration: iconConfig))
+            lock.tintColor = .label
+            lock.frame = CGRect(x: offset, y: 0, width: 20, height: 20)
+            lock.center = CGPoint(x: lock.center.x, y: exitButton.center.y)
+            offset += 28 + 5
+            addSubview(lock)
+        }
+
+        let label = UILabel(frame: CGRect(x: offset, y: 0, width: muteButton.frame.origin.x - (offset + 20), height: 28))
 
         label.text = {
             if let name = room.name, name != "" {
