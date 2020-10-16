@@ -6,15 +6,15 @@ extension UICollectionViewFlowLayout {
     }
 
     static func roomsLayout() -> UICollectionViewFlowLayout {
-        return genericLayout(height: 138, top: 0)
+        return genericLayout(height: 138)
     }
 
-    private static func genericLayout(height: CGFloat, top: CGFloat = 20) -> UICollectionViewFlowLayout {
+    private static func genericLayout(height: CGFloat) -> UICollectionViewFlowLayout {
         let spacing = CGFloat(20)
 
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: UIScreen.main.bounds.size.width - (spacing * 2), height: height)
-        layout.sectionInset = UIEdgeInsets(top: top, left: spacing, bottom: 0, right: spacing)
+        layout.sectionInset = UIEdgeInsets(top: spacing, left: spacing, bottom: 0, right: spacing)
         layout.minimumInteritemSpacing = spacing
         layout.minimumLineSpacing = spacing
         return layout
