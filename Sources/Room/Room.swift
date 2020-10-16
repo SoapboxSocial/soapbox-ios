@@ -12,6 +12,7 @@ protocol RoomDelegate {
     func roomWasClosedByRemote()
     func didChangeSpeakVolume(user: Int, volume: Float)
     func didReceiveLink(from: Int, link: URL)
+    func roomWasRenamed(_ name: String)
 }
 
 enum RoomError: Error {
@@ -272,6 +273,15 @@ class Room {
         })
     }
 
+    func rename(_ name: String) {
+        send(command: SignalRequest.Command.with {
+            $0.type = SignalRequest.Command.TypeEnum.renameRoom
+            $0.data = Data(name.utf8)
+        })
+
+        delegate?.roomWasRenamed(name)
+    }
+
     private func handle(_ reply: SignalReply) {
         switch reply.payload {
         case let .join(join):
@@ -371,6 +381,8 @@ class Room {
             didReceiveAddedAdmin(event)
         case .removedAdmin:
             didReceiveRemovedAdmin(event)
+        case .renamedRoom:
+            didReceiveRenamedRoom(event)
         case .UNRECOGNIZED:
             return
         }
@@ -472,6 +484,14 @@ extension Room {
         }
 
         delegate?.didReceiveLink(from: Int(event.from), link: url)
+    }
+
+    private func didReceiveRenamedRoom(_ event: SignalReply.Event) {
+        guard let value = String(bytes: event.data, encoding: .utf8) else {
+            return
+        }
+
+        delegate?.roomWasRenamed(value)
     }
 
     private func updateMemberMuteState(user: Int, isMuted: Bool) {
