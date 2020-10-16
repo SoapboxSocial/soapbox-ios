@@ -247,6 +247,8 @@ extension HomeViewController: UICollectionViewDataSource {
             cell.style = .normal
         }
 
+        cell.visibility = room.visibility
+
         return cell
     }
 

@@ -70,6 +70,7 @@ class Room {
 
     // @todo think about this for when users join and are muted by default
     private(set) var isMuted = false
+    private(set) var visibility = Visibility.public
 
     private(set) var members = [Member]()
 
@@ -144,9 +145,8 @@ class Room {
             return completion(.failure(RoomError.general))
         }
 
-        var visibility = CreateRequest.Visibility.public
         if isPrivate {
-            visibility = CreateRequest.Visibility.private
+            visibility = Visibility.private
         }
 
         _ = stream.sendMessage(SignalRequest.with {
@@ -302,6 +302,8 @@ class Room {
         guard let r = MemberRole(rawValue: join.room.role) else {
             return completion(.failure(RoomError.general))
         }
+
+        visibility = join.room.visibility
 
         role = r
 
