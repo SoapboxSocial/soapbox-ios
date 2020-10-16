@@ -61,14 +61,7 @@ class RoomCell: UICollectionViewCell {
             contentView.leftAnchor.constraint(equalTo: leftAnchor),
             contentView.rightAnchor.constraint(equalTo: rightAnchor),
         ])
-
-        NSLayoutConstraint.activate([
-            contentView.topAnchor.constraint(equalTo: topAnchor, constant: 10), // @TODO THIS SEEMS TO BE TOO BIG?
-            contentView.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            contentView.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
-            contentView.bottomAnchor.constraint(equalTo: bottomAnchor),
-        ])
-
+        
         NSLayoutConstraint.activate([
             title.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
             title.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
