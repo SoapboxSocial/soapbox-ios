@@ -275,9 +275,11 @@ class Room {
 
     func rename(_ name: String) {
         send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.linkShare
+            $0.type = SignalRequest.Command.TypeEnum.renameRoom
             $0.data = Data(name.utf8)
         })
+
+        delegate?.roomWasRenamed(name)
     }
 
     private func handle(_ reply: SignalReply) {

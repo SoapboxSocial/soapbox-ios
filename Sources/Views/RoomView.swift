@@ -23,6 +23,9 @@ class RoomView: UIView {
 
     private var roomNameLabel: UILabel!
 
+    private var editNameButton: EmojiButton!
+    private var inviteButton: EmojiButton!
+
     init(frame: CGRect, room: Room, topBarHeight: CGFloat) {
         self.room = room
         self.topBarHeight = topBarHeight
@@ -136,17 +139,18 @@ class RoomView: UIView {
             addSubview(button)
         }
 
-        let editNameButton = EmojiButton(
+        editNameButton = EmojiButton(
             frame: CGRect(x: safeAreaInsets.left + 20, y: frame.size.height - (reactSize + 10 + safeAreaInsets.bottom), width: 36, height: 36)
         )
         editNameButton.setImage(UIImage(systemName: "square.and.pencil", withConfiguration: iconConfig), for: .normal)
         editNameButton.tintColor = .secondaryBackground
         editNameButton.addTarget(self, action: #selector(editRoomNameButtonTapped), for: .touchUpInside)
+        editNameButton.isHidden = false
         addSubview(editNameButton)
 
-        let inviteButton = EmojiButton(frame: editNameButton.frame)
+        inviteButton = EmojiButton(frame: editNameButton.frame)
         inviteButton.frame = CGRect(
-            origin: CGPoint(x: inviteButton.frame.size.width + inviteButton.frame.origin.x + 10, y: inviteButton.frame.origin.y),
+            origin: CGPoint(x: offset, y: inviteButton.frame.origin.y),
             size: inviteButton.frame.size
         )
         inviteButton.setImage(UIImage(systemName: "person.badge.plus", withConfiguration: iconConfig), for: .normal)
@@ -154,9 +158,25 @@ class RoomView: UIView {
         inviteButton.addTarget(self, action: #selector(inviteTapped), for: .touchUpInside)
         addSubview(inviteButton)
 
+        if room.role != .admin {
+            hideEditNameButton()
+        } else {
+            showEditNameButton()
+        }
+
         DispatchQueue.main.async {
             self.members.reloadData()
         }
+    }
+
+    private func hideEditNameButton() {
+        editNameButton.isHidden = true
+        inviteButton.frame.origin.x = safeAreaInsets.left + 20
+    }
+
+    private func showEditNameButton() {
+        editNameButton.isHidden = false
+        inviteButton.frame.origin.x = editNameButton.frame.size.width + editNameButton.frame.origin.x + 10
     }
 
     @objc private func pasteLink() {
@@ -262,9 +282,14 @@ class RoomView: UIView {
             guard let text = answer.text else {
                 return
             }
+
+            self.room.rename(text)
         }
 
         ac.addAction(submitAction)
+
+        let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
+        ac.addAction(cancel)
 
         UIApplication.shared.keyWindow?.rootViewController!.present(ac, animated: true)
     }
@@ -319,9 +344,21 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func didChangeUserRole(user _: Int, role _: Room.MemberRole) {
+    func didChangeUserRole(user: Int, role: Room.MemberRole) {
         DispatchQueue.main.async {
             self.members.reloadData()
+        }
+
+        if user != UserDefaults.standard.integer(forKey: "id") {
+            return
+        }
+
+        DispatchQueue.main.async {
+            if role == .admin {
+                self.showEditNameButton()
+            } else {
+                self.hideEditNameButton()
+            }
         }
     }
 
