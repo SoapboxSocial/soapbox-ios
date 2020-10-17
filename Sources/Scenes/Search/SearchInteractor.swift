@@ -2,6 +2,7 @@ import Foundation
 
 protocol SearchInteractorOutput {
     func didFetch(users: [APIClient.User])
+    func didFetch(nextPage: [APIClient.User])
     func failedToFetch()
 }
 
@@ -40,13 +41,13 @@ extension SearchInteractor: SearchViewControllerOutput {
         }
 
         // @TODO
-        api.search(term, limit: limit, offset: offset, callback: { result in
+        api.search(term, limit: limit, offset: nextOffset, callback: { result in
             switch result {
             case .failure:
                 self.output.failedToFetch()
             case let .success(users):
                 self.offset = nextOffset
-//                self.output.didFetch(users: users)
+                self.output.didFetch(nextPage: users)
             }
         })
     }
