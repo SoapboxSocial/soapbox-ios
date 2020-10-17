@@ -367,18 +367,18 @@ extension APIClient {
 }
 
 extension APIClient {
-    typealias FollowerListFunc = (_ id: Int, _ callback: @escaping (Result<[User], APIError>) -> Void) -> Void
+    typealias FollowerListFunc = (_ id: Int, _ limit: Int, _ offset: Int, _ callback: @escaping (Result<[User], APIError>) -> Void) -> Void
 
     func friends(_ callback: @escaping (Result<[User], APIError>) -> Void) {
         userListRequest("/v1/users/friends", callback: callback)
     }
 
-    func followers(_ id: Int, _ callback: @escaping (Result<[User], APIError>) -> Void) {
-        userListRequest("/v1/users/" + String(id) + "/followers", callback: callback)
+    func followers(_ id: Int, _ limit: Int, _ offset: Int, _ callback: @escaping (Result<[User], APIError>) -> Void) {
+        userListRequest("/v1/users/" + String(id) + "/followers", parameters: ["limit": limit, "offset": offset], callback: callback)
     }
 
-    func following(_ id: Int, _ callback: @escaping (Result<[User], APIError>) -> Void) {
-        userListRequest("/v1/users/" + String(id) + "/following", callback: callback)
+    func following(_ id: Int, _ limit: Int, _ offset: Int, _ callback: @escaping (Result<[User], APIError>) -> Void) {
+        userListRequest("/v1/users/" + String(id) + "/following", parameters: ["limit": limit, "offset": offset], callback: callback)
     }
 
     func follow(id: Int, callback: @escaping (Result<Void, APIError>) -> Void) {
@@ -389,8 +389,8 @@ extension APIClient {
         followRequest("/v1/users/unfollow", id: id, callback: callback)
     }
 
-    private func userListRequest(_ path: String, callback: @escaping (Result<[User], APIError>) -> Void) {
-        AF.request(Configuration.rootURL.appendingPathComponent(path), method: .get, headers: ["Authorization": token!])
+    private func userListRequest(_ path: String, parameters: Parameters? = nil, callback: @escaping (Result<[User], APIError>) -> Void) {
+        AF.request(Configuration.rootURL.appendingPathComponent(path), method: .get, parameters: parameters, headers: ["Authorization": token!])
             .validate()
             .response { result in
                 guard let data = result.data else {
