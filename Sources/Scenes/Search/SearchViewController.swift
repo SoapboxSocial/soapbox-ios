@@ -1,9 +1,11 @@
 import AlamofireImage
+import CCBottomRefreshControl
 import NotificationBannerSwift
 import UIKit
 
 protocol SearchViewControllerOutput {
     func search(_ keyword: String)
+    func nextPage()
 }
 
 class SearchViewController: UIViewController {
@@ -12,7 +14,7 @@ class SearchViewController: UIViewController {
     private var collection: CollectionView!
     private var users = [APIClient.User]()
 
-    private let refresh = UIRefreshControl()
+    private let paginate = UIRefreshControl()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,18 +28,27 @@ class SearchViewController: UIViewController {
         collection.backgroundColor = .clear
         collection.keyboardDismissMode = .onDrag
 
+        let refresh = UIRefreshControl()
+        refresh.addTarget(self, action: #selector(endRefresh), for: .valueChanged)
         collection.refreshControl = refresh
-        refresh.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
 
         collection.register(cellWithClass: UserCell.self)
 
         output.search("*")
 
         view.addSubview(collection)
+
+        paginate.addTarget(self, action: #selector(loadMore), for: .valueChanged)
+        paginate.triggerVerticalOffset = 100
+        collection.bottomRefreshControl = paginate
     }
 
-    @objc private func didPullToRefresh() {
-        refresh.endRefreshing()
+    @objc private func endRefresh() {
+        collection.refreshControl?.endRefreshing()
+    }
+
+    @objc private func loadMore() {
+        output.nextPage()
     }
 }
 
@@ -94,8 +105,18 @@ extension SearchViewController: SearchPresenterOutput {
         }
     }
 
+    func display(nextPage users: [APIClient.User]) {
+        DispatchQueue.main.async {
+            self.collection.bottomRefreshControl?.endRefreshing()
+
+            self.users.append(contentsOf: users)
+            self.collection.reloadData()
+        }
+    }
+
     func displaySearchError() {
         collection.refreshControl?.endRefreshing()
+        collection.bottomRefreshControl?.endRefreshing()
     }
 }
 
