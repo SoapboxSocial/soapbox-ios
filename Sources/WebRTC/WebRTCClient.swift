@@ -69,8 +69,6 @@ final class WebRTCClient: NSObject {
         createAudioLevelUpdater()
     }
 
-    // MARK: Signaling
-
     func close() {
         // @todo remove audio track? peerConnection.removeTrack()
         peerConnection.close()
