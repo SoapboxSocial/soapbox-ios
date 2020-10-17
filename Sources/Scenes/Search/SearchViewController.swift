@@ -1,6 +1,7 @@
 import AlamofireImage
 import NotificationBannerSwift
 import UIKit
+import CCBottomRefreshControl
 
 protocol SearchViewControllerOutput {
     func search(_ keyword: String)
@@ -12,7 +13,7 @@ class SearchViewController: UIViewController {
     private var collection: CollectionView!
     private var users = [APIClient.User]()
 
-    private let refresh = UIRefreshControl()
+    private let paginate = UIRefreshControl()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,18 +27,21 @@ class SearchViewController: UIViewController {
         collection.backgroundColor = .clear
         collection.keyboardDismissMode = .onDrag
 
-        collection.refreshControl = refresh
-        refresh.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
-
         collection.register(cellWithClass: UserCell.self)
 
         output.search("*")
 
         view.addSubview(collection)
+        
+        paginate.addTarget(self, action: #selector(loadMore), for: .valueChanged)
+        paginate.triggerVerticalOffset = 100
+        collection.bottomRefreshControl = paginate
     }
 
-    @objc private func didPullToRefresh() {
-        refresh.endRefreshing()
+    @objc private func loadMore() {
+        paginate.endRefreshing()
+        paginate.isHidden = true
+        debugPrint("yay")
     }
 }
 
