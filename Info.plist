@@ -10,7 +10,15 @@
 			<key>UIApplicationShortcutItemIconType</key>
 			<string>UIApplicationShortcutIconTypeAdd</string>
 			<key>UIApplicationShortcutItemTitle</key>
-			<string>Create Room</string>
+			<string>NEW_ROOM</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>NEW_PRIVATE_ROOM</string>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeAdd</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>NEW_PRIVATE_ROOM</string>
 		</dict>
 	</array>
 	<key>CDN_URL</key>

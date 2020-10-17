@@ -113,6 +113,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         return true
     }
+
+    func application(_: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+        guard let nav = self.window?.rootViewController as? NavigationViewController else {
+            return completionHandler(true)
+        }
+
+        switch shortcutItem.type {
+        case "NEW_ROOM":
+            nav.createRoom(name: nil, isPrivate: false)
+        case "NEW_PRIVATE_ROOM":
+            nav.createRoom(name: nil, isPrivate: true)
+        default:
+            break
+        }
+
+        completionHandler(true)
+    }
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
