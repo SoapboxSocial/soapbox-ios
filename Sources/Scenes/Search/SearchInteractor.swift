@@ -12,7 +12,7 @@ class SearchInteractor {
 
     private var keyword: String?
     private var offset = 0
-    private let limit = 10
+    private var limit = 10
 
     init(output: SearchInteractorOutput, api: APIClient) {
         self.output = output
