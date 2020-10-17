@@ -1,3 +1,4 @@
+import CCBottomRefreshControl
 import NotificationBannerSwift
 import UIKit
 
@@ -12,7 +13,7 @@ class FollowerListViewController: UIViewController {
     private var users = [APIClient.User]()
 
     private let paginate = UIRefreshControl()
-    
+
     override func viewDidLoad() {
         view.backgroundColor = .background
 
@@ -25,14 +26,14 @@ class FollowerListViewController: UIViewController {
         collection.register(cellWithClass: UserCell.self)
 
         output.loadFollowers()
-        
+
+        view.addSubview(collection)
+
         paginate.addTarget(self, action: #selector(loadMore), for: .valueChanged)
         paginate.triggerVerticalOffset = 100
         collection.bottomRefreshControl = paginate
-
-        view.addSubview(collection)
     }
-    
+
     @objc private func loadMore() {
         output.loadFollowers()
     }
