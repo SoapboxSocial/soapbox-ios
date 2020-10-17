@@ -11,6 +11,8 @@ class FollowerListViewController: UIViewController {
     private var collection: CollectionView!
     private var users = [APIClient.User]()
 
+    private let paginate = UIRefreshControl()
+    
     override func viewDidLoad() {
         view.backgroundColor = .background
 
@@ -23,8 +25,16 @@ class FollowerListViewController: UIViewController {
         collection.register(cellWithClass: UserCell.self)
 
         output.loadFollowers()
+        
+        paginate.addTarget(self, action: #selector(loadMore), for: .valueChanged)
+        paginate.triggerVerticalOffset = 100
+        collection.bottomRefreshControl = paginate
 
         view.addSubview(collection)
+    }
+    
+    @objc private func loadMore() {
+        output.loadFollowers()
     }
 }
 
@@ -40,9 +50,10 @@ extension FollowerListViewController: FollowerListPresenterOutput {
     }
 
     func display(users: [APIClient.User]) {
-        self.users = users
+        self.users.append(contentsOf: users)
 
         DispatchQueue.main.async {
+            self.collection.bottomRefreshControl?.endRefreshing()
             self.collection.reloadData()
         }
     }
