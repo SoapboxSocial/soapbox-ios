@@ -23,6 +23,9 @@ class SearchInteractor {
 extension SearchInteractor: SearchViewControllerOutput {
     func search(_ keyword: String) {
         self.keyword = keyword
+        limit = 10
+        offset = 0
+
         api.search(keyword, limit: limit, offset: offset, callback: { result in
             switch result {
             case .failure:
