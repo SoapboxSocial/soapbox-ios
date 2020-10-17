@@ -8,9 +8,9 @@ protocol SearchInteractorOutput {
 class SearchInteractor {
     private let output: SearchInteractorOutput
     private let api: APIClient
-    
+
     private var keyword: String?
-    private var start = 0
+    private var offset = 0
     private let limit = 10
 
     init(output: SearchInteractorOutput, api: APIClient) {
@@ -22,7 +22,7 @@ class SearchInteractor {
 extension SearchInteractor: SearchViewControllerOutput {
     func search(_ keyword: String) {
         self.keyword = keyword
-        api.search(keyword, limit: limit, start: start, callback: { result in
+        api.search(keyword, limit: limit, offset: offset, callback: { result in
             switch result {
             case .failure:
                 self.output.failedToFetch()
@@ -31,21 +31,21 @@ extension SearchInteractor: SearchViewControllerOutput {
             }
         })
     }
-    
+
     func nextPage() {
-        start = start + limit
-        
+        let nextOffset = offset + limit
+
         guard let term = keyword else {
             return
         }
-        
-        
+
         // @TODO
-        api.search(term, limit: limit, start: start, callback: { result in
+        api.search(term, limit: limit, offset: offset, callback: { result in
             switch result {
             case .failure:
-//                self.output.endRefreshing()
+                self.output.failedToFetch()
             case let .success(users):
+                self.offset = nextOffset
 //                self.output.didFetch(users: users)
             }
         })

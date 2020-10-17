@@ -454,8 +454,8 @@ extension APIClient {
 }
 
 extension APIClient {
-    func search(_ text: String, limit: Int, start: Int, callback: @escaping (Result<[User], APIError>) -> Void) {
-        AF.request(Configuration.rootURL.appendingPathComponent("/v1/users/search"), method: .get, parameters: ["query": text], encoding: URLEncoding.default, headers: ["Authorization": self.token!])
+    func search(_ text: String, limit: Int, offset: Int, callback: @escaping (Result<[User], APIError>) -> Void) {
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/users/search"), method: .get, parameters: ["query": text, "limit": limit, "offset": offset], encoding: URLEncoding.default, headers: ["Authorization": self.token!])
             .validate()
             .response { result in
                 guard let data = result.data else {
