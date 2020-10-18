@@ -5,6 +5,7 @@ protocol SectionData {}
 enum SectionType: Int, CaseIterable {
     case roomList
     case activeList
+    case noRooms
 }
 
 struct Section {
@@ -14,7 +15,9 @@ struct Section {
 }
 
 class HomeCollectionPresenter {
-    var dataSource = [Section]()
+    var currentRoom: Int?
+
+    private var dataSource = [Section]()
 
     var numberOfSections: Int {
         return dataSource.count
@@ -22,6 +25,7 @@ class HomeCollectionPresenter {
 
     init() {
         dataSource.append(Section(type: .activeList, title: "", data: [1, 2, 3, 4, 5, 6, 7]))
+//        dataSource.append(Section(type: .noRooms, title: "", data: [Any]()))
         dataSource.append(Section(type: .roomList, title: "Rooms", data: [1, 2, 3, 4, 5, 6, 7]))
     }
 
@@ -30,61 +34,71 @@ class HomeCollectionPresenter {
     }
 
     func numberOfItems(for sectionIndex: Int) -> Int {
-        return dataSource[sectionIndex].data.count
+        let section = dataSource[sectionIndex]
+        if section.type == .noRooms {
+            return 1
+        }
+
+        return section.data.count
     }
 
     func configure(item _: ActiveUserCell, for indexPath: IndexPath) {
         let section = dataSource[indexPath.section]
         guard let room = section.data[indexPath.row] as? RoomState else {
-            print("Error getting app for indexPath: \(indexPath)")
+            print("Error getting active user for indexPath: \(indexPath)")
             return
         }
     }
 
-    class TestCell: UICollectionViewCell {
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-
-            backgroundColor = .clear
-
-            contentView.backgroundColor = .foreground
-            contentView.translatesAutoresizingMaskIntoConstraints = false
-            contentView.layer.cornerRadius = 15
-        }
-
-        required init?(coder _: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-    }
-
-    func configure(item _: TestCell, for indexPath: IndexPath) {
+    func configure(item: RoomCell, for indexPath: IndexPath) {
         let section = dataSource[indexPath.section]
         guard let room = section.data[indexPath.row] as? RoomState else {
-            print("Error getting app for indexPath: \(indexPath)")
+            print("Error getting room for indexPath: \(indexPath)")
             return
         }
 
-//        item.members = room.members
-//
-//        item.title.text = {
-//            if room.name != "" {
-//                return room.name
-//            }
-//
-        ////            if let id = currentRoom, room.id == id {
-        ////                return NSLocalizedString("current_room", comment: "")
-        ////            }
-//
-//            return NSLocalizedString("listen_in", comment: "")
-//        }()
-//
-        ////        if let id = currentRoom, room.id == id {
-        ////            item.style = .current
-        ////        } else {
-        ////            item.style = .normal
-        ////        }
-//
-//        item.style = .normal
-//        item.visibility = room.visibility
+        item.title.text = {
+            if room.name != "" {
+                return room.name
+            }
+
+            if let id = currentRoom, room.id == id {
+                return NSLocalizedString("current_room", comment: "")
+            }
+
+            return NSLocalizedString("listen_in", comment: "")
+        }()
+
+        if let id = currentRoom, room.id == id {
+            item.style = .current
+        } else {
+            item.style = .normal
+        }
+
+        item.visibility = room.visibility
+        item.members = room.members
+    }
+
+    func set(rooms: [RoomState]) {
+        if rooms.isEmpty {
+            removeRooms()
+            return
+        }
+
+        dataSource.removeAll(where: { $0.type == .roomList })
+        dataSource.append(Section(type: .roomList, title: NSLocalizedString("rooms", comment: ""), data: rooms))
+    }
+
+    func set(actives: [Int]) {
+        if actives.isEmpty {
+            dataSource.removeAll(where: { $0.type == .activeList })
+        }
+
+        dataSource.insert(Section(type: .activeList, title: "", data: actives), at: 0)
+    }
+
+    private func removeRooms() {
+        dataSource.removeAll(where: { $0.type == .roomList })
+        dataSource.append(Section(type: .noRooms, title: "", data: [Any]()))
     }
 }
