@@ -3,7 +3,7 @@ import NotificationBannerSwift
 import UIKit
 
 protocol HomeViewControllerOutput {
-    func fetchRooms()
+    func fetchData()
     func didSelectRoom(room: Int)
     func didEndSearching()
     func didBeginSearching()
@@ -132,7 +132,7 @@ class HomeViewController: UIViewController {
 
     @objc private func loadData() {
         refresh.beginRefreshing()
-        output.fetchRooms()
+        output.fetchData()
     }
 
     private func makeLayout() -> UICollectionViewLayout {
@@ -167,13 +167,11 @@ class HomeViewController: UIViewController {
     }
 
     private func createActiveListSection() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(96), heightDimension: .fractionalHeight(1))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
 
-        layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(125))
-        let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitems: [layoutItem])
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .absolute(96), heightDimension: .absolute(125))
+        let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitem: layoutItem, count: 1)
 
         layoutGroup.interItemSpacing = .fixed(10)
 
@@ -225,6 +223,15 @@ class HomeViewController: UIViewController {
 extension HomeViewController: HomePresenterOutput {
     func didFetchRooms(rooms: [RoomState]) {
         presenter.set(rooms: rooms)
+
+        DispatchQueue.main.async {
+            self.refresh.endRefreshing()
+            self.collection.reloadData()
+        }
+    }
+
+    func didFetchActives(actives: [APIClient.ActiveUser]) {
+        presenter.set(actives: actives)
 
         DispatchQueue.main.async {
             self.refresh.endRefreshing()
@@ -284,12 +291,15 @@ extension HomeViewController: UISearchControllerDelegate {
 
 extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if rooms.count == 0 {
+        switch presenter.sectionType(for: indexPath.section) {
+        case .activeList:
+            return
+        case .roomList:
+            let room = presenter.item(for: indexPath, ofType: RoomState.self)
+            output.didSelectRoom(room: Int(room.id))
+        case .noRooms:
             return
         }
-
-        let room = rooms[indexPath.item]
-        output.didSelectRoom(room: Int(room.id))
     }
 }
 

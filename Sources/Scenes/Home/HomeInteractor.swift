@@ -20,6 +20,7 @@ protocol HomeInteractorOutput {
     func didJoin(room: Int)
     func didLeaveRoom()
     func didFetchImage()
+    func didFetchActives(actives: [APIClient.ActiveUser])
 }
 
 class HomeInteractor: HomeViewControllerOutput {
@@ -44,7 +45,7 @@ class HomeInteractor: HomeViewControllerOutput {
         self.api = api
     }
 
-    func fetchRooms() {
+    func fetchData() {
         // @TODO probably want to start refresh control.
 
         let call = roomService.listRoomsV2(Auth.with {
@@ -61,6 +62,17 @@ class HomeInteractor: HomeViewControllerOutput {
                 }
             }
         }
+
+        api.actives(callback: { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .failure:
+                    self.output.didFetchActives(actives: [])
+                case let .success(users):
+                    self.output.didFetchActives(actives: users)
+                }
+            }
+        })
     }
 
     func fetchMe() {
@@ -100,6 +112,6 @@ extension HomeInteractor: RoomControllerDelegate {
     }
 
     func reloadRooms() {
-        fetchRooms()
+        fetchData()
     }
 }

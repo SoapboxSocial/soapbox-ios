@@ -1,3 +1,4 @@
+import AlamofireImage
 import UIKit
 
 protocol SectionData {}
@@ -25,12 +26,16 @@ class HomeCollectionPresenter {
 
     init() {
         dataSource.append(Section(type: .activeList, title: "", data: [1, 2, 3, 4, 5, 6, 7]))
-//        dataSource.append(Section(type: .noRooms, title: "", data: [Any]()))
-        dataSource.append(Section(type: .roomList, title: "Rooms", data: [1, 2, 3, 4, 5, 6, 7]))
+        set(rooms: [])
     }
 
     func sectionType(for sectionIndex: Int) -> SectionType {
         return dataSource[sectionIndex].type
+    }
+
+    func item<T: Any>(for index: IndexPath, ofType _: T.Type) -> T {
+        let section = dataSource[index.section]
+        return section.data[index.row] as! T
     }
 
     func numberOfItems(for sectionIndex: Int) -> Int {
@@ -42,11 +47,19 @@ class HomeCollectionPresenter {
         return section.data.count
     }
 
-    func configure(item _: ActiveUserCell, for indexPath: IndexPath) {
+    func configure(item: ActiveUserCell, for indexPath: IndexPath) {
         let section = dataSource[indexPath.section]
-        guard let room = section.data[indexPath.row] as? RoomState else {
+        guard let user = section.data[indexPath.row] as? APIClient.ActiveUser else {
             print("Error getting active user for indexPath: \(indexPath)")
             return
+        }
+
+        item.displayName.text = user.displayName.firstName()
+        item.username.text = "@" + user.username
+
+        item.image.image = nil
+        if let image = user.image, image != "" {
+            item.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
         }
     }
 
@@ -89,7 +102,7 @@ class HomeCollectionPresenter {
         dataSource.append(Section(type: .roomList, title: NSLocalizedString("rooms", comment: ""), data: rooms))
     }
 
-    func set(actives: [Int]) {
+    func set(actives: [APIClient.ActiveUser]) {
         if actives.isEmpty {
             dataSource.removeAll(where: { $0.type == .activeList })
         }
@@ -99,6 +112,11 @@ class HomeCollectionPresenter {
 
     private func removeRooms() {
         dataSource.removeAll(where: { $0.type == .roomList })
-        dataSource.append(Section(type: .noRooms, title: "", data: [Any]()))
+
+        if dataSource.contains(where: { $0.type == .noRooms }) {
+            return
+        }
+
+        dataSource.append(Section(type: .noRooms, title: "", data: []))
     }
 }
