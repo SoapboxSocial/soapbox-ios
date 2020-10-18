@@ -4,9 +4,6 @@ class EmptyRoomCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.width).isActive = true
-        heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.height - 200).isActive = true
-
         let titleLabel = UILabel()
         let messageLabel = UILabel()
         titleLabel.translatesAutoresizingMaskIntoConstraints = false

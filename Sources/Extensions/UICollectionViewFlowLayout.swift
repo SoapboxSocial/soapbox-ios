@@ -5,10 +5,6 @@ extension UICollectionViewFlowLayout {
         return genericLayout(height: 88)
     }
 
-    static func roomsLayout() -> UICollectionViewFlowLayout {
-        return genericLayout(height: 138)
-    }
-
     private static func genericLayout(height: CGFloat) -> UICollectionViewFlowLayout {
         let spacing = CGFloat(20)
 

@@ -3,7 +3,7 @@ import NotificationBannerSwift
 import UIKit
 
 protocol HomeViewControllerOutput {
-    func fetchRooms()
+    func fetchData()
     func didSelectRoom(room: Int)
     func didEndSearching()
     func didBeginSearching()
@@ -15,10 +15,10 @@ class HomeViewController: UIViewController {
     private let downloader = ImageDownloader()
 
     private var searchController: UISearchController!
-    private var currentRoom: Int?
 
     private var collection: CollectionView!
     private var rooms = [RoomState]()
+    private let presenter = HomeCollectionPresenter()
 
     private var profileImageView: UIImageView!
 
@@ -27,7 +27,7 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        collection = CollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout.roomsLayout())
+        collection = CollectionView(frame: view.frame, collectionViewLayout: makeLayout())
         collection.automaticallyAdjustsScrollIndicatorInsets = false
         collection.delegate = self
         collection.dataSource = self
@@ -37,6 +37,7 @@ class HomeViewController: UIViewController {
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
         collection.register(cellWithClass: EmptyRoomCollectionViewCell.self)
         collection.register(cellWithClass: RoomCell.self)
+        collection.register(cellWithClass: ActiveUserCell.self)
 
         collection.refreshControl = refresh
         refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -131,13 +132,106 @@ class HomeViewController: UIViewController {
 
     @objc private func loadData() {
         refresh.beginRefreshing()
-        output.fetchRooms()
+        output.fetchData()
+    }
+
+    private func makeLayout() -> UICollectionViewLayout {
+        return UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            switch self.presenter.sectionType(for: sectionIndex) {
+            case .activeList:
+                return self.createActiveListSection()
+            case .roomList:
+                return self.createRoomListSection()
+            case .noRooms:
+                return self.createNoRoomsSection()
+            }
+        }
+    }
+
+    private func createNoRoomsSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+
+        let layoutGroupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0), heightDimension:
+            .absolute(view.frame.size.height - 300) // @TODO NOT SURE ABOUT HEIGHT
+        )
+        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitem: layoutItem, count: 1)
+
+        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+
+        return layoutSection
+    }
+
+    private func createActiveListSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
+        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .absolute(96), heightDimension: .absolute(125))
+        let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitem: layoutItem, count: 1)
+
+        layoutGroup.interItemSpacing = .fixed(10)
+
+        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        layoutSection.interGroupSpacing = 10
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
+        layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
+
+        return layoutSection
+    }
+
+    private func createRoomListSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalWidth(1))
+        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(138))
+
+        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitem: layoutItem, count: 1)
+
+        layoutGroup.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+        layoutGroup.interItemSpacing = .fixed(20)
+
+        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
+        layoutSection.interGroupSpacing = 20
+
+        layoutSection.boundarySupplementaryItems = [createSectionHeader(), createSectionFooter()]
+
+        return layoutSection
+    }
+
+    private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
+        return NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(80)),
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top
+        )
+    }
+
+    private func createSectionFooter() -> NSCollectionLayoutBoundarySupplementaryItem {
+        return NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(105)),
+            elementKind: UICollectionView.elementKindSectionFooter,
+            alignment: .bottom
+        )
     }
 }
 
 extension HomeViewController: HomePresenterOutput {
     func didFetchRooms(rooms: [RoomState]) {
-        self.rooms = rooms
+        presenter.set(rooms: rooms)
+
+        DispatchQueue.main.async {
+            self.refresh.endRefreshing()
+            self.collection.reloadData()
+        }
+    }
+
+    func didFetchActives(actives: [APIClient.ActiveUser]) {
+        presenter.set(actives: actives)
 
         DispatchQueue.main.async {
             self.refresh.endRefreshing()
@@ -155,7 +249,7 @@ extension HomeViewController: HomePresenterOutput {
     }
 
     func displayCurrentRoom(_ id: Int) {
-        currentRoom = id
+        presenter.currentRoom = id
 
         DispatchQueue.main.async {
             self.collection.reloadData()
@@ -163,7 +257,7 @@ extension HomeViewController: HomePresenterOutput {
     }
 
     func removeCurrentRoom() {
-        currentRoom = nil
+        presenter.currentRoom = nil
 
         DispatchQueue.main.async {
             self.collection.reloadData()
@@ -197,59 +291,41 @@ extension HomeViewController: UISearchControllerDelegate {
 
 extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if rooms.count == 0 {
+        switch presenter.sectionType(for: indexPath.section) {
+        case .activeList:
+            let user = presenter.item(for: indexPath, ofType: APIClient.ActiveUser.self)
+            output.didSelectRoom(room: Int(user.currentRoom))
+        case .roomList:
+            let room = presenter.item(for: indexPath, ofType: RoomState.self)
+            output.didSelectRoom(room: Int(room.id))
+        case .noRooms:
             return
         }
-
-        let room = rooms[indexPath.item]
-        output.didSelectRoom(room: Int(room.id))
     }
 }
 
 extension HomeViewController: UICollectionViewDataSource {
     func numberOfSections(in _: UICollectionView) -> Int {
-        return 1
+        return presenter.numberOfSections
     }
 
-    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        if rooms.count > 0 {
-            return rooms.count
-        }
-
-        return 1
+    func collectionView(_: UICollectionView, numberOfItemsInSection index: Int) -> Int {
+        return presenter.numberOfItems(for: index)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if rooms.count == 0 {
+        switch presenter.sectionType(for: indexPath.section) {
+        case .activeList:
+            let cell = collectionView.dequeueReusableCell(withClass: ActiveUserCell.self, for: indexPath)
+            presenter.configure(item: cell, for: indexPath)
+            return cell
+        case .roomList:
+            let cell = collectionView.dequeueReusableCell(withClass: RoomCell.self, for: indexPath)
+            presenter.configure(item: cell, for: indexPath)
+            return cell
+        case .noRooms:
             return collectionView.dequeueReusableCell(withClass: EmptyRoomCollectionViewCell.self, for: indexPath)
         }
-
-        let room = rooms[indexPath.item]
-
-        let cell = collectionView.dequeueReusableCell(withClass: RoomCell.self, for: indexPath)
-        cell.members = room.members
-
-        cell.title.text = {
-            if room.name != "" {
-                return room.name
-            }
-
-            if let id = currentRoom, room.id == id {
-                return NSLocalizedString("current_room", comment: "")
-            }
-
-            return NSLocalizedString("listen_in", comment: "")
-        }()
-
-        if let id = currentRoom, room.id == id {
-            cell.style = .current
-        } else {
-            cell.style = .normal
-        }
-
-        cell.visibility = room.visibility
-
-        return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {

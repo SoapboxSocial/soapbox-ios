@@ -475,3 +475,39 @@ extension APIClient {
             }
     }
 }
+
+extension APIClient {
+    struct ActiveUser: Decodable {
+        let id: Int
+        let displayName: String
+        let username: String
+        let image: String?
+        let currentRoom: Int
+
+        private enum CodingKeys: String, CodingKey {
+            case id, displayName = "display_name", username, image, currentRoom = "current_room"
+        }
+    }
+
+    func actives(callback: @escaping (Result<[ActiveUser], APIError>) -> Void) {
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/users/active"), method: .get, encoding: URLEncoding.default, headers: ["Authorization": self.token!])
+            .validate()
+            .response { result in
+                debugPrint(result)
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
+
+                do {
+                    let resp = try self.decoder.decode([ActiveUser].self, from: data)
+                    callback(.success(resp))
+                } catch {
+                    return callback(.failure(.decode))
+                }
+            }
+    }
+}

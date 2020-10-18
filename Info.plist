@@ -2,25 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>UIApplicationShortcutItems</key>
-	<array>
-		<dict>
-			<key>UIApplicationShortcutItemType</key>
-			<string>NEW_ROOM</string>
-			<key>UIApplicationShortcutItemIconType</key>
-			<string>UIApplicationShortcutIconTypeAdd</string>
-			<key>UIApplicationShortcutItemTitle</key>
-			<string>NEW_ROOM</string>
-		</dict>
-		<dict>
-			<key>UIApplicationShortcutItemType</key>
-			<string>NEW_PRIVATE_ROOM</string>
-			<key>UIApplicationShortcutItemIconType</key>
-			<string>UIApplicationShortcutIconTypeAdd</string>
-			<key>UIApplicationShortcutItemTitle</key>
-			<string>NEW_PRIVATE_ROOM</string>
-		</dict>
-	</array>
 	<key>CDN_URL</key>
 	<string>$(CDN_URL)</string>
 	<key>CFBundleDevelopmentRegion</key>
@@ -67,7 +48,7 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>We don&apos;t use this, must investigate further</string>
+	<string>We don't use this, must investigate further</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone is required</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -78,6 +59,25 @@
 	<string>$(ROOM_SERVICE_URL)</string>
 	<key>ROOT_URL</key>
 	<string>$(ROOT_URL)</string>
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeAdd</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>NEW_ROOM</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>NEW_ROOM</string>
+		</dict>
+		<dict>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeAdd</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>NEW_PRIVATE_ROOM</string>
+			<key>UIApplicationShortcutItemType</key>
+			<string>NEW_PRIVATE_ROOM</string>
+		</dict>
+	</array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
