@@ -36,7 +36,7 @@ class HomeViewController: UIViewController {
         // @TODO PROBABLY NEED TO ADD FOOTER VIEW
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
         collection.register(cellWithClass: EmptyRoomCollectionViewCell.self)
-        collection.register(cellWithClass: HomeCollectionPresenter.TestCell.self)
+        collection.register(cellWithClass: RoomCell.self)
         collection.register(cellWithClass: ActiveUserCell.self)
 
         collection.refreshControl = refresh
@@ -309,7 +309,7 @@ extension HomeViewController: UICollectionViewDataSource {
             presenter.configure(item: cell, for: indexPath)
             return cell
         case .roomList:
-            let cell = collectionView.dequeueReusableCell(withClass: HomeCollectionPresenter.TestCell.self, for: indexPath)
+            let cell = collectionView.dequeueReusableCell(withClass: RoomCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
         case .noRooms:
