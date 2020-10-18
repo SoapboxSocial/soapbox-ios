@@ -24,6 +24,16 @@ class HomeViewController: UIViewController {
 
     var output: HomeViewControllerOutput!
 
+    enum SectionType: Int, CaseIterable {
+        case roomList
+        case activeList
+    }
+
+    struct Section {
+        let type: SectionType
+        let data: [Any]
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
