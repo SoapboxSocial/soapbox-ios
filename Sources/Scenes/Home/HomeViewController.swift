@@ -19,20 +19,11 @@ class HomeViewController: UIViewController {
 
     private var collection: CollectionView!
     private var rooms = [RoomState]()
+    private let presenter = HomeCollectionPresenter()
 
     private var profileImageView: UIImageView!
 
     var output: HomeViewControllerOutput!
-
-    enum SectionType: Int, CaseIterable {
-        case roomList
-        case activeList
-    }
-
-    struct Section {
-        let type: SectionType
-        let data: [Any]
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -237,27 +228,7 @@ extension HomeViewController: UICollectionViewDataSource {
         let room = rooms[indexPath.item]
 
         let cell = collectionView.dequeueReusableCell(withClass: RoomCell.self, for: indexPath)
-        cell.members = room.members
-
-        cell.title.text = {
-            if room.name != "" {
-                return room.name
-            }
-
-            if let id = currentRoom, room.id == id {
-                return NSLocalizedString("current_room", comment: "")
-            }
-
-            return NSLocalizedString("listen_in", comment: "")
-        }()
-
-        if let id = currentRoom, room.id == id {
-            cell.style = .current
-        } else {
-            cell.style = .normal
-        }
-
-        cell.visibility = room.visibility
+        presenter.configure(item: cell, for: indexPath)
 
         return cell
     }
