@@ -38,6 +38,7 @@ class HomeViewController: UIViewController {
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
         collection.register(cellWithClass: EmptyRoomCollectionViewCell.self)
         collection.register(cellWithClass: RoomCell.self)
+        collection.register(cellWithClass: ActiveUserCell.self)
 
         collection.refreshControl = refresh
         refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -209,28 +210,24 @@ extension HomeViewController: UICollectionViewDelegate {
 
 extension HomeViewController: UICollectionViewDataSource {
     func numberOfSections(in _: UICollectionView) -> Int {
-        return 1
+        return presenter.numberOfSections
     }
 
-    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        if rooms.count > 0 {
-            return rooms.count
-        }
-
-        return 1
+    func collectionView(_: UICollectionView, numberOfItemsInSection index: Int) -> Int {
+        return presenter.numberOfItems(for: index)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if rooms.count == 0 {
-            return collectionView.dequeueReusableCell(withClass: EmptyRoomCollectionViewCell.self, for: indexPath)
+        switch presenter.sectionType(for: indexPath.section) {
+        case .activeList:
+            let cell = collectionView.dequeueReusableCell(withClass: ActiveUserCell.self, for: indexPath)
+            presenter.configure(item: cell, for: indexPath)
+            return cell
+        case .roomList:
+            let cell = collectionView.dequeueReusableCell(withClass: RoomCell.self, for: indexPath)
+            presenter.configure(item: cell, for: indexPath)
+            return cell
         }
-
-        let room = rooms[indexPath.item]
-
-        let cell = collectionView.dequeueReusableCell(withClass: RoomCell.self, for: indexPath)
-        presenter.configure(item: cell, for: indexPath)
-
-        return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
