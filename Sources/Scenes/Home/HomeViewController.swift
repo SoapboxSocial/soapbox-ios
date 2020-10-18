@@ -293,7 +293,8 @@ extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch presenter.sectionType(for: indexPath.section) {
         case .activeList:
-            return
+            let user = presenter.item(for: indexPath, ofType: APIClient.ActiveUser.self)
+            output.didSelectRoom(room: Int(user.currentRoom))
         case .roomList:
             let room = presenter.item(for: indexPath, ofType: RoomState.self)
             output.didSelectRoom(room: Int(room.id))

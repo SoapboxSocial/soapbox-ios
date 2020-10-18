@@ -25,7 +25,6 @@ class HomeCollectionPresenter {
     }
 
     init() {
-        dataSource.append(Section(type: .activeList, title: "", data: [1, 2, 3, 4, 5, 6, 7]))
         set(rooms: [])
     }
 
@@ -98,13 +97,15 @@ class HomeCollectionPresenter {
             return
         }
 
-        dataSource.removeAll(where: { $0.type == .roomList })
+        dataSource.removeAll(where: { $0.type == .roomList || $0.type == .noRooms })
         dataSource.append(Section(type: .roomList, title: NSLocalizedString("rooms", comment: ""), data: rooms))
     }
 
     func set(actives: [APIClient.ActiveUser]) {
+        dataSource.removeAll(where: { $0.type == .activeList })
+
         if actives.isEmpty {
-            dataSource.removeAll(where: { $0.type == .activeList })
+            return
         }
 
         dataSource.insert(Section(type: .activeList, title: "", data: actives), at: 0)
