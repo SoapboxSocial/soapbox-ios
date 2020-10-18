@@ -28,7 +28,7 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        collection = CollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout.roomsLayout())
+        collection = CollectionView(frame: view.frame, collectionViewLayout: makeLayout())
         collection.automaticallyAdjustsScrollIndicatorInsets = false
         collection.delegate = self
         collection.dataSource = self
@@ -37,7 +37,7 @@ class HomeViewController: UIViewController {
         // @TODO PROBABLY NEED TO ADD FOOTER VIEW
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
         collection.register(cellWithClass: EmptyRoomCollectionViewCell.self)
-        collection.register(cellWithClass: RoomCell.self)
+        collection.register(cellWithClass: HomeCollectionPresenter.TestCell.self)
         collection.register(cellWithClass: ActiveUserCell.self)
 
         collection.refreshControl = refresh
@@ -135,6 +135,73 @@ class HomeViewController: UIViewController {
         refresh.beginRefreshing()
         output.fetchRooms()
     }
+
+    private func makeLayout() -> UICollectionViewLayout {
+        // Constructs the UICollectionViewCompositionalLayout
+        let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            switch self.presenter.sectionType(for: sectionIndex) {
+            case .activeList:
+                return self.createActiveListSection()
+            case .roomList:
+                return self.createRoomListSection()
+            }
+        }
+
+        let config = UICollectionViewCompositionalLayoutConfiguration()
+        layout.configuration = config
+
+        return layout
+    }
+
+    private func createActiveListSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(96), heightDimension: .absolute(125))
+        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(125))
+        let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitems: [layoutItem])
+
+        layoutGroup.interItemSpacing = .fixed(10)
+
+        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        layoutSection.interGroupSpacing = 10
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
+        layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
+
+        return layoutSection
+    }
+
+    private func createRoomListSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalWidth(1))
+        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(138))
+
+        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitem: layoutItem, count: 1)
+
+        layoutGroup.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+        layoutGroup.interItemSpacing = .fixed(20)
+
+        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
+        layoutSection.interGroupSpacing = 20
+
+        let layoutSectionHeader = createSectionHeader()
+        layoutSection.boundarySupplementaryItems = [layoutSectionHeader]
+
+        return layoutSection
+    }
+
+    private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
+        let layoutSectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(80))
+
+        return NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: layoutSectionHeaderSize,
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top
+        )
+    }
 }
 
 extension HomeViewController: HomePresenterOutput {
@@ -224,7 +291,7 @@ extension HomeViewController: UICollectionViewDataSource {
             presenter.configure(item: cell, for: indexPath)
             return cell
         case .roomList:
-            let cell = collectionView.dequeueReusableCell(withClass: RoomCell.self, for: indexPath)
+            let cell = collectionView.dequeueReusableCell(withClass: HomeCollectionPresenter.TestCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
         }
