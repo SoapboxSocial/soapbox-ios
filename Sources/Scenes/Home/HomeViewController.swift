@@ -187,19 +187,24 @@ class HomeViewController: UIViewController {
         layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
         layoutSection.interGroupSpacing = 20
 
-        let layoutSectionHeader = createSectionHeader()
-        layoutSection.boundarySupplementaryItems = [layoutSectionHeader]
+        layoutSection.boundarySupplementaryItems = [createSectionHeader(), createSectionFooter()]
 
         return layoutSection
     }
 
     private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
-        let layoutSectionHeaderSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(80))
-
         return NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: layoutSectionHeaderSize,
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(80)),
             elementKind: UICollectionView.elementKindSectionHeader,
             alignment: .top
+        )
+    }
+
+    private func createSectionFooter() -> NSCollectionLayoutBoundarySupplementaryItem {
+        return NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(105)),
+            elementKind: UICollectionView.elementKindSectionFooter,
+            alignment: .bottom
         )
     }
 }
