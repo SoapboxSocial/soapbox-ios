@@ -136,7 +136,7 @@ class HomeViewController: UIViewController {
     }
 
     private func makeLayout() -> UICollectionViewLayout {
-        let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+        return UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             switch self.presenter.sectionType(for: sectionIndex) {
             case .activeList:
                 return self.createActiveListSection()
@@ -146,11 +146,6 @@ class HomeViewController: UIViewController {
                 return self.createNoRoomsSection()
             }
         }
-
-        let config = UICollectionViewCompositionalLayoutConfiguration()
-        layout.configuration = config
-
-        return layout
     }
 
     private func createNoRoomsSection() -> NSCollectionLayoutSection {
