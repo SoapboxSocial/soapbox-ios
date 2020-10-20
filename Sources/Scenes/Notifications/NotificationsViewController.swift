@@ -12,6 +12,8 @@ class NotificationsViewController: UIViewController {
 
     private var tableView: UITableView!
 
+    private let refresh = UIRefreshControl()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -29,8 +31,14 @@ class NotificationsViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.estimatedRowHeight = 44.0
         tableView.rowHeight = UITableView.automaticDimension
+        tableView.refreshControl = refresh
+        refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
         view.addSubview(tableView)
 
+        loadData()
+    }
+
+    @objc private func loadData() {
         output.loadNotifications()
     }
 }
