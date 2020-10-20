@@ -48,6 +48,7 @@ extension NotificationsViewController: NotificationsPresenterOutput {
         self.notifications = notifications
 
         DispatchQueue.main.async {
+            self.refresh.endRefreshing()
             self.tableView.reloadData()
         }
     }
