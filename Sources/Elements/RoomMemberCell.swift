@@ -63,6 +63,11 @@ class RoomMemberCell: UICollectionViewCell {
         muteView.isHidden = true
         speakingView.isHidden = true
 
+        if role == .admin {
+            profileImage.layer.borderColor = UIColor.brandColor.cgColor
+            profileImage.layer.borderWidth = 4
+        }
+
         nameLabel.text = name.firstName()
 
         if reactionView != nil {
