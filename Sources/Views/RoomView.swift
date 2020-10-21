@@ -55,6 +55,11 @@ class RoomView: UIView {
         topBar.roundCorners(corners: [.topLeft, .topRight], radius: 25.0)
         addSubview(topBar)
 
+        let handle = UIView(frame: CGRect(x: (frame.size.width / 2) - (36 / 2), y: 5, width: 36, height: 5))
+        handle.backgroundColor = .systemGray5
+        handle.layer.cornerRadius = 5 / 2
+        topBar.addSubview(handle)
+
         let recognizer = UITapGestureRecognizer(target: self, action: #selector(openBar))
         recognizer.numberOfTapsRequired = 1
         topBar.addGestureRecognizer(recognizer)
