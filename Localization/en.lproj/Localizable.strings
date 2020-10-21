@@ -98,7 +98,7 @@
 "connect_twitter" = "Connect to Twitter";
 "disconnect_twitter" = "Disconnect Twitter";
 
-"kick_user" = "Kick user";
+"ban_from_room" = "Ban from room";
 
 "remove_admin" = "Remove admin";
 "add_admin" = "Make admin";
