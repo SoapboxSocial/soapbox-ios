@@ -66,6 +66,9 @@ class RoomMemberCell: UICollectionViewCell {
         if role == .admin {
             profileImage.layer.borderColor = UIColor.brandColor.cgColor
             profileImage.layer.borderWidth = 4
+        } else {
+            profileImage.layer.borderColor = .none
+            profileImage.layer.borderWidth = 0
         }
 
         nameLabel.text = name.firstName()
