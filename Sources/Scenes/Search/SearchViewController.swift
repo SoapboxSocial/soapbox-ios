@@ -14,6 +14,8 @@ class SearchViewController: UIViewController {
     private var collection: CollectionView!
     private var users = [APIClient.User]()
 
+    private var searchController = UISearchController()
+
     private let paginate = UIRefreshControl()
 
     override func viewDidLoad() {
@@ -41,6 +43,25 @@ class SearchViewController: UIViewController {
         paginate.addTarget(self, action: #selector(loadMore), for: .valueChanged)
         paginate.triggerVerticalOffset = 100
         collection.bottomRefreshControl = paginate
+
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.showsSearchResultsController = true
+        definesPresentationContext = true
+
+        let scb = searchController.searchBar
+        searchController.hidesNavigationBarDuringPresentation = false
+        scb.returnKeyType = .default
+        scb.delegate = self
+        scb.showsCancelButton = false
+        scb.placeholder = NSLocalizedString("search_for_friends", comment: "")
+        scb.searchTextField.layer.cornerRadius = 15
+        scb.searchTextField.layer.masksToBounds = true
+        scb.searchTextField.leftView = nil
+
+        navigationItem.titleView = scb
+        navigationItem.hidesSearchBarWhenScrolling = false
+        searchController.hidesNavigationBarDuringPresentation = false
     }
 
     @objc private func endRefresh() {
@@ -58,7 +79,7 @@ extension SearchViewController: UICollectionViewDelegate {
         view.endEditing(true)
 
         let id = users[indexPath.item].id
-        presentingViewController?.navigationController?.pushViewController(SceneFactory.createProfileViewController(id: id), animated: true)
+        navigationController?.pushViewController(SceneFactory.createProfileViewController(id: id), animated: true)
     }
 }
 

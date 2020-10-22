@@ -50,7 +50,7 @@ class NavigationViewController: UINavigationController {
 
         navigationBar.shadowImage = UIImage()
         navigationBar.isHidden = false
-        navigationBar.isTranslucent = true
+        navigationBar.isTranslucent = false
         navigationBar.barTintColor = .background
         navigationBar.tintColor = .brandColor
     }
@@ -234,18 +234,6 @@ extension NavigationViewController: RoomController {
         openRoom()
     }
 
-    func didBeginSearching() {
-        createRoomButton.isHidden = true
-    }
-
-    func didEndSearching() {
-        if room != nil {
-            return
-        }
-
-        createRoomButton.isHidden = false
-    }
-
     private func requestMicrophone(callback: @escaping () -> Void) {
         func showMicrophoneWarning() {
             let alert = UIAlertController(
@@ -344,7 +332,7 @@ extension NavigationViewController: DrawerViewDelegate {
 }
 
 extension NavigationViewController: UINavigationControllerDelegate {
-    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+    func navigationController(_: UINavigationController, willShow viewController: UIViewController, animated _: Bool) {
         let item = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         viewController.navigationItem.backBarButtonItem = item
     }
