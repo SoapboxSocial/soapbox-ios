@@ -555,7 +555,7 @@ extension Room: WebRTCClientDelegate {
             completion = nil
             return
         }
-        
+
         if state == .failed || state == .closed {
             delegate?.roomWasClosedByRemote()
         }

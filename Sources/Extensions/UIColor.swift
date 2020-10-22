@@ -51,4 +51,14 @@ extension UIColor {
             }
         }
     }
+
+    static var exitButtonBackground: UIColor {
+        return UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
+            if UITraitCollection.userInterfaceStyle == .dark {
+                return UIColor.systemRed.withAlphaComponent(0.2)
+            } else {
+                return UIColor.systemRed.withAlphaComponent(0.1)
+            }
+        }
+    }
 }

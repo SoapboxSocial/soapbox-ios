@@ -75,7 +75,8 @@ class RoomView: UIView {
         )
         exitButton.center = CGPoint(x: exitButton.center.x, y: topBar.center.y - (inset / 2))
         exitButton.setImage(UIImage(systemName: "xmark", withConfiguration: iconConfig), for: .normal)
-        exitButton.tintColor = .secondaryBackground
+        exitButton.tintColor = .systemRed
+        exitButton.backgroundColor = .exitButtonBackground
         exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         addSubview(exitButton)
 
