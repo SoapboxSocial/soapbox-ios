@@ -332,18 +332,12 @@ class Room {
 
         name = join.room.name
 
-        completion(.success(()))
-        completion = nil
-
         receivedOffer(join.answer.sdp)
     }
 
     private func on(create: CreateReply) {
         // @todo may wanna do some delegate call stuff around this.
         id = Int(create.id)
-
-        completion(.success(()))
-        completion = nil
 
         receivedOffer(create.answer.sdp)
     }
@@ -556,6 +550,12 @@ extension Room: WebRTCClientDelegate {
     }
 
     func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
+        if state == .connected {
+            completion(.success(()))
+            completion = nil
+            return
+        }
+        
         if state == .failed || state == .closed {
             delegate?.roomWasClosedByRemote()
         }
