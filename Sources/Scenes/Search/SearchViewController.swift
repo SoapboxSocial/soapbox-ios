@@ -23,8 +23,8 @@ class SearchViewController: UIViewController {
 
         view.backgroundColor = .background
 
-        collection = CollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout.usersLayout())
-        collection.automaticallyAdjustsScrollIndicatorInsets = false
+        let layout = UICollectionViewFlowLayout.usersLayout()
+        collection = CollectionView(frame: view.frame, collectionViewLayout: layout)
         collection.delegate = self
         collection.dataSource = self
         collection.backgroundColor = .clear
@@ -48,7 +48,6 @@ class SearchViewController: UIViewController {
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.showsSearchResultsController = true
         searchController.automaticallyShowsCancelButton = false
-        definesPresentationContext = true
 
         let scb = searchController.searchBar
         scb.translatesAutoresizingMaskIntoConstraints = false
@@ -58,15 +57,15 @@ class SearchViewController: UIViewController {
         scb.showsCancelButton = false
         scb.placeholder = NSLocalizedString("search_for_friends", comment: "")
         scb.searchTextField.layer.masksToBounds = true
+        scb.searchTextField.layer.cornerRadius = 15
         scb.searchTextField.leftView = nil
+
+        title = NSLocalizedString("search", comment: "")
 
         navigationItem.hidesSearchBarWhenScrolling = false
         searchController.hidesNavigationBarDuringPresentation = false
 
-        let searchBarContainer = SearchBarContainerView(customSearchBar: scb)
-        searchBarContainer.frame = CGRect(x: 0, y: 0, width: view.frame.width - 200, height: 44)
-
-        navigationItem.titleView = searchBarContainer
+        navigationItem.searchController = searchController
     }
 
     @objc private func endRefresh() {
@@ -116,7 +115,6 @@ extension SearchViewController: UICollectionViewDataSource {
 
 extension SearchViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_: UICollectionView, layout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        // @TODO ONLY RETURN WHEN IN ROOM?
         return collection.collectionView(collection, layout: layout, referenceSizeForFooterInSection: section)
     }
 }

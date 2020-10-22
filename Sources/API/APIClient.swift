@@ -493,7 +493,6 @@ extension APIClient {
         AF.request(Configuration.rootURL.appendingPathComponent("/v1/users/active"), method: .get, encoding: URLEncoding.default, headers: ["Authorization": self.token!])
             .validate()
             .response { result in
-                debugPrint(result)
                 guard let data = result.data else {
                     return callback(.failure(.requestFailed))
                 }
