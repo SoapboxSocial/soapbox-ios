@@ -47,21 +47,26 @@ class SearchViewController: UIViewController {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.showsSearchResultsController = true
+        searchController.automaticallyShowsCancelButton = false
         definesPresentationContext = true
 
         let scb = searchController.searchBar
+        scb.translatesAutoresizingMaskIntoConstraints = false
         searchController.hidesNavigationBarDuringPresentation = false
         scb.returnKeyType = .default
         scb.delegate = self
         scb.showsCancelButton = false
         scb.placeholder = NSLocalizedString("search_for_friends", comment: "")
-        scb.searchTextField.layer.cornerRadius = 15
         scb.searchTextField.layer.masksToBounds = true
         scb.searchTextField.leftView = nil
 
-        navigationItem.titleView = scb
         navigationItem.hidesSearchBarWhenScrolling = false
         searchController.hidesNavigationBarDuringPresentation = false
+
+        let searchBarContainer = SearchBarContainerView(customSearchBar: scb)
+        searchBarContainer.frame = CGRect(x: 0, y: 0, width: view.frame.width - 200, height: 44)
+
+        navigationItem.titleView = searchBarContainer
     }
 
     @objc private func endRefresh() {
