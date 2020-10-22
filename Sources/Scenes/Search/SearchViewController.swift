@@ -23,9 +23,8 @@ class SearchViewController: UIViewController {
 
         view.backgroundColor = .background
 
-        let layout = UICollectionViewFlowLayout.usersLayout()
-        // this is in no way accurate but it works
-        collection = UICollectionView(frame: view.frame, collectionViewLayout: layout)
+        collection = UICollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout.usersLayout())
+        collection.translatesAutoresizingMaskIntoConstraints = false
         collection.delegate = self
         collection.dataSource = self
         collection.backgroundColor = .clear
@@ -66,8 +65,15 @@ class SearchViewController: UIViewController {
         searchController.hidesNavigationBarDuringPresentation = false
 
         navigationItem.searchController = searchController
+        
+        NSLayoutConstraint.activate([
+            collection.leftAnchor.constraint(equalTo: view.leftAnchor),
+            collection.rightAnchor.constraint(equalTo: view.rightAnchor),
+            collection.topAnchor.constraint(equalTo: view.topAnchor),
+            collection.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
     }
-
+    
     @objc private func endRefresh() {
         collection.refreshControl?.endRefreshing()
     }
