@@ -19,7 +19,7 @@ class NotificationsViewController: UIViewController {
 
         view.backgroundColor = .background
 
-        title = NSLocalizedString("notifications", comment: "")
+        title = NSLocalizedString("activity", comment: "")
 
         navigationController?.navigationBar.titleTextAttributes = [
             NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .body, weight: .medium),

@@ -345,6 +345,7 @@ extension ProfileViewController: ProfilePresenterOutput {
         username.text = "@" + profile.username
         followingCountLabel.text = String(profile.following)
         bioLabel.text = profile.bio
+        title = profile.username
 
         if user.linkedAccounts.first(where: { $0.provider == "twitter" }) != nil {
             twitter.isHidden = false

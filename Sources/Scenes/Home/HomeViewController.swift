@@ -5,8 +5,6 @@ import UIKit
 protocol HomeViewControllerOutput {
     func fetchData()
     func didSelectRoom(room: Int)
-    func didEndSearching()
-    func didBeginSearching()
     func fetchMe()
 }
 
@@ -28,7 +26,6 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
 
         collection = CollectionView(frame: view.frame, collectionViewLayout: makeLayout())
-        collection.automaticallyAdjustsScrollIndicatorInsets = false
         collection.delegate = self
         collection.dataSource = self
         collection.backgroundColor = .clear
@@ -44,9 +41,9 @@ class HomeViewController: UIViewController {
 
         view.addSubview(collection)
 
-        let containView = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        let containView = UIButton(frame: CGRect(x: 0, y: 0, width: 44, height: 44))
         containView.backgroundColor = .secondaryBackground
-        containView.layer.cornerRadius = 40 / 2
+        containView.layer.cornerRadius = 44 / 2
         containView.clipsToBounds = true
         containView.addTarget(self, action: #selector(openProfile), for: .touchUpInside)
 
@@ -62,42 +59,24 @@ class HomeViewController: UIViewController {
         containView.addSubview(profileImageView!)
 
         let iconConfig = UIImage.SymbolConfiguration(weight: .bold)
-        let rightbarButton = UIBarButtonItem(
+        let searchButton = UIBarButtonItem(
+            image: UIImage(systemName: "magnifyingglass", withConfiguration: iconConfig),
+            style: .plain,
+            target: self,
+            action: #selector(openSearch)
+        )
+
+        let notificationsButton = UIBarButtonItem(
             image: UIImage(systemName: "bell", withConfiguration: iconConfig),
             style: .plain,
             target: self,
             action: #selector(openNotifications)
         )
-        navigationItem.rightBarButtonItem = rightbarButton
-
-        let searchViewController = SceneFactory.createSearchViewController()
-        searchController = UISearchController(searchResultsController: searchViewController)
-        searchController.searchResultsUpdater = searchViewController
-        searchController.delegate = self
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.showsSearchResultsController = true
-        definesPresentationContext = true
-
-        let scb = searchController.searchBar
-        searchController.hidesNavigationBarDuringPresentation = false
-        scb.returnKeyType = .default
-        scb.delegate = searchViewController
-        scb.placeholder = NSLocalizedString("search_for_friends", comment: "")
-        scb.searchTextField.layer.cornerRadius = 15
-        scb.searchTextField.layer.masksToBounds = true
-        scb.searchTextField.leftView = nil
-
-        navigationItem.titleView = scb
-        navigationItem.hidesSearchBarWhenScrolling = false
-        searchController.hidesNavigationBarDuringPresentation = false
+        navigationItem.rightBarButtonItems = [notificationsButton, searchButton]
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
-        if searchController.isActive {
-            output.didEndSearching()
-        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -105,12 +84,6 @@ class HomeViewController: UIViewController {
 
         // @TODO probably not best to do this all the time?
         output.fetchMe()
-
-        if searchController.isActive {
-            output.didBeginSearching()
-            return
-        }
-
         loadData()
     }
 
@@ -123,6 +96,11 @@ class HomeViewController: UIViewController {
 
         let profile = SceneFactory.createProfileViewController(id: id)
         navigationController?.pushViewController(profile, animated: true)
+    }
+
+    @objc private func openSearch() {
+        let search = SceneFactory.createSearchViewController()
+        navigationController?.pushViewController(search, animated: true)
     }
 
     @objc private func openNotifications() {
@@ -275,17 +253,6 @@ extension HomeViewController: HomePresenterOutput {
                 break
             }
         })
-    }
-}
-
-extension HomeViewController: UISearchControllerDelegate {
-    func didDismissSearchController(_: UISearchController) {
-        output.didEndSearching()
-        loadData()
-    }
-
-    func didPresentSearchController(_: UISearchController) {
-        output.didBeginSearching()
     }
 }
 

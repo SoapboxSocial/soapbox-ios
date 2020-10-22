@@ -84,7 +84,7 @@
 "create_a_room" = "Create a room";
 "room_was_closed" = "This room was already closed!";
 
-"notifications" = "Notifications";
+"activity" = "Activity";
 
 "name" = "Name";
 "enter_name" = "Enter name";
@@ -102,3 +102,5 @@
 
 "remove_admin" = "Remove admin";
 "add_admin" = "Make admin";
+
+"search" = "Search";

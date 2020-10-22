@@ -9,7 +9,7 @@ protocol FollowerListViewControllerOutput {
 class FollowerListViewController: UIViewController {
     var output: FollowerListViewControllerOutput!
 
-    private var collection: CollectionView!
+    private var collection: UICollectionView!
     private var users = [APIClient.User]()
 
     private let paginate = UIRefreshControl()
@@ -17,8 +17,7 @@ class FollowerListViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .background
 
-        collection = CollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout.usersLayout())
-        collection.automaticallyAdjustsScrollIndicatorInsets = false
+        collection = UICollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout.usersLayout())
         collection.delegate = self
         collection.dataSource = self
         collection.backgroundColor = .clear
@@ -80,21 +79,11 @@ extension FollowerListViewController: UICollectionViewDataSource {
 
         return cell
     }
-
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        return collection.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
-    }
 }
 
 extension FollowerListViewController: UICollectionViewDelegate {
     // @TODO probably needs to be in the interactor?
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         navigationController?.pushViewController(SceneFactory.createProfileViewController(id: users[indexPath.item].id), animated: true)
-    }
-}
-
-extension FollowerListViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_: UICollectionView, layout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        return collection.collectionView(collection, layout: layout, referenceSizeForFooterInSection: section)
     }
 }
