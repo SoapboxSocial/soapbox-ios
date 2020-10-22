@@ -11,7 +11,7 @@ protocol SearchViewControllerOutput {
 class SearchViewController: UIViewController {
     var output: SearchViewControllerOutput!
 
-    private var collection: CollectionView!
+    private var collection: UICollectionView!
     private var users = [APIClient.User]()
 
     private var searchController = UISearchController()
@@ -24,7 +24,9 @@ class SearchViewController: UIViewController {
         view.backgroundColor = .background
 
         let layout = UICollectionViewFlowLayout.usersLayout()
-        collection = CollectionView(frame: view.frame, collectionViewLayout: layout)
+        // this is in no way accurate but it works
+        layout.footerReferenceSize = CGSize(width: view.frame.size.width, height: layout.footerReferenceSize.height + 50)
+        collection = UICollectionView(frame: view.frame, collectionViewLayout: layout)
         collection.delegate = self
         collection.dataSource = self
         collection.backgroundColor = .clear
@@ -50,7 +52,6 @@ class SearchViewController: UIViewController {
         searchController.automaticallyShowsCancelButton = false
 
         let scb = searchController.searchBar
-        scb.translatesAutoresizingMaskIntoConstraints = false
         searchController.hidesNavigationBarDuringPresentation = false
         scb.returnKeyType = .default
         scb.delegate = self
@@ -106,16 +107,6 @@ extension SearchViewController: UICollectionViewDataSource {
         }
 
         return cell
-    }
-
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        return collection.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
-    }
-}
-
-extension SearchViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_: UICollectionView, layout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        return collection.collectionView(collection, layout: layout, referenceSizeForFooterInSection: section)
     }
 }
 

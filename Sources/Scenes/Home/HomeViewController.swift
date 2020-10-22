@@ -26,7 +26,6 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
 
         collection = CollectionView(frame: view.frame, collectionViewLayout: makeLayout())
-        collection.automaticallyAdjustsScrollIndicatorInsets = false
         collection.delegate = self
         collection.dataSource = self
         collection.backgroundColor = .clear
