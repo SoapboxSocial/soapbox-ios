@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .body, weight: .bold)], for: .normal)
         UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).defaultTextAttributes = [NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .body, weight: .bold)]
-
+        
         let loggedIn = isLoggedIn()
 
         window!.rootViewController = { () -> UIViewController in
