@@ -13,7 +13,6 @@ extension UICollectionViewFlowLayout {
         layout.sectionInset = UIEdgeInsets(top: spacing, left: spacing, bottom: 105, right: spacing)
         layout.minimumInteritemSpacing = spacing
         layout.minimumLineSpacing = spacing
-        layout.footerReferenceSize = CGSize(width: UIScreen.main.bounds.size.width, height: 105)
         return layout
     }
 }

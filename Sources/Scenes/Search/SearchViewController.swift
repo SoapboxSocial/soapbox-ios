@@ -25,7 +25,6 @@ class SearchViewController: UIViewController {
 
         let layout = UICollectionViewFlowLayout.usersLayout()
         // this is in no way accurate but it works
-        layout.footerReferenceSize = CGSize(width: view.frame.size.width, height: layout.footerReferenceSize.height + 50)
         collection = UICollectionView(frame: view.frame, collectionViewLayout: layout)
         collection.delegate = self
         collection.dataSource = self
