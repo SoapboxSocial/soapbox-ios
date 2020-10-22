@@ -550,7 +550,7 @@ extension Room: WebRTCClientDelegate {
     }
 
     func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
-        if state == .connected {
+        if state == .connected && completion != nil {
             completion(.success(()))
             completion = nil
             return
