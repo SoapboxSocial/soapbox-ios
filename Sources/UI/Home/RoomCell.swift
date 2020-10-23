@@ -146,7 +146,7 @@ class RoomCell: UICollectionViewCell {
                     label.font = .rounded(forTextStyle: .body, weight: .black)
                     label.text = String(min(members.count - 3, 9))
                     view.addSubview(label)
-                    
+
                     let plus = UILabel()
                     plus.translatesAutoresizingMaskIntoConstraints = false
 
