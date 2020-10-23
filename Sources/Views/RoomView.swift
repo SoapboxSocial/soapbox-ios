@@ -23,8 +23,8 @@ class RoomView: UIView {
 
     private var roomNameLabel: UILabel!
 
-    private var editNameButton: EmojiButton!
-    private var inviteButton: EmojiButton!
+    private var editNameButton: UIButton!
+    private var inviteButton: UIButton!
 
     init(frame: CGRect, room: Room, topBarHeight: CGFloat) {
         self.room = room
@@ -130,8 +130,32 @@ class RoomView: UIView {
 
         let userId = UserDefaults.standard.integer(forKey: "id")
 
+        let bottomBar = UIView(frame: CGRect(x: (frame.size.width / 2) - (208 / 2), y: frame.size.height - (25 + 48 + safeAreaInsets.bottom), width: 208, height: 48))
+        bottomBar.layer.cornerRadius = 48 / 2
+        bottomBar.backgroundColor = .background
+        addSubview(bottomBar)
+
+        editNameButton = UIButton(
+            frame: CGRect(x: 8, y: (48 / 2) - (36 / 2), width: 36, height: 36)
+        )
+        editNameButton.setImage(UIImage(systemName: "square.and.pencil", withConfiguration: iconConfig), for: .normal)
+        editNameButton.tintColor = .secondaryBackground
+        editNameButton.addTarget(self, action: #selector(editRoomNameButtonTapped), for: .touchUpInside)
+        editNameButton.isHidden = false
+        bottomBar.addSubview(editNameButton)
+
+        inviteButton = UIButton(frame: editNameButton.frame)
+        inviteButton.frame = CGRect(
+            origin: CGPoint(x: editNameButton.frame.size.width + editNameButton.frame.origin.x + 8, y: inviteButton.frame.origin.y),
+            size: inviteButton.frame.size
+        )
+        inviteButton.setImage(UIImage(systemName: "person.badge.plus", withConfiguration: iconConfig), for: .normal)
+        inviteButton.tintColor = .secondaryBackground
+        inviteButton.addTarget(self, action: #selector(inviteTapped), for: .touchUpInside)
+        bottomBar.addSubview(inviteButton)
+
+        var origin = CGPoint(x: inviteButton.frame.origin.x + inviteButton.frame.size.width + 8, y: inviteButton.frame.origin.y)
         let reactSize = CGFloat(36)
-        var origin = CGPoint(x: exitButton.frame.origin.x, y: frame.size.height - (reactSize + 10 + safeAreaInsets.bottom))
         for reaction in Room.Reaction.allCases {
             // poop emoji, only for Dean & Palley
             if reaction == .poop, userId != 1, userId != 170 {
@@ -141,28 +165,16 @@ class RoomView: UIView {
             let button = EmojiButton(frame: CGRect(origin: origin, size: CGSize(width: reactSize, height: reactSize)))
             button.setTitle(reaction.rawValue, for: .normal)
             button.addTarget(self, action: #selector(reactionTapped), for: .touchUpInside)
-            origin.x = origin.x - (button.frame.size.width + 10)
-            addSubview(button)
+            origin.x = origin.x + reactSize + 8
+            bottomBar.addSubview(button)
         }
 
-        editNameButton = EmojiButton(
-            frame: CGRect(x: safeAreaInsets.left + 20, y: frame.size.height - (reactSize + 10 + safeAreaInsets.bottom), width: 36, height: 36)
-        )
-        editNameButton.setImage(UIImage(systemName: "square.and.pencil", withConfiguration: iconConfig), for: .normal)
-        editNameButton.tintColor = .secondaryBackground
-        editNameButton.addTarget(self, action: #selector(editRoomNameButtonTapped), for: .touchUpInside)
-        editNameButton.isHidden = false
-        addSubview(editNameButton)
+        let newWidth = origin.x
 
-        inviteButton = EmojiButton(frame: editNameButton.frame)
-        inviteButton.frame = CGRect(
-            origin: CGPoint(x: offset, y: inviteButton.frame.origin.y),
-            size: inviteButton.frame.size
+        bottomBar.frame = CGRect(
+            origin: CGPoint(x: (frame.size.width / 2) - (newWidth / 2), y: bottomBar.frame.origin.y),
+            size: CGSize(width: newWidth, height: bottomBar.frame.height)
         )
-        inviteButton.setImage(UIImage(systemName: "person.badge.plus", withConfiguration: iconConfig), for: .normal)
-        inviteButton.tintColor = .secondaryBackground
-        inviteButton.addTarget(self, action: #selector(inviteTapped), for: .touchUpInside)
-        addSubview(inviteButton)
 
         if room.role != .admin {
             hideEditNameButton()
