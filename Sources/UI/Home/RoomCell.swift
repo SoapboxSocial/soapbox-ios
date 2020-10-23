@@ -123,14 +123,14 @@ class RoomCell: UICollectionViewCell {
         // @todo only use members with images
         let count = members.count
 
-        for i in 0 ..< min(4, count) {
+        for i in 0 ..< min(2, count) {
             let view: UIView = {
-                if i == 3, count > 3 {
+                if i == 1, count > 1 {
                     let view = UIView()
                     if style == .current {
                         view.backgroundColor = .brandColor
                     } else {
-                        view.backgroundColor = .systemGray6
+                        view.backgroundColor = .foreground
                     }
 
                     view.translatesAutoresizingMaskIntoConstraints = false
@@ -143,12 +143,29 @@ class RoomCell: UICollectionViewCell {
                         label.textColor = .white
                     }
 
-                    label.font = .rounded(forTextStyle: .body, weight: .bold)
-                    label.text = "+" + String(min(members.count - 3, 9))
+                    label.font = .rounded(forTextStyle: .body, weight: .black)
+                    label.text = String(min(members.count - 3, 9))
                     view.addSubview(label)
+                    
+                    let plus = UILabel()
+                    plus.translatesAutoresizingMaskIntoConstraints = false
+
+                    plus.textColor = .label
+                    if style == .current {
+                        plus.textColor = .white
+                    }
+
+                    plus.font = .rounded(forTextStyle: .caption2, weight: .semibold)
+                    plus.text = "+"
+                    view.addSubview(plus)
 
                     NSLayoutConstraint.activate([
-                        label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                        plus.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 7),
+                        plus.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+                    ])
+
+                    NSLayoutConstraint.activate([
+                        label.leftAnchor.constraint(equalTo: plus.rightAnchor),
                         label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
                     ])
 
