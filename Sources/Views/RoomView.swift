@@ -26,6 +26,10 @@ class RoomView: UIView {
     private var editNameButton: UIButton!
     private var inviteButton: UIButton!
 
+    // @TODO MAKE THIS ITS OWN CLASS
+    private var bottomBar: UIView!
+    private var normalButtons: UIView!
+
     init(frame: CGRect, room: Room, topBarHeight: CGFloat) {
         self.room = room
         self.topBarHeight = topBarHeight
@@ -130,7 +134,7 @@ class RoomView: UIView {
 
         let userId = UserDefaults.standard.integer(forKey: "id")
 
-        let bottomBar = UIView(frame: CGRect(x: (frame.size.width / 2) - (208 / 2), y: frame.size.height - (25 + 48 + safeAreaInsets.bottom), width: 208, height: 48))
+        bottomBar = UIView(frame: CGRect(x: (frame.size.width / 2) - (208 / 2), y: frame.size.height - (25 + 48 + safeAreaInsets.bottom), width: 208, height: 48))
         bottomBar.layer.cornerRadius = 48 / 2
         bottomBar.backgroundColor = .background
         addSubview(bottomBar)
@@ -144,18 +148,18 @@ class RoomView: UIView {
         editNameButton.isHidden = false
         bottomBar.addSubview(editNameButton)
 
+        normalButtons = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 48))
+        bottomBar.addSubview(normalButtons)
+
         inviteButton = UIButton(frame: editNameButton.frame)
-        inviteButton.frame = CGRect(
-            origin: CGPoint(x: editNameButton.frame.size.width + editNameButton.frame.origin.x + 8, y: inviteButton.frame.origin.y),
-            size: inviteButton.frame.size
-        )
         inviteButton.setImage(UIImage(systemName: "person.badge.plus", withConfiguration: iconConfig), for: .normal)
         inviteButton.tintColor = .secondaryBackground
         inviteButton.addTarget(self, action: #selector(inviteTapped), for: .touchUpInside)
-        bottomBar.addSubview(inviteButton)
+        normalButtons.addSubview(inviteButton)
 
         var origin = CGPoint(x: inviteButton.frame.origin.x + inviteButton.frame.size.width + 8, y: inviteButton.frame.origin.y)
         let reactSize = CGFloat(36)
+        let buttonSpacing = CGFloat(8)
         for reaction in Room.Reaction.allCases {
             // poop emoji, only for Dean & Palley
             if reaction == .poop, userId != 1, userId != 170 {
@@ -165,21 +169,22 @@ class RoomView: UIView {
             let button = EmojiButton(frame: CGRect(origin: origin, size: CGSize(width: reactSize, height: reactSize)))
             button.setTitle(reaction.rawValue, for: .normal)
             button.addTarget(self, action: #selector(reactionTapped), for: .touchUpInside)
-            origin.x = origin.x + reactSize + 8
-            bottomBar.addSubview(button)
+            origin.x += reactSize + buttonSpacing
+            normalButtons.addSubview(button)
         }
 
-        let newWidth = origin.x
+        let newWidth = origin.x + reactSize + buttonSpacing
 
         bottomBar.frame = CGRect(
             origin: CGPoint(x: (frame.size.width / 2) - (newWidth / 2), y: bottomBar.frame.origin.y),
             size: CGSize(width: newWidth, height: bottomBar.frame.height)
         )
 
+        offset = editNameButton.frame.size.width + editNameButton.frame.origin.x
+        normalButtons.frame = CGRect(x: offset, y: 0, width: bottomBar.frame.width - offset, height: bottomBar.frame.height)
+
         if room.role != .admin {
             hideEditNameButton()
-        } else {
-            showEditNameButton()
         }
 
         DispatchQueue.main.async {
@@ -188,13 +193,21 @@ class RoomView: UIView {
     }
 
     private func hideEditNameButton() {
-        editNameButton.isHidden = true
-        inviteButton.frame.origin.x = safeAreaInsets.left + 20
+        UIView.animate(withDuration: 0.2) { [self] in
+            editNameButton.isHidden = true
+            normalButtons.frame.origin.x = 0
+            bottomBar.frame.size.width = normalButtons.frame.size.width
+            bottomBar.center.x = center.x
+        }
     }
 
     private func showEditNameButton() {
-        editNameButton.isHidden = false
-        inviteButton.frame.origin.x = editNameButton.frame.size.width + editNameButton.frame.origin.x + 10
+        UIView.animate(withDuration: 0.2) { [self] in
+            editNameButton.isHidden = false
+            bottomBar.frame.size.width = normalButtons.frame.size.width + editNameButton.frame.size.width + editNameButton.frame.origin.x
+            bottomBar.center.x = center.x
+            normalButtons.frame.origin.x = editNameButton.frame.size.width + editNameButton.frame.origin.x
+        }
     }
 
     @objc private func pasteLink() {
