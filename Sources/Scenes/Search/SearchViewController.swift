@@ -65,7 +65,7 @@ class SearchViewController: UIViewController {
         searchController.hidesNavigationBarDuringPresentation = false
 
         navigationItem.searchController = searchController
-        
+
         NSLayoutConstraint.activate([
             collection.leftAnchor.constraint(equalTo: view.leftAnchor),
             collection.rightAnchor.constraint(equalTo: view.rightAnchor),
@@ -73,7 +73,7 @@ class SearchViewController: UIViewController {
             collection.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
-    
+
     @objc private func endRefresh() {
         collection.refreshControl?.endRefreshing()
     }
