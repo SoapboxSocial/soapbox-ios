@@ -37,6 +37,7 @@ class HomeViewController: UIViewController {
         collection.register(cellWithClass: EmptyRoomCollectionViewCell.self)
         collection.register(cellWithClass: RoomCell.self)
         collection.register(cellWithClass: ActiveUserCell.self)
+        collection.register(cellWithClass: GroupCell.self)
 
         collection.refreshControl = refresh
         refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -124,6 +125,8 @@ class HomeViewController: UIViewController {
                 return self.createRoomListSection()
             case .noRooms:
                 return self.createNoRoomsSection()
+            case .groupList:
+                return self.createGroupSection()
             }
         }
     }
@@ -179,6 +182,23 @@ class HomeViewController: UIViewController {
         layoutSection.interGroupSpacing = 20
 
         layoutSection.boundarySupplementaryItems = [createSectionHeader(), createSectionFooter()]
+
+        return layoutSection
+    }
+
+    private func createGroupSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .estimated(96), heightDimension: .fractionalHeight(1))
+        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .estimated(1), heightDimension: .absolute(56))
+        let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitems: [layoutItem])
+
+        layoutGroup.interItemSpacing = .fixed(10)
+
+        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        layoutSection.interGroupSpacing = 10
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
+        layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
 
         return layoutSection
     }
@@ -269,6 +289,8 @@ extension HomeViewController: UICollectionViewDelegate {
             output.didSelectRoom(room: Int(room.id))
         case .noRooms:
             return
+        case .groupList:
+            return
         }
     }
 }
@@ -290,6 +312,10 @@ extension HomeViewController: UICollectionViewDataSource {
             return cell
         case .roomList:
             let cell = collectionView.dequeueReusableCell(withClass: RoomCell.self, for: indexPath)
+            presenter.configure(item: cell, for: indexPath)
+            return cell
+        case .groupList:
+            let cell = collectionView.dequeueReusableCell(withClass: GroupCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
         case .noRooms:

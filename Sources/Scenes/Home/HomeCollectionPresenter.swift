@@ -3,9 +3,14 @@ import UIKit
 
 protocol SectionData {}
 
+struct Group {
+    let title: String
+}
+
 enum SectionType: Int, CaseIterable {
     case roomList
     case activeList
+    case groupList
     case noRooms
 }
 
@@ -25,6 +30,7 @@ class HomeCollectionPresenter {
     }
 
     init() {
+        set(groups: [Group(title: "woodworking"), Group(title: "crypto"), Group(title: "yolo"), Group(title: "Dialectic"), Group(title: "Mandela")])
         set(rooms: [])
     }
 
@@ -62,6 +68,16 @@ class HomeCollectionPresenter {
         }
     }
 
+    func configure(item: GroupCell, for indexPath: IndexPath) {
+        let section = dataSource[indexPath.section]
+        guard let group = section.data[indexPath.row] as? Group else {
+            print("Error getting active user for indexPath: \(indexPath)")
+            return
+        }
+
+        item.name.text = group.title
+    }
+
     func configure(item: RoomCell, for indexPath: IndexPath) {
         let section = dataSource[indexPath.section]
         guard let room = section.data[indexPath.row] as? RoomState else {
@@ -91,6 +107,16 @@ class HomeCollectionPresenter {
         item.members = room.members
     }
 
+    func set(groups: [Group]) {
+        dataSource.removeAll(where: { $0.type == .groupList })
+
+        if groups.isEmpty {
+            return
+        }
+
+        dataSource.insert(Section(type: .groupList, title: "", data: groups), at: 0)
+    }
+
     func set(rooms: [RoomState]) {
         if rooms.isEmpty {
             removeRooms()
@@ -108,7 +134,7 @@ class HomeCollectionPresenter {
             return
         }
 
-        dataSource.insert(Section(type: .activeList, title: "", data: actives), at: 0)
+        dataSource.insert(Section(type: .activeList, title: "", data: actives), at: 1)
     }
 
     private func removeRooms() {
