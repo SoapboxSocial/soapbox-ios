@@ -71,7 +71,7 @@ PODS:
     - SwiftNIOConcurrencyHelpers (< 3, >= 2.22.0)
     - SwiftNIOFoundationCompat (< 3, >= 2.22.0)
     - SwiftNIOTLS (< 3, >= 2.22.0)
-  - SwiftProtobuf (1.12.0)
+  - SwiftProtobuf (1.13.0)
   - UIWindowTransitions (0.2.0)
 
 DEPENDENCIES:
@@ -167,7 +167,7 @@ SPEC CHECKSUMS:
   SwiftNIOSSL: fc672dc6a26e6ab78edd729568cd5a44aabb3409
   SwiftNIOTLS: 905a7e7e26a3f7d9661da34e0edf01be086c596d
   SwiftNIOTransportServices: 801923921fbecdcde1e1c1ff38e812167d01ead1
-  SwiftProtobuf: 4ef85479c18ca85b5482b343df9c319c62bda699
+  SwiftProtobuf: fd4693388a96c8c2df35d3b063272b0e7c499d00
   UIWindowTransitions: cb662e2ae9e2d1060fcdbe3eb3de9232bedb7612
 
 PODFILE CHECKSUM: 625142ee75df99cfd84b6f1d606bf6d36ca92334
