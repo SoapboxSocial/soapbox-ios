@@ -10,6 +10,14 @@ class GroupCell: UICollectionViewCell {
         return label
     }()
 
+    var image: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .brandColor
+        view.layer.cornerRadius = 40 / 2
+        return view
+    }()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
 
@@ -20,6 +28,7 @@ class GroupCell: UICollectionViewCell {
         contentView.layer.cornerRadius = 56 / 2
 
         contentView.addSubview(name)
+        contentView.addSubview(image)
 
         NSLayoutConstraint.activate([
             contentView.leftAnchor.constraint(equalTo: leftAnchor),
@@ -29,7 +38,14 @@ class GroupCell: UICollectionViewCell {
         ])
 
         NSLayoutConstraint.activate([
-            name.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
+            image.widthAnchor.constraint(equalToConstant: 40),
+            image.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 8),
+            image.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            image.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+        ])
+
+        NSLayoutConstraint.activate([
+            name.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 10),
             name.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
             name.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             name.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
