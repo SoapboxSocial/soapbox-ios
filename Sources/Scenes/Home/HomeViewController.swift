@@ -138,10 +138,12 @@ class HomeViewController: UIViewController {
 
         layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
 
-        let layoutGroupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0), heightDimension:
-            .absolute(view.frame.size.height - 300) // @TODO NOT SURE ABOUT HEIGHT
-        )
+        var height = NSCollectionLayoutDimension.fractionalHeight(0.9)
+        if presenter.has(section: .activeList) {
+            height = .absolute(view.frame.size.height - 300)
+        }
+
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: height)
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitem: layoutItem, count: 1)
 
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
