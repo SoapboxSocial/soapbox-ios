@@ -38,6 +38,7 @@ class HomeViewController: UIViewController {
         collection.register(cellWithClass: RoomCell.self)
         collection.register(cellWithClass: ActiveUserCell.self)
         collection.register(cellWithClass: GroupCell.self)
+        collection.register(cellWithClass: CreateGroupCell.self)
 
         collection.refreshControl = refresh
         refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -187,7 +188,7 @@ class HomeViewController: UIViewController {
     }
 
     private func createGroupSection() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .estimated(96), heightDimension: .fractionalHeight(1))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .estimated(1), heightDimension: .fractionalHeight(1))
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .estimated(1), heightDimension: .absolute(56))
@@ -315,6 +316,10 @@ extension HomeViewController: UICollectionViewDataSource {
             presenter.configure(item: cell, for: indexPath)
             return cell
         case .groupList:
+            if indexPath.item == 0 {
+                return collectionView.dequeueReusableCell(withClass: CreateGroupCell.self, for: indexPath)
+            }
+
             let cell = collectionView.dequeueReusableCell(withClass: GroupCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
