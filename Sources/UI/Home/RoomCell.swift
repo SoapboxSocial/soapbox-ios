@@ -1,9 +1,8 @@
 import UIKit
 
 class RoomCell: UICollectionViewCell {
-    
     private let configuration = UIImage.SymbolConfiguration(weight: .black)
-    
+
     enum RoomStyle {
         case normal, current
     }
@@ -126,9 +125,9 @@ class RoomCell: UICollectionViewCell {
         // @todo only use members with images
         let count = members.count
 
-        for i in 0 ..< min(2, count) {
+        for i in 0 ..< min(4, count) {
             let view: UIView = {
-                if i == 1, count > 1 {
+                if i == 3, count > 3 {
                     let view = UIView()
                     if style == .current {
                         view.backgroundColor = .brandColor
@@ -158,7 +157,7 @@ class RoomCell: UICollectionViewCell {
                         plus.textColor = .white
                     }
 
-                    plus.font = .rounded(forTextStyle: .caption2, weight: .semibold)
+                    plus.font = .rounded(forTextStyle: .caption2, weight: .black)
                     plus.text = "+"
                     view.addSubview(plus)
 
