@@ -138,7 +138,12 @@ class HomeCollectionPresenter {
             return
         }
 
-        dataSource.insert(Section(type: .activeList, title: "", data: actives), at: 1)
+        var at = 0
+        if has(section: .groupList) {
+            at = 1
+        }
+
+        dataSource.insert(Section(type: .activeList, title: "", data: actives), at: at)
     }
 
     func has(section: SectionType) -> Bool {

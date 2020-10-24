@@ -118,7 +118,7 @@ class HomeViewController: UIViewController {
     }
 
     private func makeLayout() -> UICollectionViewLayout {
-        return UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+        let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             switch self.presenter.sectionType(for: sectionIndex) {
             case .activeList:
                 return self.createActiveListSection()
@@ -130,6 +130,10 @@ class HomeViewController: UIViewController {
                 return self.createGroupSection()
             }
         }
+
+        layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
+        layout.configuration.interSectionSpacing = 20
+        return layout
     }
 
     private func createNoRoomsSection() -> NSCollectionLayoutSection {
@@ -200,7 +204,7 @@ class HomeViewController: UIViewController {
 
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
         layoutSection.interGroupSpacing = 10
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20)
         layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
 
         return layoutSection
