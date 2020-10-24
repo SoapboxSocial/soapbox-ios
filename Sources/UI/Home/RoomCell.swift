@@ -1,6 +1,9 @@
 import UIKit
 
 class RoomCell: UICollectionViewCell {
+    
+    private let configuration = UIImage.SymbolConfiguration(weight: .black)
+    
     enum RoomStyle {
         case normal, current
     }
