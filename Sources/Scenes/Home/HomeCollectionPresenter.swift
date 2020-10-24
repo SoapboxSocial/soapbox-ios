@@ -111,6 +111,10 @@ class HomeCollectionPresenter {
         dataSource.insert(Section(type: .activeList, title: "", data: actives), at: 0)
     }
 
+    func has(section: SectionType) -> Bool {
+        return dataSource.contains(where: { $0.type == section })
+    }
+
     private func removeRooms() {
         dataSource.removeAll(where: { $0.type == .roomList })
 
