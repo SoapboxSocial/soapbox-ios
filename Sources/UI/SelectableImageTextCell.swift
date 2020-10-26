@@ -31,10 +31,10 @@ class SelectableImageTextCell: UICollectionViewCell {
         view.addSubview(image)
 
         NSLayoutConstraint.activate([
-            image.topAnchor.constraint(equalTo: view.topAnchor, constant: 10),
-            image.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10),
-            image.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 10),
-            image.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -10),
+            image.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            image.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
+            image.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            image.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
 
         return view
