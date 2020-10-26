@@ -1,3 +1,4 @@
+import BetterSegmentedControl
 import UIKit
 
 protocol RoomCreationDelegate {
@@ -8,7 +9,7 @@ protocol RoomCreationDelegate {
 class RoomCreationView: UIView, UITextFieldDelegate {
     var delegate: RoomCreationDelegate?
 
-    private var lock: UIButton!
+    private var visibilityControl: BetterSegmentedControl!
     private var textField: UITextField!
 
     override func layoutSubviews() {
@@ -40,26 +41,21 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         title.frame = CGRect(origin: CGPoint(x: 20, y: cancel.frame.size.height + cancel.frame.origin.y + 20), size: title.frame.size)
         addSubview(title)
 
-        let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
-        lock = UIButton(frame: CGRect(x: frame.size.width - 56, y: 0, width: 36, height: 36))
-        lock.tintColor = .white
-        lock.backgroundColor = UIColor.white.withAlphaComponent(0.3)
-        lock.layer.cornerRadius = 36 / 2
-        lock.center = CGPoint(x: lock.center.x, y: title.center.y)
-        lock.setImage(UIImage(systemName: "lock.open", withConfiguration: iconConfig), for: .normal)
-        lock.setImage(UIImage(systemName: "lock", withConfiguration: iconConfig), for: .selected)
-        lock.addTarget(self, action: #selector(didPressLock), for: .touchUpInside)
-        addSubview(lock)
-
         textField = TextField(frame: CGRect(x: 20, y: title.frame.origin.y + title.frame.size.height + 30, width: frame.size.width - 40, height: 56), theme: .light)
         textField.placeholder = NSLocalizedString("enter_name", comment: "")
         textField.delegate = self
         addSubview(textField)
 
+        visibilityControl = SegmentedControl(
+            frame: CGRect(x: 20, y: textField.frame.origin.y + title.frame.size.height + 30, width: frame.size.width - 40, height: 56),
+            titles: [NSLocalizedString("public", comment: ""), NSLocalizedString("private", comment: "")]
+        )
+        addSubview(visibilityControl)
+
         let button = Button(size: .large)
         button.setTitle(NSLocalizedString("create", comment: ""), for: .normal)
-        button.frame = CGRect(x: 20, y: textField.frame.origin.y + textField.frame.size.height + 10, width: frame.size.width - 40, height: 54)
-        button.backgroundColor = UIColor.white.withAlphaComponent(0.3)
+        button.frame = CGRect(x: 20, y: visibilityControl.frame.origin.y + visibilityControl.frame.size.height + 20, width: frame.size.width - 40, height: 54)
+        button.backgroundColor = .lightBrandColor
         button.addTarget(self, action: #selector(createPressed), for: .touchUpInside)
         addSubview(button)
     }
@@ -74,12 +70,8 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         return true
     }
 
-    @objc private func didPressLock() {
-        lock.isSelected.toggle()
-    }
-
     @objc private func createPressed() {
-        delegate?.didEnterWithName(textField.text, isPrivate: lock.isSelected)
+        delegate?.didEnterWithName(textField.text, isPrivate: visibilityControl.index == 1)
     }
 
     @objc private func cancelPressed() {
