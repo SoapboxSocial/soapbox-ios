@@ -2,6 +2,7 @@ PODS:
   - Alamofire (5.3.0)
   - AlamofireImage (4.1.0):
     - Alamofire (~> 5.1)
+  - BetterSegmentedControl (2.0.1)
   - CCBottomRefreshControl (0.5.2)
   - CGRPCZlib (1.0.0-alpha.20)
   - CNIOAtomics (2.23.0)
@@ -77,6 +78,7 @@ PODS:
 DEPENDENCIES:
   - Alamofire
   - AlamofireImage
+  - BetterSegmentedControl (~> 2.0)
   - CCBottomRefreshControl
   - DrawerView
   - FocusableImageView
@@ -93,6 +95,7 @@ SPEC REPOS:
   trunk:
     - Alamofire
     - AlamofireImage
+    - BetterSegmentedControl
     - CCBottomRefreshControl
     - CGRPCZlib
     - CNIOAtomics
@@ -137,6 +140,7 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   Alamofire: 2c792affbdc2f18016e08fdbcacd60aebe1ba593
   AlamofireImage: c4a2ba349885fb3064feb74d2e547bd42ce9be10
+  BetterSegmentedControl: 09607b27861d49cbce48b7673b74f9150a3d371a
   CCBottomRefreshControl: 389780b4488321c91d18f66a6da5ef9606df6de5
   CGRPCZlib: 9421db015a274b3cd5cce57334826881f61c0785
   CNIOAtomics: 9f81e08a07afa84d14f93828071f5f28d2c120be
@@ -170,6 +174,6 @@ SPEC CHECKSUMS:
   SwiftProtobuf: fd4693388a96c8c2df35d3b063272b0e7c499d00
   UIWindowTransitions: cb662e2ae9e2d1060fcdbe3eb3de9232bedb7612
 
-PODFILE CHECKSUM: 625142ee75df99cfd84b6f1d606bf6d36ca92334
+PODFILE CHECKSUM: d7bd2b8a0e04e5d2e90071bdaa5e1ce331804d0d
 
 COCOAPODS: 1.10.0.rc.1
