@@ -11,29 +11,28 @@ class InviteFriendsListViewController: UIViewController {
 
     private var friends = [APIClient.User]()
 
-    private let friendsList: UITableView
+    private var friendsList: UICollectionView!
     private let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
 
     private var invited = [Int]()
-
-    init() {
-        friendsList = UITableView()
-        super.init(nibName: nil, bundle: nil)
-        friendsList.dataSource = self
-        friendsList.delegate = self
-    }
-
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .background
 
-        friendsList.frame = CGRect(x: 0, y: 44, width: view.frame.size.width, height: view.frame.size.height - 44)
-        friendsList.separatorStyle = .none
+        let layout = UICollectionViewFlowLayout.basicUserBubbleLayout(itemsPerRow: 4, width: view.frame.size.width)
+        layout.sectionInset.bottom = view.safeAreaInsets.bottom + 20
+
+        friendsList = UICollectionView(
+            frame: CGRect(x: 0, y: 44, width: view.frame.size.width, height: view.frame.size.height - 44),
+            collectionViewLayout: layout
+        )
+        friendsList!.dataSource = self
+        friendsList!.delegate = self
+        friendsList!.allowsMultipleSelection = true
+        friendsList!.register(cellWithClass: SelectableImageTextCell.self)
+        friendsList!.backgroundColor = .clear
         view.addSubview(friendsList)
 
         // @todo probably use emoji button?
@@ -61,48 +60,42 @@ extension InviteFriendsListViewController: InviteFriendsListPresenterOutput {
     }
 }
 
-extension InviteFriendsListViewController: UITableViewDataSource {
-    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        return friends.count
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt index: IndexPath) -> UITableViewCell {
-        let user = friends[index.item]
-
-        let cell = getCell(tableView)
-
-        var accessory = UIImage(systemName: "paperplane", withConfiguration: iconConfig)
-        if invited.contains(user.id) {
-            accessory = UIImage(systemName: "checkmark", withConfiguration: iconConfig)
+extension InviteFriendsListViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? SelectableImageTextCell else {
+            return
         }
 
-        cell.accessoryView = UIImageView(image: accessory)
-        cell.accessoryView?.tintColor = .secondaryBackground
+        cell.selectedView.isHidden = false
 
-        cell.textLabel?.text = user.displayName
-        cell.detailTextLabel?.text = "@" + user.username
-        return cell
-    }
-
-    func getCell(_ tableView: UITableView) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier") {
-            return cell
-        }
-
-        return UITableViewCell(style: .subtitle, reuseIdentifier: "reuseIdentifier")
+        output.didSelect(user: friends[indexPath.item].id)
+        invited.append(friends[indexPath.item].id)
     }
 }
 
-extension InviteFriendsListViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+extension InviteFriendsListViewController: UICollectionViewDataSource {
+    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
+        return friends.count
+    }
 
-        // @TODO THIS SHOULD BE PART OF THE VIPER CYCLE
-        output.didSelect(user: friends[indexPath.item].id)
-        invited.append(friends[indexPath.item].id)
+    func collectionView(_: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = friendsList.dequeueReusableCell(withClass: SelectableImageTextCell.self, for: indexPath)
 
-        if let cell = tableView.cellForRow(at: indexPath) {
-            (cell.accessoryView as? UIImageView)?.image = UIImage(systemName: "checkmark", withConfiguration: iconConfig)
+        let user = friends[indexPath.item]
+
+        cell.image.image = nil
+        if let image = user.image, image != "" {
+            cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
         }
+
+        cell.title.text = user.displayName.firstName()
+
+        if invited.contains(user.id) {
+            cell.selectedView.isHidden = false
+        } else {
+            cell.selectedView.isHidden = true
+        }
+
+        return cell
     }
 }
