@@ -104,3 +104,6 @@
 "add_admin" = "Make admin";
 
 "search" = "Search";
+
+"public" = "Public";
+"private" = "Private";

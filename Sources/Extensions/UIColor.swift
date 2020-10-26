@@ -5,6 +5,10 @@ extension UIColor {
         UIColor(displayP3Red: 133 / 255, green: 90 / 255, blue: 255 / 255, alpha: 1)
     }
 
+    static var lightBrandColor: UIColor {
+        UIColor(displayP3Red: 161 / 255, green: 141 / 255, blue: 248 / 255, alpha: 1)
+    }
+
     static var background: UIColor {
         return UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
             if UITraitCollection.userInterfaceStyle == .dark {

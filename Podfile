@@ -19,7 +19,8 @@ target 'Soapbox' do
   pod 'FocusableImageView'
   pod 'Swifter', git: 'git@github.com:mattdonnelly/Swifter.git'
   pod 'CCBottomRefreshControl'
-  
+  pod 'BetterSegmentedControl', '~> 2.0'
+
   target 'SoapboxTests' do
     inherit! :search_paths
     # Pods for testing
