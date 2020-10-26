@@ -1,4 +1,3 @@
-import BetterSegmentedControl
 import UIKit
 
 protocol RoomCreationDelegate {
@@ -9,7 +8,7 @@ protocol RoomCreationDelegate {
 class RoomCreationView: UIView, UITextFieldDelegate {
     var delegate: RoomCreationDelegate?
 
-    private var visibilityControl: BetterSegmentedControl!
+    private var visibilityControl: SegmentedControl!
     private var textField: UITextField!
 
     override func layoutSubviews() {
