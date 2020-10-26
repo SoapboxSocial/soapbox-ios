@@ -116,14 +116,7 @@ class RoomView: UIView {
         roomNameLabel.center = CGPoint(x: roomNameLabel.center.x, y: exitButton.center.y)
         topBar.addSubview(roomNameLabel)
 
-        let itemsPerRow = CGFloat(4)
-        let spacing = CGFloat(20)
-        let size = (frame.size.width - (spacing * (itemsPerRow + 1))) / itemsPerRow
-        let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: size, height: size + 30)
-        layout.minimumInteritemSpacing = spacing
-        layout.sectionInset = UIEdgeInsets(top: 0, left: spacing, bottom: 0, right: spacing)
-
+        let layout = UICollectionViewFlowLayout.basicUserBubbleLayout(itemsPerRow: 4, width: frame.size.width)
         members = UICollectionView(frame: CGRect(x: 0, y: topBar.frame.size.height, width: frame.size.width, height: frame.size.height - topBar.frame.size.height), collectionViewLayout: layout)
         members!.dataSource = self
         members!.delegate = self
