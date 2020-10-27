@@ -49,8 +49,6 @@ class RoomView: UIView {
             return
         }
 
-        backgroundColor = .foreground
-
         roundCorners(corners: [.topLeft, .topRight], radius: 25.0)
 
         let inset = safeAreaInsets.bottom
@@ -87,7 +85,7 @@ class RoomView: UIView {
         muteButton = EmojiButton(frame: CGRect(x: exitButton.frame.origin.x - 56, y: 0, width: 36, height: 36))
         muteButton.setImage(UIImage(systemName: "mic", withConfiguration: iconConfig), for: .normal)
         muteButton.setImage(UIImage(systemName: "mic.slash", withConfiguration: iconConfig), for: .selected)
-        muteButton.tintColor = .secondaryBackground
+        muteButton.tintColor = .brandColor
         muteButton.center = CGPoint(x: muteButton.center.x, y: exitButton.center.y)
         muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
         addSubview(muteButton)
@@ -136,7 +134,7 @@ class RoomView: UIView {
             frame: CGRect(x: 8, y: (48 / 2) - (36 / 2), width: 36, height: 36)
         )
         editNameButton.setImage(UIImage(systemName: "square.and.pencil", withConfiguration: iconConfig), for: .normal)
-        editNameButton.tintColor = .secondaryBackground
+        editNameButton.tintColor = .brandColor
         editNameButton.addTarget(self, action: #selector(editRoomNameButtonTapped), for: .touchUpInside)
         editNameButton.isHidden = false
         bottomBar.addSubview(editNameButton)
@@ -146,7 +144,7 @@ class RoomView: UIView {
 
         inviteButton = UIButton(frame: editNameButton.frame)
         inviteButton.setImage(UIImage(systemName: "person.badge.plus", withConfiguration: iconConfig), for: .normal)
-        inviteButton.tintColor = .secondaryBackground
+        inviteButton.tintColor = .brandColor
         inviteButton.addTarget(self, action: #selector(inviteTapped), for: .touchUpInside)
         normalButtons.addSubview(inviteButton)
 
