@@ -19,28 +19,52 @@ class InviteFriendsListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .background
+        view.backgroundColor = .brandColor
+
+        let closeButton = UIButton()
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+        closeButton.titleLabel?.font = .rounded(forTextStyle: .body, weight: .medium)
+        closeButton.setTitle(NSLocalizedString("close", comment: ""), for: .normal)
+        closeButton.setTitleColor(.white, for: .normal)
+        closeButton.addTarget(self, action: #selector(close), for: .touchUpInside)
+        view.addSubview(closeButton)
+
+        let title = UILabel()
+        title.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
+        title.text = NSLocalizedString("invite_your_friends", comment: "")
+        title.translatesAutoresizingMaskIntoConstraints = false
+        title.textColor = .white
+        view.addSubview(title)
 
         let layout = UICollectionViewFlowLayout.basicUserBubbleLayout(itemsPerRow: 4, width: view.frame.size.width)
-        layout.sectionInset.bottom = view.safeAreaInsets.bottom + 40
+        layout.sectionInset.bottom = view.safeAreaInsets.bottom
 
-        friendsList = UICollectionView(
-            frame: CGRect(x: 0, y: 44, width: view.frame.size.width, height: view.frame.size.height - 44),
-            collectionViewLayout: layout
-        )
+        friendsList = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
         friendsList!.dataSource = self
         friendsList!.delegate = self
         friendsList!.allowsMultipleSelection = true
+        friendsList!.translatesAutoresizingMaskIntoConstraints = false
         friendsList!.register(cellWithClass: SelectableImageTextCell.self)
         friendsList!.backgroundColor = .clear
         view.addSubview(friendsList)
 
-        // @todo probably use emoji button?
-        let button = UIButton(type: .close)
-        button.center = CGPoint(x: 0, y: 44 / 2)
-        button.frame.origin = CGPoint(x: view.frame.size.width - (button.frame.size.width + 10), y: button.frame.origin.y)
-        button.addTarget(self, action: #selector(close), for: .touchUpInside)
-        view.addSubview(button)
+        NSLayoutConstraint.activate([
+            closeButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            closeButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            title.topAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: 20),
+            title.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            title.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+        ])
+
+        NSLayoutConstraint.activate([
+            friendsList.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 20),
+            friendsList.leftAnchor.constraint(equalTo: view.leftAnchor),
+            friendsList.rightAnchor.constraint(equalTo: view.rightAnchor),
+            friendsList.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
 
         output.fetchFriends()
     }
@@ -89,6 +113,7 @@ extension InviteFriendsListViewController: UICollectionViewDataSource {
         }
 
         cell.title.text = user.displayName.firstName()
+        cell.title.textColor = .white
 
         if invited.contains(user.id) {
             cell.selectedView.isHidden = false
