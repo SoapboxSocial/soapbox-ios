@@ -28,7 +28,7 @@ class AuthenticationViewController: UIViewController {
 
     private var profileImage: EditProfileImageButton!
 
-    private var state = AuthenticationInteractor.AuthenticationState.login
+    var state = AuthenticationInteractor.AuthenticationState.login
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,6 +75,11 @@ class AuthenticationViewController: UIViewController {
             state.frame = CGRect(origin: CGPoint(x: view.frame.size.width * CGFloat(i), y: 0), size: state.frame.size)
             scrollView.addSubview(state)
         }
+    }
+
+    func inject(pin: String) {
+        pinTextField.text = pin
+        didSubmit()
     }
 
     @objc private func didSubmit() {

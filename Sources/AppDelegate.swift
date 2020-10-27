@@ -58,6 +58,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
+    func application(_: UIApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+            let incomingURL = userActivity.webpageURL,
+            let components = NSURLComponents(url: incomingURL, resolvingAgainstBaseURL: true) else {
+            return false
+        }
+
+        guard let param = components.queryItems?.first(where: { $0.name == "pin" }), let pin = param.value else {
+            return false
+        }
+
+        guard let nav = window?.rootViewController as? UINavigationController else {
+            return false
+        }
+
+        guard let auth = nav.visibleViewController as? AuthenticationViewController else {
+            return false
+        }
+
+        guard auth.state == .pin else {
+            return false
+        }
+
+        auth.inject(pin: pin)
+
+        return true
+    }
+
     func transitionToLoginView() {
         window?.setRootViewController(createLoginView(), options: UIWindow.TransitionOptions(direction: .fade, style: .easeOut))
     }
