@@ -22,7 +22,7 @@ class InviteFriendsListViewController: UIViewController {
         view.backgroundColor = .background
 
         let layout = UICollectionViewFlowLayout.basicUserBubbleLayout(itemsPerRow: 4, width: view.frame.size.width)
-        layout.sectionInset.bottom = view.safeAreaInsets.bottom + 20
+        layout.sectionInset.bottom = view.safeAreaInsets.bottom + 40
 
         friendsList = UICollectionView(
             frame: CGRect(x: 0, y: 44, width: view.frame.size.width, height: view.frame.size.height - 44),
