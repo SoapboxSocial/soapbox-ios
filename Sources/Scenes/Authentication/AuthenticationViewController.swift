@@ -28,7 +28,7 @@ class AuthenticationViewController: UIViewController {
 
     private var profileImage: EditProfileImageButton!
 
-    var state = AuthenticationInteractor.AuthenticationState.login
+    private var state = AuthenticationInteractor.AuthenticationState.login
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -77,9 +77,14 @@ class AuthenticationViewController: UIViewController {
         }
     }
 
-    func inject(pin: String) {
+    func inject(pin: String) -> Bool {
+        if state == .pin {
+            return false
+        }
+        
         pinTextField.text = pin
         didSubmit()
+        return true
     }
 
     @objc private func didSubmit() {

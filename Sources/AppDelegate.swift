@@ -77,13 +77,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return false
         }
 
-        guard auth.state == .pin else {
-            return false
-        }
-
-        auth.inject(pin: pin)
-
-        return true
+        return auth.inject(pin: pin)
     }
 
     func transitionToLoginView() {
