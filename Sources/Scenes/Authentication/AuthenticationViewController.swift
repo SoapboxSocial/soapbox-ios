@@ -77,6 +77,16 @@ class AuthenticationViewController: UIViewController {
         }
     }
 
+    func inject(pin: String) -> Bool {
+        if state == .pin {
+            return false
+        }
+        
+        pinTextField.text = pin
+        didSubmit()
+        return true
+    }
+
     @objc private func didSubmit() {
         view.endEditing(true)
         submitButton.isEnabled = false
