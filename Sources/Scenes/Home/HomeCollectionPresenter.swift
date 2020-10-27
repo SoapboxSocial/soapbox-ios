@@ -3,10 +3,6 @@ import UIKit
 
 protocol SectionData {}
 
-struct Group {
-    let title: String
-}
-
 enum SectionType: Int, CaseIterable {
     case roomList
     case activeList
@@ -30,7 +26,7 @@ class HomeCollectionPresenter {
     }
 
     init() {
-        set(groups: [Group(title: "woodworking"), Group(title: "crypto"), Group(title: "yolo"), Group(title: "Dialectic"), Group(title: "Mandela")])
+        set(groups: []) // @TODO MAYBE HAVE A FIRST ITEM?
         set(rooms: [])
     }
 
@@ -74,12 +70,12 @@ class HomeCollectionPresenter {
 
     func configure(item: GroupCell, for indexPath: IndexPath) {
         let section = dataSource[indexPath.section]
-        guard let group = section.data[indexPath.row - 1] as? Group else {
+        guard let group = section.data[indexPath.row - 1] as? APIClient.Group else {
             print("Error getting active user for indexPath: \(indexPath)")
             return
         }
 
-        item.name.text = group.title
+        item.name.text = group.name
     }
 
     func configure(item: RoomCell, for indexPath: IndexPath) {
@@ -111,13 +107,8 @@ class HomeCollectionPresenter {
         item.members = room.members
     }
 
-    func set(groups: [Group]) {
+    func set(groups: [APIClient.Group]) {
         dataSource.removeAll(where: { $0.type == .groupList })
-
-        if groups.isEmpty {
-            return
-        }
-
         dataSource.insert(Section(type: .groupList, title: "", data: groups), at: 0)
     }
 

@@ -510,3 +510,38 @@ extension APIClient {
             }
     }
 }
+
+extension APIClient {
+    struct Group: Decodable {
+        let id: Int
+        let name: String
+        let groupType: String
+        let image: String?
+        let description: String
+
+        private enum CodingKeys: String, CodingKey {
+            case id, name, groupType = "group_type", image, description
+        }
+    }
+
+    func groups(id: Int, callback: @escaping (Result<[Group], APIError>) -> Void) {
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/users/" + String(id) + "/groups"), method: .get, encoding: URLEncoding.default, headers: ["Authorization": token!])
+            .validate()
+            .response { result in
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
+
+                do {
+                    let resp = try self.decoder.decode([Group].self, from: data)
+                    callback(.success(resp))
+                } catch {
+                    return callback(.failure(.decode))
+                }
+            }
+    }
+}

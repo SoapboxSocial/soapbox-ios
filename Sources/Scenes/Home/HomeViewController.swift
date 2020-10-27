@@ -228,6 +228,15 @@ class HomeViewController: UIViewController {
 }
 
 extension HomeViewController: HomePresenterOutput {
+    func didFetchGroups(groups: [APIClient.Group]) {
+        presenter.set(groups: groups)
+
+        DispatchQueue.main.async {
+            self.refresh.endRefreshing()
+            self.collection.reloadData()
+        }
+    }
+
     func didFetchRooms(rooms: [RoomState]) {
         presenter.set(rooms: rooms)
 
