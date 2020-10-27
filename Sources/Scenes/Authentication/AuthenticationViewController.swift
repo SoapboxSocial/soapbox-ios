@@ -78,10 +78,10 @@ class AuthenticationViewController: UIViewController {
     }
 
     func inject(pin: String) -> Bool {
-        if state == .pin {
+        if state != .pin {
             return false
         }
-        
+
         pinTextField.text = pin
         didSubmit()
         return true
