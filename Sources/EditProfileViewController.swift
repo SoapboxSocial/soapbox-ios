@@ -43,7 +43,7 @@ class EditProfileViewController: UIViewController {
         saveButton.translatesAutoresizingMaskIntoConstraints = false
         saveButton.titleLabel?.font = .rounded(forTextStyle: .body, weight: .semibold)
         saveButton.setTitle(NSLocalizedString("save", comment: ""), for: .normal)
-        saveButton.setTitleColor(.secondaryBackground, for: .normal)
+        saveButton.setTitleColor(.brandColor, for: .normal)
         saveButton.addTarget(self, action: #selector(savePressed), for: .touchUpInside)
         view.addSubview(saveButton)
 
@@ -51,7 +51,7 @@ class EditProfileViewController: UIViewController {
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.titleLabel?.font = .rounded(forTextStyle: .body, weight: .semibold)
         cancelButton.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
-        cancelButton.setTitleColor(.secondaryBackground, for: .normal)
+        cancelButton.setTitleColor(.brandColor, for: .normal)
         cancelButton.addTarget(self, action: #selector(cancelPressed), for: .touchUpInside)
         view.addSubview(cancelButton)
 
