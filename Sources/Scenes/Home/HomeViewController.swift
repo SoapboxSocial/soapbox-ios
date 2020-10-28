@@ -143,8 +143,19 @@ class HomeViewController: UIViewController {
         layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
 
         var height = NSCollectionLayoutDimension.fractionalHeight(0.9)
+
+        let absolute = view.frame.size.height
+        var heightAbsolute = absolute
         if presenter.has(section: .activeList) {
-            height = .absolute(view.frame.size.height - 300)
+            heightAbsolute -= 300
+        }
+
+        if presenter.has(section: .groupList) {
+            heightAbsolute -= 200
+        }
+
+        if heightAbsolute != absolute {
+            height = .absolute(heightAbsolute)
         }
 
         let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: height)
