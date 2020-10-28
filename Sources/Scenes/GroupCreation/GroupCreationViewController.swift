@@ -5,6 +5,8 @@ class GroupCreationViewController: UIViewController {
         case name, describe, invite
     }
 
+    private var scrollView: UIScrollView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -18,30 +20,33 @@ class GroupCreationViewController: UIViewController {
         cancelButton.addTarget(self, action: #selector(cancelPressed), for: .touchUpInside)
         view.addSubview(cancelButton)
 
-        let scrollView = UIScrollView(frame: CGRect.zero)
+        scrollView = UIScrollView(frame: CGRect.zero)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.isScrollEnabled = false
         view.addSubview(scrollView)
 
-        let content = UIView()
-        content.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(content)
+        let views = [
+            setupNameView(),
+        ]
 
-        let name = setupNameView()
-        content.addSubview(name)
+        var previous = scrollView as UIView
+        for sub in views {
+            scrollView.addSubview(sub)
 
-        NSLayoutConstraint.activate([
-            name.leftAnchor.constraint(equalTo: content.leftAnchor),
-            name.rightAnchor.constraint(equalTo: content.rightAnchor),
-            name.bottomAnchor.constraint(equalTo: content.bottomAnchor),
-            name.topAnchor.constraint(equalTo: content.topAnchor),
-        ])
+            var anchor = previous.rightAnchor
+            if previous == scrollView as UIView {
+                anchor = previous.leftAnchor
+            }
 
-        NSLayoutConstraint.activate([
-            content.leftAnchor.constraint(equalTo: scrollView.leftAnchor),
-            content.rightAnchor.constraint(equalTo: scrollView.rightAnchor),
-            content.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            content.topAnchor.constraint(equalTo: scrollView.topAnchor),
-        ])
+            NSLayoutConstraint.activate([
+                sub.leftAnchor.constraint(equalTo: anchor),
+                sub.widthAnchor.constraint(equalTo: view.widthAnchor),
+                sub.heightAnchor.constraint(equalTo: scrollView.heightAnchor),
+                sub.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            ])
+
+            previous = sub
+        }
 
         NSLayoutConstraint.activate([
             cancelButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
