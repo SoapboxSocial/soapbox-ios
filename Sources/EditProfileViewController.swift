@@ -83,6 +83,7 @@ class EditProfileViewController: UIViewController {
         view.addSubview(bioLabel)
 
         bioTextField = TextView()
+        bioTextField.delegate = self
         bioTextField.translatesAutoresizingMaskIntoConstraints = false
         bioTextField.text = user.bio
         view.addSubview(bioTextField)
@@ -254,6 +255,12 @@ class EditProfileViewController: UIViewController {
             style: .danger
         )
         banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+    }
+}
+
+extension EditProfileViewController: UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        return textView.text.count + (text.count - range.length) <= 300
     }
 }
 
