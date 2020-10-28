@@ -22,13 +22,24 @@ class GroupCreationViewController: UIViewController {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
 
-        let content = setupNameView()
-        scrollView.addSubview(content)
+        let content = UIView()
+        content.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(content)
+
+        let name = setupNameView()
+        content.addSubview(name)
 
         NSLayoutConstraint.activate([
-            content.leftAnchor.constraint(equalTo: view.leftAnchor),
-            content.rightAnchor.constraint(equalTo: view.rightAnchor),
-            content.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            name.leftAnchor.constraint(equalTo: content.leftAnchor),
+            name.rightAnchor.constraint(equalTo: content.rightAnchor),
+            name.bottomAnchor.constraint(equalTo: content.bottomAnchor),
+            name.topAnchor.constraint(equalTo: content.topAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            content.leftAnchor.constraint(equalTo: scrollView.leftAnchor),
+            content.rightAnchor.constraint(equalTo: scrollView.rightAnchor),
+            content.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             content.topAnchor.constraint(equalTo: scrollView.topAnchor),
         ])
 
@@ -39,7 +50,7 @@ class GroupCreationViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 20),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             scrollView.leftAnchor.constraint(equalTo: view.leftAnchor),
             scrollView.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])

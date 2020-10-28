@@ -144,8 +144,7 @@ class HomeViewController: UIViewController {
 
         var height = NSCollectionLayoutDimension.fractionalHeight(0.9)
 
-        let absolute = view.frame.size.height
-        var heightAbsolute = absolute
+        var heightAbsolute = view.frame.size.height
         if presenter.has(section: .activeList) {
             heightAbsolute -= 300
         }
@@ -154,7 +153,7 @@ class HomeViewController: UIViewController {
             heightAbsolute -= 200
         }
 
-        if heightAbsolute != absolute {
+        if heightAbsolute != view.frame.size.height {
             height = .absolute(heightAbsolute)
         }
 
