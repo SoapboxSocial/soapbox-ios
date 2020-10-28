@@ -14,9 +14,11 @@ class RoomCell: UICollectionViewCell {
                 contentView.backgroundColor = .foreground
                 badge.style = .normal
                 title.textColor = .label
+                lock.tintColor = .label
             case .current:
                 badge.style = .current
                 contentView.backgroundColor = .brandColor
+                lock.tintColor = .white
                 title.textColor = .white
             }
 

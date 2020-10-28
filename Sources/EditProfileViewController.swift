@@ -43,7 +43,7 @@ class EditProfileViewController: UIViewController {
         saveButton.translatesAutoresizingMaskIntoConstraints = false
         saveButton.titleLabel?.font = .rounded(forTextStyle: .body, weight: .semibold)
         saveButton.setTitle(NSLocalizedString("save", comment: ""), for: .normal)
-        saveButton.setTitleColor(.secondaryBackground, for: .normal)
+        saveButton.setTitleColor(.brandColor, for: .normal)
         saveButton.addTarget(self, action: #selector(savePressed), for: .touchUpInside)
         view.addSubview(saveButton)
 
@@ -51,7 +51,7 @@ class EditProfileViewController: UIViewController {
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.titleLabel?.font = .rounded(forTextStyle: .body, weight: .semibold)
         cancelButton.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
-        cancelButton.setTitleColor(.secondaryBackground, for: .normal)
+        cancelButton.setTitleColor(.brandColor, for: .normal)
         cancelButton.addTarget(self, action: #selector(cancelPressed), for: .touchUpInside)
         view.addSubview(cancelButton)
 
@@ -83,6 +83,7 @@ class EditProfileViewController: UIViewController {
         view.addSubview(bioLabel)
 
         bioTextField = TextView()
+        bioTextField.delegate = self
         bioTextField.translatesAutoresizingMaskIntoConstraints = false
         bioTextField.text = user.bio
         view.addSubview(bioTextField)
@@ -254,6 +255,12 @@ class EditProfileViewController: UIViewController {
             style: .danger
         )
         banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+    }
+}
+
+extension EditProfileViewController: UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        return textView.text.count + (text.count - range.length) <= 300
     }
 }
 

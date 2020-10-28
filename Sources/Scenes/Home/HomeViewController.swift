@@ -46,7 +46,7 @@ class HomeViewController: UIViewController {
         view.addSubview(collection)
 
         let containView = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        containView.backgroundColor = .secondaryBackground
+        containView.backgroundColor = .brandColor
         containView.layer.cornerRadius = 40 / 2
         containView.clipsToBounds = true
         containView.addTarget(self, action: #selector(openProfile), for: .touchUpInside)

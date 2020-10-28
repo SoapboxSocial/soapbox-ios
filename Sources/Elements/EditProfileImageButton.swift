@@ -20,7 +20,7 @@ class EditProfileImageButton: UIImageView {
 
     private func setup() {
         layer.cornerRadius = frame.size.width / 2
-        backgroundColor = .secondaryBackground
+        backgroundColor = .brandColor
         clipsToBounds = true
 
         let view = UIView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: frame.size.height))
