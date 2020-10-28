@@ -306,6 +306,10 @@ extension HomeViewController: UICollectionViewDelegate {
         case .noRooms:
             return
         case .groupList:
+            if indexPath.item == 0 {
+                return present(GroupCreationViewController(), animated: true)
+            }
+
             return
         }
     }
