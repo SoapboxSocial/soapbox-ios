@@ -17,7 +17,10 @@ class FollowerListViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .background
 
-        collection = UICollectionView(frame: view.frame, collectionViewLayout: UICollectionViewFlowLayout.usersLayout())
+        let layout = UICollectionViewFlowLayout.usersLayout()
+
+        collection = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+        collection.translatesAutoresizingMaskIntoConstraints = false
         collection.delegate = self
         collection.dataSource = self
         collection.backgroundColor = .clear
@@ -31,6 +34,13 @@ class FollowerListViewController: UIViewController {
         paginate.addTarget(self, action: #selector(loadMore), for: .valueChanged)
         paginate.triggerVerticalOffset = 100
         collection.bottomRefreshControl = paginate
+
+        NSLayoutConstraint.activate([
+            collection.leftAnchor.constraint(equalTo: view.leftAnchor),
+            collection.rightAnchor.constraint(equalTo: view.rightAnchor),
+            collection.topAnchor.constraint(equalTo: view.topAnchor),
+            collection.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
     }
 
     @objc private func loadMore() {
