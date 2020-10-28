@@ -52,7 +52,7 @@ class InviteFriendsListViewController: UIViewController {
         searchBar.textColor = .white
         searchBar.tintColor = .white
         searchBar.attributedPlaceholder = NSAttributedString(
-            string: "Search",
+            string: NSLocalizedString("search", comment: ""),
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.white]
         )
         view.addSubview(searchBar)
