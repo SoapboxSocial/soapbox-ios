@@ -7,6 +7,11 @@ class GroupCreationViewController: UIViewController {
 
     private var scrollView: UIScrollView!
 
+    private var image: UIImage?
+    private var imageButton: EditImageButton!
+    private var imagePicker: ImagePicker!
+
+    private var nameField: TextField!
     private var bioTextField: TextView!
     private var visibilityControl: SegmentedControl!
     private var visibilityLabel: UILabel!
@@ -15,6 +20,9 @@ class GroupCreationViewController: UIViewController {
         super.viewDidLoad()
 
         view.backgroundColor = .brandColor
+
+        imagePicker = ImagePicker()
+        imagePicker.delegate = self
 
         let cancelButton = UIButton()
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
@@ -69,7 +77,7 @@ class GroupCreationViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        scrollView.contentOffset = CGPoint(x: view.frame.size.width, y: 0)
+//        scrollView.contentOffset = CGPoint(x: view.frame.size.width, y: 0)
     }
 
     @objc private func cancelPressed() {
@@ -88,10 +96,11 @@ extension GroupCreationViewController {
         title.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(title)
 
-        let imageButton = EditImageButton() // @TOOD ALL THE OTHER STUFF LIKE TARGET
+        imageButton = EditImageButton() // @TOOD ALL THE OTHER STUFF LIKE TARGET
+        imageButton.addTarget(self, action: #selector(imageButtonPressed))
         view.addSubview(imageButton)
 
-        let nameField = TextField(frame: CGRect.zero, theme: .light)
+        nameField = TextField(frame: CGRect.zero, theme: .light)
         nameField.translatesAutoresizingMaskIntoConstraints = false
         nameField.placeholder = NSLocalizedString("name", comment: "")
         nameField.returnKeyType = .done
@@ -217,6 +226,10 @@ extension GroupCreationViewController {
         return view
     }
 
+    @objc private func imageButtonPressed() {
+        imagePicker.present(self)
+    }
+
     @objc private func segmentedControlUpdated() {
         switch visibilityControl.index {
         case 0:
@@ -234,5 +247,13 @@ extension GroupCreationViewController {
 extension GroupCreationViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         return textView.text.count + (text.count - range.length) <= 300
+    }
+}
+
+extension GroupCreationViewController: ImagePickerDelegate {
+    func didSelect(image: UIImage?) {
+        guard image != nil else { return }
+        imageButton.image = image
+        self.image = image
     }
 }
