@@ -120,3 +120,5 @@
 "public_group_description" = "Anyone can view, create rooms, and see the members of this group";
 "private_group_description" = "Only invited users can view and create rooms in this group";
 "restricted_group_description" = "Anyone can view, but only invited users can create and join rooms";
+
+"started_following_you" = "started following you.";

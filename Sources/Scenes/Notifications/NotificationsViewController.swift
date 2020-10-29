@@ -10,7 +10,7 @@ class NotificationsViewController: UIViewController {
 
     private var notifications = [APIClient.Notification]()
 
-    private var tableView: UITableView!
+    private var collection: UICollectionView!
 
     private let refresh = UIRefreshControl()
 
@@ -25,21 +25,40 @@ class NotificationsViewController: UIViewController {
             NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .body, weight: .medium),
         ]
 
-        tableView = UITableView(frame: view.frame)
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.separatorStyle = .none
-        tableView.estimatedRowHeight = 44.0
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.refreshControl = refresh
-        refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
-        view.addSubview(tableView)
+        collection = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout())
+        collection.dataSource = self
+        collection.delegate = self
+        collection.translatesAutoresizingMaskIntoConstraints = false
+        collection.register(cellWithClass: FollowingNotificationCell.self)
+        view.addSubview(collection)
+
+        NSLayoutConstraint.activate([
+            collection.topAnchor.constraint(equalTo: view.topAnchor),
+            collection.leftAnchor.constraint(equalTo: view.leftAnchor),
+            collection.rightAnchor.constraint(equalTo: view.rightAnchor),
+            collection.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
 
         loadData()
     }
 
     @objc private func loadData() {
         output.loadNotifications()
+    }
+
+    private func layout() -> UICollectionViewCompositionalLayout {
+        let size = NSCollectionLayoutSize(
+            widthDimension: NSCollectionLayoutDimension.fractionalWidth(1),
+            heightDimension: NSCollectionLayoutDimension.estimated(40)
+        )
+        let item = NSCollectionLayoutItem(layoutSize: size)
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: size, subitem: item, count: 1)
+
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
+        section.interGroupSpacing = 20
+
+        return UICollectionViewCompositionalLayout(section: section)
     }
 }
 
@@ -49,7 +68,7 @@ extension NotificationsViewController: NotificationsPresenterOutput {
 
         DispatchQueue.main.async {
             self.refresh.endRefreshing()
-            self.tableView.reloadData()
+            self.collection.reloadData()
         }
     }
 
@@ -63,59 +82,40 @@ extension NotificationsViewController: NotificationsPresenterOutput {
     }
 }
 
-extension NotificationsViewController: UITableViewDataSource {
-    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
+extension NotificationsViewController: UICollectionViewDataSource {
+    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         return notifications.count
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let notification = notifications[indexPath.item]
 
-        let cell = getCell(tableView)
-        let title = NSLocalizedString(notification.alert.key, comment: "")
-        cell.textLabel?.font = .rounded(forTextStyle: .body, weight: .medium)
-        cell.textLabel?.text = String(format: title, arguments: notification.alert.arguments)
-        cell.textLabel?.numberOfLines = 0
-        cell.textLabel?.lineBreakMode = .byWordWrapping
+        let cell = collectionView.dequeueReusableCell(withClass: FollowingNotificationCell.self, for: indexPath)
+        cell.name.text = notification.from.username
+        cell.user = notification.from.id
+
+        cell.image.image = nil
+        if notification.from.image != "" {
+            cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + notification.from.image))
+        }
 
         return cell
     }
-
-    private func getCell(_ tableView: UITableView) -> UITableViewCell {
-        if let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier") {
-            return cell
-        }
-
-        return UITableViewCell(style: .subtitle, reuseIdentifier: "reuseIdentifier")
-    }
 }
 
-extension NotificationsViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-
-        // @TODO MOVE TO INTERACTOR:
+extension NotificationsViewController: UICollectionViewDelegate {
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // @TODO INTERACTOR
         let item = notifications[indexPath.item]
 
         guard let nav = navigationController as? NavigationViewController else {
             return
         }
 
-        switch item.category {
-        case "NEW_ROOM", "ROOM_JOINED", "ROOM_INVITE":
-            guard let id = item.arguments["id"] else {
-                return
-            }
-
-            nav.didSelect(room: id)
-        case "NEW_FOLLOWER":
-            guard let id = item.arguments["id"] else {
-                return
-            }
-
-            nav.pushViewController(SceneFactory.createProfileViewController(id: id), animated: true)
-        default:
-            break
+        if item.category != "NEW_FOLLOWER" {
+            return
         }
+
+        nav.pushViewController(SceneFactory.createProfileViewController(id: item.from.id), animated: true)
     }
 }
