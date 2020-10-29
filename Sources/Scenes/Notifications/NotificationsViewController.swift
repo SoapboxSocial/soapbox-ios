@@ -92,7 +92,7 @@ extension NotificationsViewController: UICollectionViewDataSource {
 
         let cell = collectionView.dequeueReusableCell(withClass: FollowingNotificationCell.self, for: indexPath)
         cell.name.text = notification.from.username
-        cell.user = notification.from.id
+        cell.time = notification.timestamp
 
         cell.image.image = nil
         if notification.from.image != "" {

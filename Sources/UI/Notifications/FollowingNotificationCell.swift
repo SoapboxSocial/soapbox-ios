@@ -1,7 +1,23 @@
 import UIKit
 
 class FollowingNotificationCell: UICollectionViewCell {
-    var user: Int!
+    var time: Int! {
+        didSet {
+            let notification = NSLocalizedString("started_following_you", comment: "")
+
+            let label = NSMutableAttributedString(string: notification, attributes: [NSAttributedString.Key.foregroundColor: UIColor.label])
+
+            let interval = TimeInterval(time)
+            label.append(
+                NSAttributedString(
+                    string: " " + Date(timeIntervalSince1970: interval).timeAgoDisplay(),
+                    attributes: [NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel]
+                )
+            )
+
+            descriptionLabel.attributedText = label
+        }
+    }
 
     let image: UIImageView = {
         let image = UIImageView()
@@ -19,18 +35,19 @@ class FollowingNotificationCell: UICollectionViewCell {
         return label
     }()
 
+    private var descriptionLabel: UILabel = {
+        let description = UILabel()
+        description.font = .rounded(forTextStyle: .body, weight: .regular)
+        description.translatesAutoresizingMaskIntoConstraints = false
+        return description
+    }()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
 
         contentView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(name)
-
-        let description = UILabel()
-        description.text = NSLocalizedString("started_following_you", comment: "")
-        description.font = .rounded(forTextStyle: .body, weight: .regular)
-        description.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(description)
-
+        contentView.addSubview(descriptionLabel)
         contentView.addSubview(image)
 
         NSLayoutConstraint.activate([
@@ -45,15 +62,15 @@ class FollowingNotificationCell: UICollectionViewCell {
         ])
 
         NSLayoutConstraint.activate([
-            description.leftAnchor.constraint(equalTo: name.leftAnchor),
-            description.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            description.topAnchor.constraint(equalTo: name.bottomAnchor),
+            descriptionLabel.leftAnchor.constraint(equalTo: name.leftAnchor),
+            descriptionLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            descriptionLabel.topAnchor.constraint(equalTo: name.bottomAnchor),
         ])
 
         NSLayoutConstraint.activate([
             contentView.leftAnchor.constraint(equalTo: leftAnchor),
             contentView.rightAnchor.constraint(equalTo: rightAnchor),
-            contentView.bottomAnchor.constraint(equalTo: description.bottomAnchor),
+            contentView.bottomAnchor.constraint(equalTo: descriptionLabel.bottomAnchor),
             contentView.topAnchor.constraint(equalTo: name.topAnchor),
         ])
     }
