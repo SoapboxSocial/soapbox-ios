@@ -2,7 +2,7 @@ import UIKit
 
 class Button: UIButton {
     enum Size {
-        case small, regular, large
+        case xsmall, small, regular, large
     }
 
     init(size: Size) {
@@ -12,6 +12,10 @@ class Button: UIButton {
         layer.cornerRadius = 15
 
         switch size {
+        case .xsmall:
+            titleLabel?.font = .rounded(forTextStyle: .body, weight: .semibold)
+            contentEdgeInsets = UIEdgeInsets(top: 5, left: 16, bottom: 5, right: 16)
+            layer.cornerRadius = 10
         case .small:
             titleLabel?.font = .rounded(forTextStyle: .title3, weight: .bold)
             contentEdgeInsets = UIEdgeInsets(top: 8, left: 20, bottom: 8, right: 20)

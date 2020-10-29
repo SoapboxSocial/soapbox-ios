@@ -75,10 +75,21 @@ extension APIClient {
         }
     }
 
+    struct NotificationUser: Decodable {
+        let id: Int
+        let username: String
+        var isFollowing: Bool
+        let image: String
+
+        private enum CodingKeys: String, CodingKey {
+            case id, username, isFollowing = "is_following", image
+        }
+    }
+
     struct Notification: Decodable {
+        let timestamp: Int
+        var from: NotificationUser
         let category: String
-        let alert: Alert
-        let arguments: [String: Int] // @TODO THIS IS DANGEROUS
     }
 
     private struct PinEntryResponse: Decodable {
