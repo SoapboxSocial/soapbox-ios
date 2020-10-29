@@ -27,6 +27,7 @@ class HomeViewController: UIViewController {
 
         view.backgroundColor = .background
 
+        // @TODO USE CONSTRAINT
         collection = CollectionView(frame: view.frame, collectionViewLayout: makeLayout())
         collection.delegate = self
         collection.dataSource = self

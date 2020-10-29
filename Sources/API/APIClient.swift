@@ -75,10 +75,16 @@ extension APIClient {
         }
     }
 
+    struct NotificationUser: Decodable {
+        let id: Int
+        let username: String
+        let image: String
+    }
+
     struct Notification: Decodable {
+        let timestamp: Int
+        var from: NotificationUser
         let category: String
-        let alert: Alert
-        let arguments: [String: Int] // @TODO THIS IS DANGEROUS
     }
 
     private struct PinEntryResponse: Decodable {
