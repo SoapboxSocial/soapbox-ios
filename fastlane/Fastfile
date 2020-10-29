@@ -38,8 +38,10 @@ platform :ios do
       build_configuration: "Release"
     )
 
+    build_number = latest_testflight_build_number + 1
+
     increment_build_number({
-      build_number: latest_testflight_build_number + 1
+      build_number: build_number
     })
 
     gym(
@@ -58,6 +60,9 @@ platform :ios do
       codesigning_identity:"Apple Distribution: Dean Eigenmann (Z9LC5GZ33U)",
       output_name: "Soapbox.ipa"
     )
-    upload_to_testflight
+    
+    changelog = read_changelog
+    upload_to_testflight(distribute_external: true, changelog: changelog)
+    stamp_changelog(section_identifier: "Build #{build_number}", stamp_date: true)
   end
 end
