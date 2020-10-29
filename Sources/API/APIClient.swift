@@ -78,12 +78,7 @@ extension APIClient {
     struct NotificationUser: Decodable {
         let id: Int
         let username: String
-        var isFollowing: Bool
         let image: String
-
-        private enum CodingKeys: String, CodingKey {
-            case id, username, isFollowing = "is_following", image
-        }
     }
 
     struct Notification: Decodable {
