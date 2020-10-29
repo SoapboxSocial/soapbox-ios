@@ -74,12 +74,6 @@ class GroupCreationViewController: UIViewController {
         ])
     }
 
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-
-//        scrollView.contentOffset = CGPoint(x: view.frame.size.width, y: 0)
-    }
-
     @objc private func cancelPressed() {
         dismiss(animated: true)
     }
