@@ -120,17 +120,26 @@ class Room {
                 switch status.code {
                 case .ok: break
                 default:
-                    if let c = self.completion {
-                        if let message = status.message, message == "join error room closed" {
-                            return c(.failure(.closed))
+                    guard let c = self.completion else {
+                        if !self.isClosed {
+                            self.delegate?.roomWasClosedByRemote()
                         }
 
-                        return c(.failure(.general))
+                        return
                     }
 
-                    if !self.isClosed {
-                        self.delegate?.roomWasClosedByRemote()
+                    if let message = status.message {
+                        switch message {
+                        case "join error room closed":
+                            return c(.failure(.closed))
+                        case "join error room full":
+                            return c(.failure(.fullRoom))
+                        default:
+                            break
+                        }
                     }
+
+                    return c(.failure(.general))
                 }
             }
         }

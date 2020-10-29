@@ -113,7 +113,8 @@ class NavigationViewController: UINavigationController {
     private func showClosedError() {
         let banner = FloatingNotificationBanner(
             title: NSLocalizedString("room_was_closed", comment: ""),
-            style: .danger
+            subtitle: NSLocalizedString("why_not_create_a_new_room", comment: ""),
+            style: .success
         )
         banner.show(cornerRadius: 10, shadowBlurRadius: 15)
     }
@@ -131,7 +132,7 @@ class NavigationViewController: UINavigationController {
         let banner = FloatingNotificationBanner(
             title: NSLocalizedString("room_is_full", comment: ""),
             subtitle: NSLocalizedString("why_not_create_a_new_room", comment: ""),
-            style: .danger
+            style: .success
         )
         banner.show(cornerRadius: 10, shadowBlurRadius: 15)
     }
@@ -214,6 +215,8 @@ extension NavigationViewController: RoomController {
                         switch error {
                         case .closed:
                             return self.showClosedError()
+                        case .fullRoom:
+                            return self.showFullRoomError()
                         default:
                             return self.showNetworkError()
                         }
