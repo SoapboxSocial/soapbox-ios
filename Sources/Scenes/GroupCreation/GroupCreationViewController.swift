@@ -7,6 +7,9 @@ class GroupCreationViewController: UIViewController {
 
     private var scrollView: UIScrollView!
 
+    private var visibilityControl: SegmentedControl!
+    private var visibilityLabel: UILabel!
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -151,8 +154,9 @@ extension GroupCreationViewController {
         view.addSubview(title)
 
         let button = Button(size: .large)
-        button.setTitle(NSLocalizedString("next", comment: ""), for: .normal)
-        button.backgroundColor = .lightBrandColor
+        button.setTitle(NSLocalizedString("create", comment: ""), for: .normal)
+        button.backgroundColor = .white
+        button.setTitleColor(.black, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(button)
 
@@ -163,14 +167,15 @@ extension GroupCreationViewController {
         bioTextField.textColor = .black
         view.addSubview(bioTextField)
 
-        let visibilityControl = SegmentedControl(
+        visibilityControl = SegmentedControl(
             frame: CGRect.zero,
             titles: ["Public", "Private", "Restricted"]
         )
         visibilityControl.translatesAutoresizingMaskIntoConstraints = false
+        visibilityControl.addTarget(self, action: #selector(segmentedControlUpdated), for: .valueChanged)
         view.addSubview(visibilityControl)
 
-        let visibilityLabel = UILabel()
+        visibilityLabel = UILabel()
         visibilityLabel.font = .rounded(forTextStyle: .title3, weight: .bold)
         visibilityLabel.text = NSLocalizedString("public_group_description", comment: "")
         visibilityLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -209,5 +214,18 @@ extension GroupCreationViewController {
         ])
 
         return view
+    }
+
+    @objc private func segmentedControlUpdated() {
+        switch visibilityControl.index {
+        case 0:
+            visibilityLabel.text = NSLocalizedString("public_group_description", comment: "")
+        case 1:
+            visibilityLabel.text = NSLocalizedString("private_group_description", comment: "")
+        case 2:
+            visibilityLabel.text = NSLocalizedString("restricted_group_description", comment: "")
+        default:
+            break
+        }
     }
 }
