@@ -7,6 +7,7 @@ class GroupCreationViewController: UIViewController {
 
     private var scrollView: UIScrollView!
 
+    private var bioTextField: TextView!
     private var visibilityControl: SegmentedControl!
     private var visibilityLabel: UILabel!
 
@@ -160,8 +161,8 @@ extension GroupCreationViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(button)
 
-        let bioTextField = TextView()
-//        bioTextField.delegate = self
+        bioTextField = TextView()
+        bioTextField.delegate = self
         bioTextField.translatesAutoresizingMaskIntoConstraints = false
         bioTextField.backgroundColor = .white
         bioTextField.textColor = .black
@@ -227,5 +228,11 @@ extension GroupCreationViewController {
         default:
             break
         }
+    }
+}
+
+extension GroupCreationViewController: UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        return textView.text.count + (text.count - range.length) <= 300
     }
 }
