@@ -265,7 +265,6 @@ class ProfileViewController: UIViewController {
 
     @objc private func editPressed() {
         let vc = EditProfileViewController(user: user, parent: self)
-        vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true)
     }
 
