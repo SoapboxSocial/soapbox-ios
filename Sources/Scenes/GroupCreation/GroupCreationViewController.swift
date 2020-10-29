@@ -27,6 +27,7 @@ class GroupCreationViewController: UIViewController {
 
         let views = [
             setupNameView(),
+            setupDescriptionView(),
         ]
 
         var previous = scrollView as UIView
@@ -59,6 +60,12 @@ class GroupCreationViewController: UIViewController {
             scrollView.leftAnchor.constraint(equalTo: view.leftAnchor),
             scrollView.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        scrollView.contentOffset = CGPoint(x: view.frame.size.width, y: 0)
     }
 
     @objc private func cancelPressed() {
@@ -122,6 +129,77 @@ extension GroupCreationViewController {
             label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 20),
             label.topAnchor.constraint(equalTo: nameField.bottomAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            button.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            button.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10),
+        ])
+
+        return view
+    }
+
+    private func setupDescriptionView() -> UIView {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+
+        let title = UILabel()
+        title.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
+        title.text = NSLocalizedString("describe_group", comment: "")
+        title.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(title)
+
+        let button = Button(size: .large)
+        button.setTitle(NSLocalizedString("next", comment: ""), for: .normal)
+        button.backgroundColor = .lightBrandColor
+        button.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(button)
+
+        let bioTextField = TextView()
+//        bioTextField.delegate = self
+        bioTextField.translatesAutoresizingMaskIntoConstraints = false
+        bioTextField.backgroundColor = .white
+        bioTextField.textColor = .black
+        view.addSubview(bioTextField)
+
+        let visibilityControl = SegmentedControl(
+            frame: CGRect.zero,
+            titles: ["Public", "Private", "Restricted"]
+        )
+        visibilityControl.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(visibilityControl)
+
+        let visibilityLabel = UILabel()
+        visibilityLabel.font = .rounded(forTextStyle: .title3, weight: .bold)
+        visibilityLabel.text = NSLocalizedString("public_group_description", comment: "")
+        visibilityLabel.translatesAutoresizingMaskIntoConstraints = false
+        visibilityLabel.numberOfLines = 0
+        view.addSubview(visibilityLabel)
+
+        NSLayoutConstraint.activate([
+            title.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            title.topAnchor.constraint(equalTo: view.topAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            bioTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            bioTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            bioTextField.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 30),
+            bioTextField.heightAnchor.constraint(equalToConstant: 80),
+        ])
+
+        NSLayoutConstraint.activate([
+            visibilityControl.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            visibilityControl.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            visibilityControl.topAnchor.constraint(equalTo: bioTextField.bottomAnchor, constant: 20),
+            visibilityControl.heightAnchor.constraint(equalToConstant: 56),
+        ])
+
+        NSLayoutConstraint.activate([
+            visibilityLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            visibilityLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            visibilityLabel.topAnchor.constraint(equalTo: visibilityControl.bottomAnchor, constant: 20),
         ])
 
         NSLayoutConstraint.activate([

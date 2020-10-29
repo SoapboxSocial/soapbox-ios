@@ -114,4 +114,7 @@
 "name_group" = "Name your group";
 "next" = "Next";
 
-"group_names_cannot_be_changed" = "Group names cannot be changed.";
+"group_names_cannot_be_changed" = "Group names cannot be changed";
+"describe_group" = "Describe your group";
+
+"public_group_description" = "Anyone can view, create rooms, and see the members of this group";
