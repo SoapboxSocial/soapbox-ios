@@ -70,7 +70,7 @@ class EditProfileViewController: UIViewController {
         nameLabel.font = .rounded(forTextStyle: .title3, weight: .bold)
         view.addSubview(nameLabel)
 
-        displayNameTextField = TextField(frame: CGRect.zero, theme: .normal)
+        displayNameTextField = TextField(frame: .zero, theme: .normal)
         displayNameTextField.translatesAutoresizingMaskIntoConstraints = false
         displayNameTextField.placeholder = NSLocalizedString("enter_name", comment: "")
         displayNameTextField.text = user.displayName
