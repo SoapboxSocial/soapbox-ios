@@ -45,12 +45,14 @@ class InviteFriendsListViewController: UIViewController {
         view.addSubview(title)
 
         searchBar = TextField(frame: CGRect.zero, theme: .light)
+        searchBar.delegate = self
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         searchBar.addTarget(self, action: #selector(updateSearchResults), for: .editingChanged)
         searchBar.backgroundColor = .lightBrandColor
         searchBar.clearButtonMode = .whileEditing
         searchBar.textColor = .white
         searchBar.tintColor = .white
+        searchBar.returnKeyType = .done
         searchBar.attributedPlaceholder = NSAttributedString(
             string: NSLocalizedString("search", comment: ""),
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.white]
@@ -168,7 +170,7 @@ extension InviteFriendsListViewController: UICollectionViewDataSource {
     }
 }
 
-extension InviteFriendsListViewController {
+extension InviteFriendsListViewController: UITextFieldDelegate {
     @objc private func updateSearchResults() {
         guard let text = searchBar.text else {
             return
@@ -183,5 +185,10 @@ extension InviteFriendsListViewController {
         }
 
         friendsList.reloadData()
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        view.endEditing(true)
+        return true
     }
 }
