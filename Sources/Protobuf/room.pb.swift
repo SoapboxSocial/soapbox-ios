@@ -408,6 +408,7 @@ struct JoinRequest {
 
   var room: Int64 = 0
 
+  /// Deprecated: use auth header instead.
   var session: String = String()
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -520,6 +521,7 @@ struct CreateRequest {
 
   var name: String = String()
 
+  /// Deprecated: use auth header instead.
   var session: String = String()
 
   var visibility: Visibility = .public
