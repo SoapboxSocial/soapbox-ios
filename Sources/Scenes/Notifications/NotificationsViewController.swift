@@ -25,7 +25,7 @@ class NotificationsViewController: UIViewController {
             NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .body, weight: .medium),
         ]
 
-        collection = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout())
+        collection = UICollectionView(frame: .zero, collectionViewLayout: layout())
         collection.dataSource = self
         collection.delegate = self
         collection.translatesAutoresizingMaskIntoConstraints = false

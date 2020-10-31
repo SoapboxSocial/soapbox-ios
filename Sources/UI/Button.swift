@@ -6,7 +6,7 @@ class Button: UIButton {
     }
 
     init(size: Size) {
-        super.init(frame: CGRect.zero)
+        super.init(frame: .zero)
 
         backgroundColor = .brandColor
         layer.cornerRadius = 15

@@ -27,10 +27,10 @@ class HomeViewController: UIViewController {
 
         view.backgroundColor = .background
 
-        // @TODO USE CONSTRAINT
-        collection = CollectionView(frame: view.frame, collectionViewLayout: makeLayout())
+        collection = CollectionView(frame: .zero, collectionViewLayout: makeLayout())
         collection.delegate = self
         collection.dataSource = self
+        collection.translatesAutoresizingMaskIntoConstraints = false
         collection.backgroundColor = .clear
 
         // @TODO PROBABLY NEED TO ADD FOOTER VIEW
@@ -78,10 +78,13 @@ class HomeViewController: UIViewController {
             action: #selector(openNotifications)
         )
         navigationItem.rightBarButtonItems = [notificationsButton, searchButton]
-    }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+        NSLayoutConstraint.activate([
+            collection.leftAnchor.constraint(equalTo: view.leftAnchor),
+            collection.rightAnchor.constraint(equalTo: view.rightAnchor),
+            collection.topAnchor.constraint(equalTo: view.topAnchor),
+            collection.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
     }
 
     override func viewWillAppear(_ animated: Bool) {
