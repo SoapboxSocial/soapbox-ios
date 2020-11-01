@@ -20,7 +20,7 @@ class RoomBadge: Badge {
         }
     }
 
-    private var label: UILabel = {
+    var label: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = NSLocalizedString("join_in", comment: "")
