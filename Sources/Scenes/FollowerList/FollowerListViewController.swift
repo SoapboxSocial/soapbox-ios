@@ -19,7 +19,7 @@ class FollowerListViewController: UIViewController {
 
         let layout = UICollectionViewFlowLayout.usersLayout()
 
-        collection = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+        collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.delegate = self
         collection.dataSource = self

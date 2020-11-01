@@ -43,15 +43,6 @@ class Room {
         }
     }
 
-    private var token: String? {
-        guard let identifier = Bundle.main.bundleIdentifier else {
-            fatalError("no identifier")
-        }
-
-        let keychain = Keychain(service: identifier)
-        return keychain[string: "token"]
-    }
-
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
 
@@ -101,14 +92,9 @@ class Room {
         self.completion = completion
         self.id = id
 
-        guard let token = self.token else {
-            return completion(.failure(.general))
-        }
-
         _ = stream.sendMessage(SignalRequest.with {
             $0.join = JoinRequest.with {
                 $0.room = Int64(id)
-                $0.session = token
             }
         })
 
@@ -151,10 +137,6 @@ class Room {
 
         role = .admin
 
-        guard let token = self.token else {
-            return completion(.failure(RoomError.general))
-        }
-
         if isPrivate {
             visibility = Visibility.private
         }
@@ -162,7 +144,6 @@ class Room {
         _ = stream.sendMessage(SignalRequest.with {
             $0.create = CreateRequest.with {
                 $0.name = name ?? ""
-                $0.session = token
                 $0.visibility = visibility
             }
         })

@@ -44,13 +44,15 @@ class InviteFriendsListViewController: UIViewController {
         title.textColor = .white
         view.addSubview(title)
 
-        searchBar = TextField(frame: CGRect.zero, theme: .light)
+        searchBar = TextField(frame: .zero, theme: .light)
+        searchBar.delegate = self
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         searchBar.addTarget(self, action: #selector(updateSearchResults), for: .editingChanged)
         searchBar.backgroundColor = .lightBrandColor
         searchBar.clearButtonMode = .whileEditing
         searchBar.textColor = .white
         searchBar.tintColor = .white
+        searchBar.returnKeyType = .done
         searchBar.attributedPlaceholder = NSAttributedString(
             string: NSLocalizedString("search", comment: ""),
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.white]
@@ -60,7 +62,7 @@ class InviteFriendsListViewController: UIViewController {
         let layout = UICollectionViewFlowLayout.basicUserBubbleLayout(itemsPerRow: 4, width: view.frame.size.width)
         layout.sectionInset.bottom = view.safeAreaInsets.bottom
 
-        friendsList = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+        friendsList = UICollectionView(frame: .zero, collectionViewLayout: layout)
         friendsList!.dataSource = self
         friendsList!.delegate = self
         friendsList!.allowsMultipleSelection = true
@@ -168,7 +170,7 @@ extension InviteFriendsListViewController: UICollectionViewDataSource {
     }
 }
 
-extension InviteFriendsListViewController {
+extension InviteFriendsListViewController: UITextFieldDelegate {
     @objc private func updateSearchResults() {
         guard let text = searchBar.text else {
             return
@@ -183,5 +185,10 @@ extension InviteFriendsListViewController {
         }
 
         friendsList.reloadData()
+    }
+
+    func textFieldShouldReturn(_: UITextField) -> Bool {
+        view.endEditing(true)
+        return true
     }
 }

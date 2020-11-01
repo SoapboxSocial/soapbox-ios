@@ -83,7 +83,7 @@ extension RoomServiceClientProtocol {
     )
   }
 
-  /// @TODO ONCE WE FIGURE OUT AUTHENTICATION
+  /// Deprecated: Use ListRooms instead
   ///
   /// - Parameters:
   ///   - request: Request to send to ListRoomsV2.
