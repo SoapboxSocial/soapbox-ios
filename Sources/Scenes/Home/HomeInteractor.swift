@@ -46,9 +46,7 @@ class HomeInteractor: HomeViewControllerOutput {
     func fetchData() {
         // @TODO probably want to start refresh control.
 
-        let call = roomService.listRoomsV2(Auth.with {
-            $0.session = token!
-        })
+        let call = roomService.listRooms(Google_Protobuf_Empty())
 
         call.response.whenComplete { result in
             DispatchQueue.main.async {
