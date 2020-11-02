@@ -1,7 +1,17 @@
 import Foundation
 import GRPC
+import KeychainAccess
 
 class ServiceFactory {
+    private static var token: String? {
+        guard let identifier = Bundle.main.bundleIdentifier else {
+            fatalError("no identifier")
+        }
+
+        let keychain = Keychain(service: identifier)
+        return keychain[string: "token"]
+    }
+
     static func createRoomService() -> RoomServiceClient {
         let group = PlatformSupport.makeEventLoopGroup(loopCount: 1)
 
@@ -9,6 +19,10 @@ class ServiceFactory {
             .insecure(group: group)
             .connect(host: Configuration.roomServiceURL, port: Configuration.roomServicePort)
 
-        return RoomServiceClient(channel: channel)
+        let callOptions = CallOptions(customMetadata: [
+            "Authorization": token!,
+        ])
+
+        return RoomServiceClient(channel: channel, defaultCallOptions: callOptions)
     }
 }

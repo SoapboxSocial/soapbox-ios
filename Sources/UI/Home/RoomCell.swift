@@ -53,6 +53,10 @@ class RoomCell: UICollectionViewCell {
     var members = [RoomState.RoomMember]() {
         didSet {
             createImageViews()
+
+            if members.count >= 16 {
+                badge.label.text = NSLocalizedString("full", comment: "")
+            }
         }
     }
 
