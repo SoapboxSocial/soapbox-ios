@@ -19,6 +19,7 @@ class GroupCreationViewController: UIViewController {
     private var descriptionText: TextView!
     private var visibilityControl: SegmentedControl!
     private var visibilityLabel: UILabel!
+    private var inviteButton: Button!
 
     private var state = GroupCreationInteractor.State.name
 
@@ -245,13 +246,13 @@ extension GroupCreationViewController {
         title.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(title)
 
-        let button = Button(size: .large)
-        button.setTitle(NSLocalizedString("skip", comment: ""), for: .normal)
-        button.backgroundColor = .white
-        button.setTitleColor(.black, for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(nextPressed), for: .touchUpInside)
-        view.addSubview(button)
+        inviteButton = Button(size: .large)
+        inviteButton.setTitle(NSLocalizedString("skip", comment: ""), for: .normal)
+        inviteButton.backgroundColor = .white
+        inviteButton.setTitleColor(.black, for: .normal)
+        inviteButton.translatesAutoresizingMaskIntoConstraints = false
+        inviteButton.addTarget(self, action: #selector(nextPressed), for: .touchUpInside)
+        view.addSubview(inviteButton)
 
         let invites = UsersListWithSearch(width: view.frame.size.width, allowsDeselection: true)
         invites.delegate = self
@@ -268,13 +269,13 @@ extension GroupCreationViewController {
             invites.leftAnchor.constraint(equalTo: view.leftAnchor),
             invites.rightAnchor.constraint(equalTo: view.rightAnchor),
             invites.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 20),
-            invites.bottomAnchor.constraint(equalTo: button.bottomAnchor),
+            invites.bottomAnchor.constraint(equalTo: inviteButton.bottomAnchor),
         ])
 
         NSLayoutConstraint.activate([
-            button.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            button.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10),
+            inviteButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            inviteButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            inviteButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10),
         ])
 
         return view
@@ -327,24 +328,28 @@ extension GroupCreationViewController: GroupCreationPresenterOutput {
     }
 
     func transitionTo(state: GroupCreationInteractor.State) {
-        self.state = state
-        scrollView.setContentOffset(CGPoint(x: view.frame.size.width * CGFloat(state.rawValue), y: 0), animated: true)
-
         if state == .success {
-            dismiss(animated: true, completion: {
+            return dismiss(animated: true, completion: {
                 // @TODO: PRESENT GROUP
             })
         }
+
+        self.state = state
+        scrollView.setContentOffset(CGPoint(x: view.frame.size.width * CGFloat(state.rawValue), y: 0), animated: true)
     }
 }
 
 extension GroupCreationViewController: UsersListWithSearchDelegate {
-    func usersList(_: UsersListWithSearch, didSelect _: Int) {
-        // @TODO
+    func usersList(_ list: UsersListWithSearch, didSelect _: Int) {
+        inviteButton.setTitle(NSLocalizedString("invite", comment: ""), for: .normal)
     }
 
-    func usersList(_: UsersListWithSearch, didDeselect _: Int) {
-        // @TODO
+    func usersList(_ list: UsersListWithSearch, didDeselect _: Int) {
+        if list.selected.count > 0 {
+            return
+        }
+
+        inviteButton.setTitle(NSLocalizedString("skip", comment: ""), for: .normal)
     }
 }
 
