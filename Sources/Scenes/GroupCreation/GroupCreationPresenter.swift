@@ -16,6 +16,12 @@ class GroupCreationPresenter: GroupCreationInteractorOutput {
         switch error {
         case .invalidName:
             output.displayError(.normal, title: NSLocalizedString("invalid_name", comment: ""), description: nil)
+        case .failedToCreate:
+            output.displayError(
+                .normal,
+                title: NSLocalizedString("failed_to_create_group", comment: ""),
+                description: NSLocalizedString("please_try_again_later", comment: "")
+            )
         }
     }
 

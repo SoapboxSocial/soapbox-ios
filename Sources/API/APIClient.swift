@@ -575,7 +575,7 @@ extension APIClient {
                     multipartFormData.append(desc.data(using: String.Encoding.utf8)!, withName: "description")
                 }
             },
-            to: Configuration.rootURL.appendingPathComponent("/v1/groups"),
+            to: Configuration.rootURL.appendingPathComponent("/v1/groups/create"),
             headers: ["Authorization": token!]
         )
         .validate()

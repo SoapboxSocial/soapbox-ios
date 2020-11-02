@@ -10,11 +10,14 @@ class GroupCell: UICollectionViewCell {
         return label
     }()
 
-    var image: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .brandColor
+    var image: UIImageView = {
+        let view = UIImageView()
         view.layer.cornerRadius = 40 / 2
+        view.backgroundColor = .brandColor
+        view.clipsToBounds = true
+        view.layer.masksToBounds = true
+        view.contentMode = .scaleAspectFill
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 

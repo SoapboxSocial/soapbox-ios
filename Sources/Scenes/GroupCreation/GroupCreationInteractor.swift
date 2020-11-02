@@ -8,7 +8,7 @@ protocol GroupCreationInteractorOutput {
 
 class GroupCreationInteractor: GroupCreationViewControllerOutput {
     enum Error {
-        case invalidName
+        case invalidName, failedToCreate
     }
 
     enum State: Int, CaseIterable {
@@ -32,8 +32,13 @@ class GroupCreationInteractor: GroupCreationViewControllerOutput {
     }
 
     func create(name: String, image: UIImage?, description: String?, visibility: Int) {
-        api.createGroup(name: name, type: typeFor(visibility: visibility), description: description, image: image, callback: { _ in
-            // @TODO
+        api.createGroup(name: name, type: typeFor(visibility: visibility), description: description, image: image, callback: { result in
+            switch result {
+            case .failure:
+                self.output.present(error: .failedToCreate)
+            case let .success(id):
+                self.output.present(state: .invite)
+            }
         })
     }
 

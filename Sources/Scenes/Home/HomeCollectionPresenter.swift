@@ -76,6 +76,11 @@ class HomeCollectionPresenter {
         }
 
         item.name.text = group.name
+
+        item.image.image = nil
+        if let image = group.image, image != "" {
+            item.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
+        }
     }
 
     func configure(item: RoomCell, for indexPath: IndexPath) {
