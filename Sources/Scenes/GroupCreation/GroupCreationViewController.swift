@@ -4,6 +4,7 @@ import UIKit
 protocol GroupCreationViewControllerOutput {
     func submit(name: String?)
     func create(name: String, image: UIImage?, description: String?, visibility: Int)
+    func invite(users: [Int])
 }
 
 class GroupCreationViewController: UIViewController {
@@ -17,9 +18,12 @@ class GroupCreationViewController: UIViewController {
 
     private var nameField: TextField!
     private var descriptionText: TextView!
+
     private var visibilityControl: SegmentedControl!
     private var visibilityLabel: UILabel!
+
     private var inviteButton: Button!
+    private var invites: UsersListWithSearch!
 
     private var state = GroupCreationInteractor.State.name
 
@@ -254,11 +258,9 @@ extension GroupCreationViewController {
         inviteButton.addTarget(self, action: #selector(nextPressed), for: .touchUpInside)
         view.addSubview(inviteButton)
 
-        let invites = UsersListWithSearch(width: view.frame.size.width, allowsDeselection: true)
+        invites = UsersListWithSearch(width: view.frame.size.width, allowsDeselection: true)
         invites.delegate = self
         view.addSubview(invites)
-
-        // @TODO LOAD USERS
 
         NSLayoutConstraint.activate([
             title.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
@@ -269,7 +271,7 @@ extension GroupCreationViewController {
             invites.leftAnchor.constraint(equalTo: view.leftAnchor),
             invites.rightAnchor.constraint(equalTo: view.rightAnchor),
             invites.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 20),
-            invites.bottomAnchor.constraint(equalTo: inviteButton.bottomAnchor),
+            invites.bottomAnchor.constraint(equalTo: inviteButton.topAnchor),
         ])
 
         NSLayoutConstraint.activate([
@@ -309,6 +311,8 @@ extension GroupCreationViewController {
             return output.submit(name: nameField.text)
         case .describe:
             return output.create(name: nameField.text!, image: image, description: descriptionText.text, visibility: visibilityControl.index)
+        case .invite:
+            return output.invite(users: invites.selected)
         default:
             return
         }
@@ -330,7 +334,11 @@ extension GroupCreationViewController: GroupCreationPresenterOutput {
     func transitionTo(state: GroupCreationInteractor.State, id: Int?) {
         if state == .success {
             return dismiss(animated: true, completion: {
-                // @TODO: PRESENT GROUP
+                // @TODO
+                self.presentingViewController?.navigationController?.pushViewController(
+                    SceneFactory.createProfileViewController(id: id!),
+                    animated: true
+                )
             })
         }
 

@@ -565,7 +565,7 @@ extension APIClient {
                         return callback(.failure(.noData))
                     }
 
-                    multipartFormData.append(imgData, withName: "profile", fileName: "profile", mimeType: "image/jpg")
+                    multipartFormData.append(imgData, withName: "image", fileName: "image", mimeType: "image/jpg")
                 }
 
                 multipartFormData.append(name.data(using: String.Encoding.utf8)!, withName: "name")
@@ -581,6 +581,7 @@ extension APIClient {
         .validate()
         .response {
             result in
+
             guard let data = result.data else {
                 return callback(.failure(.requestFailed))
             }

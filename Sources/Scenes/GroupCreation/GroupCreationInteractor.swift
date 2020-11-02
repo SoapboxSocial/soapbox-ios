@@ -45,6 +45,13 @@ class GroupCreationInteractor: GroupCreationViewControllerOutput {
         })
     }
 
+    func invite(users: [Int]) {
+        debugPrint(users)
+        if users.isEmpty {
+            return output.present(state: .success, id: id)
+        }
+    }
+
     private func typeFor(visibility: Int) -> String {
         switch visibility {
         case 1:
