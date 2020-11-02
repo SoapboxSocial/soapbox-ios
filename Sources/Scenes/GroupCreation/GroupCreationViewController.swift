@@ -1,9 +1,13 @@
 import UIKit
 
+protocol GroupCreationViewControllerOutput {}
+
 class GroupCreationViewController: UIViewController {
     enum CreationState: CaseIterable {
         case name, describe, invite
     }
+
+    var output: GroupCreationViewController!
 
     private var scrollView: UIScrollView!
 
