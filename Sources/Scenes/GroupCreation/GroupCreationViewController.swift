@@ -155,6 +155,11 @@ extension GroupCreationViewController {
         return view
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        scrollView.setContentOffset(CGPoint(x: view.frame.size.width * CGFloat(state.rawValue), y: 0), animated: false)
+    }
+
     private func setupDescriptionView() -> UIView {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -178,6 +183,7 @@ extension GroupCreationViewController {
         bioTextField.translatesAutoresizingMaskIntoConstraints = false
         bioTextField.backgroundColor = .white
         bioTextField.textColor = .black
+        bioTextField.addDoneButton(title: "Done", target: self, selector: #selector(closeKeyboard))
         view.addSubview(bioTextField)
 
         visibilityControl = SegmentedControl(
@@ -234,6 +240,10 @@ extension GroupCreationViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
 
         return view
+    }
+
+    @objc private func closeKeyboard() {
+        view.endEditing(true)
     }
 
     @objc private func imageButtonPressed() {
