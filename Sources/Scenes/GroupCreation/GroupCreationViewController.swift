@@ -327,7 +327,7 @@ extension GroupCreationViewController: GroupCreationPresenterOutput {
         }
     }
 
-    func transitionTo(state: GroupCreationInteractor.State) {
+    func transitionTo(state: GroupCreationInteractor.State, id: Int?) {
         if state == .success {
             return dismiss(animated: true, completion: {
                 // @TODO: PRESENT GROUP

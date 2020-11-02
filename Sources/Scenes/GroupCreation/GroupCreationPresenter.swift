@@ -2,7 +2,7 @@ import Foundation
 
 protocol GroupCreationPresenterOutput {
     func displayError(_ style: ErrorStyle, title: String, description: String?)
-    func transitionTo(state: GroupCreationInteractor.State)
+    func transitionTo(state: GroupCreationInteractor.State, id: Int?)
 }
 
 class GroupCreationPresenter: GroupCreationInteractorOutput {
@@ -25,7 +25,7 @@ class GroupCreationPresenter: GroupCreationInteractorOutput {
         }
     }
 
-    func present(state: GroupCreationInteractor.State) {
-        output.transitionTo(state: state)
+    func present(state: GroupCreationInteractor.State, id: Int?) {
+        output.transitionTo(state: state, id: id)
     }
 }

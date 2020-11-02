@@ -3,7 +3,7 @@ import UIKit
 
 protocol GroupCreationInteractorOutput {
     func present(error: GroupCreationInteractor.Error)
-    func present(state: GroupCreationInteractor.State)
+    func present(state: GroupCreationInteractor.State, id: Int?)
 }
 
 class GroupCreationInteractor: GroupCreationViewControllerOutput {
@@ -30,7 +30,7 @@ class GroupCreationInteractor: GroupCreationViewControllerOutput {
             return output.present(error: .invalidName)
         }
 
-        output.present(state: .describe)
+        output.present(state: .describe, id: nil)
     }
 
     func create(name: String, image: UIImage?, description: String?, visibility: Int) {
@@ -40,7 +40,7 @@ class GroupCreationInteractor: GroupCreationViewControllerOutput {
                 self.output.present(error: .failedToCreate)
             case let .success(id):
                 self.id = id
-                self.output.present(state: .invite)
+                self.output.present(state: .invite, id: nil)
             }
         })
     }
