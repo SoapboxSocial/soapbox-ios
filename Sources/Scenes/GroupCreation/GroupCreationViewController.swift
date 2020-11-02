@@ -16,7 +16,7 @@ class GroupCreationViewController: UIViewController {
     private var imagePicker: ImagePicker!
 
     private var nameField: TextField!
-    private var bioTextField: TextView!
+    private var descriptionText: TextView!
     private var visibilityControl: SegmentedControl!
     private var visibilityLabel: UILabel!
 
@@ -178,13 +178,13 @@ extension GroupCreationViewController {
         button.addTarget(self, action: #selector(nextPressed), for: .touchUpInside)
         view.addSubview(button)
 
-        bioTextField = TextView()
-        bioTextField.delegate = self
-        bioTextField.translatesAutoresizingMaskIntoConstraints = false
-        bioTextField.backgroundColor = .white
-        bioTextField.textColor = .black
-        bioTextField.addDoneButton(title: "Done", target: self, selector: #selector(closeKeyboard))
-        view.addSubview(bioTextField)
+        descriptionText = TextView()
+        descriptionText.delegate = self
+        descriptionText.translatesAutoresizingMaskIntoConstraints = false
+        descriptionText.backgroundColor = .white
+        descriptionText.textColor = .black
+        descriptionText.addDoneButton(title: "Done", target: self, selector: #selector(closeKeyboard))
+        view.addSubview(descriptionText)
 
         visibilityControl = SegmentedControl(
             frame: CGRect.zero,
@@ -207,16 +207,16 @@ extension GroupCreationViewController {
         ])
 
         NSLayoutConstraint.activate([
-            bioTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            bioTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            bioTextField.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 30),
-            bioTextField.heightAnchor.constraint(equalToConstant: 80),
+            descriptionText.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            descriptionText.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            descriptionText.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 30),
+            descriptionText.heightAnchor.constraint(equalToConstant: 80),
         ])
 
         NSLayoutConstraint.activate([
             visibilityControl.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             visibilityControl.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            visibilityControl.topAnchor.constraint(equalTo: bioTextField.bottomAnchor, constant: 20),
+            visibilityControl.topAnchor.constraint(equalTo: descriptionText.bottomAnchor, constant: 20),
             visibilityControl.heightAnchor.constraint(equalToConstant: 56),
         ])
 
@@ -238,6 +238,44 @@ extension GroupCreationViewController {
     private func setupInviteFriendsView() -> UIView {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
+
+        let title = UILabel()
+        title.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
+        title.text = NSLocalizedString("invite_your_friends", comment: "")
+        title.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(title)
+
+        let button = Button(size: .large)
+        button.setTitle(NSLocalizedString("skip", comment: ""), for: .normal)
+        button.backgroundColor = .white
+        button.setTitleColor(.black, for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(nextPressed), for: .touchUpInside)
+        view.addSubview(button)
+
+        let invites = UsersListWithSearch(width: view.frame.size.width, allowsDeselection: true)
+        invites.delegate = self
+        view.addSubview(invites)
+
+        // @TODO LOAD USERS
+
+        NSLayoutConstraint.activate([
+            title.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            title.topAnchor.constraint(equalTo: view.topAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            invites.leftAnchor.constraint(equalTo: view.leftAnchor),
+            invites.rightAnchor.constraint(equalTo: view.rightAnchor),
+            invites.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 20),
+            invites.bottomAnchor.constraint(equalTo: button.bottomAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            button.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            button.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10),
+        ])
 
         return view
     }
@@ -269,7 +307,7 @@ extension GroupCreationViewController {
         case .name:
             return output.submit(name: nameField.text)
         case .describe:
-            return output.create(name: nameField.text!, image: image, description: bioTextField.text, visibility: visibilityControl.index)
+            return output.create(name: nameField.text!, image: image, description: descriptionText.text, visibility: visibilityControl.index)
         default:
             return
         }
@@ -297,6 +335,16 @@ extension GroupCreationViewController: GroupCreationPresenterOutput {
                 // @TODO: PRESENT GROUP
             })
         }
+    }
+}
+
+extension GroupCreationViewController: UsersListWithSearchDelegate {
+    func usersList(_: UsersListWithSearch, didSelect _: Int) {
+        // @TODO
+    }
+
+    func usersList(_: UsersListWithSearch, didDeselect _: Int) {
+        // @TODO
     }
 }
 

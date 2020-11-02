@@ -18,6 +18,8 @@ class GroupCreationInteractor: GroupCreationViewControllerOutput {
     private let output: GroupCreationInteractorOutput
     private let api: APIClient
 
+    private var id: Int!
+
     init(output: GroupCreationInteractorOutput, api: APIClient) {
         self.output = output
         self.api = api
@@ -37,6 +39,7 @@ class GroupCreationInteractor: GroupCreationViewControllerOutput {
             case .failure:
                 self.output.present(error: .failedToCreate)
             case let .success(id):
+                self.id = id
                 self.output.present(state: .invite)
             }
         })

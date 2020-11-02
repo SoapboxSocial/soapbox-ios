@@ -127,3 +127,5 @@
 
 "invalid_name" = "Please enter a valid name";
 "failed_to_create_group" = "Failed to create group.";
+
+"skip" = "Skip";
