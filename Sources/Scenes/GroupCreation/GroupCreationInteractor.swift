@@ -31,5 +31,20 @@ class GroupCreationInteractor: GroupCreationViewControllerOutput {
         output.present(state: .describe)
     }
 
-    func create(name _: String, image _: UIImage?, description _: String?, visibility _: Int) {}
+    func create(name: String, image: UIImage?, description: String?, visibility: Int) {
+        api.createGroup(name: name, type: typeFor(visibility: visibility), description: description, image: image, callback: { _ in
+            // @TODO
+        })
+    }
+
+    private func typeFor(visibility: Int) -> String {
+        switch visibility {
+        case 1:
+            return "private"
+        case 2:
+            return "restricted"
+        default:
+            return "public"
+        }
+    }
 }

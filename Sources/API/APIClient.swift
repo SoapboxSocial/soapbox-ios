@@ -530,6 +530,11 @@ extension APIClient {
         }
     }
 
+    struct GroupSuccess: Decodable {
+        let success: Bool
+        let id: Int
+    }
+
     func groups(id: Int, callback: @escaping (Result<[Group], APIError>) -> Void) {
         AF.request(Configuration.rootURL.appendingPathComponent("/v1/users/" + String(id) + "/groups"), method: .get, encoding: URLEncoding.default, headers: ["Authorization": token!])
             .validate()
@@ -549,5 +554,47 @@ extension APIClient {
                     return callback(.failure(.decode))
                 }
             }
+    }
+
+    // @TODO VOID SHOULD PROBABLY BE GROUP ID
+    func createGroup(name: String, type: String, description: String?, image: UIImage?, callback: @escaping (Result<Int, APIError>) -> Void) {
+        AF.upload(
+            multipartFormData: { multipartFormData in
+                if let uploadImage = image {
+                    guard let imgData = uploadImage.jpegData(compressionQuality: 0.5) else {
+                        return callback(.failure(.noData))
+                    }
+
+                    multipartFormData.append(imgData, withName: "profile", fileName: "profile", mimeType: "image/jpg")
+                }
+
+                multipartFormData.append(name.data(using: String.Encoding.utf8)!, withName: "name")
+                multipartFormData.append(type.data(using: String.Encoding.utf8)!, withName: "group_type")
+
+                if let desc = description {
+                    multipartFormData.append(desc.data(using: String.Encoding.utf8)!, withName: "description")
+                }
+            },
+            to: Configuration.rootURL.appendingPathComponent("/v1/groups"),
+            headers: ["Authorization": token!]
+        )
+        .validate()
+        .response {
+            result in
+            guard let data = result.data else {
+                return callback(.failure(.requestFailed))
+            }
+
+            if result.error != nil {
+                callback(.failure(.noData))
+            }
+
+            do {
+                let resp = try self.decoder.decode(GroupSuccess.self, from: data)
+                callback(.success(resp.id))
+            } catch {
+                return callback(.failure(.decode))
+            }
+        }
     }
 }
