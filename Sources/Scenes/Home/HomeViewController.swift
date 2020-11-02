@@ -321,7 +321,7 @@ extension HomeViewController: UICollectionViewDelegate {
             return
         case .groupList:
             if indexPath.item == 0 {
-                return present(GroupCreationViewController(), animated: true)
+                return present(SceneFactory.createGroupCreationViewController(), animated: true)
             }
 
             return

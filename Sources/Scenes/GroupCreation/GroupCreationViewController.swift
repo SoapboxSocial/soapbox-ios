@@ -1,13 +1,13 @@
+import NotificationBannerSwift
 import UIKit
 
-protocol GroupCreationViewControllerOutput {}
+protocol GroupCreationViewControllerOutput {
+    func submit(name: String?)
+    func create(name: String, image: UIImage?, description: String?, visibility: Int)
+}
 
 class GroupCreationViewController: UIViewController {
-    enum CreationState: CaseIterable {
-        case name, describe, invite
-    }
-
-    var output: GroupCreationViewController!
+    var output: GroupCreationViewControllerOutput!
 
     private var scrollView: UIScrollView!
 
@@ -19,6 +19,8 @@ class GroupCreationViewController: UIViewController {
     private var bioTextField: TextView!
     private var visibilityControl: SegmentedControl!
     private var visibilityLabel: UILabel!
+
+    private var state = GroupCreationInteractor.State.name
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -102,13 +104,14 @@ extension GroupCreationViewController {
         nameField.translatesAutoresizingMaskIntoConstraints = false
         nameField.placeholder = NSLocalizedString("name", comment: "")
         nameField.returnKeyType = .done
+        nameField.delegate = self
         view.addSubview(nameField)
 
         let button = Button(size: .large)
         button.setTitle(NSLocalizedString("next", comment: ""), for: .normal)
         button.backgroundColor = .lightBrandColor
         button.translatesAutoresizingMaskIntoConstraints = false
-//        button.addTarget(self, action: #selector(createPressed), for: .touchUpInside)
+        button.addTarget(self, action: #selector(nextPressed), for: .touchUpInside)
         view.addSubview(button)
 
         let label = UILabel()
@@ -166,6 +169,7 @@ extension GroupCreationViewController {
         button.backgroundColor = .white
         button.setTitleColor(.black, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(nextPressed), for: .touchUpInside)
         view.addSubview(button)
 
         bioTextField = TextView()
@@ -177,7 +181,7 @@ extension GroupCreationViewController {
 
         visibilityControl = SegmentedControl(
             frame: CGRect.zero,
-            titles: ["Public", "Private", "Restricted"]
+            titles: ["Public", "Private", "Restricted"] // @TODO TRANSLATION
         )
         visibilityControl.translatesAutoresizingMaskIntoConstraints = false
         visibilityControl.addTarget(self, action: #selector(segmentedControlUpdated), for: .valueChanged)
@@ -239,6 +243,64 @@ extension GroupCreationViewController {
         default:
             break
         }
+    }
+
+    @objc private func nextPressed() {
+        view.endEditing(true)
+        switch state {
+        case .name:
+            return output.submit(name: nameField.text)
+        case .describe:
+            return output.create(name: nameField.text!, image: image, description: bioTextField.text, visibility: visibilityControl.index)
+        default:
+            return
+        }
+    }
+}
+
+extension GroupCreationViewController: GroupCreationPresenterOutput {
+    func displayError(_ style: ErrorStyle, title: String, description: String?) {
+        switch style {
+        case .normal:
+            let banner = NotificationBanner(title: title, subtitle: description, style: .danger)
+            banner.show()
+        case .floating:
+            let banner = FloatingNotificationBanner(title: title, subtitle: description, style: .danger)
+            banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+        }
+    }
+
+    func transitionTo(state: GroupCreationInteractor.State) {
+        self.state = state
+        scrollView.setContentOffset(CGPoint(x: view.frame.size.width * CGFloat(state.rawValue), y: 0), animated: true)
+
+//        if state == .requestNotifications {
+//            UIView.animate(withDuration: 0.3) {
+//                self.submitButton.frame = CGRect(origin: CGPoint(x: self.submitButton.frame.origin.x, y: self.view.frame.size.height), size: self.submitButton.frame.size)
+//            }
+//        }
+//
+//        if state == .success {
+//            let confettiView = SwiftConfettiView(frame: view.bounds)
+//            view.addSubview(confettiView)
+//            confettiView.startConfetti()
+//
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                confettiView.stopConfetti()
+//            }
+//        }
+    }
+}
+
+extension GroupCreationViewController: UITextFieldDelegate {
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }
 

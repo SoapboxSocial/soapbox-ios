@@ -1,11 +1,25 @@
 import Foundation
 
-protocol GroupCreationPresenterOutput {}
+protocol GroupCreationPresenterOutput {
+    func displayError(_ style: ErrorStyle, title: String, description: String?)
+    func transitionTo(state: GroupCreationInteractor.State)
+}
 
-class GroupCreationPresenter {
+class GroupCreationPresenter: GroupCreationInteractorOutput {
     let output: GroupCreationPresenterOutput
 
     init(output: GroupCreationPresenterOutput) {
         self.output = output
+    }
+
+    func present(error: GroupCreationInteractor.Error) {
+        switch error {
+        case .invalidName:
+            output.displayError(.normal, title: NSLocalizedString("invalid_name", comment: ""), description: nil)
+        }
+    }
+
+    func present(state: GroupCreationInteractor.State) {
+        output.transitionTo(state: state)
     }
 }
