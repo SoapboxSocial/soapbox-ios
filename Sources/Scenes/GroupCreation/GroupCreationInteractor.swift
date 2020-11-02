@@ -12,7 +12,7 @@ class GroupCreationInteractor: GroupCreationViewControllerOutput {
     }
 
     enum State: Int, CaseIterable {
-        case name, describe, invite
+        case name, describe, invite, success
     }
 
     private let output: GroupCreationInteractorOutput

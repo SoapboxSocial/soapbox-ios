@@ -46,6 +46,7 @@ class GroupCreationViewController: UIViewController {
         let views = [
             setupNameView(),
             setupDescriptionView(),
+            setupInviteFriendsView(),
         ]
 
         var previous = scrollView as UIView
@@ -228,6 +229,13 @@ extension GroupCreationViewController {
         return view
     }
 
+    private func setupInviteFriendsView() -> UIView {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+
+        return view
+    }
+
     @objc private func imageButtonPressed() {
         imagePicker.present(self)
     }
@@ -274,21 +282,11 @@ extension GroupCreationViewController: GroupCreationPresenterOutput {
         self.state = state
         scrollView.setContentOffset(CGPoint(x: view.frame.size.width * CGFloat(state.rawValue), y: 0), animated: true)
 
-//        if state == .requestNotifications {
-//            UIView.animate(withDuration: 0.3) {
-//                self.submitButton.frame = CGRect(origin: CGPoint(x: self.submitButton.frame.origin.x, y: self.view.frame.size.height), size: self.submitButton.frame.size)
-//            }
-//        }
-//
-//        if state == .success {
-//            let confettiView = SwiftConfettiView(frame: view.bounds)
-//            view.addSubview(confettiView)
-//            confettiView.startConfetti()
-//
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                confettiView.stopConfetti()
-//            }
-//        }
+        if state == .success {
+            dismiss(animated: true, completion: {
+                // @TODO: PRESENT GROUP
+            })
+        }
     }
 }
 
