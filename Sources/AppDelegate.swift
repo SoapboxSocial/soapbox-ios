@@ -99,12 +99,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func createLoginView() -> UIViewController {
-        let viewController = AuthenticationViewController()
-        let presenter = AuthenticationPresenter(output: viewController)
-        let interactor = AuthenticationInteractor(output: presenter, api: APIClient())
-        viewController.output = interactor
-
-        let navigation = UINavigationController(rootViewController: viewController)
+        let navigation = UINavigationController(rootViewController: SceneFactory.createAuthenticationViewController())
         navigation.navigationBar.isHidden = true
 
         return navigation

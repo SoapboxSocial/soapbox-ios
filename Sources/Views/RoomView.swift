@@ -317,13 +317,10 @@ class RoomView: UIView {
     }
 
     @objc private func inviteTapped() {
-        // @todo this needs to be elsewhere
-        let view = InviteFriendsListViewController()
-        let presenter = InviteFriendsListPresenter(output: view)
-        let interactor = InviteFriendsListInteractor(output: presenter, api: APIClient(), room: room)
-        view.output = interactor
-
-        UIApplication.shared.keyWindow?.rootViewController!.present(view, animated: true)
+        UIApplication.shared.keyWindow?.rootViewController!.present(
+            SceneFactory.createInviteFriendsListViewController(room: room),
+            animated: true
+        )
     }
 }
 

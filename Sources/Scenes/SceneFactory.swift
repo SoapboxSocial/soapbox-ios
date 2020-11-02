@@ -50,4 +50,24 @@ class SceneFactory {
 
         return viewController
     }
+    
+    static func createInviteFriendsListViewController(room: Room) -> InviteFriendsListViewController {
+        let viewController = InviteFriendsListViewController()
+        let presenter = InviteFriendsListPresenter(output: viewController)
+
+        let interactor = InviteFriendsListInteractor(output: presenter, api: APIClient(), room: room)
+        viewController.output = interactor
+
+        return viewController
+    }
+
+    static func createAuthenticationViewController() -> AuthenticationViewController {
+        let viewController = AuthenticationViewController()
+        let presenter = AuthenticationPresenter(output: viewController)
+
+        let interactor = AuthenticationInteractor(output: presenter, api: APIClient())
+        viewController.output = interactor
+
+        return viewController
+    }
 }
