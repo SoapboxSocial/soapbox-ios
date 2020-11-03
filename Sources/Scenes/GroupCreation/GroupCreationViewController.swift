@@ -5,6 +5,7 @@ protocol GroupCreationViewControllerOutput {
     func submit(name: String?)
     func create(name: String, image: UIImage?, description: String?, visibility: Int)
     func invite(users: [Int])
+    func fetchFriends()
 }
 
 class GroupCreationViewController: UIViewController {
@@ -258,7 +259,7 @@ extension GroupCreationViewController {
         inviteButton.addTarget(self, action: #selector(nextPressed), for: .touchUpInside)
         view.addSubview(inviteButton)
 
-        invites = UsersListWithSearch(width: view.frame.size.width, allowsDeselection: true)
+        invites = UsersListWithSearch(width: self.view.frame.size.width, allowsDeselection: true)
         invites.delegate = self
         view.addSubview(invites)
 
@@ -279,6 +280,8 @@ extension GroupCreationViewController {
             inviteButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             inviteButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10),
         ])
+
+        output.fetchFriends()
 
         return view
     }
@@ -344,6 +347,10 @@ extension GroupCreationViewController: GroupCreationPresenterOutput {
 
         self.state = state
         scrollView.setContentOffset(CGPoint(x: view.frame.size.width * CGFloat(state.rawValue), y: 0), animated: true)
+    }
+
+    func display(friends: [APIClient.User]) {
+        invites.set(users: friends)
     }
 }
 

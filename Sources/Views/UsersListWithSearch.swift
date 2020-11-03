@@ -88,6 +88,28 @@ class UsersListWithSearch: UIView {
 }
 
 extension UsersListWithSearch: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        let item = collectionView.cellForItem(at: indexPath)
+        if item?.isSelected ?? false {
+            return false
+        }
+
+        return true
+    }
+
+    func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
+        if !allowsDeselection {
+            return false
+        }
+
+        let item = collectionView.cellForItem(at: indexPath)
+        if item?.isSelected ?? false {
+            return true
+        }
+
+        return false
+    }
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let cell = collectionView.cellForItem(at: indexPath) as? SelectableImageTextCell else {
             return
@@ -102,10 +124,6 @@ extension UsersListWithSearch: UICollectionViewDelegate {
     }
 
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        if !allowsDeselection {
-            return
-        }
-
         guard let cell = collectionView.cellForItem(at: indexPath) as? SelectableImageTextCell else {
             return
         }
@@ -114,8 +132,8 @@ extension UsersListWithSearch: UICollectionViewDelegate {
 
         cell.selectedView.isHidden = true
 
-        delegate?.usersList?(self, didDeselect: user.id)
         selected.removeAll(where: { $0 == user.id })
+        delegate?.usersList?(self, didDeselect: user.id)
     }
 }
 

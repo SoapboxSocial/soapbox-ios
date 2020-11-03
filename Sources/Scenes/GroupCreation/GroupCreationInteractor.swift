@@ -4,6 +4,7 @@ import UIKit
 protocol GroupCreationInteractorOutput {
     func present(error: GroupCreationInteractor.Error)
     func present(state: GroupCreationInteractor.State, id: Int?)
+    func present(friends: [APIClient.User])
 }
 
 class GroupCreationInteractor: GroupCreationViewControllerOutput {
@@ -49,6 +50,16 @@ class GroupCreationInteractor: GroupCreationViewControllerOutput {
         debugPrint(users)
         if users.isEmpty {
             return output.present(state: .success, id: id)
+        }
+    }
+
+    func fetchFriends() {
+        api.friends { result in
+            switch result {
+            case .failure: break
+            case let .success(users):
+                self.output.present(friends: users)
+            }
         }
     }
 

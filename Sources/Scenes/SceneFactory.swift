@@ -50,7 +50,7 @@ class SceneFactory {
 
         return viewController
     }
-    
+
     static func createInviteFriendsListViewController(room: Room) -> InviteFriendsListViewController {
         let viewController = InviteFriendsListViewController()
         let presenter = InviteFriendsListPresenter(output: viewController)
