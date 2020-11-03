@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Fixed
+ - Notifications: We've fixed the notification screen when using the light theme.
+
 ## [Build 81] - 2020-11-01
 
 ### Changed

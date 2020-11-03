@@ -30,6 +30,7 @@ class NotificationsViewController: UIViewController {
         collection.delegate = self
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.register(cellWithClass: FollowingNotificationCell.self)
+        collection.backgroundColor = .clear
         view.addSubview(collection)
 
         NSLayoutConstraint.activate([
