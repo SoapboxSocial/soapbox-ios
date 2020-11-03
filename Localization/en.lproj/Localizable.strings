@@ -59,6 +59,7 @@
 "room_joined_with_name_notification" = "%@ joined the room \"%@\", why not join them?";
 "room_invite_with_name_notification" = "%@ invited you to join the room \"%@\"";
 "room_invite_notification" = "%@ invited you to join a room";
+"group_invite_notification" = "%@ invited you to join the group \"%@\""
 
 "save" = "Save";
 "invalid_display_name" = "Valid display name required";
