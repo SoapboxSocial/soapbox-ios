@@ -50,7 +50,7 @@ class GroupCreationInteractor: GroupCreationViewControllerOutput {
         if users.isEmpty {
             return output.present(state: .success, id: id)
         }
-        
+
         api.inviteGroupMembers(id: id, users: users, callback: { _ in
             // @TODO
             self.output.present(state: .success, id: self.id)

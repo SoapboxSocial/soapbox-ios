@@ -131,3 +131,5 @@
 
 "skip" = "Skip";
 "invite" = "Invite";
+
+"invited_you_to_join" = "invited you to join %@.";

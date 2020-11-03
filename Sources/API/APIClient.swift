@@ -84,6 +84,7 @@ extension APIClient {
     struct Notification: Decodable {
         let timestamp: Int
         var from: NotificationUser
+        var group: Group?
         let category: String
     }
 
@@ -555,7 +556,7 @@ extension APIClient {
                 }
             }
     }
-    
+
     func inviteGroupMembers(id: Int, users: [Int], callback: @escaping (Result<[Group], APIError>) -> Void) {
         AF.request(Configuration.rootURL.appendingPathComponent("/v1/groups/" + String(id) + "/invite"), method: .post, parameters: ["ids": users.map(String.init).joined(separator: ",")], encoding: URLEncoding.default, headers: ["Authorization": token!])
             .validate()
