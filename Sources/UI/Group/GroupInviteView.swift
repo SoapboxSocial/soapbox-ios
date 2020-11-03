@@ -26,6 +26,7 @@ class GroupInviteView: UIView {
 
         layer.cornerRadius = 30
         backgroundColor = .brandColor
+        translatesAutoresizingMaskIntoConstraints = false
 
         addSubview(image)
         addSubview(label)
@@ -38,8 +39,8 @@ class GroupInviteView: UIView {
         ])
 
         NSLayoutConstraint.activate([
-            label.topAnchor.constraint(equalTo: topAnchor, constant: 20),
-            label.leftAnchor.constraint(equalTo: image.leftAnchor, constant: 10),
+            label.topAnchor.constraint(equalTo: image.topAnchor),
+            label.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 10),
             label.rightAnchor.constraint(equalTo: rightAnchor, constant: 20),
         ])
     }

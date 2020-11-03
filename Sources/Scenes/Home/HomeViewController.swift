@@ -324,6 +324,8 @@ extension HomeViewController: UICollectionViewDelegate {
                 return present(SceneFactory.createGroupCreationViewController(), animated: true)
             }
 
+            navigationController?.pushViewController(GroupViewController(), animated: true)
+
             return
         }
     }
