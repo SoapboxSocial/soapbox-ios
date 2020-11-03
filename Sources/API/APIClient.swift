@@ -555,8 +555,28 @@ extension APIClient {
                 }
             }
     }
+    
+    func inviteGroupMembers(id: Int, users: [Int], callback: @escaping (Result<[Group], APIError>) -> Void) {
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/groups/" + String(id) + "/invite"), method: .post, parameters: ["ids": users.map(String.init).joined(separator: ",")], encoding: URLEncoding.default, headers: ["Authorization": token!])
+            .validate()
+            .response { result in
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
+                }
 
-    // @TODO VOID SHOULD PROBABLY BE GROUP ID
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
+
+                do {
+                    let resp = try self.decoder.decode([Group].self, from: data)
+                    callback(.success(resp))
+                } catch {
+                    return callback(.failure(.decode))
+                }
+            }
+    }
+
     func createGroup(name: String, type: String, description: String?, image: UIImage?, callback: @escaping (Result<Int, APIError>) -> Void) {
         AF.upload(
             multipartFormData: { multipartFormData in
