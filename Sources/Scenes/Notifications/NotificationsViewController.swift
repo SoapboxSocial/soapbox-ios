@@ -122,12 +122,17 @@ extension NotificationsViewController: UICollectionViewDelegate {
             return
         }
 
-        if item.category != "NEW_FOLLOWER" {
+        switch item.category {
+        case "NEW_FOLLOWER":
+            nav.pushViewController(SceneFactory.createProfileViewController(id: item.from.id), animated: true)
+        case "GROUP_INVITE":
+            guard let id = item.group?.id else {
+                return
+            }
+
+            nav.pushViewController(SceneFactory.createGroupViewController(id: id), animated: true)
+        default:
             return
         }
-
-        // @TODO PUSH TO GROUP
-
-        nav.pushViewController(SceneFactory.createProfileViewController(id: item.from.id), animated: true)
     }
 }
