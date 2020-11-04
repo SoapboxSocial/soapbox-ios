@@ -21,6 +21,24 @@ class GroupInviteView: UIView {
         return label
     }()
 
+    var acceptButton: Button = {
+        let button = Button(size: .small)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = .white
+        button.setTitleColor(.black, for: .normal)
+        button.setTitle(NSLocalizedString("accept", comment: ""), for: .normal)
+        return button
+    }()
+
+    var declineButton: Button = {
+        let button = Button(size: .small)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = .lightBrandColor
+        button.setTitleColor(.white, for: .normal)
+        button.setTitle(NSLocalizedString("decline", comment: ""), for: .normal)
+        return button
+    }()
+
     init() {
         super.init(frame: .zero)
 
@@ -30,6 +48,9 @@ class GroupInviteView: UIView {
 
         addSubview(image)
         addSubview(label)
+
+        addSubview(acceptButton)
+        addSubview(declineButton)
 
         NSLayoutConstraint.activate([
             image.heightAnchor.constraint(equalToConstant: 48),
@@ -41,7 +62,24 @@ class GroupInviteView: UIView {
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: image.topAnchor),
             label.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 10),
-            label.rightAnchor.constraint(equalTo: rightAnchor, constant: 20),
+            label.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+        ])
+
+        NSLayoutConstraint.activate([
+            declineButton.widthAnchor.constraint(greaterThanOrEqualTo: widthAnchor, multiplier: 0.5, constant: -30),
+            declineButton.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 20),
+            declineButton.leftAnchor.constraint(equalTo: image.leftAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            acceptButton.topAnchor.constraint(equalTo: declineButton.topAnchor),
+            acceptButton.widthAnchor.constraint(greaterThanOrEqualTo: widthAnchor, multiplier: 0.5, constant: -30),
+            acceptButton.leftAnchor.constraint(equalTo: declineButton.rightAnchor, constant: 10),
+            acceptButton.rightAnchor.constraint(equalTo: label.rightAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            bottomAnchor.constraint(equalTo: declineButton.bottomAnchor, constant: 20),
         ])
     }
 

@@ -4,6 +4,16 @@ class GroupViewController: UIViewController {
     private let content: UIStackView = {
         let view = UIStackView()
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.spacing = 20
+        view.distribution = .fill
+        view.alignment = .fill
+        view.axis = .vertical
+        return view
+    }()
+
+    private var inviteView: GroupInviteView = {
+        let view = GroupInviteView()
+        view.label.text = "Blah blah has invited you to join Woodworking"
         return view
     }()
 
@@ -12,12 +22,21 @@ class GroupViewController: UIViewController {
 
         view.backgroundColor = .background
 
-        view.addSubview(content)
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
 
-        let inviteView = GroupInviteView()
-        inviteView.label.text = "This is a pooping test of all tests"
+        scrollView.addSubview(content)
 
+        let headerView = GroupHeaderView()
+
+        content.addArrangedSubview(headerView)
         content.addArrangedSubview(inviteView)
+
+        NSLayoutConstraint.activate([
+            headerView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            headerView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+        ])
 
         NSLayoutConstraint.activate([
             inviteView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
@@ -26,9 +45,15 @@ class GroupViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             content.topAnchor.constraint(equalTo: view.topAnchor),
-            content.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             content.leftAnchor.constraint(equalTo: view.leftAnchor),
             content.rightAnchor.constraint(equalTo: view.rightAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            scrollView.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
     }
 }
