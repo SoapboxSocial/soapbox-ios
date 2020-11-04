@@ -28,6 +28,8 @@ class GroupViewController: UIViewController {
 
         scrollView.addSubview(content)
 
+        title = "woodworking"
+
         let headerView = GroupHeaderView()
 
         content.addArrangedSubview(headerView)
