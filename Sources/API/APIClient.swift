@@ -231,7 +231,6 @@ extension APIClient {
         }
     }
 
-    // @todo add token
     func user(id: Int, callback: @escaping (Result<Profile, APIError>) -> Void) {
         AF.request(Configuration.rootURL.appendingPathComponent("/v1/users/" + String(id)), method: .get, headers: ["Authorization": token!])
             .validate()
@@ -525,9 +524,10 @@ extension APIClient {
         let groupType: String
         let image: String?
         let description: String
+        let isMember: Bool?
 
         private enum CodingKeys: String, CodingKey {
-            case id, name, groupType = "group_type", image, description
+            case id, name, groupType = "group_type", image, description, isMember = "is_member"
         }
     }
 
@@ -618,5 +618,26 @@ extension APIClient {
                 return callback(.failure(.decode))
             }
         }
+    }
+
+    func group(id: Int, callback: @escaping (Result<Group, APIError>) -> Void) {
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/groups/" + String(id)), method: .get, headers: ["Authorization": token!])
+            .validate()
+            .response { result in
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
+
+                do {
+                    let resp = try self.decoder.decode(Group.self, from: data)
+                    callback(.success(resp))
+                } catch {
+                    return callback(.failure(.decode))
+                }
+            }
     }
 }

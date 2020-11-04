@@ -70,4 +70,14 @@ class SceneFactory {
 
         return viewController
     }
+
+    static func createGroupViewController(id: Int) -> GroupViewController {
+        let viewController = GroupViewController()
+        let presenter = GroupPresenter(output: viewController)
+
+        let interactor = GroupInteractor(output: presenter, api: APIClient(), group: id)
+        viewController.output = interactor
+
+        return viewController
+    }
 }

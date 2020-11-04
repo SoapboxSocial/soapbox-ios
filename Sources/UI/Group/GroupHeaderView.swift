@@ -1,15 +1,14 @@
+import FocusableImageView
 import UIKit
 
 class GroupHeaderView: UIView {
-    var image: UIImageView = {
-        let view = UIImageView()
-        view.layer.cornerRadius = 96 / 2
-        view.backgroundColor = .brandColor
-        view.clipsToBounds = true
-        view.layer.masksToBounds = true
-        view.contentMode = .scaleAspectFill
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
+    var image: FocusableImageView = {
+        let image = FocusableImageView()
+        image.backgroundColor = .brandColor
+        image.layer.cornerRadius = 96 / 2
+        image.clipsToBounds = true
+        image.translatesAutoresizingMaskIntoConstraints = false
+        return image
     }()
 
     var titleLabel: UILabel = {

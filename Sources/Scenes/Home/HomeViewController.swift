@@ -247,7 +247,7 @@ extension HomeViewController: HomePresenterOutput {
 
         DispatchQueue.main.async {
             self.refresh.endRefreshing()
-            self.collection.reloadData()
+            self.collection.reloadSections(IndexSet(integer: 0))
         }
     }
 
@@ -324,9 +324,8 @@ extension HomeViewController: UICollectionViewDelegate {
                 return present(SceneFactory.createGroupCreationViewController(), animated: true)
             }
 
-            navigationController?.pushViewController(GroupViewController(), animated: true)
-
-            return
+            let group = presenter.item(for: IndexPath(item: indexPath.item - 1, section: indexPath.section), ofType: APIClient.Group.self)
+            navigationController?.pushViewController(SceneFactory.createGroupViewController(id: group.id), animated: true)
         }
     }
 }
