@@ -15,7 +15,6 @@ class GroupHeaderView: UIView {
     var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Woodworking"
         label.numberOfLines = 0
         label.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
         label.textColor = .white
@@ -25,7 +24,6 @@ class GroupHeaderView: UIView {
     var descriptionLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Your home for furniture, toys, tools, wood, glue, and anything else that has to do with woodworking as a hobby or profession."
         label.font = .rounded(forTextStyle: .title3, weight: .regular)
         label.numberOfLines = 0
         return label

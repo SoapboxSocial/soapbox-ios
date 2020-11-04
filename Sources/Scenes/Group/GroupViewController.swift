@@ -17,6 +17,10 @@ class GroupViewController: UIViewController {
         return view
     }()
 
+    private var headerView: GroupHeaderView = {
+        GroupHeaderView()
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -30,7 +34,8 @@ class GroupViewController: UIViewController {
 
         title = "woodworking"
 
-        let headerView = GroupHeaderView()
+        headerView.descriptionLabel.text = "Your home for furniture, toys, tools, wood, glue, and anything else that has to do with woodworking as a hobby or profession."
+        headerView.titleLabel.text = "Woodworking"
 
         content.addArrangedSubview(headerView)
         content.addArrangedSubview(inviteView)
