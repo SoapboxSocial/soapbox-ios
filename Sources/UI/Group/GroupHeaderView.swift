@@ -15,7 +15,7 @@ class GroupHeaderView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
-        label.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
+        label.font = .rounded(forTextStyle: .title1, weight: .bold)
         label.textColor = .white
         return label
     }()
@@ -30,7 +30,7 @@ class GroupHeaderView: UIView {
 
     var button: Button = {
         let button = Button(size: .small)
-        button.setTitle("Join", for: .normal)
+        button.setTitle(NSLocalizedString("join", comment: ""), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
