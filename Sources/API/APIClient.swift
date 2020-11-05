@@ -3,14 +3,6 @@ import Foundation
 import KeychainAccess
 import WebRTC
 
-enum APIError: Error {
-    case noData
-    case requestFailed
-    case decode
-    case usernameAlreadyExists
-    case incorrectPin
-}
-
 class APIClient {
     // @todo put elsewhere?
     private var token: String? {
@@ -23,26 +15,33 @@ class APIClient {
     }
 
     enum ErrorCode: Int, Decodable {
-        case invalidRequestBody = 0
-        case missingParameter = 1
-        case failedToRegister = 2
-        case invalidEmail = 3
-        case invalidUsername = 4
-        case usernameAlreadyExists = 5
-        case failedToLogin = 6
-        case incorrectPin = 7
-        case userNotFound = 8
-        case failedToGetUser = 9
-        case failedToGetFollowers = 10
-        case unauthorized = 11
-        case failedToStoreDevice = 12
-        case notFound = 13
-        case notAllowed = 14
+        case invalidRequestBody
+        case missingParameter
+        case failedToRegister
+        case invalidEmail
+        case invalidUsername
+        case usernameAlreadyExists
+        case failedToLogin
+        case incorrectPin
+        case userNotFound
+        case failedToGetUser
+        case failedToGetFollowers
+        case unauthorized
+        case failedToStoreDevice
+        case notFound
+        case notAllowed
     }
 
     struct ErrorResponse: Decodable {
         let code: ErrorCode
         let message: String
+    }
+
+    enum Error: Swift.Error {
+        case preprocessing
+        case decode
+        case requestFailed
+        case endpoint(ErrorResponse)
     }
 
     let decoder = JSONDecoder()
@@ -88,11 +87,11 @@ extension APIClient {
         }
     }
 
-    func login(email: String, callback: @escaping (Result<String, APIError>) -> Void) {
+    func login(email: String, callback: @escaping (Result<String, Error>) -> Void) {
         AF.request(Configuration.rootURL.appendingPathComponent("/v1/login/start"), method: .post, parameters: ["email": email], encoding: URLEncoding.default)
             .validate()
             .response { result in
-                self.decodable(result, callback: { (result: Result<[String: String], APIError>) in
+                self.decodable(result, callback: { (result: Result<[String: String], Error>) in
                     switch result {
                     case let .failure(error):
                         callback(.failure(error))
@@ -107,25 +106,16 @@ extension APIClient {
             }
     }
 
-    func submitPin(token: String, pin: String, callback: @escaping (Result<(LoginState, User?, Int?), APIError>) -> Void) {
+    func submitPin(token: String, pin: String, callback: @escaping (Result<(LoginState, User?, Int?), Error>) -> Void) {
         AF.request(Configuration.rootURL.appendingPathComponent("/v1/login/pin"), method: .post, parameters: ["token": token, "pin": pin], encoding: URLEncoding.default)
             .validate()
             .response { result in
-                guard let data = result.data else {
-                    return callback(.failure(.requestFailed))
+                if let error = self.error(result) {
+                    return callback(.failure(error))
                 }
 
-                if result.error != nil {
-                    do {
-                        let resp = try self.decoder.decode(ErrorResponse.self, from: data)
-                        if resp.code == .incorrectPin {
-                            return callback(.failure(.incorrectPin))
-                        }
-
-                        return callback(.failure(.requestFailed))
-                    } catch {
-                        return callback(.failure(.decode))
-                    }
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
                 }
 
                 do {
@@ -139,11 +129,11 @@ extension APIClient {
 
     // @todo return expires in and store it somewhere
 
-    func register(token: String, username: String, displayName: String, image: UIImage, callback: @escaping (Result<(User, Int), APIError>) -> Void) {
+    func register(token: String, username: String, displayName: String, image: UIImage, callback: @escaping (Result<(User, Int), Error>) -> Void) {
         AF.upload(
             multipartFormData: { multipartFormData in
                 guard let imgData = image.jpegData(compressionQuality: 0.5) else {
-                    return callback(.failure(.noData))
+                    return callback(.failure(.preprocessing))
                 }
 
                 multipartFormData.append(imgData, withName: "profile", fileName: "profile", mimeType: "image/jpg")
@@ -156,21 +146,12 @@ extension APIClient {
         )
         .validate()
         .response { result in
-            guard let data = result.data else {
-                return callback(.failure(.requestFailed))
+            if let error = self.error(result) {
+                return callback(.failure(error))
             }
 
-            if result.error != nil {
-                do {
-                    let resp = try self.decoder.decode(ErrorResponse.self, from: data)
-                    if resp.code == .usernameAlreadyExists {
-                        return callback(.failure(.usernameAlreadyExists))
-                    }
-
-                    return callback(.failure(.requestFailed))
-                } catch {
-                    return callback(.failure(.decode))
-                }
+            guard let data = result.data else {
+                return callback(.failure(.requestFailed))
             }
 
             do {
@@ -212,16 +193,16 @@ extension APIClient {
         }
     }
 
-    func user(id: Int, callback: @escaping (Result<Profile, APIError>) -> Void) {
+    func user(id: Int, callback: @escaping (Result<Profile, Error>) -> Void) {
         get(path: "/v1/users/" + String(id), callback: callback)
     }
 
-    func editProfile(displayName: String, image: UIImage?, bio: String, callback: @escaping (Result<Bool, APIError>) -> Void) {
+    func editProfile(displayName: String, image: UIImage?, bio: String, callback: @escaping (Result<Bool, Error>) -> Void) {
         AF.upload(
             multipartFormData: { multipartFormData in
                 if let uploadImage = image {
                     guard let imgData = uploadImage.jpegData(compressionQuality: 0.5) else {
-                        return callback(.failure(.noData))
+                        return callback(.failure(.preprocessing))
                     }
 
                     multipartFormData.append(imgData, withName: "profile", fileName: "profile", mimeType: "image/jpg")
@@ -234,81 +215,72 @@ extension APIClient {
             headers: ["Authorization": token!]
         )
         .validate()
-        .response {
-            result in
-            guard result.data != nil else {
-                return callback(.failure(.requestFailed))
+        .response { result in
+            if let error = self.error(result) {
+                callback(.failure(error))
             }
 
-            if result.error != nil {
-                callback(.failure(.noData))
-            }
-
-            if result.response?.statusCode == 200 {
-                return callback(.success(true))
-            }
-
-            return callback(.failure(.decode))
+            return callback(.success(true))
         }
     }
 
-    func me(callback: @escaping (Result<User, APIError>) -> Void) {
+    func me(callback: @escaping (Result<User, Error>) -> Void) {
         get(path: "/v1/me", callback: callback)
     }
 
-    func notifications(callback: @escaping (Result<[Notification], APIError>) -> Void) {
+    func notifications(callback: @escaping (Result<[Notification], Error>) -> Void) {
         get(path: "/v1/me/notifications", callback: callback)
     }
 
-    func addTwitter(token: String, secret: String, callback: @escaping (Result<Void, APIError>) -> Void) {
+    func addTwitter(token: String, secret: String, callback: @escaping (Result<Void, Error>) -> Void) {
         post(path: "/v1/me/profiles/twitter", parameters: ["token": token, "secret": secret], callback: callback)
     }
 
-    func removeTwitter(callback: @escaping (Result<Void, APIError>) -> Void) {
+    func removeTwitter(callback: @escaping (Result<Void, Error>) -> Void) {
         void(path: "/v1/me/profiles/twitter", method: .delete, callback: callback)
     }
 }
 
 extension APIClient {
-    typealias FollowerListFunc = (_ id: Int, _ limit: Int, _ offset: Int, _ callback: @escaping (Result<[User], APIError>) -> Void) -> Void
+    typealias FollowerListFunc = (_ id: Int, _ limit: Int, _ offset: Int, _ callback: @escaping (Result<[User], Error>) -> Void) -> Void
 
-    func friends(_ callback: @escaping (Result<[User], APIError>) -> Void) {
+    func friends(_ callback: @escaping (Result<[User], Error>) -> Void) {
         userListRequest("/v1/users/friends", callback: callback)
     }
 
-    func followers(_ id: Int, _ limit: Int, _ offset: Int, _ callback: @escaping (Result<[User], APIError>) -> Void) {
+    func followers(_ id: Int, _ limit: Int, _ offset: Int, _ callback: @escaping (Result<[User], Error>) -> Void) {
         userListRequest("/v1/users/" + String(id) + "/followers", parameters: ["limit": limit, "offset": offset], callback: callback)
     }
 
-    func following(_ id: Int, _ limit: Int, _ offset: Int, _ callback: @escaping (Result<[User], APIError>) -> Void) {
+    func following(_ id: Int, _ limit: Int, _ offset: Int, _ callback: @escaping (Result<[User], Error>) -> Void) {
         userListRequest("/v1/users/" + String(id) + "/following", parameters: ["limit": limit, "offset": offset], callback: callback)
     }
 
-    func follow(id: Int, callback: @escaping (Result<Void, APIError>) -> Void) {
+    func follow(id: Int, callback: @escaping (Result<Void, Error>) -> Void) {
         followRequest("/v1/users/follow", id: id, callback: callback)
     }
 
-    func unfollow(id: Int, callback: @escaping (Result<Void, APIError>) -> Void) {
+    func unfollow(id: Int, callback: @escaping (Result<Void, Error>) -> Void) {
         followRequest("/v1/users/unfollow", id: id, callback: callback)
     }
 
-    private func userListRequest(_ path: String, parameters _: Parameters? = nil, callback: @escaping (Result<[User], APIError>) -> Void) {
-        get(path: path, callback: callback)
+    private func userListRequest(_ path: String, parameters: Parameters? = nil, callback: @escaping (Result<[User], Error>) -> Void) {
+        get(path: path, parameters: parameters, callback: callback)
     }
 
-    private func followRequest(_ path: String, id: Int, callback: @escaping (Result<Void, APIError>) -> Void) {
+    private func followRequest(_ path: String, id: Int, callback: @escaping (Result<Void, Error>) -> Void) {
         post(path: path, parameters: ["id": id], callback: callback)
     }
 }
 
 extension APIClient {
-    func addDevice(token: String, callback: @escaping (Result<Void, APIError>) -> Void) {
+    func addDevice(token: String, callback: @escaping (Result<Void, Error>) -> Void) {
         post(path: "/v1/devices/add", parameters: ["token": token], callback: callback)
     }
 }
 
 extension APIClient {
-    func search(_ text: String, limit: Int, offset: Int, callback: @escaping (Result<[User], APIError>) -> Void) {
+    func search(_ text: String, limit: Int, offset: Int, callback: @escaping (Result<[User], Error>) -> Void) {
         get(path: "/v1/users/search", parameters: ["query": text, "limit": limit, "offset": offset], callback: callback)
     }
 }
@@ -326,13 +298,13 @@ extension APIClient {
         }
     }
 
-    func actives(callback: @escaping (Result<[ActiveUser], APIError>) -> Void) {
+    func actives(callback: @escaping (Result<[ActiveUser], Error>) -> Void) {
         get(path: "/v1/users/active", callback: callback)
     }
 }
 
 extension APIClient {
-    private func get<T: Decodable>(path: String, parameters: Parameters? = nil, callback: @escaping (Result<T, APIError>) -> Void) {
+    private func get<T: Decodable>(path: String, parameters: Parameters? = nil, callback: @escaping (Result<T, Error>) -> Void) {
         AF.request(
             Configuration.rootURL.appendingPathComponent(path),
             method: .get,
@@ -346,11 +318,11 @@ extension APIClient {
         }
     }
 
-    private func post(path: String, parameters: Parameters? = nil, callback: @escaping (Result<Void, APIError>) -> Void) {
+    private func post(path: String, parameters: Parameters? = nil, callback: @escaping (Result<Void, Error>) -> Void) {
         void(path: path, method: .post, parameters: parameters, callback: callback)
     }
 
-    private func void(path: String, method: HTTPMethod, parameters: Parameters? = nil, callback: @escaping (Result<Void, APIError>) -> Void) {
+    private func void(path: String, method: HTTPMethod, parameters: Parameters? = nil, callback: @escaping (Result<Void, Error>) -> Void) {
         AF.request(
             Configuration.rootURL.appendingPathComponent(path),
             method: method,
@@ -360,25 +332,17 @@ extension APIClient {
         )
         .validate()
         .response { result in
-            guard result.data != nil else {
-                return callback(.failure(.requestFailed))
+            if let err = self.error(result) {
+                return callback(.failure(err))
             }
 
-            if result.error != nil {
-                callback(.failure(.noData))
-            }
-
-            if result.response?.statusCode == 200 {
-                return callback(.success(()))
-            }
-
-            return callback(.failure(.decode))
+            return callback(.success(()))
         }
     }
 
-    private func decodable<T: Decodable>(_ response: AFDataResponse<Data?>, callback: @escaping (Result<T, APIError>) -> Void) {
-        if response.error != nil {
-            return callback(.failure(.noData))
+    private func decodable<T: Decodable>(_ response: AFDataResponse<Data?>, callback: @escaping (Result<T, Error>) -> Void) {
+        if let err = error(response) {
+            return callback(.failure(err))
         }
 
         guard let data = response.data else {
@@ -389,6 +353,27 @@ extension APIClient {
             return callback(.success(try decoder.decode(T.self, from: data)))
         } catch {
             return callback(.failure(.decode))
+        }
+    }
+
+    // @TODO
+    private func error(_ response: AFDataResponse<Data?>) -> Error? {
+        if response.response?.statusCode == 200 {
+            return nil
+        }
+
+        if response.error == nil {
+            return nil
+        }
+
+        do {
+            guard let data = response.data else {
+                return .decode
+            }
+
+            return .endpoint(try decoder.decode(ErrorResponse.self, from: data))
+        } catch {
+            return (.decode)
         }
     }
 }

@@ -60,8 +60,13 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
         api.submitPin(token: token!, pin: input) { result in
             switch result {
             case let .failure(error):
-                if error == .incorrectPin {
-                    return self.output.present(error: .invalidPin)
+                switch error {
+                case let .endpoint(response):
+                    if response.code == .incorrectPin {
+                        return self.output.present(error: .invalidPin)
+                    }
+                default:
+                    break
                 }
 
                 return self.output.present(error: .general)
@@ -98,8 +103,13 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
         api.register(token: token!, username: usernameInput, displayName: displayName ?? usernameInput, image: profileImage) { result in
             switch result {
             case let .failure(error):
-                if error == .usernameAlreadyExists {
-                    return self.output.present(error: .usernameTaken)
+                switch error {
+                case let .endpoint(response):
+                    if response.code == .usernameAlreadyExists {
+                        return self.output.present(error: .usernameTaken)
+                    }
+                default:
+                    break
                 }
 
                 return self.output.present(error: .general)
