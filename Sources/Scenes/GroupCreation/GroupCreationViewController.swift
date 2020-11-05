@@ -336,10 +336,10 @@ extension GroupCreationViewController: GroupCreationPresenterOutput {
 
     func transitionTo(state: GroupCreationInteractor.State, id: Int?) {
         if state == .success {
+            let presenter = presentingViewController as? NavigationViewController
             return dismiss(animated: true, completion: {
-                // @TODO
-                self.presentingViewController?.navigationController?.pushViewController(
-                    SceneFactory.createProfileViewController(id: id!),
+                presenter?.pushViewController(
+                    SceneFactory.createGroupViewController(id: id!),
                     animated: true
                 )
             })
