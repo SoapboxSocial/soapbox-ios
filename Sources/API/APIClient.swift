@@ -97,7 +97,7 @@ extension APIClient {
                         callback(.failure(error))
                     case let .success(data):
                         guard let token = data["token"] else {
-                            return callback(.failure(.decode)) // @todo
+                            return callback(.failure(.decode))
                         }
 
                         callback(.success(token))
@@ -110,24 +110,16 @@ extension APIClient {
         AF.request(Configuration.rootURL.appendingPathComponent("/v1/login/pin"), method: .post, parameters: ["token": token, "pin": pin], encoding: URLEncoding.default)
             .validate()
             .response { result in
-                if let error = self.error(result) {
-                    return callback(.failure(error))
-                }
-
-                guard let data = result.data else {
-                    return callback(.failure(.requestFailed))
-                }
-
-                do {
-                    let resp = try self.decoder.decode(PinEntryResponse.self, from: data)
-                    callback(.success((resp.state, resp.user, resp.expiresIn)))
-                } catch {
-                    return callback(.failure(.decode))
-                }
+                self.decodable(result, callback: { (result: Result<PinEntryResponse, Error>) in
+                    switch result {
+                    case let .failure(error):
+                        callback(.failure(error))
+                    case let .success(data):
+                        callback(.success((data.state, data.user, data.expiresIn)))
+                    }
+                })
             }
     }
-
-    // @todo return expires in and store it somewhere
 
     func register(token: String, username: String, displayName: String, image: UIImage, callback: @escaping (Result<(User, Int), Error>) -> Void) {
         AF.upload(
@@ -146,24 +138,18 @@ extension APIClient {
         )
         .validate()
         .response { result in
-            if let error = self.error(result) {
-                return callback(.failure(error))
-            }
+            self.decodable(result, callback: { (result: Result<PinEntryResponse, Error>) in
+                switch result {
+                case let .failure(error):
+                    callback(.failure(error))
+                case let .success(data):
+                    guard let user = data.user, let expires = data.expiresIn else {
+                        return callback(.failure(.decode))
+                    }
 
-            guard let data = result.data else {
-                return callback(.failure(.requestFailed))
-            }
-
-            do {
-                let resp = try self.decoder.decode(PinEntryResponse.self, from: data)
-                guard let user = resp.user, let expires = resp.expiresIn else {
-                    return callback(.failure(.decode))
+                    callback(.success((user, expires)))
                 }
-
-                callback(.success((user, expires)))
-            } catch {
-                return callback(.failure(.decode))
-            }
+            })
         }
     }
 }
