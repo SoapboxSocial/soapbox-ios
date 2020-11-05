@@ -230,26 +230,8 @@ extension APIClient {
         }
     }
 
-    // @todo add token
     func user(id: Int, callback: @escaping (Result<Profile, APIError>) -> Void) {
-        AF.request(Configuration.rootURL.appendingPathComponent("/v1/users/" + String(id)), method: .get, headers: ["Authorization": token!])
-            .validate()
-            .response { result in
-                guard let data = result.data else {
-                    return callback(.failure(.requestFailed))
-                }
-
-                if result.error != nil {
-                    callback(.failure(.noData))
-                }
-
-                do {
-                    let resp = try self.decoder.decode(Profile.self, from: data)
-                    callback(.success(resp))
-                } catch {
-                    return callback(.failure(.decode))
-                }
-            }
+        get(path: "/v1/users/" + String(id), callback: callback)
     }
 
     func editProfile(displayName: String, image: UIImage?, bio: String, callback: @escaping (Result<Bool, APIError>) -> Void) {
@@ -289,46 +271,11 @@ extension APIClient {
     }
 
     func me(callback: @escaping (Result<User, APIError>) -> Void) {
-        AF.request(Configuration.rootURL.appendingPathComponent("/v1/me"), method: .get, headers: ["Authorization": token!])
-            .validate()
-            .response { result in
-                guard let data = result.data else {
-                    return callback(.failure(.requestFailed))
-                }
-
-                if result.error != nil {
-                    callback(.failure(.noData))
-                }
-
-                do {
-                    let resp = try self.decoder.decode(User.self, from: data)
-                    callback(.success(resp))
-                } catch {
-                    return callback(.failure(.decode))
-                }
-            }
+        get(path: "/v1/me", callback: callback)
     }
 
     func notifications(callback: @escaping (Result<[Notification], APIError>) -> Void) {
-        AF.request(Configuration.rootURL.appendingPathComponent("/v1/me/notifications"), method: .get, headers: ["Authorization": token!])
-            .validate()
-            .response { result in
-                guard let data = result.data else {
-                    return callback(.failure(.requestFailed))
-                }
-
-                if result.error != nil {
-                    callback(.failure(.noData))
-                }
-
-                do {
-                    let resp = try self.decoder.decode([Notification].self, from: data)
-                    callback(.success(resp))
-                } catch {
-                    debugPrint("\(error)")
-                    return callback(.failure(.decode))
-                }
-            }
+        get(path: "/v1/me/notifications", callback: callback)
     }
 
     func addTwitter(token: String, secret: String, callback: @escaping (Result<Void, APIError>) -> Void) {
@@ -395,25 +342,8 @@ extension APIClient {
         followRequest("/v1/users/unfollow", id: id, callback: callback)
     }
 
-    private func userListRequest(_ path: String, parameters: Parameters? = nil, callback: @escaping (Result<[User], APIError>) -> Void) {
-        AF.request(Configuration.rootURL.appendingPathComponent(path), method: .get, parameters: parameters, headers: ["Authorization": token!])
-            .validate()
-            .response { result in
-                guard let data = result.data else {
-                    return callback(.failure(.requestFailed))
-                }
-
-                if result.error != nil {
-                    callback(.failure(.noData))
-                }
-
-                do {
-                    let resp = try self.decoder.decode([User].self, from: data)
-                    callback(.success(resp))
-                } catch {
-                    return callback(.failure(.decode))
-                }
-            }
+    private func userListRequest(_ path: String, parameters _: Parameters? = nil, callback: @escaping (Result<[User], APIError>) -> Void) {
+        get(path: path, callback: callback)
     }
 
     private func followRequest(_ path: String, id: Int, callback: @escaping (Result<Void, APIError>) -> Void) {
@@ -461,24 +391,7 @@ extension APIClient {
 
 extension APIClient {
     func search(_ text: String, limit: Int, offset: Int, callback: @escaping (Result<[User], APIError>) -> Void) {
-        AF.request(Configuration.rootURL.appendingPathComponent("/v1/users/search"), method: .get, parameters: ["query": text, "limit": limit, "offset": offset], encoding: URLEncoding.default, headers: ["Authorization": self.token!])
-            .validate()
-            .response { result in
-                guard let data = result.data else {
-                    return callback(.failure(.requestFailed))
-                }
-
-                if result.error != nil {
-                    callback(.failure(.noData))
-                }
-
-                do {
-                    let resp = try self.decoder.decode([User].self, from: data)
-                    callback(.success(resp))
-                } catch {
-                    return callback(.failure(.decode))
-                }
-            }
+        get(path: "/v1/users/search", parameters: ["query": text, "limit": limit, "offset": offset], callback: callback)
     }
 }
 
@@ -496,23 +409,38 @@ extension APIClient {
     }
 
     func actives(callback: @escaping (Result<[ActiveUser], APIError>) -> Void) {
-        AF.request(Configuration.rootURL.appendingPathComponent("/v1/users/active"), method: .get, encoding: URLEncoding.default, headers: ["Authorization": self.token!])
-            .validate()
-            .response { result in
-                guard let data = result.data else {
-                    return callback(.failure(.requestFailed))
-                }
+        get(path: "/v1/users/active", callback: callback)
+    }
+}
 
-                if result.error != nil {
-                    callback(.failure(.noData))
-                }
+extension APIClient {
+    private func get<T: Decodable>(path: String, parameters: Parameters? = nil, callback: @escaping (Result<T, APIError>) -> Void) {
+        AF.request(
+            Configuration.rootURL.appendingPathComponent(path),
+            method: .get,
+            parameters: parameters,
+            encoding: URLEncoding.default, headers: ["Authorization": self.token!]
+        )
+        .validate()
+        .response { result in
+            callback(self.handleResponse(T.self, response: result))
+        }
+    }
 
-                do {
-                    let resp = try self.decoder.decode([ActiveUser].self, from: data)
-                    callback(.success(resp))
-                } catch {
-                    return callback(.failure(.decode))
-                }
-            }
+    private func handleResponse<T: Decodable>(_ type: T.Type, response: AFDataResponse<Data?>) -> Result<T, APIError> {
+        guard let data = response.data else {
+            return .failure(.requestFailed)
+        }
+
+        if response.error != nil {
+            return .failure(.noData)
+        }
+
+        do {
+            let resp = try decoder.decode(type, from: data)
+            return .success(resp)
+        } catch {
+            return .failure(.decode)
+        }
     }
 }
