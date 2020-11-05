@@ -375,7 +375,19 @@ extension APIClient {
         )
         .validate()
         .response { result in
-            callback(self.handleResponse(T.self, response: result))
+            guard let data = result.data else {
+                return callback(.failure(.requestFailed))
+            }
+
+            if result.error != nil {
+                return callback(.failure(.noData))
+            }
+
+            do {
+                return callback(.success(try self.decoder.decode(T.self, from: data)))
+            } catch {
+                return callback(.failure(.decode))
+            }
         }
     }
 
@@ -402,23 +414,6 @@ extension APIClient {
             }
 
             return callback(.failure(.decode))
-        }
-    }
-
-    private func handleResponse<T: Decodable>(_ type: T.Type, response: AFDataResponse<Data?>) -> Result<T, APIError> {
-        guard let data = response.data else {
-            return .failure(.requestFailed)
-        }
-
-        if response.error != nil {
-            return .failure(.noData)
-        }
-
-        do {
-            let resp = try decoder.decode(type, from: data)
-            return .success(resp)
-        } catch {
-            return .failure(.decode)
         }
     }
 }
