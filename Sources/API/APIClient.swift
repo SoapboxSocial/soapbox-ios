@@ -525,9 +525,10 @@ extension APIClient {
         let image: String?
         let description: String
         let isMember: Bool?
+        let isInvited: Bool?
 
         private enum CodingKeys: String, CodingKey {
-            case id, name, groupType = "group_type", image, description, isMember = "is_member"
+            case id, name, groupType = "group_type", image, description, isMember = "is_member", isInvited = "is_invited"
         }
     }
 
@@ -634,6 +635,27 @@ extension APIClient {
 
                 do {
                     let resp = try self.decoder.decode(Group.self, from: data)
+                    callback(.success(resp))
+                } catch {
+                    return callback(.failure(.decode))
+                }
+            }
+    }
+
+    func getInvite(id: Int, callback: @escaping (Result<User, APIError>) -> Void) {
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/groups/" + String(id) + "/invite"), method: .get, headers: ["Authorization": token!])
+            .validate()
+            .response { result in
+                guard let data = result.data else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
+
+                do {
+                    let resp = try self.decoder.decode(User.self, from: data)
                     callback(.success(resp))
                 } catch {
                     return callback(.failure(.decode))

@@ -20,7 +20,6 @@ class GroupViewController: UIViewController {
 
     private var inviteView: GroupInviteView = {
         let view = GroupInviteView()
-        view.label.text = "Blah blah has invited you to join Woodworking"
         return view
     }()
 
@@ -43,6 +42,8 @@ class GroupViewController: UIViewController {
 
         content.addArrangedSubview(headerView)
         content.addArrangedSubview(inviteView)
+
+        inviteView.isHidden = true
 
         inviteView.acceptButton.addTarget(self, action: #selector(acceptInvite), for: .touchUpInside)
         inviteView.declineButton.addTarget(self, action: #selector(declineInvite), for: .touchUpInside)
@@ -101,5 +102,18 @@ extension GroupViewController: GroupPresenterOutput {
             headerView.image.inner.contentMode = .scaleAspectFill
             manager.register(parentViewController: self, imageViews: [headerView.image])
         }
+    }
+
+    func display(invite: APIClient.User) {
+        let fmt = NSLocalizedString("user_invited_you_to_join_group", comment: "")
+        let data = String(format: fmt, invite.displayName, title!)
+        inviteView.label.text = data
+
+        if let image = invite.image, image != "" {
+            inviteView.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
+            inviteView.image.contentMode = .scaleAspectFill
+        }
+
+        inviteView.isHidden = false
     }
 }

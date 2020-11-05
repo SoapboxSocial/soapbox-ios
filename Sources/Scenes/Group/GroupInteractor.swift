@@ -2,6 +2,7 @@ import Foundation
 
 protocol GroupInteractorOutput {
     func present(group: APIClient.Group)
+    func present(inviter: APIClient.User)
 }
 
 class GroupInteractor: GroupViewControllerOutput {
@@ -20,7 +21,22 @@ class GroupInteractor: GroupViewControllerOutput {
             switch result {
             case .failure: break
             case let .success(group):
+
+                if group.isInvited ?? false {
+                    self.loadInvite()
+                }
+
                 self.output.present(group: group)
+            }
+        })
+    }
+
+    private func loadInvite() {
+        api.getInvite(id: group, callback: { result in
+            switch result {
+            case .failure: break
+            case let .success(inviter):
+                self.output.present(inviter: inviter)
             }
         })
     }
