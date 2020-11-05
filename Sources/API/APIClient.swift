@@ -279,23 +279,7 @@ extension APIClient {
     }
 
     func addTwitter(token: String, secret: String, callback: @escaping (Result<Void, APIError>) -> Void) {
-        AF.request(Configuration.rootURL.appendingPathComponent("/v1/me/profiles/twitter"), method: .post, parameters: ["token": token, "secret": secret], headers: ["Authorization": self.token!])
-            .validate()
-            .response { result in
-                guard result.data != nil else {
-                    return callback(.failure(.requestFailed))
-                }
-
-                if result.error != nil {
-                    callback(.failure(.noData))
-                }
-
-                if result.response?.statusCode == 200 {
-                    return callback(.success(()))
-                }
-
-                return callback(.failure(.decode))
-            }
+        post(path: "/v1/me/profiles/twitter", parameters: ["token": token, "secret": secret], callback: callback)
     }
 
     func removeTwitter(callback: @escaping (Result<Void, APIError>) -> Void) {
@@ -347,45 +331,13 @@ extension APIClient {
     }
 
     private func followRequest(_ path: String, id: Int, callback: @escaping (Result<Void, APIError>) -> Void) {
-        AF.request(Configuration.rootURL.appendingPathComponent(path), method: .post, parameters: ["id": id], encoding: URLEncoding.default, headers: ["Authorization": token!])
-            .validate()
-            .response { result in
-                guard result.data != nil else {
-                    return callback(.failure(.requestFailed))
-                }
-
-                if result.error != nil {
-                    callback(.failure(.noData))
-                }
-
-                if result.response?.statusCode == 200 {
-                    return callback(.success(()))
-                }
-
-                return callback(.failure(.decode))
-            }
+        post(path: path, parameters: ["id": id], callback: callback)
     }
 }
 
 extension APIClient {
     func addDevice(token: String, callback: @escaping (Result<Void, APIError>) -> Void) {
-        AF.request(Configuration.rootURL.appendingPathComponent("/v1/devices/add"), method: .post, parameters: ["token": token], encoding: URLEncoding.default, headers: ["Authorization": self.token!])
-            .validate()
-            .response { result in
-                guard result.data != nil else {
-                    return callback(.failure(.requestFailed))
-                }
-
-                if result.error != nil {
-                    callback(.failure(.noData))
-                }
-
-                if result.response?.statusCode == 200 {
-                    return callback(.success(()))
-                }
-
-                return callback(.failure(.decode))
-            }
+        post(path: "/v1/devices/add", parameters: ["token": token], callback: callback)
     }
 }
 
@@ -427,6 +379,26 @@ extension APIClient {
         }
     }
 
+    private func post(path: String, parameters: Parameters? = nil, callback: @escaping (Result<Void, APIError>) -> Void) {
+        AF.request(Configuration.rootURL.appendingPathComponent(path), method: .post, parameters: parameters, encoding: URLEncoding.default, headers: ["Authorization": self.token!])
+            .validate()
+            .response { result in
+                guard result.data != nil else {
+                    return callback(.failure(.requestFailed))
+                }
+
+                if result.error != nil {
+                    callback(.failure(.noData))
+                }
+
+                if result.response?.statusCode == 200 {
+                    return callback(.success(()))
+                }
+
+                return callback(.failure(.decode))
+            }
+    }
+    
     private func handleResponse<T: Decodable>(_ type: T.Type, response: AFDataResponse<Data?>) -> Result<T, APIError> {
         guard let data = response.data else {
             return .failure(.requestFailed)
