@@ -92,27 +92,18 @@ extension APIClient {
         AF.request(Configuration.rootURL.appendingPathComponent("/v1/login/start"), method: .post, parameters: ["email": email], encoding: URLEncoding.default)
             .validate()
             .response { result in
+                self.decodable(result, callback: { (result: Result<[String: String], APIError>) in
+                    switch result {
+                    case let .failure(error):
+                        callback(.failure(error))
+                    case let .success(data):
+                        guard let token = data["token"] else {
+                            return callback(.failure(.decode)) // @todo
+                        }
 
-                if result.error != nil {
-                    // @todo
-                    return callback(.failure(.requestFailed))
-                }
-
-                guard let data = result.data else {
-                    return callback(.failure(.requestFailed))
-                }
-
-                do {
-                    let resp = try self.decoder.decode([String: String].self, from: data)
-
-                    guard let token = resp["token"] else {
-                        return callback(.failure(.decode)) // @todo
+                        callback(.success(token))
                     }
-
-                    callback(.success(token))
-                } catch {
-                    return callback(.failure(.decode))
-                }
+                })
             }
     }
 
@@ -346,23 +337,12 @@ extension APIClient {
             Configuration.rootURL.appendingPathComponent(path),
             method: .get,
             parameters: parameters,
-            encoding: URLEncoding.default, headers: ["Authorization": self.token!]
+            encoding: URLEncoding.default,
+            headers: ["Authorization": self.token!]
         )
         .validate()
         .response { result in
-            guard let data = result.data else {
-                return callback(.failure(.requestFailed))
-            }
-
-            if result.error != nil {
-                return callback(.failure(.noData))
-            }
-
-            do {
-                return callback(.success(try self.decoder.decode(T.self, from: data)))
-            } catch {
-                return callback(.failure(.decode))
-            }
+            self.decodable(result, callback: callback)
         }
     }
 
@@ -392,6 +372,22 @@ extension APIClient {
                 return callback(.success(()))
             }
 
+            return callback(.failure(.decode))
+        }
+    }
+
+    private func decodable<T: Decodable>(_ response: AFDataResponse<Data?>, callback: @escaping (Result<T, APIError>) -> Void) {
+        if response.error != nil {
+            return callback(.failure(.noData))
+        }
+
+        guard let data = response.data else {
+            return callback(.failure(.requestFailed))
+        }
+
+        do {
+            return callback(.success(try decoder.decode(T.self, from: data)))
+        } catch {
             return callback(.failure(.decode))
         }
     }
