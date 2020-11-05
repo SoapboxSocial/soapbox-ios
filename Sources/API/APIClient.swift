@@ -283,23 +283,7 @@ extension APIClient {
     }
 
     func removeTwitter(callback: @escaping (Result<Void, APIError>) -> Void) {
-        AF.request(Configuration.rootURL.appendingPathComponent("/v1/me/profiles/twitter"), method: .delete, headers: ["Authorization": token!])
-            .validate()
-            .response { result in
-                guard result.data != nil else {
-                    return callback(.failure(.requestFailed))
-                }
-
-                if result.error != nil {
-                    callback(.failure(.noData))
-                }
-
-                if result.response?.statusCode == 200 {
-                    return callback(.success(()))
-                }
-
-                return callback(.failure(.decode))
-            }
+        void(path: "/v1/me/profiles/twitter", method: .delete, callback: callback)
     }
 }
 
@@ -391,10 +375,14 @@ extension APIClient {
         }
     }
 
-    private func post(path: String, parameters: Parameters? = nil, callback: @escaping (Result<Void, APIError>) -> Void) {
+    private func post(path: String, parameters _: Parameters? = nil, callback: @escaping (Result<Void, APIError>) -> Void) {
+        void(path: path, method: .post, callback: callback)
+    }
+
+    private func void(path: String, method: HTTPMethod, parameters: Parameters? = nil, callback: @escaping (Result<Void, APIError>) -> Void) {
         AF.request(
             Configuration.rootURL.appendingPathComponent(path),
-            method: .post,
+            method: method,
             parameters: parameters,
             encoding: URLEncoding.default,
             headers: ["Authorization": self.token!]
