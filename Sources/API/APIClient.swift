@@ -380,25 +380,31 @@ extension APIClient {
     }
 
     private func post(path: String, parameters: Parameters? = nil, callback: @escaping (Result<Void, APIError>) -> Void) {
-        AF.request(Configuration.rootURL.appendingPathComponent(path), method: .post, parameters: parameters, encoding: URLEncoding.default, headers: ["Authorization": self.token!])
-            .validate()
-            .response { result in
-                guard result.data != nil else {
-                    return callback(.failure(.requestFailed))
-                }
-
-                if result.error != nil {
-                    callback(.failure(.noData))
-                }
-
-                if result.response?.statusCode == 200 {
-                    return callback(.success(()))
-                }
-
-                return callback(.failure(.decode))
+        AF.request(
+            Configuration.rootURL.appendingPathComponent(path),
+            method: .post,
+            parameters: parameters,
+            encoding: URLEncoding.default,
+            headers: ["Authorization": self.token!]
+        )
+        .validate()
+        .response { result in
+            guard result.data != nil else {
+                return callback(.failure(.requestFailed))
             }
+
+            if result.error != nil {
+                callback(.failure(.noData))
+            }
+
+            if result.response?.statusCode == 200 {
+                return callback(.success(()))
+            }
+
+            return callback(.failure(.decode))
+        }
     }
-    
+
     private func handleResponse<T: Decodable>(_ type: T.Type, response: AFDataResponse<Data?>) -> Result<T, APIError> {
         guard let data = response.data else {
             return .failure(.requestFailed)
