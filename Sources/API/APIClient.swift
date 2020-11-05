@@ -329,6 +329,7 @@ extension APIClient {
     }
 
     func createGroup(name: String, type: GroupType, description: String?, image: UIImage?, callback: @escaping (Result<Int, Error>) -> Void) {
+        // @TODO MAKE UPLOAD FUNC
         AF.upload(
             multipartFormData: { multipartFormData in
                 if let uploadImage = image {
