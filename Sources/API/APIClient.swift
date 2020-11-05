@@ -375,8 +375,8 @@ extension APIClient {
         }
     }
 
-    private func post(path: String, parameters _: Parameters? = nil, callback: @escaping (Result<Void, APIError>) -> Void) {
-        void(path: path, method: .post, callback: callback)
+    private func post(path: String, parameters: Parameters? = nil, callback: @escaping (Result<Void, APIError>) -> Void) {
+        void(path: path, method: .post, parameters: parameters, callback: callback)
     }
 
     private func void(path: String, method: HTTPMethod, parameters: Parameters? = nil, callback: @escaping (Result<Void, APIError>) -> Void) {
