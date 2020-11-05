@@ -66,15 +66,6 @@ extension APIClient {
         }
     }
 
-    struct Alert: Decodable {
-        let key: String
-        let arguments: [String]
-
-        private enum CodingKeys: String, CodingKey {
-            case key = "loc-key", arguments = "loc-args"
-        }
-    }
-
     struct NotificationUser: Decodable {
         let id: Int
         let username: String
