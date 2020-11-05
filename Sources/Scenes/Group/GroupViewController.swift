@@ -97,6 +97,11 @@ extension GroupViewController: GroupPresenterOutput {
         headerView.titleLabel.text = group.name
         headerView.descriptionLabel.text = group.description
 
+        if group.isMember ?? false {
+            headerView.button.isSelected = true
+            headerView.button.isHidden = false
+        }
+
         if let image = group.image, image != "" {
             headerView.image.inner.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
             headerView.image.inner.contentMode = .scaleAspectFill

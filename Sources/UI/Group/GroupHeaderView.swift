@@ -31,7 +31,9 @@ class GroupHeaderView: UIView {
     var button: Button = {
         let button = Button(size: .small)
         button.setTitle(NSLocalizedString("join", comment: ""), for: .normal)
+        button.setTitle(NSLocalizedString("joined", comment: ""), for: .selected)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.isHidden = true
         return button
     }()
 

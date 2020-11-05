@@ -19,7 +19,7 @@ class GroupInteractor: GroupViewControllerOutput {
     func loadData() {
         api.group(id: group, callback: { result in
             switch result {
-            case .failure: break
+            case .failure: break // @TODO
             case let .success(group):
 
                 if group.isInvited ?? false {

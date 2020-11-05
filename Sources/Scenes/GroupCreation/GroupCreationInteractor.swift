@@ -67,14 +67,14 @@ class GroupCreationInteractor: GroupCreationViewControllerOutput {
         }
     }
 
-    private func typeFor(visibility: Int) -> String {
+    private func typeFor(visibility: Int) -> APIClient.GroupType {
         switch visibility {
         case 1:
-            return "private"
+            return APIClient.GroupType.private
         case 2:
-            return "restricted"
+            return APIClient.GroupType.restricted
         default:
-            return "public"
+            return APIClient.GroupType.public
         }
     }
 }

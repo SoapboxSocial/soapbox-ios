@@ -518,10 +518,16 @@ extension APIClient {
 }
 
 extension APIClient {
+    enum GroupType: String, Decodable, CaseIterable {
+        case restricted
+        case `private`
+        case `public`
+    }
+
     struct Group: Decodable {
         let id: Int
         let name: String
-        let groupType: String
+        let groupType: GroupType
         let image: String?
         let description: String
         let isMember: Bool?
@@ -579,7 +585,7 @@ extension APIClient {
             }
     }
 
-    func createGroup(name: String, type: String, description: String?, image: UIImage?, callback: @escaping (Result<Int, APIError>) -> Void) {
+    func createGroup(name: String, type: GroupType, description: String?, image: UIImage?, callback: @escaping (Result<Int, APIError>) -> Void) {
         AF.upload(
             multipartFormData: { multipartFormData in
                 if let uploadImage = image {
@@ -591,7 +597,7 @@ extension APIClient {
                 }
 
                 multipartFormData.append(name.data(using: String.Encoding.utf8)!, withName: "name")
-                multipartFormData.append(type.data(using: String.Encoding.utf8)!, withName: "group_type")
+                multipartFormData.append(type.rawValue.data(using: String.Encoding.utf8)!, withName: "group_type")
 
                 if let desc = description {
                     multipartFormData.append(desc.data(using: String.Encoding.utf8)!, withName: "description")
