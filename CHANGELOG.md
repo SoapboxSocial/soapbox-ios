@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Notifications: We've readded the pull-to-refresh function to the notification screen.
+
 ## [Build 82] - 2020-11-03
 
 ### Fixed
