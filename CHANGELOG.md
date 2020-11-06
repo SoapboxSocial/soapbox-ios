@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [Build 83] - 2020-11-06
+
  - Groups: We are ready to introduce groups. You can create and invite friends! More features coming soon!
  - Notifications: We've readded the pull-to-refresh function to the notification screen.
 
