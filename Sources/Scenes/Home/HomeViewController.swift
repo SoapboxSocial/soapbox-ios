@@ -22,6 +22,8 @@ class HomeViewController: UIViewController {
 
     var output: HomeViewControllerOutput!
 
+    private var updateQueue = [Update]()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -242,30 +244,15 @@ class HomeViewController: UIViewController {
 
 extension HomeViewController: HomePresenterOutput {
     func didFetchGroups(groups: [APIClient.Group]) {
-        presenter.set(groups: groups)
-
-        DispatchQueue.main.async {
-            self.refresh.endRefreshing()
-            self.collection.reloadData()
-        }
+        update(.groups(groups))
     }
 
     func didFetchRooms(rooms: [RoomState]) {
-        presenter.set(rooms: rooms)
-
-        DispatchQueue.main.async {
-            self.refresh.endRefreshing()
-            self.collection.reloadData()
-        }
+        update(.rooms(rooms))
     }
 
     func didFetchActives(actives: [APIClient.ActiveUser]) {
-        presenter.set(actives: actives)
-
-        DispatchQueue.main.async {
-            self.refresh.endRefreshing()
-            self.collection.reloadData()
-        }
+        update(.actives(actives))
     }
 
     func displayError(title: String, description: String?) {
@@ -302,6 +289,47 @@ extension HomeViewController: HomePresenterOutput {
                 self.profileImageView!.image = image
             case .failure:
                 break
+            }
+        })
+    }
+}
+
+extension HomeViewController {
+    enum Update {
+        case rooms([RoomState])
+        case actives([APIClient.ActiveUser])
+        case groups([APIClient.Group])
+    }
+
+    func update(_ update: Update) {
+        refresh.endRefreshing()
+
+        updateQueue.append(update)
+        if updateQueue.count == 1 {
+            reloadData()
+        }
+    }
+
+    private func reloadData() {
+        guard let data = updateQueue.first else {
+            return
+        }
+
+        switch data {
+        case let .rooms(rooms):
+            presenter.set(rooms: rooms)
+        case let .actives(actives):
+            presenter.set(actives: actives)
+        case let .groups(groups):
+            presenter.set(groups: groups)
+        }
+
+        UIView.animate(withDuration: 0, animations: {
+            self.collection.reloadData()
+        }, completion: { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.updateQueue.removeFirst()
+                self?.reloadData()
             }
         })
     }
