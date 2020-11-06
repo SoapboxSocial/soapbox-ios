@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Groups: We are ready to introduce groups. You can create and invite friends!
  - Notifications: We've readded the pull-to-refresh function to the notification screen.
 
 ## [Build 82] - 2020-11-03
