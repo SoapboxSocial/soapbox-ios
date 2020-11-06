@@ -34,6 +34,9 @@ class NotificationsViewController: UIViewController {
         collection.backgroundColor = .clear
         view.addSubview(collection)
 
+        collection.refreshControl = refresh
+        refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
+
         NSLayoutConstraint.activate([
             collection.topAnchor.constraint(equalTo: view.topAnchor),
             collection.leftAnchor.constraint(equalTo: view.leftAnchor),

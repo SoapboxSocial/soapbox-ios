@@ -133,15 +133,15 @@ final class WebRTCClient: NSObject {
 
                     self.peerConnection.stats(for: track, statsOutputLevel: .standard, completionHandler: { stats in
                         stats.forEach { stat in
-                            guard let e = stat.values["totalAudioEnergy"], let energy = Float(e) else {
+                            guard let energy = stat.values.value(Float.self, key: "totalAudioEnergy") else {
                                 return
                             }
 
-                            guard let s = stat.values["ssrc"], let ssrc = UInt32(s) else {
+                            guard let ssrc = stat.values.value(UInt32.self, key: "ssrc") else {
                                 return
                             }
 
-                            guard let d = stat.values["totalSamplesDuration"], let duration = Float(d) else {
+                            guard let duration = stat.values.value(Float.self, key: "totalSamplesDuration") else {
                                 return
                             }
 
