@@ -98,6 +98,7 @@ extension GroupCreationViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
 
         let title = UILabel()
+        title.textColor = .white
         title.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
         title.text = NSLocalizedString("name_group", comment: "")
         title.translatesAutoresizingMaskIntoConstraints = false
@@ -122,6 +123,7 @@ extension GroupCreationViewController {
         view.addSubview(button)
 
         let label = UILabel()
+        label.textColor = .white
         label.font = .rounded(forTextStyle: .title3, weight: .bold)
         label.text = NSLocalizedString("group_names_cannot_be_changed", comment: "")
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -171,6 +173,7 @@ extension GroupCreationViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
 
         let title = UILabel()
+        title.textColor = .white
         title.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
         title.text = NSLocalizedString("describe_group", comment: "")
         title.translatesAutoresizingMaskIntoConstraints = false
@@ -201,6 +204,7 @@ extension GroupCreationViewController {
         view.addSubview(visibilityControl)
 
         visibilityLabel = UILabel()
+        visibilityLabel.textColor = .white
         visibilityLabel.font = .rounded(forTextStyle: .title3, weight: .bold)
         visibilityLabel.text = NSLocalizedString("public_group_description", comment: "")
         visibilityLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -246,6 +250,7 @@ extension GroupCreationViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
 
         let title = UILabel()
+        title.textColor = .white
         title.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
         title.text = NSLocalizedString("invite_your_friends", comment: "")
         title.translatesAutoresizingMaskIntoConstraints = false

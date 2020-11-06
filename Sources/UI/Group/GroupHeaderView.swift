@@ -16,7 +16,6 @@ class GroupHeaderView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.font = .rounded(forTextStyle: .title1, weight: .bold)
-        label.textColor = .white
         return label
     }()
 
