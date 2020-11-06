@@ -220,6 +220,12 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 }
 
                 nav.pushViewController(SceneFactory.createProfileViewController(id: id), animated: true)
+            case "GROUP_INVITE":
+                guard let id = args["id"] as? Int else {
+                    return
+                }
+
+                nav.pushViewController(SceneFactory.createGroupViewController(id: id), animated: true)
             default:
                 break
             }

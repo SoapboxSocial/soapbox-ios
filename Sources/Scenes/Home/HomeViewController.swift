@@ -33,11 +33,12 @@ class HomeViewController: UIViewController {
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.backgroundColor = .clear
 
-        // @TODO PROBABLY NEED TO ADD FOOTER VIEW
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
         collection.register(cellWithClass: EmptyRoomCollectionViewCell.self)
         collection.register(cellWithClass: RoomCell.self)
         collection.register(cellWithClass: ActiveUserCell.self)
+        collection.register(cellWithClass: GroupCell.self)
+        collection.register(cellWithClass: CreateGroupCell.self)
 
         collection.refreshControl = refresh
         refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -120,7 +121,7 @@ class HomeViewController: UIViewController {
     }
 
     private func makeLayout() -> UICollectionViewLayout {
-        return UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+        let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             switch self.presenter.sectionType(for: sectionIndex) {
             case .activeList:
                 return self.createActiveListSection()
@@ -128,8 +129,14 @@ class HomeViewController: UIViewController {
                 return self.createRoomListSection()
             case .noRooms:
                 return self.createNoRoomsSection()
+            case .groupList:
+                return self.createGroupSection()
             }
         }
+
+        layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
+        layout.configuration.interSectionSpacing = 20
+        return layout
     }
 
     private func createNoRoomsSection() -> NSCollectionLayoutSection {
@@ -139,8 +146,18 @@ class HomeViewController: UIViewController {
         layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
 
         var height = NSCollectionLayoutDimension.fractionalHeight(0.9)
+
+        var heightAbsolute = view.frame.size.height
         if presenter.has(section: .activeList) {
-            height = .absolute(view.frame.size.height - 300)
+            heightAbsolute -= 300
+        }
+
+        if presenter.has(section: .groupList) {
+            heightAbsolute -= 200
+        }
+
+        if heightAbsolute != view.frame.size.height {
+            height = .absolute(heightAbsolute)
         }
 
         let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: height)
@@ -189,6 +206,23 @@ class HomeViewController: UIViewController {
         return layoutSection
     }
 
+    private func createGroupSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .estimated(1), heightDimension: .fractionalHeight(1))
+        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .estimated(1), heightDimension: .absolute(56))
+        let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitems: [layoutItem])
+
+        layoutGroup.interItemSpacing = .fixed(10)
+
+        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        layoutSection.interGroupSpacing = 10
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20)
+        layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
+
+        return layoutSection
+    }
+
     private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
         return NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(80)),
@@ -207,6 +241,15 @@ class HomeViewController: UIViewController {
 }
 
 extension HomeViewController: HomePresenterOutput {
+    func didFetchGroups(groups: [APIClient.Group]) {
+        presenter.set(groups: groups)
+
+        DispatchQueue.main.async {
+            self.refresh.endRefreshing()
+            self.collection.reloadSections(IndexSet(integer: 0))
+        }
+    }
+
     func didFetchRooms(rooms: [RoomState]) {
         presenter.set(rooms: rooms)
 
@@ -275,6 +318,13 @@ extension HomeViewController: UICollectionViewDelegate {
             output.didSelectRoom(room: Int(room.id))
         case .noRooms:
             return
+        case .groupList:
+            if indexPath.item == 0 {
+                return present(SceneFactory.createGroupCreationViewController(), animated: true)
+            }
+
+            let group = presenter.item(for: IndexPath(item: indexPath.item - 1, section: indexPath.section), ofType: APIClient.Group.self)
+            navigationController?.pushViewController(SceneFactory.createGroupViewController(id: group.id), animated: true)
         }
     }
 }
@@ -296,6 +346,14 @@ extension HomeViewController: UICollectionViewDataSource {
             return cell
         case .roomList:
             let cell = collectionView.dequeueReusableCell(withClass: RoomCell.self, for: indexPath)
+            presenter.configure(item: cell, for: indexPath)
+            return cell
+        case .groupList:
+            if indexPath.item == 0 {
+                return collectionView.dequeueReusableCell(withClass: CreateGroupCell.self, for: indexPath)
+            }
+
+            let cell = collectionView.dequeueReusableCell(withClass: GroupCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
         case .noRooms:

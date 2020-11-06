@@ -41,6 +41,16 @@ class SceneFactory {
         return viewController
     }
 
+    static func createGroupCreationViewController() -> GroupCreationViewController {
+        let viewController = GroupCreationViewController()
+        let presenter = GroupCreationPresenter(output: viewController)
+
+        let interactor = GroupCreationInteractor(output: presenter, api: APIClient())
+        viewController.output = interactor
+
+        return viewController
+    }
+
     static func createInviteFriendsListViewController(room: Room) -> InviteFriendsListViewController {
         let viewController = InviteFriendsListViewController()
         let presenter = InviteFriendsListPresenter(output: viewController)
@@ -56,6 +66,16 @@ class SceneFactory {
         let presenter = AuthenticationPresenter(output: viewController)
 
         let interactor = AuthenticationInteractor(output: presenter, api: APIClient())
+        viewController.output = interactor
+
+        return viewController
+    }
+
+    static func createGroupViewController(id: Int) -> GroupViewController {
+        let viewController = GroupViewController()
+        let presenter = GroupPresenter(output: viewController)
+
+        let interactor = GroupInteractor(output: presenter, api: APIClient(), group: id)
         viewController.output = interactor
 
         return viewController

@@ -8,7 +8,7 @@ class EditProfileViewController: UIViewController {
 
     private var user: APIClient.Profile
     private let parentVC: ProfileViewController
-    private var imageView: EditProfileImageButton!
+    private var imageView: EditImageButton!
     private var imagePicker: ImagePicker!
     private var bioTextField: UITextView!
     private var twitterButton: Button!
@@ -58,8 +58,7 @@ class EditProfileViewController: UIViewController {
         imagePicker = ImagePicker()
         imagePicker.delegate = self
 
-        imageView = EditProfileImageButton(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
-        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView = EditImageButton()
         imageView.addTarget(self, action: #selector(selectImage))
         imageView.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + user.image))
         view.addSubview(imageView)

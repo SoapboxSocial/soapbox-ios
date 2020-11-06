@@ -74,6 +74,7 @@ extension APIClient {
     struct Notification: Decodable {
         let timestamp: Int
         var from: NotificationUser
+        var group: Group?
         let category: String
     }
 
@@ -286,6 +287,96 @@ extension APIClient {
 
     func actives(callback: @escaping (Result<[ActiveUser], Error>) -> Void) {
         get(path: "/v1/users/active", callback: callback)
+    }
+}
+
+extension APIClient {
+    enum GroupType: String, Decodable, CaseIterable {
+        case restricted
+        case `private`
+        case `public`
+    }
+
+    struct Group: Decodable {
+        let id: Int
+        let name: String
+        let groupType: GroupType
+        let image: String?
+        let description: String
+        let isMember: Bool?
+        let isInvited: Bool?
+
+        private enum CodingKeys: String, CodingKey {
+            case id, name, groupType = "group_type", image, description, isMember = "is_member", isInvited = "is_invited"
+        }
+    }
+
+    struct GroupSuccess: Decodable {
+        let success: Bool
+        let id: Int
+    }
+
+    func groups(id: Int, callback: @escaping (Result<[Group], Error>) -> Void) {
+        get(path: "/v1/users/" + String(id) + "/groups", callback: callback)
+    }
+
+    func inviteGroupMembers(id: Int, users: [Int], callback: @escaping (Result<Void, Error>) -> Void) {
+        post(
+            path: "/v1/groups/" + String(id) + "/invite",
+            parameters: ["ids": users.map(String.init).joined(separator: ",")],
+            callback: callback
+        )
+    }
+
+    func declineInvite(id: Int, callback: @escaping (Result<Void, Error>) -> Void) {
+        post(path: "/v1/groups/" + String(id) + "/invite/decline", callback: callback)
+    }
+
+    func acceptInvite(id: Int, callback: @escaping (Result<Void, Error>) -> Void) {
+        post(path: "/v1/groups/" + String(id) + "/invite/accept", callback: callback)
+    }
+
+    func createGroup(name: String, type: GroupType, description: String?, image: UIImage?, callback: @escaping (Result<Int, Error>) -> Void) {
+        // @TODO MAKE UPLOAD FUNC
+        AF.upload(
+            multipartFormData: { multipartFormData in
+                if let uploadImage = image {
+                    guard let imgData = uploadImage.jpegData(compressionQuality: 0.5) else {
+                        return callback(.failure(.preprocessing))
+                    }
+
+                    multipartFormData.append(imgData, withName: "image", fileName: "image", mimeType: "image/jpg")
+                }
+
+                multipartFormData.append(name.data(using: String.Encoding.utf8)!, withName: "name")
+                multipartFormData.append(type.rawValue.data(using: String.Encoding.utf8)!, withName: "group_type")
+
+                if let desc = description {
+                    multipartFormData.append(desc.data(using: String.Encoding.utf8)!, withName: "description")
+                }
+            },
+            to: Configuration.rootURL.appendingPathComponent("/v1/groups/create"),
+            headers: ["Authorization": token!]
+        )
+        .validate()
+        .response { result in
+            self.decodable(result, callback: { (result: Result<GroupSuccess, Error>) in
+                switch result {
+                case let .failure(error):
+                    callback(.failure(error))
+                case let .success(data):
+                    callback(.success(data.id))
+                }
+            })
+        }
+    }
+
+    func group(id: Int, callback: @escaping (Result<Group, Error>) -> Void) {
+        get(path: "/v1/groups/" + String(id), callback: callback)
+    }
+
+    func getInvite(id: Int, callback: @escaping (Result<User, Error>) -> Void) {
+        get(path: "/v1/groups/" + String(id) + "/invite", callback: callback)
     }
 }
 

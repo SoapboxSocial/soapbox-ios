@@ -32,4 +32,13 @@ class TextView: UITextView {
 
         textContainerInset = UIEdgeInsets(top: 16, left: 20, bottom: 16, right: 20)
     }
+
+    func addDoneButton(title: String, target: Any, selector: Selector) {
+        let toolBar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: 44.0))
+        let flexible = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let barButton = UIBarButtonItem(title: title, style: .plain, target: target, action: selector)
+        toolBar.setItems([flexible, barButton], animated: false)
+
+        inputAccessoryView = toolBar
+    }
 }

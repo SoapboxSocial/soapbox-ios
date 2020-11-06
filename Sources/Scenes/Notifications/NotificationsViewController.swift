@@ -30,6 +30,7 @@ class NotificationsViewController: UIViewController {
         collection.delegate = self
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.register(cellWithClass: FollowingNotificationCell.self)
+        collection.register(cellWithClass: GroupNotificationCell.self)
         collection.backgroundColor = .clear
         view.addSubview(collection)
 
@@ -94,9 +95,17 @@ extension NotificationsViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let notification = notifications[indexPath.item]
 
-        let cell = collectionView.dequeueReusableCell(withClass: FollowingNotificationCell.self, for: indexPath)
-        cell.name.text = notification.from.username
-        cell.time = notification.timestamp
+        var cell: NotificationCell
+        if notification.category == "NEW_FOLLOWER" {
+            cell = collectionView.dequeueReusableCell(withClass: FollowingNotificationCell.self, for: indexPath)
+            cell.name.text = notification.from.username
+            cell.time = notification.timestamp
+        } else {
+            cell = collectionView.dequeueReusableCell(withClass: GroupNotificationCell.self, for: indexPath)
+            cell.name.text = notification.from.username
+            cell.time = notification.timestamp
+            (cell as! GroupNotificationCell).group = notification.group?.name
+        }
 
         cell.image.image = nil
         if notification.from.image != "" {
@@ -116,10 +125,17 @@ extension NotificationsViewController: UICollectionViewDelegate {
             return
         }
 
-        if item.category != "NEW_FOLLOWER" {
+        switch item.category {
+        case "NEW_FOLLOWER":
+            nav.pushViewController(SceneFactory.createProfileViewController(id: item.from.id), animated: true)
+        case "GROUP_INVITE":
+            guard let id = item.group?.id else {
+                return
+            }
+
+            nav.pushViewController(SceneFactory.createGroupViewController(id: id), animated: true)
+        default:
             return
         }
-
-        nav.pushViewController(SceneFactory.createProfileViewController(id: item.from.id), animated: true)
     }
 }

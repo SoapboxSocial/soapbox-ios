@@ -13,7 +13,7 @@ protocol AuthenticationPresenterOutput {
 }
 
 class AuthenticationPresenter: AuthenticationInteractorOutput {
-    var output: AuthenticationPresenterOutput
+    let output: AuthenticationPresenterOutput
 
     init(output: AuthenticationPresenterOutput) {
         self.output = output

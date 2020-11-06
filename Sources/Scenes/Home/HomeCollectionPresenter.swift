@@ -6,6 +6,7 @@ protocol SectionData {}
 enum SectionType: Int, CaseIterable {
     case roomList
     case activeList
+    case groupList
     case noRooms
 }
 
@@ -25,6 +26,7 @@ class HomeCollectionPresenter {
     }
 
     init() {
+        set(groups: []) // @TODO MAYBE HAVE A FIRST ITEM?
         set(rooms: [])
     }
 
@@ -43,6 +45,10 @@ class HomeCollectionPresenter {
             return 1
         }
 
+        if section.type == .groupList {
+            return section.data.count + 1
+        }
+
         return section.data.count
     }
 
@@ -59,6 +65,21 @@ class HomeCollectionPresenter {
         item.image.image = nil
         if let image = user.image, image != "" {
             item.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
+        }
+    }
+
+    func configure(item: GroupCell, for indexPath: IndexPath) {
+        let section = dataSource[indexPath.section]
+        guard let group = section.data[indexPath.row - 1] as? APIClient.Group else {
+            print("Error getting active user for indexPath: \(indexPath)")
+            return
+        }
+
+        item.name.text = group.name
+
+        item.image.image = nil
+        if let image = group.image, image != "" {
+            item.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
         }
     }
 
@@ -91,6 +112,11 @@ class HomeCollectionPresenter {
         item.members = room.members
     }
 
+    func set(groups: [APIClient.Group]) {
+        dataSource.removeAll(where: { $0.type == .groupList })
+        dataSource.insert(Section(type: .groupList, title: "", data: groups), at: 0)
+    }
+
     func set(rooms: [RoomState]) {
         if rooms.isEmpty {
             removeRooms()
@@ -108,7 +134,12 @@ class HomeCollectionPresenter {
             return
         }
 
-        dataSource.insert(Section(type: .activeList, title: "", data: actives), at: 0)
+        var at = 0
+        if has(section: .groupList) {
+            at = 1
+        }
+
+        dataSource.insert(Section(type: .activeList, title: "", data: actives), at: at)
     }
 
     func has(section: SectionType) -> Bool {

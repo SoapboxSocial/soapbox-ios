@@ -19,6 +19,7 @@ protocol HomeInteractorOutput {
     func didLeaveRoom()
     func didFetchImage()
     func didFetchActives(actives: [APIClient.ActiveUser])
+    func didFetchGroups(groups: [APIClient.Group])
 }
 
 class HomeInteractor: HomeViewControllerOutput {
@@ -67,6 +68,15 @@ class HomeInteractor: HomeViewControllerOutput {
                 case let .success(users):
                     self.output.didFetchActives(actives: users)
                 }
+            }
+        })
+
+        api.groups(id: UserDefaults.standard.integer(forKey: "id"), callback: { result in
+            switch result {
+            case .failure:
+                self.output.didFetchGroups(groups: [])
+            case let .success(groups):
+                self.output.didFetchGroups(groups: groups)
             }
         })
     }
