@@ -7,9 +7,9 @@ class SegmentedControl: BetterSegmentedControl {
             frame: frame,
             segments: LabelSegment.segments(
                 withTitles: titles,
-                normalFont: UIFont.rounded(forTextStyle: .title2, weight: .bold),
+                normalFont: UIFont.rounded(forTextStyle: .title3, weight: .bold),
                 normalTextColor: .white,
-                selectedFont: UIFont.rounded(forTextStyle: .title2, weight: .bold),
+                selectedFont: UIFont.rounded(forTextStyle: .title3, weight: .bold),
                 selectedTextColor: .black
             )
         )
