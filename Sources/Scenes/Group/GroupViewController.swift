@@ -91,7 +91,9 @@ extension GroupViewController: GroupPresenterOutput {
         headerView.titleLabel.text = group.name
         headerView.descriptionLabel.text = group.description
 
-        if group.isMember ?? false {}
+        if group.isMember ?? false {
+            showJoinedBadge()
+        }
 
         if let image = group.image, image != "" {
             headerView.image.inner.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
