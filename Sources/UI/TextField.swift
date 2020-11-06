@@ -46,10 +46,7 @@ class TextField: UITextField {
 
         font = .rounded(forTextStyle: .title3, weight: .bold)
 
-        let theme = colors()
-
-        backgroundColor = theme.background
-        textColor = theme.text
+        updateColors()
 
         layer.cornerRadius = 15
 
@@ -73,5 +70,23 @@ class TextField: UITextField {
         }
 
         return ThemeColors(text: .white, background: .systemGray6, placeholder: .secondaryLabel)
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        updateColors()
+    }
+
+    private func updateColors() {
+        let theme = colors()
+        backgroundColor = theme.background
+        textColor = theme.text
+
+        if let text = placeholder {
+            attributedPlaceholder = NSAttributedString(
+                string: text,
+                attributes: [NSAttributedString.Key.foregroundColor: theme.placeholder]
+            )
+        }
     }
 }
