@@ -54,7 +54,7 @@ class NotificationsViewController: UIViewController {
     private func layout() -> UICollectionViewCompositionalLayout {
         let size = NSCollectionLayoutSize(
             widthDimension: NSCollectionLayoutDimension.fractionalWidth(1),
-            heightDimension: NSCollectionLayoutDimension.estimated(40)
+            heightDimension: .estimated(42)
         )
         let item = NSCollectionLayoutItem(layoutSize: size)
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: size, subitem: item, count: 1)

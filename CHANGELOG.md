@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Notifications: We fixed the layout for when the notification is a bit too long.
  - Groups: We fixed various issues.
  - Search: We made the search bar look a little nicer, and fixed some animation bugs.
 

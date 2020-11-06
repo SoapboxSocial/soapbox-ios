@@ -14,6 +14,7 @@ class NotificationCell: UICollectionViewCell {
         let label = UILabel()
         label.font = .rounded(forTextStyle: .body, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
         return label
     }()
 
@@ -25,6 +26,7 @@ class NotificationCell: UICollectionViewCell {
         let description = UILabel()
         description.font = .rounded(forTextStyle: .body, weight: .regular)
         description.translatesAutoresizingMaskIntoConstraints = false
+        description.numberOfLines = 0
         return description
     }()
 
@@ -37,27 +39,30 @@ class NotificationCell: UICollectionViewCell {
         contentView.addSubview(image)
 
         NSLayoutConstraint.activate([
-            image.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            image.heightAnchor.constraint(equalToConstant: 40),
+            contentView.leftAnchor.constraint(equalTo: leftAnchor),
+            contentView.rightAnchor.constraint(equalTo: rightAnchor),
+            contentView.widthAnchor.constraint(equalTo: widthAnchor),
+            bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
             image.widthAnchor.constraint(equalToConstant: 40),
+            image.heightAnchor.constraint(equalToConstant: 40),
+            image.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            image.topAnchor.constraint(equalTo: contentView.topAnchor),
         ])
 
         NSLayoutConstraint.activate([
             name.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 10),
             name.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            name.topAnchor.constraint(equalTo: contentView.topAnchor),
         ])
 
         NSLayoutConstraint.activate([
-            descriptionLabel.leftAnchor.constraint(equalTo: name.leftAnchor),
-            descriptionLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             descriptionLabel.topAnchor.constraint(equalTo: name.bottomAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
-            contentView.leftAnchor.constraint(equalTo: leftAnchor),
-            contentView.rightAnchor.constraint(equalTo: rightAnchor),
+            descriptionLabel.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 10),
+            descriptionLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             contentView.bottomAnchor.constraint(equalTo: descriptionLabel.bottomAnchor),
-            contentView.topAnchor.constraint(equalTo: name.topAnchor),
         ])
     }
 
