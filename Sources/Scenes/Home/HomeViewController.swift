@@ -246,7 +246,7 @@ extension HomeViewController: HomePresenterOutput {
 
         DispatchQueue.main.async {
             self.refresh.endRefreshing()
-            self.collection.reloadSections(IndexSet(integer: 0))
+            self.collection.reloadData()
         }
     }
 
