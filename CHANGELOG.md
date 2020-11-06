@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [Build 85] - 2020-11-06
+
  - Home: Fixed issue with groups sometimes disappearing.
 
 ## [Build 84] - 2020-11-06
