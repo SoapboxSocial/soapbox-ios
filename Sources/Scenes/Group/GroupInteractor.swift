@@ -3,6 +3,8 @@ import Foundation
 protocol GroupInteractorOutput {
     func present(group: APIClient.Group)
     func present(inviter: APIClient.User)
+    func presentInviteAccepted()
+    func presentInviteDeclined()
 }
 
 class GroupInteractor: GroupViewControllerOutput {
@@ -27,6 +29,26 @@ class GroupInteractor: GroupViewControllerOutput {
                 }
 
                 self.output.present(group: group)
+            }
+        })
+    }
+
+    func acceptInvite() {
+        api.acceptInvite(id: group, callback: { result in
+            switch result {
+            case .failure: break // @TODO
+            case .success:
+                self.output.presentInviteAccepted()
+            }
+        })
+    }
+
+    func declineInvite() {
+        api.declineInvite(id: group, callback: { result in
+            switch result {
+            case .failure: break // @TODO
+            case .success:
+                self.output.presentInviteDeclined()
             }
         })
     }

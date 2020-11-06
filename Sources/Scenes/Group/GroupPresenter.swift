@@ -3,6 +3,8 @@ import Foundation
 protocol GroupPresenterOutput {
     func display(group: APIClient.Group)
     func display(invite: APIClient.User)
+    func displayInviteAccepted()
+    func displayInviteDeclined()
 }
 
 class GroupPresenter: GroupInteractorOutput {
@@ -18,5 +20,13 @@ class GroupPresenter: GroupInteractorOutput {
 
     func present(inviter: APIClient.User) {
         output.display(invite: inviter)
+    }
+
+    func presentInviteDeclined() {
+        output.displayInviteDeclined()
+    }
+
+    func presentInviteAccepted() {
+        output.displayInviteAccepted()
     }
 }

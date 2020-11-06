@@ -328,6 +328,14 @@ extension APIClient {
         )
     }
 
+    func declineInvite(id: Int, callback: @escaping (Result<Void, Error>) -> Void) {
+        post(path: "/v1/groups/" + String(id) + "/invite/decline", callback: callback)
+    }
+
+    func acceptInvite(id: Int, callback: @escaping (Result<Void, Error>) -> Void) {
+        post(path: "/v1/groups/" + String(id) + "/invite/accept", callback: callback)
+    }
+
     func createGroup(name: String, type: GroupType, description: String?, image: UIImage?, callback: @escaping (Result<Int, Error>) -> Void) {
         // @TODO MAKE UPLOAD FUNC
         AF.upload(

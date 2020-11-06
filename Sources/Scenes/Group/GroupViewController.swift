@@ -3,6 +3,8 @@ import UIKit
 
 protocol GroupViewControllerOutput {
     func loadData()
+    func acceptInvite()
+    func declineInvite()
 }
 
 class GroupViewController: UIViewController {
@@ -75,19 +77,11 @@ class GroupViewController: UIViewController {
     }
 
     @objc private func acceptInvite() {
-        removeInviteView()
+        output.acceptInvite()
     }
 
     @objc private func declineInvite() {
-        removeInviteView()
-    }
-
-    private func removeInviteView() {
-        UIView.animate(
-            withDuration: 0.2,
-            animations: { self.inviteView.isHidden = true },
-            completion: { _ in self.content.removeArrangedSubview(self.inviteView) }
-        )
+        output.declineInvite()
     }
 }
 
@@ -97,10 +91,7 @@ extension GroupViewController: GroupPresenterOutput {
         headerView.titleLabel.text = group.name
         headerView.descriptionLabel.text = group.description
 
-        if group.isMember ?? false {
-            headerView.button.isSelected = true
-            headerView.button.isHidden = false
-        }
+        if group.isMember ?? false {}
 
         if let image = group.image, image != "" {
             headerView.image.inner.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
@@ -120,5 +111,27 @@ extension GroupViewController: GroupPresenterOutput {
         }
 
         inviteView.isHidden = false
+    }
+
+    func displayInviteAccepted() {
+        showJoinedBadge()
+        removeInviteView()
+    }
+
+    func displayInviteDeclined() {
+        removeInviteView()
+    }
+
+    private func showJoinedBadge() {
+        headerView.button.isSelected = true
+        headerView.button.isHidden = false
+    }
+
+    private func removeInviteView() {
+        UIView.animate(
+            withDuration: 0.2,
+            animations: { self.inviteView.isHidden = true },
+            completion: { _ in self.content.removeArrangedSubview(self.inviteView) }
+        )
     }
 }
