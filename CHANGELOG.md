@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - Groups: We fixed various issues.
+ - Search: We made the search bar look a little nicer, and fixed some animation bugs.
 
 ## [Build 83] - 2020-11-06
 
