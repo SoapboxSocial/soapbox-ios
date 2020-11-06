@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Groups: We fixed various issues.
+
 ## [Build 83] - 2020-11-06
 
  - Groups: We are ready to introduce groups. You can create and invite friends! More features coming soon!
