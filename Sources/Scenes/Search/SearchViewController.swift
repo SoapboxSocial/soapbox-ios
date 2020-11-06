@@ -14,16 +14,20 @@ class SearchViewController: UIViewController {
     private var collection: UICollectionView!
     private var users = [APIClient.User]()
 
-    private var searchController = UISearchController()
-
     private let paginate = UIRefreshControl()
+
+    private var searchBar: TextField!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .background
+        title = NSLocalizedString("search", comment: "")
 
-        collection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout.usersLayout())
+        let layout = UICollectionViewFlowLayout.usersLayout()
+        layout.sectionInset.top = 0
+
+        collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.delegate = self
         collection.dataSource = self
@@ -44,32 +48,26 @@ class SearchViewController: UIViewController {
         paginate.triggerVerticalOffset = 100
         collection.bottomRefreshControl = paginate
 
-        searchController.searchResultsUpdater = self
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.showsSearchResultsController = true
-        searchController.automaticallyShowsCancelButton = false
+        searchBar = TextField(frame: .zero, theme: .normal)
+        searchBar.delegate = self
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        searchBar.addTarget(self, action: #selector(updateSearchResults), for: .editingChanged)
+        searchBar.clearButtonMode = .whileEditing
+        searchBar.returnKeyType = .done
+        searchBar.placeholder = NSLocalizedString("search_for_friends", comment: "")
+        view.addSubview(searchBar)
 
-        let scb = searchController.searchBar
-        searchController.hidesNavigationBarDuringPresentation = false
-        scb.returnKeyType = .default
-        scb.delegate = self
-        scb.showsCancelButton = false
-        scb.placeholder = NSLocalizedString("search_for_friends", comment: "")
-        scb.searchTextField.layer.masksToBounds = true
-        scb.searchTextField.layer.cornerRadius = 15
-        scb.searchTextField.leftView = nil
-
-        title = NSLocalizedString("search", comment: "")
-
-        navigationItem.hidesSearchBarWhenScrolling = false
-        searchController.hidesNavigationBarDuringPresentation = false
-
-        navigationItem.searchController = searchController
+        NSLayoutConstraint.activate([
+            searchBar.topAnchor.constraint(equalTo: view.topAnchor),
+            searchBar.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            searchBar.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            searchBar.heightAnchor.constraint(equalToConstant: 48),
+        ])
 
         NSLayoutConstraint.activate([
             collection.leftAnchor.constraint(equalTo: view.leftAnchor),
             collection.rightAnchor.constraint(equalTo: view.rightAnchor),
-            collection.topAnchor.constraint(equalTo: view.topAnchor),
+            collection.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 20),
             collection.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
@@ -140,20 +138,19 @@ extension SearchViewController: SearchPresenterOutput {
     }
 }
 
-extension SearchViewController: UISearchResultsUpdating {
-    func updateSearchResults(for searchController: UISearchController) {
+extension SearchViewController: UITextFieldDelegate {
+    @objc private func updateSearchResults() {
         var text = "*"
-        if let input = searchController.searchBar.text, input != "" {
+        if let input = searchBar.text, input != "" {
             text = input
         }
 
         collection.refreshControl?.beginRefreshing()
         output.search(text)
     }
-}
 
-extension SearchViewController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_: UISearchBar) {
+    func textFieldShouldReturn(_: UITextField) -> Bool {
         view.endEditing(true)
+        return true
     }
 }
