@@ -1,19 +1,19 @@
 import Foundation
 
-protocol FollowerListInteractorOutput {
+protocol UserListInteractorOutput {
     func presentGeneralError()
     func present(users: [APIClient.User])
 }
 
-class FollowerListInteractor: FollowerListViewControllerOutput {
-    private let output: FollowerListInteractorOutput
-    private let userListFunc: APIClient.FollowerListFunc
+class UserListInteractor: UserListViewControllerOutput {
+    private let output: UserListInteractorOutput
+    private let userListFunc: APIClient.UserListFunc
     private let user: Int
 
     private var offset = 0
     private var limit = 10
 
-    init(output: FollowerListInteractorOutput, user: Int, userListFunc: @escaping APIClient.FollowerListFunc) {
+    init(output: UserListInteractorOutput, user: Int, userListFunc: @escaping APIClient.UserListFunc) {
         self.output = output
         self.user = user
         self.userListFunc = userListFunc

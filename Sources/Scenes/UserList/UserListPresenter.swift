@@ -1,14 +1,14 @@
 import Foundation
 
-protocol FollowerListPresenterOutput {
+protocol UserListPresenterOutput {
     func displayError(title: String, description: String?)
     func display(users: [APIClient.User])
 }
 
-class FollowerListPresenter: FollowerListInteractorOutput {
-    private var output: FollowerListPresenterOutput
+class UserListPresenter: UserListInteractorOutput {
+    private var output: UserListPresenterOutput
 
-    init(output: FollowerListPresenterOutput) {
+    init(output: UserListPresenterOutput) {
         self.output = output
     }
 

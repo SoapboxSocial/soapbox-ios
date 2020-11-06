@@ -11,11 +11,12 @@ class SceneFactory {
         return viewController
     }
 
-    static func createFollowerViewController(id: Int, userListFunc: @escaping APIClient.FollowerListFunc) -> FollowerListViewController {
-        let viewController = FollowerListViewController()
-        let presenter = FollowerListPresenter(output: viewController)
+    static func createUserViewController(id: Int, title: String, userListFunc: @escaping APIClient.UserListFunc) -> UserListViewController {
+        let viewController = UserListViewController()
+        viewController.title = title
+        let presenter = UserListPresenter(output: viewController)
 
-        let interactor = FollowerListInteractor(output: presenter, user: id, userListFunc: userListFunc)
+        let interactor = UserListInteractor(output: presenter, user: id, userListFunc: userListFunc)
         viewController.output = interactor
 
         return viewController

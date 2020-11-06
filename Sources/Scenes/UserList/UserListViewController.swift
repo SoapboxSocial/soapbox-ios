@@ -2,12 +2,12 @@ import CCBottomRefreshControl
 import NotificationBannerSwift
 import UIKit
 
-protocol FollowerListViewControllerOutput {
+protocol UserListViewControllerOutput {
     func loadFollowers()
 }
 
-class FollowerListViewController: UIViewController {
-    var output: FollowerListViewControllerOutput!
+class UserListViewController: UIViewController {
+    var output: UserListViewControllerOutput!
 
     private var collection: UICollectionView!
     private var users = [APIClient.User]()
@@ -48,7 +48,7 @@ class FollowerListViewController: UIViewController {
     }
 }
 
-extension FollowerListViewController: FollowerListPresenterOutput {
+extension UserListViewController: UserListPresenterOutput {
     func displayError(title: String, description: String?) {
         let banner = FloatingNotificationBanner(
             title: title,
@@ -69,7 +69,7 @@ extension FollowerListViewController: FollowerListPresenterOutput {
     }
 }
 
-extension FollowerListViewController: UICollectionViewDataSource {
+extension UserListViewController: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         return users.count
     }
@@ -91,7 +91,7 @@ extension FollowerListViewController: UICollectionViewDataSource {
     }
 }
 
-extension FollowerListViewController: UICollectionViewDelegate {
+extension UserListViewController: UICollectionViewDelegate {
     // @TODO probably needs to be in the interactor?
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         navigationController?.pushViewController(SceneFactory.createProfileViewController(id: users[indexPath.item].id), animated: true)
