@@ -254,12 +254,12 @@ class ProfileViewController: UIViewController {
 
     // @TODO THIS SHOULD BE DONE THROUGH INTERACTOR FLOW
     @objc private func didTapFollowersLabel() {
-        let list = SceneFactory.createFollowerViewController(id: user.id, userListFunc: APIClient().followers)
+        let list = SceneFactory.createUserViewController(id: user.id, title: NSLocalizedString("followers", comment: ""), userListFunc: APIClient().followers)
         navigationController?.pushViewController(list, animated: true)
     }
 
     @objc private func didTapFollowingLabel() {
-        let list = SceneFactory.createFollowerViewController(id: user.id, userListFunc: APIClient().following)
+        let list = SceneFactory.createUserViewController(id: user.id, title: NSLocalizedString("following", comment: ""), userListFunc: APIClient().following)
         navigationController?.pushViewController(list, animated: true)
     }
 
