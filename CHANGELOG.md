@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [Build 84] - 2020-11-06
+
  - General: Fixed some issues causing crashes.
  - Notifications: We fixed the layout for when the notification is a bit too long.
  - Groups: We fixed various issues.
