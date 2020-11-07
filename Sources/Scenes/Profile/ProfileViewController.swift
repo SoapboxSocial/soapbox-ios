@@ -37,18 +37,12 @@ class ProfileViewController: UIViewController {
         return label
     }()
 
-    private let followersCountLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .rounded(forTextStyle: .body, weight: .semibold)
-        return label
+    private let followersCount: StatisticView = {
+        StatisticView()
     }()
 
-    private let followingCountLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .rounded(forTextStyle: .body, weight: .semibold)
-        return label
+    private let followingCount: StatisticView = {
+        StatisticView()
     }()
 
     private let followsYouBadge: UIView = {
@@ -65,13 +59,6 @@ class ProfileViewController: UIViewController {
         button.setTitle(NSLocalizedString("unfollow", comment: ""), for: .selected)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
-    }()
-
-    private let followersLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .rounded(forTextStyle: .body, weight: .regular)
-        return label
     }()
 
     private let bioLabel: UILabel = {
@@ -125,36 +112,21 @@ class ProfileViewController: UIViewController {
         followsYouLabel.text = NSLocalizedString("follows_you", comment: "")
         followsYouBadge.addSubview(followsYouLabel)
 
+        view.addSubview(bioLabel)
+
         let followersRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapFollowersLabel))
 
-        let followersView = UIView()
-        followersView.translatesAutoresizingMaskIntoConstraints = false
-        followersView.addGestureRecognizer(followersRecognizer)
-        followersView.isUserInteractionEnabled = true
-        view.addSubview(followersView)
-
-        followersView.addSubview(followersCountLabel)
-        followersView.addSubview(followersLabel)
+        followersCount.addGestureRecognizer(followersRecognizer)
+        followersCount.isUserInteractionEnabled = true
+        followersCount.descriptionLabel.text = NSLocalizedString("followers", comment: "")
+        view.addSubview(followersCount)
 
         let followingRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapFollowingLabel))
 
-        let followingView = UIView()
-        followingView.translatesAutoresizingMaskIntoConstraints = false
-        followingView.addGestureRecognizer(followingRecognizer)
-        followingView.isUserInteractionEnabled = true
-        view.addSubview(followingView)
-
-        followingView.addSubview(followingCountLabel)
-
-        let followingLabel = UILabel()
-        followingLabel.translatesAutoresizingMaskIntoConstraints = false
-        followingLabel.font = .rounded(forTextStyle: .body, weight: .regular)
-        followingLabel.text = NSLocalizedString("following", comment: "")
-        followingView.addSubview(followingLabel)
-
-        followersLabel.text = NSLocalizedString("followers", comment: "")
-
-        view.addSubview(bioLabel)
+        followingCount.addGestureRecognizer(followingRecognizer)
+        followingCount.isUserInteractionEnabled = true
+        followingCount.descriptionLabel.text = NSLocalizedString("following", comment: "")
+        view.addSubview(followingCount)
 
         NSLayoutConstraint.activate([
             image.heightAnchor.constraint(equalToConstant: 80),
@@ -198,42 +170,18 @@ class ProfileViewController: UIViewController {
         ])
 
         NSLayoutConstraint.activate([
-            followersView.topAnchor.constraint(equalTo: bioLabel.bottomAnchor, constant: 20),
-            followersView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            followersView.bottomAnchor.constraint(equalTo: followersLabel.bottomAnchor),
-            followersView.rightAnchor.constraint(equalTo: followersLabel.rightAnchor),
+            followersCount.topAnchor.constraint(equalTo: bioLabel.bottomAnchor, constant: 20),
+            followersCount.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
         ])
 
         NSLayoutConstraint.activate([
-            followersCountLabel.topAnchor.constraint(equalTo: followersView.topAnchor, constant: 20),
-            followersCountLabel.leftAnchor.constraint(equalTo: followersView.leftAnchor, constant: 0),
-        ])
-
-        NSLayoutConstraint.activate([
-            followersLabel.topAnchor.constraint(equalTo: followersCountLabel.bottomAnchor, constant: 0),
-            followersLabel.leftAnchor.constraint(equalTo: followersCountLabel.leftAnchor, constant: 0),
-        ])
-
-        NSLayoutConstraint.activate([
-            followingView.topAnchor.constraint(equalTo: bioLabel.bottomAnchor, constant: 20),
-            followingView.leftAnchor.constraint(equalTo: followersView.rightAnchor, constant: 40),
-            followingView.rightAnchor.constraint(equalTo: followingLabel.rightAnchor),
-            followingView.bottomAnchor.constraint(equalTo: followersLabel.bottomAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
-            followingCountLabel.topAnchor.constraint(equalTo: followingView.topAnchor, constant: 20),
-            followingCountLabel.leftAnchor.constraint(equalTo: followingView.leftAnchor, constant: 0),
-        ])
-
-        NSLayoutConstraint.activate([
-            followingLabel.topAnchor.constraint(equalTo: followingCountLabel.bottomAnchor, constant: 0),
-            followingLabel.leftAnchor.constraint(equalTo: followingCountLabel.leftAnchor, constant: 0),
+            followingCount.topAnchor.constraint(equalTo: followersCount.topAnchor),
+            followingCount.leftAnchor.constraint(equalTo: followersCount.rightAnchor, constant: 40),
         ])
 
         NSLayoutConstraint.activate([
             twitter.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            twitter.topAnchor.constraint(equalTo: followersView.bottomAnchor, constant: 20),
+            twitter.topAnchor.constraint(equalTo: followersCount.bottomAnchor, constant: 20),
         ])
     }
 
@@ -330,11 +278,11 @@ extension ProfileViewController: ProfilePresenterOutput {
     }
 
     private func updateFollowerLabels() {
-        followersCountLabel.text = String(user.followers)
+        followersCount.statistic.text = String(user.followers)
         if user.followers == 1 {
-            followersLabel.text = NSLocalizedString("follower", comment: "")
+            followersCount.descriptionLabel.text = NSLocalizedString("follower", comment: "")
         } else {
-            followersLabel.text = NSLocalizedString("followers", comment: "")
+            followersCount.descriptionLabel.text = NSLocalizedString("followers", comment: "")
         }
     }
 
@@ -342,7 +290,7 @@ extension ProfileViewController: ProfilePresenterOutput {
         user = profile
         displayName.text = profile.displayName
         username.text = "@" + profile.username
-        followingCountLabel.text = String(profile.following)
+        followingCount.statistic.text = String(profile.following)
         bioLabel.text = profile.bio
         title = profile.username
 
