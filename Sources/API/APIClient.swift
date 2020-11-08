@@ -396,7 +396,6 @@ extension APIClient {
         )
         .validate()
         .response { result in
-            debugPrint(result)
             self.decodable(result, callback: callback)
         }
     }
