@@ -81,4 +81,14 @@ class SceneFactory {
 
         return viewController
     }
+
+    static func createInviteFriendsToGroupViewController(id: Int) -> InviteFriendsToGroupViewController {
+        let viewController = InviteFriendsToGroupViewController()
+        let presenter = InviteFriendsToGroupPresenter(output: viewController)
+
+        let interactor = InviteFriendsToGroupInteractor(output: presenter, api: APIClient(), id: id)
+        viewController.output = interactor
+
+        return viewController
+    }
 }
