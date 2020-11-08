@@ -7,7 +7,7 @@ protocol GroupViewControllerOutput {
     func declineInvite()
 }
 
-class GroupViewController: UIViewController {
+class GroupViewController: ViewController {
     var output: GroupViewControllerOutput!
 
     private let content: UIStackView = {
