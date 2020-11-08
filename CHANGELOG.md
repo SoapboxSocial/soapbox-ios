@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Group: You can now invite more friends to group!
+
 ## [Build 86] - 2020-11-08
 
  - Group Members: We are now displaying the members of a group!
