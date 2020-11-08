@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [Build 86] - 2020-11-08
+
  - Group Members: We are now displaying the members of a group!
 
 ## [Build 85] - 2020-11-06
