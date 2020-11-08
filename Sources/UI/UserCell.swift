@@ -28,6 +28,13 @@ class UserCell: UICollectionViewCell {
         return label
     }()
 
+    var seperator: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .background
+        return view
+    }()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
 
@@ -35,8 +42,8 @@ class UserCell: UICollectionViewCell {
 
         contentView.backgroundColor = .foreground
         contentView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.layer.cornerRadius = 30
 
+        contentView.addSubview(seperator)
         contentView.addSubview(displayName)
         contentView.addSubview(username)
         contentView.addSubview(image)
@@ -64,6 +71,13 @@ class UserCell: UICollectionViewCell {
             username.topAnchor.constraint(equalTo: displayName.bottomAnchor),
             username.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 20),
             username.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
+        ])
+
+        NSLayoutConstraint.activate([
+            seperator.heightAnchor.constraint(equalToConstant: 1),
+            seperator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            seperator.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
+            seperator.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
         ])
     }
 

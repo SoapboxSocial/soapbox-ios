@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - Group: You can now invite more friends to group!
+ - Users: We updted the way user lists look!
 
 ## [Build 86] - 2020-11-08
 
