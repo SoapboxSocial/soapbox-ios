@@ -305,9 +305,10 @@ extension APIClient {
         let description: String
         let isMember: Bool?
         let isInvited: Bool?
+        let members: Int?
 
         private enum CodingKeys: String, CodingKey {
-            case id, name, groupType = "group_type", image, description, isMember = "is_member", isInvited = "is_invited"
+            case id, name, groupType = "group_type", image, description, isMember = "is_member", isInvited = "is_invited", members
         }
     }
 
@@ -378,6 +379,10 @@ extension APIClient {
     func getInvite(id: Int, callback: @escaping (Result<User, Error>) -> Void) {
         get(path: "/v1/groups/" + String(id) + "/invite", callback: callback)
     }
+
+    func groupMembers(_ id: Int, _ limit: Int, _ offset: Int, _ callback: @escaping (Result<[User], Error>) -> Void) {
+        userListRequest("/v1/groups/" + String(id) + "/members", parameters: ["limit": limit, "offset": offset], callback: callback)
+    }
 }
 
 extension APIClient {
@@ -391,6 +396,7 @@ extension APIClient {
         )
         .validate()
         .response { result in
+            debugPrint(result)
             self.decodable(result, callback: callback)
         }
     }

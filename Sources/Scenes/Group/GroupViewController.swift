@@ -29,6 +29,12 @@ class GroupViewController: UIViewController {
         GroupHeaderView()
     }()
 
+    private var membersCountView: StatisticView = {
+        StatisticView()
+    }()
+
+    private var id: Int!
+
     private lazy var manager = FocusableImageViewManager()
 
     override func viewDidLoad() {
@@ -44,6 +50,10 @@ class GroupViewController: UIViewController {
 
         content.addArrangedSubview(headerView)
         content.addArrangedSubview(inviteView)
+        content.addArrangedSubview(membersCountView)
+
+        membersCountView.descriptionLabel.text = NSLocalizedString("members", comment: "")
+        membersCountView.handleTap(target: self, action: #selector(didTapMembers))
 
         inviteView.isHidden = true
 
@@ -58,6 +68,10 @@ class GroupViewController: UIViewController {
         NSLayoutConstraint.activate([
             inviteView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             inviteView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+        ])
+
+        NSLayoutConstraint.activate([
+            membersCountView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
         ])
 
         NSLayoutConstraint.activate([
@@ -90,6 +104,9 @@ extension GroupViewController: GroupPresenterOutput {
         title = group.name
         headerView.titleLabel.text = group.name
         headerView.descriptionLabel.text = group.description
+        id = group.id
+
+        membersCountView.statistic.text = String(group.members ?? 0)
 
         if group.isMember ?? false {
             showJoinedBadge()
@@ -135,5 +152,10 @@ extension GroupViewController: GroupPresenterOutput {
             animations: { self.inviteView.isHidden = true },
             completion: { _ in self.content.removeArrangedSubview(self.inviteView) }
         )
+    }
+
+    @objc private func didTapMembers() {
+        let list = SceneFactory.createUserViewController(id: id, title: NSLocalizedString("members", comment: ""), userListFunc: APIClient().groupMembers)
+        navigationController?.pushViewController(list, animated: true)
     }
 }

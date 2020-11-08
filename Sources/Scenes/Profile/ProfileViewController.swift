@@ -114,17 +114,11 @@ class ProfileViewController: UIViewController {
 
         view.addSubview(bioLabel)
 
-        let followersRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapFollowersLabel))
-
-        followersCount.addGestureRecognizer(followersRecognizer)
-        followersCount.isUserInteractionEnabled = true
+        followersCount.handleTap(target: self, action: #selector(didTapFollowersLabel))
         followersCount.descriptionLabel.text = NSLocalizedString("followers", comment: "")
         view.addSubview(followersCount)
 
-        let followingRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapFollowingLabel))
-
-        followingCount.addGestureRecognizer(followingRecognizer)
-        followingCount.isUserInteractionEnabled = true
+        followingCount.handleTap(target: self, action: #selector(didTapFollowingLabel))
         followingCount.descriptionLabel.text = NSLocalizedString("following", comment: "")
         view.addSubview(followingCount)
 
