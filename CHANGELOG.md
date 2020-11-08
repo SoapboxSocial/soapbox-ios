@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Navigation: We fixed the context menu for the back button.
+
 ## [Build 87] - 2020-11-09
 
  - Group: You can now invite more friends to group!
