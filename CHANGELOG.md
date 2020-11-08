@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Group Members: We are now displaying the members of a group!
+
 ## [Build 85] - 2020-11-06
 
  - Home: Fixed issue with groups sometimes disappearing.
