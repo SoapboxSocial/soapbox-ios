@@ -60,6 +60,9 @@ class GroupViewController: UIViewController {
         inviteView.acceptButton.addTarget(self, action: #selector(acceptInvite), for: .touchUpInside)
         inviteView.declineButton.addTarget(self, action: #selector(declineInvite), for: .touchUpInside)
 
+        headerView.inviteButton.addTarget(self, action: #selector(didTapInviteButton), for: .touchUpInside)
+        headerView.inviteButton.isHidden = true
+
         NSLayoutConstraint.activate([
             headerView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             headerView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
@@ -110,6 +113,10 @@ extension GroupViewController: GroupPresenterOutput {
 
         if let role = group.role {
             showJoinedBadge()
+
+            if role == .admin {
+                headerView.inviteButton.isHidden = false
+            }
         }
 
         if let image = group.image, image != "" {
@@ -157,5 +164,10 @@ extension GroupViewController: GroupPresenterOutput {
     @objc private func didTapMembers() {
         let list = SceneFactory.createUserViewController(id: id, title: NSLocalizedString("members", comment: ""), userListFunc: APIClient().groupMembers)
         navigationController?.pushViewController(list, animated: true)
+    }
+
+    @objc private func didTapInviteButton() {
+        let view = SceneFactory.createInviteFriendsToGroupViewController(id: id)
+        present(view, animated: true)
     }
 }

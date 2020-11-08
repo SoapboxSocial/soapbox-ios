@@ -33,7 +33,7 @@ class InviteFriendsToGroupViewController: UIViewController {
         view.addSubview(title)
 
         let inviteButton = Button(size: .large)
-        inviteButton.setTitle(NSLocalizedString("skip", comment: ""), for: .normal)
+        inviteButton.setTitle(NSLocalizedString("invite", comment: ""), for: .normal)
         inviteButton.backgroundColor = .white
         inviteButton.setTitleColor(.black, for: .normal)
         inviteButton.translatesAutoresizingMaskIntoConstraints = false
@@ -44,8 +44,13 @@ class InviteFriendsToGroupViewController: UIViewController {
         view.addSubview(list)
 
         NSLayoutConstraint.activate([
+            closeButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            closeButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
             title.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            title.topAnchor.constraint(equalTo: view.topAnchor),
+            title.topAnchor.constraint(equalTo: closeButton.bottomAnchor, constant: 20),
         ])
 
         NSLayoutConstraint.activate([
@@ -58,7 +63,7 @@ class InviteFriendsToGroupViewController: UIViewController {
         NSLayoutConstraint.activate([
             inviteButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             inviteButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            inviteButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10),
+            inviteButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
         ])
 
         output.fetchFriends()
