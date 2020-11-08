@@ -99,6 +99,7 @@ extension SearchViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withClass: UserCell.self, for: indexPath)
         cell.layer.mask = nil
+        cell.layer.cornerRadius = 0
 
         if indexPath.item == 0 {
             cell.roundCorners(corners: [.topLeft, .topRight], radius: 30)
@@ -106,6 +107,12 @@ extension SearchViewController: UICollectionViewDataSource {
 
         if indexPath.item == (users.count - 1) {
             cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 30)
+        }
+
+        if indexPath.item == 0, users.count == 1 {
+            cell.layer.mask = nil
+            cell.layer.cornerRadius = 30
+            cell.layer.masksToBounds = true
         }
 
         let user = users[indexPath.item]
