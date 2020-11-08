@@ -8,7 +8,7 @@ protocol SearchViewControllerOutput {
     func nextPage()
 }
 
-class SearchViewController: UIViewController {
+class SearchViewController: ViewController {
     var output: SearchViewControllerOutput!
 
     private var collection: UICollectionView!
