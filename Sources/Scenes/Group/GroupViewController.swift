@@ -108,7 +108,7 @@ extension GroupViewController: GroupPresenterOutput {
 
         membersCountView.statistic.text = String(group.members ?? 0)
 
-        if group.isMember ?? false {
+        if let role = group.role {
             showJoinedBadge()
         }
 

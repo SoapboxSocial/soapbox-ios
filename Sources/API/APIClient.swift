@@ -297,18 +297,22 @@ extension APIClient {
         case `public`
     }
 
+    enum Role: String, Decodable {
+        case admin, user
+    }
+
     struct Group: Decodable {
         let id: Int
         let name: String
         let groupType: GroupType
         let image: String?
         let description: String
-        let isMember: Bool?
         let isInvited: Bool?
         let members: Int?
+        let role: Role?
 
         private enum CodingKeys: String, CodingKey {
-            case id, name, groupType = "group_type", image, description, isMember = "is_member", isInvited = "is_invited", members
+            case id, name, groupType = "group_type", image, description, isInvited = "is_invited", members, role
         }
     }
 
