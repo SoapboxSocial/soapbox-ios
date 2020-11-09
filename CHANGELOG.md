@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Notifications: We sorted notifications a bit better to give a nicer overview.
+
 ## [Build 88] - 2020-11-09
 
  - Groups: We are displaying the groups you are a member of on your profile.
