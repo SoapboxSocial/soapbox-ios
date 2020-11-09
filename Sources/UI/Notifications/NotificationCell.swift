@@ -10,20 +10,9 @@ class NotificationCell: UICollectionViewCell {
         return image
     }()
 
-    let name: UILabel = {
-        let label = UILabel()
-        label.font = .rounded(forTextStyle: .body, weight: .bold)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.numberOfLines = 0
-        return label
-    }()
-
-    var body: String!
-
-    var time: Int!
-
-    private var descriptionLabel: UILabel = {
+    private var label: UILabel = {
         let description = UILabel()
+        description.textColor = .red
         description.font = .rounded(forTextStyle: .body, weight: .regular)
         description.translatesAutoresizingMaskIntoConstraints = false
         description.numberOfLines = 0
@@ -33,17 +22,8 @@ class NotificationCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(name)
-        contentView.addSubview(descriptionLabel)
+        contentView.addSubview(label)
         contentView.addSubview(image)
-
-        NSLayoutConstraint.activate([
-            contentView.leftAnchor.constraint(equalTo: leftAnchor),
-            contentView.rightAnchor.constraint(equalTo: rightAnchor),
-            contentView.widthAnchor.constraint(equalTo: widthAnchor),
-            bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-        ])
 
         NSLayoutConstraint.activate([
             image.widthAnchor.constraint(equalToConstant: 40),
@@ -53,16 +33,10 @@ class NotificationCell: UICollectionViewCell {
         ])
 
         NSLayoutConstraint.activate([
-            name.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 10),
-            name.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            name.topAnchor.constraint(equalTo: contentView.topAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
-            descriptionLabel.topAnchor.constraint(equalTo: name.bottomAnchor),
-            descriptionLabel.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 10),
-            descriptionLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            contentView.bottomAnchor.constraint(equalTo: descriptionLabel.bottomAnchor),
+            label.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 10),
+            label.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            label.topAnchor.constraint(equalTo: contentView.topAnchor),
+            label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
 
@@ -70,19 +44,25 @@ class NotificationCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    func setText(name: String, body: String, time: Int) {
+        let content = NSMutableAttributedString(string: name + "\n", attributes: [
+            NSAttributedString.Key.foregroundColor: UIColor.label,
+            NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .body, weight: .bold),
+        ])
 
-        let label = NSMutableAttributedString(string: body ?? "", attributes: [NSAttributedString.Key.foregroundColor: UIColor.label])
+        content.append(NSAttributedString(string: body, attributes: [
+            NSAttributedString.Key.foregroundColor: UIColor.label,
+            NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .body, weight: .regular),
+        ]))
 
         let interval = TimeInterval(time)
-        label.append(
+        content.append(
             NSAttributedString(
                 string: " " + Date(timeIntervalSince1970: interval).timeAgoDisplay(),
                 attributes: [NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel]
             )
         )
 
-        descriptionLabel.attributedText = label
+        label.attributedText = content
     }
 }
