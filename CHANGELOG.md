@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - Navigation: We fixed the context menu for the back button.
+ - Notifications: Fixed a little layout issue in the notifications screen.
 
 ## [Build 87] - 2020-11-09
 

@@ -29,8 +29,7 @@ class NotificationsViewController: ViewController {
         collection.dataSource = self
         collection.delegate = self
         collection.translatesAutoresizingMaskIntoConstraints = false
-        collection.register(cellWithClass: FollowingNotificationCell.self)
-        collection.register(cellWithClass: GroupNotificationCell.self)
+        collection.register(cellWithClass: NotificationCell.self)
         collection.backgroundColor = .clear
         view.addSubview(collection)
 
@@ -95,17 +94,16 @@ extension NotificationsViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let notification = notifications[indexPath.item]
 
-        var cell: NotificationCell
+        var body: String
         if notification.category == "NEW_FOLLOWER" {
-            cell = collectionView.dequeueReusableCell(withClass: FollowingNotificationCell.self, for: indexPath)
-            cell.name.text = notification.from.username
-            cell.time = notification.timestamp
+            body = NSLocalizedString("started_following_you", comment: "")
         } else {
-            cell = collectionView.dequeueReusableCell(withClass: GroupNotificationCell.self, for: indexPath)
-            cell.name.text = notification.from.username
-            cell.time = notification.timestamp
-            (cell as! GroupNotificationCell).group = notification.group?.name
+            let fmt = NSLocalizedString("invited_you_to_join", comment: "")
+            body = String(format: fmt, notification.group?.name ?? "")
         }
+
+        let cell = collectionView.dequeueReusableCell(withClass: NotificationCell.self, for: indexPath)
+        cell.setText(name: notification.from.username, body: body, time: notification.timestamp)
 
         cell.image.image = nil
         if notification.from.image != "" {
