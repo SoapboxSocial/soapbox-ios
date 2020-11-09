@@ -5,7 +5,7 @@ protocol NotificationsViewControllerOutput {
     func loadNotifications()
 }
 
-class NotificationsViewController: UIViewController {
+class NotificationsViewController: ViewController {
     var output: NotificationsViewControllerOutput!
 
     private var notifications = [APIClient.Notification]()

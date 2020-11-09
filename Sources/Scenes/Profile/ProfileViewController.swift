@@ -9,7 +9,7 @@ protocol ProfileViewControllerOutput {
     func unfollow()
 }
 
-class ProfileViewController: UIViewController {
+class ProfileViewController: ViewController {
     private var user: APIClient.Profile!
 
     var output: ProfileViewControllerOutput!

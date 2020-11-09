@@ -32,7 +32,6 @@ class NavigationViewController: UINavigationController {
         super.viewDidAppear(animated)
 
         view.backgroundColor = .background
-        delegate = self
 
         createRoomButton.frame = CGRect(
             origin: CGPoint(x: view.frame.size.width / 2 - (70 / 2), y: view.frame.size.height - (90 + view.safeAreaInsets.bottom)),
@@ -331,12 +330,5 @@ extension NavigationViewController: DrawerViewDelegate {
         if position == .collapsed || position == .closed {
             roomControllerDelegate?.reloadRooms()
         }
-    }
-}
-
-extension NavigationViewController: UINavigationControllerDelegate {
-    func navigationController(_: UINavigationController, willShow viewController: UIViewController, animated _: Bool) {
-        let item = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        viewController.navigationItem.backBarButtonItem = item
     }
 }

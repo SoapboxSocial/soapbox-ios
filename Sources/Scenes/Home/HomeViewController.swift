@@ -8,7 +8,7 @@ protocol HomeViewControllerOutput {
     func fetchMe()
 }
 
-class HomeViewController: UIViewController {
+class HomeViewController: ViewController {
     private let refresh = UIRefreshControl()
     private let downloader = ImageDownloader()
 

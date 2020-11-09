@@ -6,7 +6,7 @@ protocol UserListViewControllerOutput {
     func loadFollowers()
 }
 
-class UserListViewController: UIViewController {
+class UserListViewController: ViewController {
     var output: UserListViewControllerOutput!
 
     private var collection: UICollectionView!
