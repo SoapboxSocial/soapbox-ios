@@ -143,3 +143,9 @@
 
 "members" = "Members";
 "groups" = "Groups";
+
+"today" = "Today";
+"yesterday" = "Yesterday";
+"this_week" = "This Week";
+"earlier" = "Earlier";
+
