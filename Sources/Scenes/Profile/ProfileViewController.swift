@@ -47,13 +47,13 @@ class ProfileViewController: ViewController {
         view.layer.cornerRadius = 5
         return view
     }()
-    
+
     private let groupsContainer: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    
+
     private let badges: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -171,28 +171,29 @@ class ProfileViewController: ViewController {
             badges.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             badges.bottomAnchor.constraint(equalTo: twitter.bottomAnchor),
         ])
-        
+
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .rounded(forTextStyle: .title2, weight: .bold)
         label.text = NSLocalizedString("groups", comment: "")
         groupsContainer.addSubview(label)
-        
+
         groups.delegate = self
         groupsContainer.addSubview(groups)
-        
+        groupsContainer.isHidden = true
+
         content.addArrangedSubview(groupsContainer)
-        
+
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: groupsContainer.topAnchor),
             label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
-        
+
         NSLayoutConstraint.activate([
             groupsContainer.leftAnchor.constraint(equalTo: view.leftAnchor),
             groupsContainer.rightAnchor.constraint(equalTo: view.rightAnchor),
-            groupsContainer.bottomAnchor.constraint(equalTo: groups.bottomAnchor)
+            groupsContainer.bottomAnchor.constraint(equalTo: groups.bottomAnchor),
         ])
 
         NSLayoutConstraint.activate([
@@ -201,7 +202,7 @@ class ProfileViewController: ViewController {
             groups.leftAnchor.constraint(equalTo: groupsContainer.leftAnchor),
             groups.rightAnchor.constraint(equalTo: groupsContainer.rightAnchor),
         ])
-        
+
         output.loadData()
     }
 
@@ -283,6 +284,12 @@ extension ProfileViewController: ProfilePresenterOutput {
     }
 
     func display(groups: [APIClient.Group]) {
+        if groups.isEmpty {
+            groupsContainer.isHidden = true
+            return
+        }
+
+        groupsContainer.isHidden = false
         self.groups.set(groups: groups)
     }
 

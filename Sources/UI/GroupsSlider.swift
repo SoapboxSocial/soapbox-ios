@@ -6,7 +6,7 @@ protocol GroupsSliderDelegate {
 
 class GroupsSlider: UIView {
     var delegate: GroupsSliderDelegate?
-    
+
     private var data = [APIClient.Group]()
 
     private let collection: UICollectionView = {
@@ -64,7 +64,7 @@ class GroupsSlider: UIView {
 }
 
 extension GroupsSlider: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         delegate?.didSelect(group: data[indexPath.item].id)
     }
 }
