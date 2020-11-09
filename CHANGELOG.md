@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [Build 88] - 2020-11-09
+
  - Groups: We are displaying the groups you are a member of on your profile.
  - Profile: Made profiles just a bit nicer!
  - Navigation: We fixed the context menu for the back button.
