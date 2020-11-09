@@ -25,12 +25,23 @@ class GroupViewController: ViewController {
         return view
     }()
 
-    private var headerView: GroupHeaderView = {
-        GroupHeaderView()
+    private var headerView: ProfileHeaderView = {
+        ProfileHeaderView()
     }()
 
     private var membersCountView: StatisticView = {
         StatisticView()
+    }()
+
+    private var inviteButton: Button = {
+        let button = Button(size: .small)
+        button.setImage(
+            UIImage(systemName: "person.badge.plus", withConfiguration: UIImage.SymbolConfiguration(weight: .semibold)),
+            for: .normal
+        )
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tintColor = .white
+        return button
     }()
 
     private var id: Int!
@@ -60,8 +71,18 @@ class GroupViewController: ViewController {
         inviteView.acceptButton.addTarget(self, action: #selector(acceptInvite), for: .touchUpInside)
         inviteView.declineButton.addTarget(self, action: #selector(declineInvite), for: .touchUpInside)
 
-        headerView.inviteButton.addTarget(self, action: #selector(didTapInviteButton), for: .touchUpInside)
-        headerView.inviteButton.isHidden = true
+        headerView.addSubview(inviteButton)
+
+        inviteButton.addTarget(self, action: #selector(didTapInviteButton), for: .touchUpInside)
+        inviteButton.isHidden = true
+
+        headerView.button.setTitle(NSLocalizedString("join", comment: ""), for: .normal)
+        headerView.button.setTitle(NSLocalizedString("joined", comment: ""), for: .selected)
+
+        NSLayoutConstraint.activate([
+            inviteButton.bottomAnchor.constraint(equalTo: headerView.image.bottomAnchor),
+            inviteButton.rightAnchor.constraint(equalTo: headerView.button.leftAnchor, constant: -10),
+        ])
 
         NSLayoutConstraint.activate([
             headerView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
@@ -115,7 +136,7 @@ extension GroupViewController: GroupPresenterOutput {
             showJoinedBadge()
 
             if role == .admin {
-                headerView.inviteButton.isHidden = false
+                inviteButton.isHidden = false
             }
         }
 

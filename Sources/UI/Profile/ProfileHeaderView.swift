@@ -1,7 +1,7 @@
 import FocusableImageView
 import UIKit
 
-class GroupHeaderView: UIView {
+class ProfileHeaderView: UIView {
     var image: FocusableImageView = {
         let image = FocusableImageView()
         image.backgroundColor = .brandColor
@@ -29,21 +29,8 @@ class GroupHeaderView: UIView {
 
     var button: Button = {
         let button = Button(size: .small)
-        button.setTitle(NSLocalizedString("join", comment: ""), for: .normal)
-        button.setTitle(NSLocalizedString("joined", comment: ""), for: .selected)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.isHidden = true
-        return button
-    }()
-
-    var inviteButton: Button = {
-        let button = Button(size: .small)
-        button.setImage(
-            UIImage(systemName: "person.badge.plus", withConfiguration: UIImage.SymbolConfiguration(weight: .semibold)),
-            for: .normal
-        )
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = .white
         return button
     }()
 
@@ -56,7 +43,6 @@ class GroupHeaderView: UIView {
         addSubview(button)
         addSubview(titleLabel)
         addSubview(descriptionLabel)
-        addSubview(inviteButton)
 
         NSLayoutConstraint.activate([
             image.topAnchor.constraint(equalTo: topAnchor, constant: 20),
@@ -73,11 +59,6 @@ class GroupHeaderView: UIView {
         NSLayoutConstraint.activate([
             button.bottomAnchor.constraint(equalTo: image.bottomAnchor),
             button.rightAnchor.constraint(equalTo: rightAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
-            inviteButton.bottomAnchor.constraint(equalTo: image.bottomAnchor),
-            inviteButton.rightAnchor.constraint(equalTo: button.leftAnchor, constant: -10),
         ])
 
         NSLayoutConstraint.activate([
