@@ -1,6 +1,12 @@
 import UIKit
 
+protocol GroupsSliderDelegate {
+    func didSelect(group: Int)
+}
+
 class GroupsSlider: UIView {
+    var delegate: GroupsSliderDelegate?
+    
     private var data = [APIClient.Group]()
 
     private let collection: UICollectionView = {
@@ -17,7 +23,7 @@ class GroupsSlider: UIView {
 
         collection.delegate = self
         collection.dataSource = self
-        collection.automaticallyAdjustsScrollIndicatorInsets = false
+        collection.alwaysBounceVertical = false
 
         NSLayoutConstraint.activate([
             collection.topAnchor.constraint(equalTo: topAnchor),
@@ -47,7 +53,7 @@ class GroupsSlider: UIView {
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
         layoutSection.interGroupSpacing = 20
         layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
-        layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
+        layoutSection.orthogonalScrollingBehavior = .continuous
 
         return UICollectionViewCompositionalLayout(section: layoutSection)
     }
@@ -57,7 +63,11 @@ class GroupsSlider: UIView {
     }
 }
 
-extension GroupsSlider: UICollectionViewDelegate {}
+extension GroupsSlider: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        delegate?.didSelect(group: data[indexPath.item].id)
+    }
+}
 
 extension GroupsSlider: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
