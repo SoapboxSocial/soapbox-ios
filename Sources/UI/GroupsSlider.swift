@@ -82,7 +82,6 @@ extension GroupsSlider: UICollectionViewDataSource {
         cell.title.text = group.name
 
         cell.image.image = nil
-        cell.image.image = nil
         if let image = group.image, image != "" {
             cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
         }
