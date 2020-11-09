@@ -47,12 +47,30 @@ class ProfileViewController: ViewController {
         view.layer.cornerRadius = 5
         return view
     }()
+    
+    private let groupsContainer: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private let badges: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
 
     private let twitter: TwitterBadge = {
         let badge = TwitterBadge()
         badge.translatesAutoresizingMaskIntoConstraints = false
         badge.isUserInteractionEnabled = true
         return badge
+    }()
+
+    private let groups: GroupsSlider = {
+        let view = GroupsSlider()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
 
     private let downloader = ImageDownloader()
@@ -140,8 +158,6 @@ class ProfileViewController: ViewController {
 
         twitter.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openTwitterProfile)))
 
-        let badges = UIView()
-        badges.translatesAutoresizingMaskIntoConstraints = false
         badges.addSubview(twitter)
         content.addArrangedSubview(badges)
 
@@ -155,7 +171,37 @@ class ProfileViewController: ViewController {
             badges.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             badges.bottomAnchor.constraint(equalTo: twitter.bottomAnchor),
         ])
+        
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .rounded(forTextStyle: .title2, weight: .bold)
+        label.text = NSLocalizedString("groups", comment: "")
+        groupsContainer.addSubview(label)
+        
+        groups.delegate = self
+        groupsContainer.addSubview(groups)
+        
+        content.addArrangedSubview(groupsContainer)
+        
+        NSLayoutConstraint.activate([
+            label.topAnchor.constraint(equalTo: groupsContainer.topAnchor),
+            label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+        ])
+        
+        NSLayoutConstraint.activate([
+            groupsContainer.leftAnchor.constraint(equalTo: view.leftAnchor),
+            groupsContainer.rightAnchor.constraint(equalTo: view.rightAnchor),
+            groupsContainer.bottomAnchor.constraint(equalTo: groups.bottomAnchor)
+        ])
 
+        NSLayoutConstraint.activate([
+            groups.heightAnchor.constraint(equalToConstant: 82),
+            groups.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 20),
+            groups.leftAnchor.constraint(equalTo: groupsContainer.leftAnchor),
+            groups.rightAnchor.constraint(equalTo: groupsContainer.rightAnchor),
+        ])
+        
         output.loadData()
     }
 
@@ -236,6 +282,10 @@ extension ProfileViewController: ProfilePresenterOutput {
         followsYouBadge.isHidden = true
     }
 
+    func display(groups: [APIClient.Group]) {
+        self.groups.set(groups: groups)
+    }
+
     func didFollow() {
         headerView.button.isUserInteractionEnabled = true
         headerView.button.isSelected.toggle()
@@ -269,9 +319,9 @@ extension ProfileViewController: ProfilePresenterOutput {
         followingCount.statistic.text = String(profile.following)
 
         if user.linkedAccounts.first(where: { $0.provider == "twitter" }) != nil {
-            twitter.isHidden = false
+            badges.isHidden = false
         } else {
-            twitter.isHidden = true
+            badges.isHidden = true
         }
 
         updateFollowerLabels()
@@ -281,6 +331,12 @@ extension ProfileViewController: ProfilePresenterOutput {
             headerView.image.inner.contentMode = .scaleAspectFill
             manager.register(parentViewController: self, imageViews: [headerView.image])
         }
+    }
+}
+
+extension ProfileViewController: GroupsSliderDelegate {
+    func didSelect(group: Int) {
+        navigationController?.pushViewController(SceneFactory.createGroupViewController(id: group), animated: true)
     }
 }
 

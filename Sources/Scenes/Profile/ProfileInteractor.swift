@@ -3,6 +3,7 @@ import Foundation
 protocol ProfileInteractorOutput {
     func displayPersonal(profile: APIClient.Profile)
     func display(profile: APIClient.Profile)
+    func display(groups: [APIClient.Group])
     func displayUnfollowed()
     func displayFollowed()
     func displayError()
@@ -35,6 +36,14 @@ extension ProfileInteractor: ProfileViewControllerOutput {
                 self.output.display(profile: user)
             }
         }
+
+        api.groups(id: user, callback: { result in
+            switch result {
+            case .failure: break
+            case let .success(groups):
+                self.output.display(groups: groups)
+            }
+        })
     }
 
     func follow() {
