@@ -21,9 +21,12 @@ class GroupsSlider: UIView {
 
         addSubview(collection)
 
+        backgroundColor = .clear
+
         collection.delegate = self
         collection.dataSource = self
         collection.alwaysBounceVertical = false
+        collection.backgroundColor = .background
 
         NSLayoutConstraint.activate([
             collection.topAnchor.constraint(equalTo: topAnchor),
