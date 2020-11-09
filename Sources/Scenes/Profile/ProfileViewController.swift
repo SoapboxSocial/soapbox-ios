@@ -14,35 +14,30 @@ class ProfileViewController: ViewController {
 
     var output: ProfileViewControllerOutput!
 
-    private let image: FocusableImageView = {
-        let image = FocusableImageView()
-        image.backgroundColor = .brandColor
-        image.layer.cornerRadius = 80 / 2
-        image.clipsToBounds = true
-        image.translatesAutoresizingMaskIntoConstraints = false
-        return image
+    private let content: UIStackView = {
+        let view = UIStackView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.spacing = 20
+        view.distribution = .fill
+        view.alignment = .fill
+        view.axis = .vertical
+        return view
     }()
 
-    private let displayName: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .rounded(forTextStyle: .title2, weight: .bold)
-        return label
-    }()
-
-    private let username: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .rounded(forTextStyle: .title3, weight: .regular)
-        return label
+    private var headerView: ProfileHeaderView = {
+        ProfileHeaderView()
     }()
 
     private let followersCount: StatisticView = {
-        StatisticView()
+        let view = StatisticView()
+        view.descriptionLabel.text = NSLocalizedString("followers", comment: "")
+        return view
     }()
 
     private let followingCount: StatisticView = {
-        StatisticView()
+        let view = StatisticView()
+        view.descriptionLabel.text = NSLocalizedString("following", comment: "")
+        return view
     }()
 
     private let followsYouBadge: UIView = {
@@ -51,23 +46,6 @@ class ProfileViewController: ViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 5
         return view
-    }()
-
-    private let followButton: Button = {
-        let button = Button(size: .small)
-        button.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
-        button.setTitle(NSLocalizedString("unfollow", comment: ""), for: .selected)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-
-    private let bioLabel: UILabel = {
-        let label = UILabel()
-        label.font = .rounded(forTextStyle: .body, weight: .regular)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.numberOfLines = 0
-        label.lineBreakMode = .byWordWrapping
-        return label
     }()
 
     private let twitter: TwitterBadge = {
@@ -83,27 +61,19 @@ class ProfileViewController: ViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        FocusableImageViewConfiguration.default = .init(
-            backgroundColor: .init(white: 0, alpha: 0.5),
-            animationDuration: 0.5,
-            pageControlConfiguration: .init(hidesForSinglePage: true, pageIndicatorTintColor: nil, currentPageIndicatorTintColor: nil),
-            maximumZoomScale: 2
-        )
-
-        manager.delegate = self
-
         view.backgroundColor = .background
 
-        output.loadData()
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scrollView)
 
-        view.addSubview(image)
-        view.addSubview(displayName)
-        view.addSubview(username)
-        view.addSubview(followButton)
-        view.addSubview(followsYouBadge)
-        view.addSubview(twitter)
+        scrollView.addSubview(content)
 
-        twitter.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openTwitterProfile)))
+        headerView.button.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
+        headerView.button.setTitle(NSLocalizedString("unfollow", comment: ""), for: .selected)
+        headerView.button.isHidden = false
+        headerView.descriptionLabel.font = .rounded(forTextStyle: .body, weight: .regular)
+        content.addArrangedSubview(headerView)
 
         let followsYouLabel = UILabel()
         followsYouLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -111,49 +81,11 @@ class ProfileViewController: ViewController {
         followsYouLabel.textColor = .systemGray2
         followsYouLabel.text = NSLocalizedString("follows_you", comment: "")
         followsYouBadge.addSubview(followsYouLabel)
-
-        view.addSubview(bioLabel)
-
-        followersCount.handleTap(target: self, action: #selector(didTapFollowersLabel))
-        followersCount.descriptionLabel.text = NSLocalizedString("followers", comment: "")
-        view.addSubview(followersCount)
-
-        followingCount.handleTap(target: self, action: #selector(didTapFollowingLabel))
-        followingCount.descriptionLabel.text = NSLocalizedString("following", comment: "")
-        view.addSubview(followingCount)
+        headerView.addSubview(followsYouBadge)
 
         NSLayoutConstraint.activate([
-            image.heightAnchor.constraint(equalToConstant: 80),
-            image.widthAnchor.constraint(equalToConstant: 80),
-            image.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            image.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-        ])
-
-        NSLayoutConstraint.activate([
-            followButton.bottomAnchor.constraint(equalTo: image.bottomAnchor),
-            followButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-        ])
-
-        NSLayoutConstraint.activate([
-            displayName.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 20),
-            displayName.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            displayName.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-        ])
-
-        NSLayoutConstraint.activate([
-            username.topAnchor.constraint(equalTo: displayName.bottomAnchor, constant: 5),
-            username.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-        ])
-
-        NSLayoutConstraint.activate([
-            followsYouBadge.centerYAnchor.constraint(equalTo: username.centerYAnchor),
-            followsYouBadge.leftAnchor.constraint(equalTo: username.rightAnchor, constant: 10),
-        ])
-
-        NSLayoutConstraint.activate([
-            bioLabel.topAnchor.constraint(equalTo: username.bottomAnchor, constant: 20),
-            bioLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            bioLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            followsYouBadge.centerYAnchor.constraint(equalTo: headerView.button.centerYAnchor),
+            followsYouBadge.rightAnchor.constraint(equalTo: headerView.button.leftAnchor, constant: -20),
         ])
 
         NSLayoutConstraint.activate([
@@ -163,20 +95,68 @@ class ProfileViewController: ViewController {
             followsYouLabel.bottomAnchor.constraint(equalTo: followsYouBadge.bottomAnchor),
         ])
 
+        let statistics = UIView()
+        statistics.translatesAutoresizingMaskIntoConstraints = false
+        statistics.addSubview(followersCount)
+        statistics.addSubview(followingCount)
+        content.addArrangedSubview(statistics)
+
         NSLayoutConstraint.activate([
-            followersCount.topAnchor.constraint(equalTo: bioLabel.bottomAnchor, constant: 20),
-            followersCount.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            headerView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            headerView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
 
         NSLayoutConstraint.activate([
-            followingCount.topAnchor.constraint(equalTo: followersCount.topAnchor),
+            content.topAnchor.constraint(equalTo: view.topAnchor),
+            content.leftAnchor.constraint(equalTo: view.leftAnchor),
+            content.rightAnchor.constraint(equalTo: view.rightAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            scrollView.rightAnchor.constraint(equalTo: view.rightAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            followersCount.topAnchor.constraint(equalTo: statistics.topAnchor),
+            followersCount.leftAnchor.constraint(equalTo: statistics.leftAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            followingCount.topAnchor.constraint(equalTo: statistics.topAnchor),
             followingCount.leftAnchor.constraint(equalTo: followersCount.rightAnchor, constant: 40),
         ])
 
+        followingCount.handleTap(target: self, action: #selector(didTapFollowingLabel))
+        followersCount.handleTap(target: self, action: #selector(didTapFollowersLabel))
+
         NSLayoutConstraint.activate([
-            twitter.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            twitter.topAnchor.constraint(equalTo: followersCount.bottomAnchor, constant: 20),
+            statistics.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            statistics.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            statistics.bottomAnchor.constraint(equalTo: followingCount.bottomAnchor),
         ])
+
+        twitter.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openTwitterProfile)))
+
+        let badges = UIView()
+        badges.translatesAutoresizingMaskIntoConstraints = false
+        badges.addSubview(twitter)
+        content.addArrangedSubview(badges)
+
+        NSLayoutConstraint.activate([
+            twitter.topAnchor.constraint(equalTo: badges.topAnchor),
+            twitter.leftAnchor.constraint(equalTo: badges.leftAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            badges.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            badges.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            badges.bottomAnchor.constraint(equalTo: twitter.bottomAnchor),
+        ])
+
+        output.loadData()
     }
 
     @objc private func openTwitterProfile() {
@@ -201,6 +181,7 @@ class ProfileViewController: ViewController {
     }
 
     @objc private func didTapFollowingLabel() {
+        debugPrint("fuck")
         let list = SceneFactory.createUserViewController(id: user.id, title: NSLocalizedString("following", comment: ""), userListFunc: APIClient().following)
         navigationController?.pushViewController(list, animated: true)
     }
@@ -211,7 +192,7 @@ class ProfileViewController: ViewController {
     }
 
     @objc private func followPressed() {
-        followButton.isUserInteractionEnabled = false
+        headerView.button.isUserInteractionEnabled = false
 
         if user.isFollowing ?? false {
             output.unfollow()
@@ -236,7 +217,7 @@ extension ProfileViewController: ProfilePresenterOutput {
         setBasicInfo(profile)
 
         if let following = profile.isFollowing, following == true {
-            followButton.isSelected.toggle()
+            headerView.button.isSelected.toggle()
         }
 
         followsYouBadge.isHidden = true
@@ -244,28 +225,28 @@ extension ProfileViewController: ProfilePresenterOutput {
             followsYouBadge.isHidden = !followed
         }
 
-        followButton.addTarget(self, action: #selector(followPressed), for: .touchUpInside)
+        headerView.button.addTarget(self, action: #selector(followPressed), for: .touchUpInside)
     }
 
     func display(personal profile: APIClient.Profile) {
         setBasicInfo(profile)
 
-        followButton.setTitle(NSLocalizedString("edit", comment: ""), for: .normal)
-        followButton.addTarget(self, action: #selector(editPressed), for: .touchUpInside)
+        headerView.button.setTitle(NSLocalizedString("edit", comment: ""), for: .normal)
+        headerView.button.addTarget(self, action: #selector(editPressed), for: .touchUpInside)
         followsYouBadge.isHidden = true
     }
 
     func didFollow() {
-        followButton.isUserInteractionEnabled = true
-        followButton.isSelected.toggle()
+        headerView.button.isUserInteractionEnabled = true
+        headerView.button.isSelected.toggle()
         user.isFollowing = true
         user.followers += 1
         updateFollowerLabels()
     }
 
     func didUnfollow() {
-        followButton.isUserInteractionEnabled = true
-        followButton.isSelected.toggle()
+        headerView.button.isUserInteractionEnabled = true
+        headerView.button.isSelected.toggle()
         user.isFollowing = false
         user.followers -= 1
         updateFollowerLabels()
@@ -282,11 +263,10 @@ extension ProfileViewController: ProfilePresenterOutput {
 
     private func setBasicInfo(_ profile: APIClient.Profile) {
         user = profile
-        displayName.text = profile.displayName
-        username.text = "@" + profile.username
-        followingCount.statistic.text = String(profile.following)
-        bioLabel.text = profile.bio
         title = profile.username
+        headerView.titleLabel.text = profile.displayName
+        headerView.descriptionLabel.text = profile.bio
+        followingCount.statistic.text = String(profile.following)
 
         if user.linkedAccounts.first(where: { $0.provider == "twitter" }) != nil {
             twitter.isHidden = false
@@ -297,9 +277,9 @@ extension ProfileViewController: ProfilePresenterOutput {
         updateFollowerLabels()
 
         if profile.image != "" {
-            image.inner.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + profile.image))
-            image.inner.contentMode = .scaleAspectFill
-            manager.register(parentViewController: self, imageViews: [image])
+            headerView.image.inner.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + profile.image))
+            headerView.image.inner.contentMode = .scaleAspectFill
+            manager.register(parentViewController: self, imageViews: [headerView.image])
         }
     }
 }

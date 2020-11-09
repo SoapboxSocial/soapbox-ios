@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Profile: Made profiles just a bit nicer!
  - Navigation: We fixed the context menu for the back button.
  - Notifications: Fixed a little layout issue in the notifications screen.
 
