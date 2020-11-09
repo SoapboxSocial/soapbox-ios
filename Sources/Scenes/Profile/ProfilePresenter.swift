@@ -2,6 +2,7 @@ import Foundation
 
 protocol ProfilePresenterOutput {
     func display(profile: APIClient.Profile)
+    func display(groups: [APIClient.Group])
     func display(personal profile: APIClient.Profile)
     func didUnfollow()
     func didFollow()
@@ -36,5 +37,9 @@ class ProfilePresenter: ProfileInteractorOutput {
             title: NSLocalizedString("something_went_wrong", comment: ""),
             description: NSLocalizedString("please_try_again_later", comment: "")
         )
+    }
+
+    func display(groups: [APIClient.Group]) {
+        output.display(groups: groups)
     }
 }

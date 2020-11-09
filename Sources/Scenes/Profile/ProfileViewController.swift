@@ -77,6 +77,12 @@ class ProfileViewController: ViewController {
         return badge
     }()
 
+    private let groups: GroupsSlider = {
+        let view = GroupsSlider()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
     private let downloader = ImageDownloader()
     private lazy var manager = FocusableImageViewManager()
 
@@ -121,6 +127,8 @@ class ProfileViewController: ViewController {
         followingCount.handleTap(target: self, action: #selector(didTapFollowingLabel))
         followingCount.descriptionLabel.text = NSLocalizedString("following", comment: "")
         view.addSubview(followingCount)
+
+        view.addSubview(groups)
 
         NSLayoutConstraint.activate([
             image.heightAnchor.constraint(equalToConstant: 80),
@@ -176,6 +184,13 @@ class ProfileViewController: ViewController {
         NSLayoutConstraint.activate([
             twitter.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             twitter.topAnchor.constraint(equalTo: followersCount.bottomAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            groups.leftAnchor.constraint(equalTo: view.leftAnchor),
+            groups.rightAnchor.constraint(equalTo: view.rightAnchor),
+            groups.heightAnchor.constraint(equalToConstant: 82),
+            groups.topAnchor.constraint(equalTo: followersCount.bottomAnchor, constant: 20),
         ])
     }
 
@@ -253,6 +268,10 @@ extension ProfileViewController: ProfilePresenterOutput {
         followButton.setTitle(NSLocalizedString("edit", comment: ""), for: .normal)
         followButton.addTarget(self, action: #selector(editPressed), for: .touchUpInside)
         followsYouBadge.isHidden = true
+    }
+
+    func display(groups: [APIClient.Group]) {
+        self.groups.set(groups: groups)
     }
 
     func didFollow() {
