@@ -325,11 +325,6 @@ extension HomeViewController {
         }
 
         UIView.animate(withDuration: 0, animations: {
-            if case .groups = data {
-                self.collection.reloadSections(IndexSet(integer: 0))
-                return
-            }
-
             self.collection.reloadData()
         }, completion: { [weak self] _ in
             DispatchQueue.main.async {

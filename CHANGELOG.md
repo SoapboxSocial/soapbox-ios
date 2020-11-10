@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Home: Fixes some UI issues on the home screen.
+
 ## [Build 89] - 2020-11-10
 
  - Groups: You can now join any public group!
