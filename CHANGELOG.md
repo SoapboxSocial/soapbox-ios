@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [Build 89] - 2020-11-10
+
  - Groups: You can now join any public group!
  - Notifications: We sorted notifications a bit better to give a nicer overview.
 
