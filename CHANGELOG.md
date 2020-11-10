@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Rooms: Limited names to 30 characters.
  - Home: Fixes some UI issues on the home screen.
 
 ## [Build 89] - 2020-11-10
