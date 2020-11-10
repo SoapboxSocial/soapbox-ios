@@ -62,8 +62,8 @@ class GroupViewController: ViewController {
         scrollView.addSubview(content)
 
         content.addArrangedSubview(headerView)
-        content.addArrangedSubview(inviteView)
         content.addArrangedSubview(membersCountView)
+        content.addArrangedSubview(inviteView)
 
         membersCountView.descriptionLabel.text = NSLocalizedString("members", comment: "")
         membersCountView.handleTap(target: self, action: #selector(didTapMembers))
