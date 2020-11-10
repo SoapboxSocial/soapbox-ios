@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Groups: You can now join any public group!
+
 ## [Build 88] - 2020-11-09
 
  - Groups: We are displaying the groups you are a member of on your profile.
