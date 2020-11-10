@@ -178,6 +178,7 @@ extension GroupViewController: GroupPresenterOutput {
 
     func displayJoined() {
         showJoinedBadge()
+        removeInviteView()
     }
 
     func displayError() {
