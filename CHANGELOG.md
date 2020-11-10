@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - Groups: You can now join any public group!
+ - Notifications: We sorted notifications a bit better to give a nicer overview.
 
 ## [Build 88] - 2020-11-09
 
