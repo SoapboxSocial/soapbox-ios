@@ -387,6 +387,10 @@ extension APIClient {
     func groupMembers(_ id: Int, _ limit: Int, _ offset: Int, _ callback: @escaping (Result<[User], Error>) -> Void) {
         userListRequest("/v1/groups/" + String(id) + "/members", parameters: ["limit": limit, "offset": offset], callback: callback)
     }
+
+    func join(group: Int, callback: @escaping (Result<Void, Error>) -> Void) {
+        post(path: "/v1/groups/" + String(group) + "/join", callback: callback)
+    }
 }
 
 extension APIClient {

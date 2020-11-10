@@ -5,6 +5,8 @@ protocol GroupInteractorOutput {
     func present(inviter: APIClient.User)
     func presentInviteAccepted()
     func presentInviteDeclined()
+    func presentJoined()
+    func presentError()
 }
 
 class GroupInteractor: GroupViewControllerOutput {
@@ -21,7 +23,8 @@ class GroupInteractor: GroupViewControllerOutput {
     func loadData() {
         api.group(id: group, callback: { result in
             switch result {
-            case .failure: break // @TODO
+            case .failure:
+                self.output.presentError()
             case let .success(group):
 
                 if group.isInvited ?? false {
@@ -36,7 +39,8 @@ class GroupInteractor: GroupViewControllerOutput {
     func acceptInvite() {
         api.acceptInvite(id: group, callback: { result in
             switch result {
-            case .failure: break // @TODO
+            case .failure:
+                self.output.presentError()
             case .success:
                 self.output.presentInviteAccepted()
             }
@@ -46,9 +50,21 @@ class GroupInteractor: GroupViewControllerOutput {
     func declineInvite() {
         api.declineInvite(id: group, callback: { result in
             switch result {
-            case .failure: break // @TODO
+            case .failure:
+                self.output.presentError()
             case .success:
                 self.output.presentInviteDeclined()
+            }
+        })
+    }
+
+    func join() {
+        api.join(group: group, callback: { result in
+            switch result {
+            case .failure:
+                self.output.presentError()
+            case .success:
+                self.output.presentJoined()
             }
         })
     }

@@ -1,10 +1,12 @@
 import FocusableImageView
+import NotificationBannerSwift
 import UIKit
 
 protocol GroupViewControllerOutput {
     func loadData()
     func acceptInvite()
     func declineInvite()
+    func join()
 }
 
 class GroupViewController: ViewController {
@@ -130,6 +132,11 @@ extension GroupViewController: GroupPresenterOutput {
         headerView.descriptionLabel.text = group.description
         id = group.id
 
+        if group.groupType == .public {
+            headerView.button.isHidden = false
+            headerView.button.addTarget(self, action: #selector(didTapJoin), for: .touchUpInside)
+        }
+
         membersCountView.statistic.text = String(group.members ?? 0)
 
         if let role = group.role {
@@ -169,6 +176,20 @@ extension GroupViewController: GroupPresenterOutput {
         removeInviteView()
     }
 
+    func displayJoined() {
+        showJoinedBadge()
+        removeInviteView()
+    }
+
+    func displayError() {
+        let banner = FloatingNotificationBanner(
+            title: NSLocalizedString("something_went_wrong", comment: ""),
+            subtitle: NSLocalizedString("please_try_again_later", comment: ""),
+            style: .danger
+        )
+        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+    }
+
     private func showJoinedBadge() {
         headerView.button.isSelected = true
         headerView.button.isHidden = false
@@ -190,5 +211,13 @@ extension GroupViewController: GroupPresenterOutput {
     @objc private func didTapInviteButton() {
         let view = SceneFactory.createInviteFriendsToGroupViewController(id: id)
         present(view, animated: true)
+    }
+
+    @objc private func didTapJoin() {
+        if headerView.button.isSelected {
+            return
+        }
+
+        output.join()
     }
 }

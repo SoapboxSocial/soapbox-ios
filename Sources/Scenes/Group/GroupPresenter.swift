@@ -5,6 +5,8 @@ protocol GroupPresenterOutput {
     func display(invite: APIClient.User)
     func displayInviteAccepted()
     func displayInviteDeclined()
+    func displayJoined()
+    func displayError()
 }
 
 class GroupPresenter: GroupInteractorOutput {
@@ -28,5 +30,13 @@ class GroupPresenter: GroupInteractorOutput {
 
     func presentInviteAccepted() {
         output.displayInviteAccepted()
+    }
+
+    func presentJoined() {
+        output.displayJoined()
+    }
+
+    func presentError() {
+        output.displayError()
     }
 }
