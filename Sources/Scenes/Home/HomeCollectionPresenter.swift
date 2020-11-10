@@ -1,8 +1,6 @@
 import AlamofireImage
 import UIKit
 
-protocol SectionData {}
-
 enum SectionType: Int, CaseIterable {
     case roomList
     case activeList
@@ -140,6 +138,10 @@ class HomeCollectionPresenter {
         }
 
         dataSource.insert(Section(type: .activeList, title: "", data: actives), at: at)
+    }
+
+    func index(of section: SectionType) -> Int? {
+        return dataSource.firstIndex(where: { $0.type == section })
     }
 
     func has(section: SectionType) -> Bool {

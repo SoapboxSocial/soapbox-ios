@@ -315,23 +315,33 @@ extension HomeViewController {
             return
         }
 
+        // @TODO FIX THIS SHIT
         switch data {
         case let .rooms(rooms):
             presenter.set(rooms: rooms)
+            collection.reloadSections(IndexSet(integer: presenter.numberOfSections - 1))
         case let .actives(actives):
+            let previous = presenter.index(of: .activeList)
             presenter.set(actives: actives)
+            if actives.isEmpty {
+                if let index = previous {
+                    collection.deleteSections(IndexSet(integer: index))
+                }
+            } else {
+                if let index = previous {
+                    collection.reloadSections(IndexSet(integer: index))
+                } else {
+                    collection.insertSections(IndexSet(integer: presenter.index(of: .activeList)!))
+                }
+            }
+
         case let .groups(groups):
             presenter.set(groups: groups)
+            collection.reloadSections(IndexSet(integer: 0))
         }
 
-        UIView.animate(withDuration: 0, animations: {
-            self.collection.reloadData()
-        }, completion: { [weak self] _ in
-            DispatchQueue.main.async {
-                self?.updateQueue.removeFirst()
-                self?.reloadData()
-            }
-        })
+        updateQueue.removeFirst()
+        reloadData()
     }
 }
 
