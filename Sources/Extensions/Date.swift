@@ -24,4 +24,16 @@ extension Date {
         let diff = Calendar.current.dateComponents([.weekOfYear], from: self, to: Date()).weekOfYear ?? 0
         return "\(diff)w"
     }
+
+    func isToday() -> Bool {
+        return Calendar.current.date(byAdding: .day, value: -1, to: Date())! < self
+    }
+
+    func isYesterday() -> Bool {
+        return Calendar.current.date(byAdding: .day, value: -2, to: Date())! < self
+    }
+
+    func isThisWeek() -> Bool {
+        return Calendar.current.date(byAdding: .day, value: -7, to: Date())! < self
+    }
 }

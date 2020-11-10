@@ -8,7 +8,16 @@ protocol NotificationsViewControllerOutput {
 class NotificationsViewController: ViewController {
     var output: NotificationsViewControllerOutput!
 
-    private var notifications = [APIClient.Notification]()
+    enum TimeFrame {
+        case today, yesterday, thisWeek, earlier
+    }
+
+    struct Section {
+        let time: TimeFrame
+        let notifications: [APIClient.Notification]
+    }
+
+    private var notifications = [Section]()
 
     private var collection: UICollectionView!
 
@@ -30,6 +39,7 @@ class NotificationsViewController: ViewController {
         collection.delegate = self
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.register(cellWithClass: NotificationCell.self)
+        collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
         collection.backgroundColor = .clear
         view.addSubview(collection)
 
@@ -61,14 +71,56 @@ class NotificationsViewController: ViewController {
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
         section.interGroupSpacing = 20
+        section.boundarySupplementaryItems = [createSectionHeader()]
 
         return UICollectionViewCompositionalLayout(section: section)
+    }
+
+    private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
+        return NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(24)),
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top
+        )
     }
 }
 
 extension NotificationsViewController: NotificationsPresenterOutput {
     func display(notifications: [APIClient.Notification]) {
-        self.notifications = notifications
+        self.notifications = [Section]()
+        let sorted = Dictionary(grouping: notifications, by: { (notification) -> TimeFrame in
+            let date = Date(timeIntervalSince1970: TimeInterval(notification.timestamp))
+
+            if date.isToday() {
+                return .today
+            }
+
+            if date.isYesterday() {
+                return .yesterday
+            }
+
+            if date.isThisWeek() {
+                return .thisWeek
+            }
+
+            return .earlier
+        })
+
+        if let today = sorted[.today], !today.isEmpty {
+            self.notifications.append(Section(time: .today, notifications: today))
+        }
+
+        if let yesterday = sorted[.yesterday], !yesterday.isEmpty {
+            self.notifications.append(Section(time: .yesterday, notifications: yesterday))
+        }
+
+        if let thisWeek = sorted[.thisWeek], !thisWeek.isEmpty {
+            self.notifications.append(Section(time: .thisWeek, notifications: thisWeek))
+        }
+
+        if let earlier = sorted[.earlier], !earlier.isEmpty {
+            self.notifications.append(Section(time: .earlier, notifications: earlier))
+        }
 
         DispatchQueue.main.async {
             self.refresh.endRefreshing()
@@ -87,12 +139,16 @@ extension NotificationsViewController: NotificationsPresenterOutput {
 }
 
 extension NotificationsViewController: UICollectionViewDataSource {
-    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
+    func numberOfSections(in _: UICollectionView) -> Int {
         return notifications.count
     }
 
+    func collectionView(_: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return notifications[section].notifications.count
+    }
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let notification = notifications[indexPath.item]
+        let notification = notifications[indexPath.section].notifications[indexPath.item]
 
         var body: String
         if notification.category == "NEW_FOLLOWER" {
@@ -112,12 +168,30 @@ extension NotificationsViewController: UICollectionViewDataSource {
 
         return cell
     }
+
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
+        cell.label.font = .rounded(forTextStyle: .title3, weight: .bold)
+
+        switch notifications[indexPath.section].time {
+        case .today:
+            cell.label.text = NSLocalizedString("today", comment: "")
+        case .yesterday:
+            cell.label.text = NSLocalizedString("yesterday", comment: "")
+        case .thisWeek:
+            cell.label.text = NSLocalizedString("this_week", comment: "")
+        case .earlier:
+            cell.label.text = NSLocalizedString("earlier", comment: "")
+        }
+
+        return cell
+    }
 }
 
 extension NotificationsViewController: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         // @TODO INTERACTOR
-        let item = notifications[indexPath.item]
+        let item = notifications[indexPath.section].notifications[indexPath.item]
 
         guard let nav = navigationController as? NavigationViewController else {
             return
