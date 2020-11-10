@@ -1,6 +1,6 @@
 import FocusableImageView
-import UIKit
 import NotificationBannerSwift
+import UIKit
 
 protocol GroupViewControllerOutput {
     func loadData()
@@ -134,6 +134,7 @@ extension GroupViewController: GroupPresenterOutput {
 
         if group.groupType == .public {
             headerView.button.isHidden = false
+            headerView.button.addTarget(self, action: #selector(didTapJoin), for: .touchUpInside)
         }
 
         membersCountView.statistic.text = String(group.members ?? 0)
