@@ -329,7 +329,9 @@ extension HomeViewController {
                 }
             } else {
                 if let index = previous {
-                    collection.reloadSections(IndexSet(integer: index))
+                    UIView.performWithoutAnimation {
+                        self.collection.reloadSections(IndexSet(integer: index))
+                    }
                 } else {
                     collection.insertSections(IndexSet(integer: presenter.index(of: .activeList)!))
                 }
@@ -337,7 +339,10 @@ extension HomeViewController {
 
         case let .groups(groups):
             presenter.set(groups: groups)
-            collection.reloadSections(IndexSet(integer: 0))
+
+            UIView.performWithoutAnimation {
+                self.collection.reloadSections(IndexSet(integer: 0))
+            }
         }
 
         updateQueue.removeFirst()
