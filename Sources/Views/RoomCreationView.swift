@@ -68,7 +68,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         textField.resignFirstResponder()
         return true
     }
-    
+
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         return (textField.text?.count ?? 0) + (string.count - range.length) < 30
     }

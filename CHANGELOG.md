@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Home: Removed animation that was causing items to flash.
+
 ## [Build 90] - 2020-11-11
 
  - Rooms: Limited names to 30 characters.
