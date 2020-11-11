@@ -95,7 +95,7 @@ class RoomViewV2: UIView {
             members.topAnchor.constraint(equalTo: exitButton.bottomAnchor, constant: 40),
             members.leftAnchor.constraint(equalTo: foreground.leftAnchor),
             members.rightAnchor.constraint(equalTo: foreground.rightAnchor),
-            members.heightAnchor.constraint(equalTo: members.widthAnchor, constant: 24 * 4),
+            members.heightAnchor.constraint(equalToConstant: UICollectionViewFlowLayout.heightForBubbleLayout(rows: 4, width: UIScreen.main.bounds.width)),
             foreground.bottomAnchor.constraint(equalTo: members.bottomAnchor),
         ])
     }
@@ -109,7 +109,7 @@ class RoomViewV2: UIView {
     }
 
     static func height() -> CGFloat {
-        return UIScreen.main.bounds.size.width + (24 * 4) + 52 + 104
+        return UICollectionViewFlowLayout.heightForBubbleLayout(rows: 4, width: UIScreen.main.bounds.width) + 52 + 104
     }
 }
 
