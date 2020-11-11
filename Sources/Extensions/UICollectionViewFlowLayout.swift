@@ -19,8 +19,18 @@ extension UICollectionViewFlowLayout {
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: size, height: size + 30)
         layout.minimumInteritemSpacing = spacing
+        layout.minimumLineSpacing = spacing
         layout.sectionInset = UIEdgeInsets(top: 0, left: spacing, bottom: 0, right: spacing)
 
         return layout
+    }
+
+    static func heightForBubbleLayout(rows: Int, width: CGFloat) -> CGFloat {
+        let spacing = CGFloat(20)
+
+        let size = (width - (spacing * (CGFloat(rows) + 1))) / CGFloat(rows)
+        let height = size + 30
+
+        return (height * CGFloat(rows)) + (spacing * CGFloat(rows))
     }
 }

@@ -56,21 +56,20 @@ class NavigationViewController: UINavigationController {
 
     @objc func didTapCreateRoom() {
         requestMicrophone {
-            let roomView = RoomCreationView()
-            roomView.delegate = self
-            roomView.translatesAutoresizingMaskIntoConstraints = false
+            let roomView = RoomViewV2()
 
             self.creationDrawer = DrawerView(withView: roomView)
             self.creationDrawer!.delegate = self
             self.creationDrawer!.attachTo(view: self.view)
             self.creationDrawer!.backgroundEffect = nil
-            self.creationDrawer!.snapPositions = [.open, .closed]
+            self.creationDrawer!.snapPositions = [.open, .collapsed]
             self.creationDrawer!.cornerRadius = 25
-            self.creationDrawer!.backgroundColor = .brandColor
+            self.creationDrawer!.backgroundColor = .background
+            self.creationDrawer!.contentVisibilityBehavior = .custom(roomView.hideViews)
+            self.creationDrawer!.openHeightBehavior = .fixed(height: RoomViewV2.height() + self.view.safeAreaInsets.bottom)
+
             self.creationDrawer!.setPosition(.closed, animated: false)
             self.view.addSubview(self.creationDrawer!)
-
-            self.creationDrawer!.contentVisibilityBehavior = .allowPartial
 
             self.creationDrawer!.setPosition(.open, animated: true) { _ in
                 self.createRoomButton.isHidden = true
