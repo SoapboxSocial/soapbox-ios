@@ -95,7 +95,7 @@ class RoomView: UIView {
 
     private let lock: UIView = {
         let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = true
+        view.translatesAutoresizingMaskIntoConstraints = false
 
         let lock = UIImageView(image: UIImage(systemName: "lock", withConfiguration: RoomView.iconConfig))
         lock.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
