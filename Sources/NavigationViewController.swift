@@ -92,12 +92,12 @@ class NavigationViewController: UINavigationController {
         roomDrawer!.backgroundEffect = nil
         roomDrawer!.snapPositions = [.collapsed, .open]
         roomDrawer!.backgroundColor = .roomBackground
-        roomDrawer!.setPosition(.closed, animated: false)
         roomDrawer!.delegate = self
         roomDrawer!.openHeightBehavior = .fixed(height: RoomView.height() + view.safeAreaInsets.bottom)
         roomDrawer!.contentVisibilityBehavior = .custom(roomView.hideViews)
         view.addSubview(roomDrawer!)
 
+        roomDrawer!.setPosition(.closed, animated: false)
         roomDrawer!.setPosition(.open, animated: true) { _ in
             self.createRoomButton.isHidden = true
             UIApplication.shared.isIdleTimerDisabled = true

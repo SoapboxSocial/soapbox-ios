@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Room: Fixed the animation when a room opens.
+
 ## [Build 91] - 2020-11-12
 
  - Room: We refined the look of rooms just a bit more!
