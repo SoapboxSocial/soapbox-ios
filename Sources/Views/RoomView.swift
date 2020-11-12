@@ -339,20 +339,29 @@ class RoomView: UIView {
             return
         }
 
-        // @TODO Probably worth grabbing a text?
+        var url: URL?
+        if let pasted = UIPasteboard.general.url {
+            url = pasted
+        }
 
-        guard let url = UIPasteboard.general.url else {
+        if let str = UIPasteboard.general.string, let pasted = URL(string: str) {
+            url = pasted
+        }
+
+        if url == nil || !UIApplication.shared.canOpenURL(url!) {
+            let banner = NotificationBanner(title: NSLocalizedString("nothing_to_share", comment: ""))
+            banner.show()
             return
         }
 
         let alert = UIAlertController(
             title: NSLocalizedString("would_you_like_to_share_link", comment: ""),
-            message: url.absoluteString,
+            message: url!.absoluteString,
             preferredStyle: .alert
         )
 
         alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .default, handler: { _ in
-            self.room.share(link: url)
+            self.room.share(link: url!)
         }))
 
         alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel, handler: nil))
