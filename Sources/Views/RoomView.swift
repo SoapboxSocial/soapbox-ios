@@ -306,7 +306,7 @@ class RoomView: UIView {
         ])
 
         if room.role != .admin {
-            hideEditNameButton()
+            editNameButton.isHidden = true
         }
     }
 
