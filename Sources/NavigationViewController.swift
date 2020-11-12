@@ -58,19 +58,17 @@ class NavigationViewController: UINavigationController {
         requestMicrophone {
             let roomView = RoomCreationView()
             roomView.delegate = self
-            roomView.translatesAutoresizingMaskIntoConstraints = false
 
             self.creationDrawer = DrawerView(withView: roomView)
             self.creationDrawer!.delegate = self
             self.creationDrawer!.attachTo(view: self.view)
             self.creationDrawer!.backgroundEffect = nil
-            self.creationDrawer!.snapPositions = [.open, .closed]
+            self.creationDrawer!.snapPositions = [.open, .collapsed]
             self.creationDrawer!.cornerRadius = 25
-            self.creationDrawer!.backgroundColor = .brandColor
+            self.creationDrawer!.backgroundColor = .background
+
             self.creationDrawer!.setPosition(.closed, animated: false)
             self.view.addSubview(self.creationDrawer!)
-
-            self.creationDrawer!.contentVisibilityBehavior = .allowPartial
 
             self.creationDrawer!.setPosition(.open, animated: true) { _ in
                 self.createRoomButton.isHidden = true
@@ -85,23 +83,20 @@ class NavigationViewController: UINavigationController {
             return
         }
 
-        roomDrawer = DrawerView()
+        let roomView = RoomView(room: room!)
+        roomView.delegate = self
+
+        roomDrawer = DrawerView(withView: roomView)
         roomDrawer!.cornerRadius = 25.0
         roomDrawer!.attachTo(view: view)
         roomDrawer!.backgroundEffect = nil
         roomDrawer!.snapPositions = [.collapsed, .open]
-        roomDrawer!.backgroundColor = .foreground
+        roomDrawer!.backgroundColor = .roomBackground
         roomDrawer!.setPosition(.closed, animated: false)
         roomDrawer!.delegate = self
+        roomDrawer!.openHeightBehavior = .fixed(height: RoomView.height() + view.safeAreaInsets.bottom)
+        roomDrawer!.contentVisibilityBehavior = .custom(roomView.hideViews)
         view.addSubview(roomDrawer!)
-
-        roomDrawer!.contentVisibilityBehavior = .allowPartial
-
-        let roomView = RoomView(frame: roomDrawer!.bounds, room: room!, topBarHeight: roomDrawer!.collapsedHeight)
-        roomView.translatesAutoresizingMaskIntoConstraints = false
-        roomDrawer!.addSubview(roomView)
-        roomView.autoPinEdgesToSuperview()
-        roomView.delegate = self
 
         roomDrawer!.setPosition(.open, animated: true) { _ in
             self.createRoomButton.isHidden = true

@@ -149,3 +149,5 @@
 "this_week" = "This Week";
 "earlier" = "Earlier";
 
+// This can be better
+"nothing_to_share" = "Please copy a link to share it.";

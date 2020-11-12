@@ -94,6 +94,7 @@ class RoomCell: UICollectionViewCell {
 
         titleLeftAnchorConstraint = title.leftAnchor.constraint(equalTo: lock.rightAnchor, constant: 5)
 
+        // @TODO MAYBE USE STACK VIEW?
         NSLayoutConstraint.activate([
             lock.heightAnchor.constraint(equalToConstant: 20),
             lock.widthAnchor.constraint(equalToConstant: 20),
