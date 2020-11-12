@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - Room: Fixed the animation when a room opens.
+ - Room Creation: Fixed bug that collapsed the creation room.
 
 ## [Build 91] - 2020-11-12
 
