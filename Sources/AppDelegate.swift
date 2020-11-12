@@ -32,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
 
         if !loggedIn {
-            return
+            return true
         }
 
         NotificationManager.shared.requestAuthorization()
