@@ -56,7 +56,8 @@ class NavigationViewController: UINavigationController {
 
     @objc func didTapCreateRoom() {
         requestMicrophone {
-            let roomView = RoomViewV2()
+            let roomView = RoomCreationView()
+            roomView.delegate = self
 
             self.creationDrawer = DrawerView(withView: roomView)
             self.creationDrawer!.delegate = self
@@ -65,8 +66,6 @@ class NavigationViewController: UINavigationController {
             self.creationDrawer!.snapPositions = [.open, .collapsed]
             self.creationDrawer!.cornerRadius = 25
             self.creationDrawer!.backgroundColor = .background
-            self.creationDrawer!.contentVisibilityBehavior = .custom(roomView.hideViews)
-            self.creationDrawer!.openHeightBehavior = .fixed(height: RoomViewV2.height() + self.view.safeAreaInsets.bottom)
 
             self.creationDrawer!.setPosition(.closed, animated: false)
             self.view.addSubview(self.creationDrawer!)
@@ -84,23 +83,20 @@ class NavigationViewController: UINavigationController {
             return
         }
 
-        roomDrawer = DrawerView()
+        let roomView = RoomView(room: room!)
+        roomView.delegate = self
+
+        roomDrawer = DrawerView(withView: roomView)
         roomDrawer!.cornerRadius = 25.0
         roomDrawer!.attachTo(view: view)
         roomDrawer!.backgroundEffect = nil
         roomDrawer!.snapPositions = [.collapsed, .open]
-        roomDrawer!.backgroundColor = .foreground
+        roomDrawer!.backgroundColor = .roomBackground
         roomDrawer!.setPosition(.closed, animated: false)
         roomDrawer!.delegate = self
+        roomDrawer!.openHeightBehavior = .fixed(height: RoomView.height() + view.safeAreaInsets.bottom)
+        roomDrawer!.contentVisibilityBehavior = .custom(roomView.hideViews)
         view.addSubview(roomDrawer!)
-
-        roomDrawer!.contentVisibilityBehavior = .allowPartial
-
-        let roomView = RoomView(frame: roomDrawer!.bounds, room: room!, topBarHeight: roomDrawer!.collapsedHeight)
-        roomView.translatesAutoresizingMaskIntoConstraints = false
-        roomDrawer!.addSubview(roomView)
-        roomView.autoPinEdgesToSuperview()
-        roomView.delegate = self
 
         roomDrawer!.setPosition(.open, animated: true) { _ in
             self.createRoomButton.isHidden = true

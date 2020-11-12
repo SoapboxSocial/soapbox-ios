@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Room: We refined the look of rooms just a bit more!
  - Home: Removed animation that was causing items to flash.
 
 ## [Build 90] - 2020-11-11

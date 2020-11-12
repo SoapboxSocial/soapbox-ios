@@ -29,6 +29,40 @@ extension UIColor {
         }
     }
 
+    static var handle: UIColor {
+        return UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
+            if UITraitCollection.userInterfaceStyle == .dark {
+                return .systemGray6
+            } else {
+                return .systemGray5
+            }
+        }
+    }
+
+    static var roomForeground: UIColor {
+        return UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
+            if UITraitCollection.userInterfaceStyle == .dark {
+                return .systemGray5
+            } else {
+                return .white
+            }
+        }
+    }
+
+    static var roomButtonBar: UIColor {
+        return .systemGray6
+    }
+
+    static var roomBackground: UIColor {
+        return UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
+            if UITraitCollection.userInterfaceStyle == .dark {
+                return .black
+            } else {
+                return .systemGray5
+            }
+        }
+    }
+
     static var twitter: UIColor {
         UIColor(red: 29 / 255, green: 161 / 255, blue: 242 / 255, alpha: 1.0)
     }

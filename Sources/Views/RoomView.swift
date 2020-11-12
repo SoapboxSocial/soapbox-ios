@@ -12,199 +12,290 @@ protocol RoomViewDelegate {
 class RoomView: UIView {
     var delegate: RoomViewDelegate?
 
-    let room: Room
-
-    private let topBarHeight: CGFloat
-
-    private var muteButton: UIButton!
-    private var members: UICollectionView!
-
     private var audioPlayer: AVAudioPlayer!
 
-    private var roomNameLabel: UILabel!
+    private static let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
 
-    private var editNameButton: UIButton!
-    private var inviteButton: UIButton!
+    private let muteButton: EmojiButton = {
+        let button = EmojiButton(frame: .zero)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "mic", withConfiguration: iconConfig), for: .normal)
+        button.setImage(UIImage(systemName: "mic.slash", withConfiguration: iconConfig), for: .selected)
+        button.tintColor = .brandColor
+        button.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
+        return button
+    }()
 
-    // @TODO MAKE THIS ITS OWN CLASS
-    private var bottomBar: UIView!
-    private var normalButtons: UIView!
+    private let exitButton: EmojiButton = {
+        let button = EmojiButton(frame: .zero)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "xmark", withConfiguration: iconConfig), for: .normal)
+        button.tintColor = .systemRed
+        button.backgroundColor = .exitButtonBackground
+        button.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
+        return button
+    }()
 
-    init(frame: CGRect, room: Room, topBarHeight: CGFloat) {
+    private let editNameButton: EmojiButton = {
+        let button = EmojiButton(frame: .zero)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "gear", withConfiguration: iconConfig), for: .normal)
+        button.tintColor = .brandColor
+        button.backgroundColor = .clear
+        button.addTarget(self, action: #selector(editRoomNameButtonTapped), for: .touchUpInside)
+        return button
+    }()
+
+    private let inviteUsersButton: EmojiButton = {
+        let button = EmojiButton(frame: .zero)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "person.badge.plus", withConfiguration: iconConfig), for: .normal)
+        button.tintColor = .brandColor
+        button.backgroundColor = .clear
+        button.addTarget(self, action: #selector(inviteTapped), for: .touchUpInside)
+        return button
+    }()
+
+    private let pasteButton: EmojiButton = {
+        let button = EmojiButton(frame: .zero)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "doc.on.clipboard", withConfiguration: iconConfig), for: .normal)
+        button.tintColor = .brandColor
+        button.backgroundColor = .clear
+        button.addTarget(self, action: #selector(pasteLink), for: .touchUpInside)
+        return button
+    }()
+
+    private let name: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Test"
+        label.font = .rounded(forTextStyle: .title2, weight: .bold)
+        return label
+    }()
+
+    private let foreground: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .roomForeground
+        view.layer.cornerRadius = 25
+        return view
+    }()
+
+    private let members: UICollectionView = {
+        let layout = UICollectionViewFlowLayout.basicUserBubbleLayout(itemsPerRow: 4, width: UIScreen.main.bounds.width)
+
+        let collection = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+        collection.translatesAutoresizingMaskIntoConstraints = false
+        collection.register(cellWithClass: RoomMemberCell.self)
+        collection.backgroundColor = .clear
+        collection.layer.masksToBounds = false
+
+        return collection
+    }()
+
+    private let room: Room
+
+    init(room: Room) {
         self.room = room
-        self.topBarHeight = topBarHeight
-        super.init(frame: frame)
+
+        super.init(frame: CGRect.zero)
+
+        backgroundColor = .roomBackground
+
         room.delegate = self
-    }
 
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+        translatesAutoresizingMaskIntoConstraints = false
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
+        let buttonBar = UIView()
+        buttonBar.backgroundColor = .roomButtonBar
+        buttonBar.translatesAutoresizingMaskIntoConstraints = false
+        buttonBar.layer.cornerRadius = 25
+        addSubview(buttonBar)
 
-        // @todo this is ugly but for a lack of a better place to put set up right now we put it here.
-        if muteButton != nil {
-            return
-        }
+        addSubview(foreground)
+        foreground.addSubview(members)
 
-        roundCorners(corners: [.topLeft, .topRight], radius: 25.0)
+        let handle = UIView()
+        handle.translatesAutoresizingMaskIntoConstraints = false
+        handle.backgroundColor = .handle
+        handle.layer.cornerRadius = 2.5
+        addSubview(handle)
 
-        let inset = safeAreaInsets.bottom
+        let topBar = UIView()
+        topBar.translatesAutoresizingMaskIntoConstraints = false
+        foreground.addSubview(topBar)
 
-        let topBar = UIView(frame: CGRect(x: 0, y: 0, width: frame.size.width, height: topBarHeight + inset))
-        topBar.roundCorners(corners: [.topLeft, .topRight], radius: 25.0)
-        addSubview(topBar)
+        topBar.addSubview(name)
+        topBar.addSubview(exitButton)
+        topBar.addSubview(muteButton)
 
-        let handle = UIView(frame: CGRect(x: (frame.size.width / 2) - (36 / 2), y: 5, width: 36, height: 5))
-        handle.backgroundColor = .systemGray5
-        handle.layer.cornerRadius = 5 / 2
-        topBar.addSubview(handle)
+        topBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openBar)))
 
-        let recognizer = UITapGestureRecognizer(target: self, action: #selector(openBar))
-        recognizer.numberOfTapsRequired = 1
-        topBar.addGestureRecognizer(recognizer)
+        members.dataSource = self
+        members.delegate = self
 
-        let pasteLinkRecognizer = UITapGestureRecognizer(target: self, action: #selector(pasteLink))
-        pasteLinkRecognizer.numberOfTapsRequired = 2
-        addGestureRecognizer(pasteLinkRecognizer)
+        NSLayoutConstraint.activate([
+            handle.centerXAnchor.constraint(equalTo: centerXAnchor),
+            handle.heightAnchor.constraint(equalToConstant: 5),
+            handle.widthAnchor.constraint(equalToConstant: 36),
+            handle.topAnchor.constraint(equalTo: topAnchor, constant: 5),
+        ])
 
-        let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
+        NSLayoutConstraint.activate([
+            foreground.leftAnchor.constraint(equalTo: leftAnchor),
+            foreground.topAnchor.constraint(equalTo: topAnchor),
+            foreground.rightAnchor.constraint(equalTo: rightAnchor),
+        ])
 
-        let exitButton = EmojiButton(
-            frame: CGRect(x: frame.size.width - (36 + 20 + safeAreaInsets.left), y: (frame.size.height - inset) / 2 - 17.5, width: 36, height: 36)
-        )
-        exitButton.center = CGPoint(x: exitButton.center.x, y: topBar.center.y - (inset / 2))
-        exitButton.setImage(UIImage(systemName: "xmark", withConfiguration: iconConfig), for: .normal)
-        exitButton.tintColor = .systemRed
-        exitButton.backgroundColor = .exitButtonBackground
-        exitButton.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
-        addSubview(exitButton)
+        NSLayoutConstraint.activate([
+            muteButton.topAnchor.constraint(equalTo: foreground.topAnchor, constant: 20),
+            muteButton.rightAnchor.constraint(equalTo: exitButton.leftAnchor, constant: -20),
+            muteButton.heightAnchor.constraint(equalToConstant: 32),
+            muteButton.widthAnchor.constraint(equalToConstant: 32),
+        ])
 
-        muteButton = EmojiButton(frame: CGRect(x: exitButton.frame.origin.x - 56, y: 0, width: 36, height: 36))
-        muteButton.setImage(UIImage(systemName: "mic", withConfiguration: iconConfig), for: .normal)
-        muteButton.setImage(UIImage(systemName: "mic.slash", withConfiguration: iconConfig), for: .selected)
-        muteButton.tintColor = .brandColor
-        muteButton.center = CGPoint(x: muteButton.center.x, y: exitButton.center.y)
-        muteButton.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
-        addSubview(muteButton)
+        NSLayoutConstraint.activate([
+            exitButton.topAnchor.constraint(equalTo: foreground.topAnchor, constant: 20),
+            exitButton.rightAnchor.constraint(equalTo: foreground.rightAnchor, constant: -20),
+            exitButton.heightAnchor.constraint(equalToConstant: 32),
+            exitButton.widthAnchor.constraint(equalToConstant: 32),
+        ])
 
-        var offset = CGFloat(safeAreaInsets.left + 20)
-        if room.visibility == .private {
-            let lock = UIImageView(image: UIImage(systemName: "lock", withConfiguration: iconConfig))
-            lock.tintColor = .label
-            lock.frame = CGRect(x: offset, y: 0, width: 20, height: 20)
-            lock.center = CGPoint(x: lock.center.x, y: exitButton.center.y)
-            offset += 28 + 5
-            addSubview(lock)
-        }
+        NSLayoutConstraint.activate([
+            name.centerYAnchor.constraint(equalTo: exitButton.centerYAnchor),
+            name.leftAnchor.constraint(equalTo: foreground.leftAnchor, constant: 20),
+        ])
 
-        roomNameLabel = UILabel(frame: CGRect(x: offset, y: 0, width: muteButton.frame.origin.x - (offset + 20), height: 28))
+        NSLayoutConstraint.activate([
+            members.topAnchor.constraint(equalTo: exitButton.bottomAnchor, constant: 40),
+            members.leftAnchor.constraint(equalTo: foreground.leftAnchor),
+            members.rightAnchor.constraint(equalTo: foreground.rightAnchor),
+            members.heightAnchor.constraint(equalToConstant: UICollectionViewFlowLayout.heightForBubbleLayout(rows: 4, width: UIScreen.main.bounds.width)),
+            foreground.bottomAnchor.constraint(equalTo: members.bottomAnchor),
+        ])
 
-        roomNameLabel.text = {
-            if let name = room.name, name != "" {
-                return name
-            }
+        NSLayoutConstraint.activate([
+            topBar.topAnchor.constraint(equalTo: topAnchor),
+            topBar.leftAnchor.constraint(equalTo: leftAnchor),
+            topBar.rightAnchor.constraint(equalTo: rightAnchor),
+            topBar.bottomAnchor.constraint(equalTo: members.topAnchor),
+        ])
 
-            return NSLocalizedString("current_room", comment: "")
-        }()
+        let buttonStack = UIStackView()
+        buttonStack.translatesAutoresizingMaskIntoConstraints = false
+        buttonStack.axis = .horizontal
+        buttonStack.spacing = 10
+        buttonBar.addSubview(buttonStack)
 
-        roomNameLabel.font = .rounded(forTextStyle: .title3, weight: .bold)
-        roomNameLabel.center = CGPoint(x: roomNameLabel.center.x, y: exitButton.center.y)
-        topBar.addSubview(roomNameLabel)
+        addSubview(pasteButton)
 
-        let layout = UICollectionViewFlowLayout.basicUserBubbleLayout(itemsPerRow: 4, width: frame.size.width)
-        members = UICollectionView(frame: CGRect(x: 0, y: topBar.frame.size.height, width: frame.size.width, height: frame.size.height - topBar.frame.size.height), collectionViewLayout: layout)
-        members!.dataSource = self
-        members!.delegate = self
-        members!.register(cellWithClass: RoomMemberCell.self)
-        members!.backgroundColor = .clear
-        members!.layer.masksToBounds = false
-        addSubview(members)
+        buttonStack.addArrangedSubview(editNameButton)
+        buttonStack.addArrangedSubview(inviteUsersButton)
+
+        NSLayoutConstraint.activate([
+            buttonStack.topAnchor.constraint(equalTo: foreground.bottomAnchor, constant: 10),
+            buttonStack.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            editNameButton.heightAnchor.constraint(equalToConstant: 32),
+            editNameButton.widthAnchor.constraint(equalToConstant: 32),
+        ])
+
+        NSLayoutConstraint.activate([
+            inviteUsersButton.heightAnchor.constraint(equalToConstant: 32),
+            inviteUsersButton.widthAnchor.constraint(equalToConstant: 32),
+        ])
+
+        NSLayoutConstraint.activate([
+            pasteButton.topAnchor.constraint(equalTo: foreground.bottomAnchor, constant: 10),
+            pasteButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            pasteButton.heightAnchor.constraint(equalToConstant: 32),
+            pasteButton.widthAnchor.constraint(equalToConstant: 32),
+        ])
+
+        NSLayoutConstraint.activate([
+            buttonBar.topAnchor.constraint(equalTo: foreground.bottomAnchor, constant: -50),
+            buttonBar.leftAnchor.constraint(equalTo: leftAnchor),
+            buttonBar.rightAnchor.constraint(equalTo: rightAnchor),
+            buttonBar.bottomAnchor.constraint(equalTo: pasteButton.bottomAnchor, constant: 10),
+        ])
+
+        let emojis = UIView()
+        emojis.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(emojis)
 
         let userId = UserDefaults.standard.integer(forKey: "id")
 
-        bottomBar = UIView(frame: CGRect(x: (frame.size.width / 2) - (208 / 2), y: frame.size.height - (25 + 48 + safeAreaInsets.bottom), width: 208, height: 48))
-        bottomBar.layer.cornerRadius = 48 / 2
-        bottomBar.backgroundColor = .background
-        addSubview(bottomBar)
+        var left = emojis.leftAnchor
+        var leftOffset = CGFloat(0)
 
-        editNameButton = UIButton(
-            frame: CGRect(x: 8, y: (48 / 2) - (36 / 2), width: 36, height: 36)
-        )
-        editNameButton.setImage(UIImage(systemName: "square.and.pencil", withConfiguration: iconConfig), for: .normal)
-        editNameButton.tintColor = .brandColor
-        editNameButton.addTarget(self, action: #selector(editRoomNameButtonTapped), for: .touchUpInside)
-        editNameButton.isHidden = false
-        bottomBar.addSubview(editNameButton)
-
-        normalButtons = UIView(frame: CGRect(x: 0, y: 0, width: 1, height: 48))
-        bottomBar.addSubview(normalButtons)
-
-        inviteButton = UIButton(frame: editNameButton.frame)
-        inviteButton.setImage(UIImage(systemName: "person.badge.plus", withConfiguration: iconConfig), for: .normal)
-        inviteButton.tintColor = .brandColor
-        inviteButton.addTarget(self, action: #selector(inviteTapped), for: .touchUpInside)
-        normalButtons.addSubview(inviteButton)
-
-        var origin = CGPoint(x: inviteButton.frame.origin.x + inviteButton.frame.size.width + 8, y: inviteButton.frame.origin.y)
-        let reactSize = CGFloat(36)
-        let buttonSpacing = CGFloat(8)
         for reaction in Room.Reaction.allCases {
             // poop emoji, only for Dean & Palley
             if reaction == .poop, userId != 1, userId != 170 {
                 continue
             }
 
-            let button = EmojiButton(frame: CGRect(origin: origin, size: CGSize(width: reactSize, height: reactSize)))
+            let button = EmojiButton()
+            button.translatesAutoresizingMaskIntoConstraints = false
             button.setTitle(reaction.rawValue, for: .normal)
             button.addTarget(self, action: #selector(reactionTapped), for: .touchUpInside)
-            origin.x += reactSize + buttonSpacing
-            normalButtons.addSubview(button)
+            button.backgroundColor = .clear
+            emojis.addSubview(button)
+
+            NSLayoutConstraint.activate([
+                button.heightAnchor.constraint(equalToConstant: 32),
+                button.widthAnchor.constraint(equalToConstant: 32),
+                button.leftAnchor.constraint(equalTo: left, constant: leftOffset),
+            ])
+
+            left = button.rightAnchor
+            leftOffset = 20
         }
 
-        let newWidth = origin.x + reactSize + buttonSpacing
-
-        bottomBar.frame = CGRect(
-            origin: CGPoint(x: (frame.size.width / 2) - (newWidth / 2), y: bottomBar.frame.origin.y),
-            size: CGSize(width: newWidth, height: bottomBar.frame.height)
-        )
-
-        offset = editNameButton.frame.size.width + editNameButton.frame.origin.x
-        normalButtons.frame = CGRect(x: offset, y: 0, width: bottomBar.frame.width - offset, height: bottomBar.frame.height)
+        NSLayoutConstraint.activate([
+            emojis.topAnchor.constraint(equalTo: pasteButton.bottomAnchor, constant: 20),
+            emojis.rightAnchor.constraint(equalTo: left),
+            emojis.heightAnchor.constraint(equalToConstant: 32),
+            emojis.centerXAnchor.constraint(equalTo: centerXAnchor),
+        ])
 
         if room.role != .admin {
             hideEditNameButton()
-        }
-
-        DispatchQueue.main.async {
-            self.members.reloadData()
         }
     }
 
     private func hideEditNameButton() {
         UIView.animate(withDuration: 0.2) { [self] in
             editNameButton.isHidden = true
-            normalButtons.frame.origin.x = 0
-            bottomBar.frame.size.width = normalButtons.frame.size.width
-            bottomBar.center.x = center.x
         }
     }
 
     private func showEditNameButton() {
         UIView.animate(withDuration: 0.2) { [self] in
             editNameButton.isHidden = false
-            bottomBar.frame.size.width = normalButtons.frame.size.width + editNameButton.frame.size.width + editNameButton.frame.origin.x
-            bottomBar.center.x = center.x
-            normalButtons.frame.origin.x = editNameButton.frame.size.width + editNameButton.frame.origin.x
         }
+    }
+
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func hideViews() -> [UIView] {
+        return [members]
+    }
+
+    static func height() -> CGFloat {
+        return UICollectionViewFlowLayout.heightForBubbleLayout(rows: 4, width: UIScreen.main.bounds.width) + 52 + 104
     }
 
     @objc private func pasteLink() {
         if room.role == .audience {
             return
         }
+
+        // @TODO Probably worth grabbing a text?
 
         guard let url = UIPasteboard.general.url else {
             return
@@ -324,6 +415,90 @@ class RoomView: UIView {
     }
 }
 
+extension RoomView: UICollectionViewDelegate {
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.item == 0 {
+            let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
+                DispatchQueue.main.async {
+                    self.delegate?.didSelectViewProfile(id: UserDefaults.standard.integer(forKey: "id"))
+                }
+            })
+            optionMenu.addAction(profileAction)
+
+            let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
+            optionMenu.addAction(cancel)
+
+            UIApplication.shared.keyWindow?.rootViewController!.present(optionMenu, animated: true)
+            return
+        }
+
+        showMemberAction(for: room.members[indexPath.item - 1])
+    }
+
+    private func showMemberAction(for member: Room.Member) {
+        let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+        let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
+            DispatchQueue.main.async {
+                self.delegate?.didSelectViewProfile(id: member.id)
+            }
+        })
+        optionMenu.addAction(profileAction)
+
+        if room.role == .admin {
+            if member.role == .admin {
+                optionMenu.addAction(
+                    UIAlertAction(title: NSLocalizedString("remove_admin", comment: ""), style: .destructive, handler: { _ in
+                        self.room.remove(admin: member.id)
+                    })
+                )
+            } else {
+                optionMenu.addAction(
+                    UIAlertAction(title: NSLocalizedString("add_admin", comment: ""), style: .default, handler: { _ in
+                        self.room.add(admin: member.id)
+                    })
+                )
+            }
+
+            optionMenu.addAction(
+                UIAlertAction(title: NSLocalizedString("ban_from_room", comment: ""), style: .destructive, handler: { _ in
+                    self.room.kick(user: member.id)
+                })
+            )
+        }
+
+        let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
+        optionMenu.addAction(cancel)
+
+        UIApplication.shared.keyWindow?.rootViewController!.present(optionMenu, animated: true)
+    }
+}
+
+extension RoomView: UICollectionViewDataSource {
+    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
+        // Adds the plus 1 for self.
+        return room.members.count + 1
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withClass: RoomMemberCell.self, for: indexPath)
+        if indexPath.item == 0 {
+            // @todo this is a bit ugly
+            cell.setup(
+                name: UserDefaults.standard.string(forKey: "display") ?? "",
+                image: UserDefaults.standard.string(forKey: "image") ?? "",
+                muted: room.isMuted,
+                role: room.role
+            )
+        } else {
+            cell.setup(member: room.members[indexPath.item - 1])
+        }
+
+        return cell
+    }
+}
+
 extension RoomView: RoomDelegate {
     func userDidReact(user: Int, reaction: Room.Reaction) {
         DispatchQueue.main.async {
@@ -353,7 +528,7 @@ extension RoomView: RoomDelegate {
 
     func roomWasRenamed(_ name: String) {
         DispatchQueue.main.async {
-            self.roomNameLabel.text = name
+            self.name.text = name
         }
     }
 
@@ -425,107 +600,5 @@ extension RoomView: RoomDelegate {
         } catch {
             debugPrint("\(error)")
         }
-    }
-}
-
-extension RoomView: UICollectionViewDelegate {
-    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if indexPath.item == 0 {
-            let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-            let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
-                DispatchQueue.main.async {
-                    self.delegate?.didSelectViewProfile(id: UserDefaults.standard.integer(forKey: "id"))
-                }
-            })
-            optionMenu.addAction(profileAction)
-
-            let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
-            optionMenu.addAction(cancel)
-
-            UIApplication.shared.keyWindow?.rootViewController!.present(optionMenu, animated: true)
-            return
-        }
-
-        showMemberAction(for: room.members[indexPath.item - 1])
-    }
-
-    private func showMemberAction(for member: Room.Member) {
-        let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-
-//        @TODO: requires server fix.
-//        if room.role == .owner {
-//            var action: UIAlertAction
-//
-//            if member.role == .speaker {
-//                action = UIAlertAction(title: NSLocalizedString("move_to_audience", comment: ""), style: .default, handler: { _ in
-//                    self.room.remove(speaker: member.id)
-//
-//                })
-//            } else {
-//                action = UIAlertAction(title: NSLocalizedString("make_speaker", comment: ""), style: .default, handler: { _ in
-//                    self.room.add(speaker: member.id)
-//                })
-//            }
-//
-//            optionMenu.addAction(action)
-//        }
-
-        let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
-            DispatchQueue.main.async {
-                self.delegate?.didSelectViewProfile(id: member.id)
-            }
-        })
-        optionMenu.addAction(profileAction)
-
-        if room.role == .admin {
-            if member.role == .admin {
-                optionMenu.addAction(
-                    UIAlertAction(title: NSLocalizedString("remove_admin", comment: ""), style: .destructive, handler: { _ in
-                        self.room.remove(admin: member.id)
-                    })
-                )
-            } else {
-                optionMenu.addAction(
-                    UIAlertAction(title: NSLocalizedString("add_admin", comment: ""), style: .default, handler: { _ in
-                        self.room.add(admin: member.id)
-                    })
-                )
-            }
-
-            optionMenu.addAction(
-                UIAlertAction(title: NSLocalizedString("ban_from_room", comment: ""), style: .destructive, handler: { _ in
-                    self.room.kick(user: member.id)
-                })
-            )
-        }
-
-        let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
-        optionMenu.addAction(cancel)
-
-        UIApplication.shared.keyWindow?.rootViewController!.present(optionMenu, animated: true)
-    }
-}
-
-extension RoomView: UICollectionViewDataSource {
-    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        // Adds the plus 1 for self.
-        return room.members.count + 1
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withClass: RoomMemberCell.self, for: indexPath)
-        if indexPath.item == 0 {
-            // @todo this is a bit ugly
-            cell.setup(
-                name: UserDefaults.standard.string(forKey: "display") ?? "",
-                image: UserDefaults.standard.string(forKey: "image") ?? "",
-                muted: room.isMuted,
-                role: room.role
-            )
-        } else {
-            cell.setup(member: room.members[indexPath.item - 1])
-        }
-
-        return cell
     }
 }
