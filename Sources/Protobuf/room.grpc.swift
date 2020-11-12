@@ -37,11 +37,6 @@ internal protocol RoomServiceClientProtocol: GRPCClient {
     callOptions: CallOptions?
   ) -> UnaryCall<SwiftProtobuf.Google_Protobuf_Empty, RoomList>
 
-  func listRoomsV2(
-    _ request: Auth,
-    callOptions: CallOptions?
-  ) -> UnaryCall<Auth, RoomList>
-
 }
 
 extension RoomServiceClientProtocol {
@@ -78,23 +73,6 @@ extension RoomServiceClientProtocol {
   ) -> UnaryCall<SwiftProtobuf.Google_Protobuf_Empty, RoomList> {
     return self.makeUnaryCall(
       path: "/RoomService/ListRooms",
-      request: request,
-      callOptions: callOptions ?? self.defaultCallOptions
-    )
-  }
-
-  /// Deprecated: Use ListRooms instead
-  ///
-  /// - Parameters:
-  ///   - request: Request to send to ListRoomsV2.
-  ///   - callOptions: Call options.
-  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
-  internal func listRoomsV2(
-    _ request: Auth,
-    callOptions: CallOptions? = nil
-  ) -> UnaryCall<Auth, RoomList> {
-    return self.makeUnaryCall(
-      path: "/RoomService/ListRoomsV2",
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions
     )
