@@ -31,13 +31,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         window?.makeKeyAndVisible()
 
-        // @TODO: WHEN WE RE-RELEASE THE APP UNDER A DIFFERENT IDENTIFIER, WE CAN REMOVE THIS.
-        // THIS IS HERE FOR BACKWARDS COMPATIBILITY.
-        // WHAT WE WILL NEED IS INSTEAD SETTINGS PAGE WHERE PEOPLE CAN ENABLE / DISABLE NOTIFICATIONS.
-        if !loggedIn {
-            return true
-        }
-
         NotificationManager.shared.requestAuthorization()
 
         if let notification = options?[.remoteNotification] as? [String: AnyObject] {
