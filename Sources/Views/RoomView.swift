@@ -56,6 +56,17 @@ class RoomView: UIView {
         return button
     }()
 
+    private let bottomMuteButton: EmojiButton = {
+        let button = EmojiButton(frame: .zero)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "mic", withConfiguration: iconConfig), for: .normal)
+        button.setImage(UIImage(systemName: "mic.slash", withConfiguration: iconConfig), for: .selected)
+        button.tintColor = .brandColor
+        button.backgroundColor = .clear
+        button.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
+        return button
+    }()
+
     private let pasteButton: EmojiButton = {
         let button = EmojiButton(frame: .zero)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -165,8 +176,14 @@ class RoomView: UIView {
 
         stack.addArrangedSubview(name)
 
-        topBar.addSubview(exitButton)
-        topBar.addSubview(muteButton)
+        let topButtonStack = UIStackView()
+        topButtonStack.axis = .horizontal
+        topButtonStack.spacing = 20
+        topButtonStack.translatesAutoresizingMaskIntoConstraints = false
+        topBar.addSubview(topButtonStack)
+
+        topButtonStack.addArrangedSubview(muteButton)
+        topButtonStack.addArrangedSubview(exitButton)
 
         topBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openBar)))
 
@@ -188,10 +205,11 @@ class RoomView: UIView {
 
         NSLayoutConstraint.activate([
             muteButton.topAnchor.constraint(equalTo: foreground.topAnchor, constant: 20),
-            muteButton.rightAnchor.constraint(equalTo: exitButton.leftAnchor, constant: -20),
             muteButton.heightAnchor.constraint(equalToConstant: 32),
             muteButton.widthAnchor.constraint(equalToConstant: 32),
         ])
+
+        muteButton.isHidden = true
 
         NSLayoutConstraint.activate([
             exitButton.topAnchor.constraint(equalTo: foreground.topAnchor, constant: 20),
@@ -207,8 +225,13 @@ class RoomView: UIView {
         NSLayoutConstraint.activate([
             stack.topAnchor.constraint(equalTo: topAnchor, constant: 20),
             stack.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            stack.rightAnchor.constraint(equalTo: muteButton.leftAnchor, constant: -10),
+            stack.rightAnchor.constraint(equalTo: topButtonStack.leftAnchor, constant: -10),
             stack.heightAnchor.constraint(equalToConstant: 32),
+        ])
+
+        NSLayoutConstraint.activate([
+            topButtonStack.rightAnchor.constraint(equalTo: rightAnchor),
+            topButtonStack.heightAnchor.constraint(equalToConstant: 32),
         ])
 
         NSLayoutConstraint.activate([
@@ -233,6 +256,7 @@ class RoomView: UIView {
         buttonBar.addSubview(buttonStack)
 
         addSubview(pasteButton)
+        addSubview(bottomMuteButton)
 
         buttonStack.addArrangedSubview(editNameButton)
         buttonStack.addArrangedSubview(inviteUsersButton)
@@ -253,8 +277,15 @@ class RoomView: UIView {
         ])
 
         NSLayoutConstraint.activate([
+            bottomMuteButton.topAnchor.constraint(equalTo: foreground.bottomAnchor, constant: 10),
+            bottomMuteButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            bottomMuteButton.heightAnchor.constraint(equalToConstant: 32),
+            bottomMuteButton.widthAnchor.constraint(equalToConstant: 32),
+        ])
+
+        NSLayoutConstraint.activate([
             pasteButton.topAnchor.constraint(equalTo: foreground.bottomAnchor, constant: 10),
-            pasteButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            pasteButton.rightAnchor.constraint(equalTo: bottomMuteButton.leftAnchor, constant: -20),
             pasteButton.heightAnchor.constraint(equalToConstant: 32),
             pasteButton.widthAnchor.constraint(equalToConstant: 32),
         ])
@@ -307,6 +338,18 @@ class RoomView: UIView {
 
         if room.role != .admin {
             editNameButton.isHidden = true
+        }
+    }
+
+    func showMuteButton() {
+        UIView.animate(withDuration: 0.1) { [self] in
+            muteButton.isHidden = false
+        }
+    }
+
+    func hideMuteButton() {
+        UIView.animate(withDuration: 0.1) { [self] in
+            muteButton.isHidden = true
         }
     }
 
@@ -380,6 +423,7 @@ class RoomView: UIView {
 
     @objc private func muteTapped() {
         muteButton.isSelected.toggle()
+        bottomMuteButton.isSelected.toggle()
 
         if room.isMuted {
             room.unmute()

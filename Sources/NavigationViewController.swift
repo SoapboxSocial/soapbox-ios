@@ -15,6 +15,7 @@ class NavigationViewController: UINavigationController {
     private var client: APIClient
 
     private var roomDrawer: DrawerView?
+    private var roomView: RoomView?
     private var creationDrawer: DrawerView?
 
     override init(rootViewController: UIViewController) {
@@ -83,10 +84,10 @@ class NavigationViewController: UINavigationController {
             return
         }
 
-        let roomView = RoomView(room: room!)
-        roomView.delegate = self
+        roomView = RoomView(room: room!)
+        roomView!.delegate = self
 
-        roomDrawer = DrawerView(withView: roomView)
+        roomDrawer = DrawerView(withView: roomView!)
         roomDrawer!.cornerRadius = 25.0
         roomDrawer!.attachTo(view: view)
         roomDrawer!.backgroundEffect = nil
@@ -94,7 +95,7 @@ class NavigationViewController: UINavigationController {
         roomDrawer!.backgroundColor = .roomBackground
         roomDrawer!.delegate = self
         roomDrawer!.openHeightBehavior = .fixed(height: RoomView.height() + view.safeAreaInsets.bottom)
-        roomDrawer!.contentVisibilityBehavior = .custom(roomView.hideViews)
+        roomDrawer!.contentVisibilityBehavior = .custom(roomView!.hideViews)
         view.addSubview(roomDrawer!)
 
         roomDrawer!.setPosition(.closed, animated: false)
@@ -316,6 +317,10 @@ extension NavigationViewController: RoomCreationDelegate {
 
 extension NavigationViewController: DrawerViewDelegate {
     func drawer(_ drawerView: DrawerView, didTransitionTo position: DrawerPosition) {
+        if position == .open {
+            roomView?.hideMuteButton()
+        }
+
         if position == .closed {
             drawerView.removeFromSuperview(animated: false)
             createRoomButton.isHidden = false
@@ -324,6 +329,7 @@ extension NavigationViewController: DrawerViewDelegate {
 
         if position == .collapsed || position == .closed {
             roomControllerDelegate?.reloadRooms()
+            roomView?.showMuteButton()
         }
     }
 }

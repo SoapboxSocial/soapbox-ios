@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Room: Made the mute button a little more accessible.
+
 ## [Build 92] - 2020-11-12
 
  - Room: Fixed the animation when a room opens. And some general fixes with our new UI.
