@@ -69,7 +69,6 @@ class RoomView: UIView {
     private let name: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Test"
         label.font = .rounded(forTextStyle: .title2, weight: .bold)
         return label
     }()
@@ -94,6 +93,19 @@ class RoomView: UIView {
         return collection
     }()
 
+    private let lock: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = true
+
+        let lock = UIImageView(image: UIImage(systemName: "lock", withConfiguration: RoomView.iconConfig))
+        lock.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+        lock.tintColor = .label
+        lock.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(lock)
+
+        return view
+    }()
+
     private let room: Room
 
     init(room: Room) {
@@ -104,6 +116,15 @@ class RoomView: UIView {
         backgroundColor = .roomBackground
 
         room.delegate = self
+
+        name.text = {
+            if let name = room.name, name != "" {
+                return name
+            }
+
+            return NSLocalizedString("current_room", comment: "")
+
+        }()
 
         translatesAutoresizingMaskIntoConstraints = false
 
@@ -126,7 +147,24 @@ class RoomView: UIView {
         topBar.translatesAutoresizingMaskIntoConstraints = false
         foreground.addSubview(topBar)
 
-        topBar.addSubview(name)
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.spacing = 10
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        topBar.addSubview(stack)
+
+        if room.visibility == .private {
+            stack.addArrangedSubview(lock)
+
+            NSLayoutConstraint.activate([
+                lock.topAnchor.constraint(equalTo: stack.topAnchor, constant: 10),
+                lock.heightAnchor.constraint(equalToConstant: 20),
+                lock.widthAnchor.constraint(equalToConstant: 20),
+            ])
+        }
+
+        stack.addArrangedSubview(name)
+
         topBar.addSubview(exitButton)
         topBar.addSubview(muteButton)
 
@@ -163,8 +201,14 @@ class RoomView: UIView {
         ])
 
         NSLayoutConstraint.activate([
-            name.centerYAnchor.constraint(equalTo: exitButton.centerYAnchor),
-            name.leftAnchor.constraint(equalTo: foreground.leftAnchor, constant: 20),
+            name.centerYAnchor.constraint(equalTo: stack.centerYAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            stack.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            stack.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            stack.rightAnchor.constraint(equalTo: muteButton.leftAnchor, constant: -10),
+            stack.heightAnchor.constraint(equalToConstant: 32),
         ])
 
         NSLayoutConstraint.activate([
