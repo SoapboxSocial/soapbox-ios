@@ -31,6 +31,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         window?.makeKeyAndVisible()
 
+        if !loggedIn {
+            return
+        }
+
         NotificationManager.shared.requestAuthorization()
 
         if let notification = options?[.remoteNotification] as? [String: AnyObject] {
