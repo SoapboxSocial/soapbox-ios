@@ -26,11 +26,16 @@ extension SearchInteractor: SearchViewControllerOutput {
         limit = 10
         offset = 0
 
-        api.search(keyword, limit: limit, offset: offset, callback: { result in
+        api.search(keyword, types: [.users], limit: limit, offset: offset, callback: { result in
             switch result {
             case .failure:
                 self.output.failedToFetch()
-            case let .success(users):
+            case let .success(response):
+                guard let users = response.users else {
+                    self.output.failedToFetch()
+                    return
+                }
+
                 self.output.didFetch(users: users)
             }
         })
@@ -44,12 +49,17 @@ extension SearchInteractor: SearchViewControllerOutput {
         }
 
         // @TODO
-        api.search(term, limit: limit, offset: nextOffset, callback: { result in
+        api.search(term, types: [.users], limit: limit, offset: nextOffset, callback: { result in
             switch result {
             case .failure:
                 self.output.failedToFetch()
-            case let .success(users):
+            case let .success(response):
                 self.offset = nextOffset
+                guard let users = response.users else {
+                    self.output.failedToFetch()
+                    return
+                }
+
                 self.output.didFetch(nextPage: users)
             }
         })
