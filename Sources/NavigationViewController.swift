@@ -64,7 +64,7 @@ class NavigationViewController: UINavigationController {
             self.creationDrawer!.delegate = self
             self.creationDrawer!.attachTo(view: self.view)
             self.creationDrawer!.backgroundEffect = nil
-            self.creationDrawer!.snapPositions = [.open]
+            self.creationDrawer!.snapPositions = [.open, .closed]
             self.creationDrawer!.cornerRadius = 25
             self.creationDrawer!.backgroundColor = .background
 
