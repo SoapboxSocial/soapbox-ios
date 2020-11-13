@@ -15,11 +15,24 @@
 
 default_platform(:ios)
 
+project = "Soapbox.xcodeproj"
+
 platform :ios do
   desc "Push a new release build to the App Store"
   lane :release do
-    increment_build_number(xcodeproj: "Soapbox.xcodeproj")
+    current = get_version_number(xcodeproj: project)
+    increment_version_number(version_number: current)
+
+    UI.message "current version is #{current}"
+    type = UI.select("What type of release is this?: ", ["major", "minor", "patch"])
+
+    increment_version_number(bump_type: type, xcodeproj: project)
+
+    changelog = read_changelog(section_identifier: '[Unreleased]')
+    set_changelog(changelog: changelog)
     build_app(workspace: "Soapbox.xcworkspace", scheme: "Soapbox")
+
+    stamp_changelog(section_identifier: "#{get_version_number(project)}")
     upload_to_app_store
   end
 
