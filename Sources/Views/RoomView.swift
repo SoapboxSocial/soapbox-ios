@@ -347,15 +347,27 @@ class RoomView: UIView {
     }
 
     func showMuteButton() {
-        UIView.animate(withDuration: 0.1) { [self] in
-            muteButton.isHidden = false
-        }
+        UIView.animate(
+            withDuration: 0.1,
+            delay: 0,
+            options: .curveEaseOut,
+            animations: { [self] in
+                muteButton.isHidden = false
+                muteButton.alpha = 1
+            }
+        )
     }
 
     func hideMuteButton() {
-        UIView.animate(withDuration: 0.1) { [self] in
-            muteButton.isHidden = true
-        }
+        UIView.animate(
+            withDuration: 0.1,
+            delay: 0,
+            options: .curveEaseOut,
+            animations: { [self] in
+                muteButton.isHidden = true
+                muteButton.alpha = 0
+            }
+        )
     }
 
     private func hideEditNameButton() {
