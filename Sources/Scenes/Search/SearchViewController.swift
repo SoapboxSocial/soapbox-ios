@@ -182,13 +182,44 @@ extension SearchViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionFooter {
-            return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionViewMore.self, for: indexPath)
+            let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionViewMore.self, for: indexPath)
+
+            switch presenter.sectionType(for: indexPath.section) {
+            case .groupList:
+                let recognizer = UITapGestureRecognizer(target: self, action: #selector(showMoreGroups))
+                cell.view.addGestureRecognizer(recognizer)
+            case .userList:
+                let recognizer = UITapGestureRecognizer(target: self, action: #selector(showMoreUsers))
+                cell.view.addGestureRecognizer(recognizer)
+            }
+
+            return cell
         }
 
         let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
         cell.label.font = .rounded(forTextStyle: .title2, weight: .bold)
         cell.label.text = presenter.sectionTitle(for: indexPath.section)
         return cell
+    }
+
+    @objc private func showMoreGroups() {
+        var text = "*"
+        if let input = searchBar.text, input != "" {
+            text = input
+        }
+
+        let view = SceneFactory.createSearchResultsViewController(type: .groups, keyword: text)
+        navigationController?.pushViewController(view, animated: true)
+    }
+
+    @objc private func showMoreUsers() {
+        var text = "*"
+        if let input = searchBar.text, input != "" {
+            text = input
+        }
+
+        let view = SceneFactory.createSearchResultsViewController(type: .users, keyword: text)
+        navigationController?.pushViewController(view, animated: true)
     }
 }
 

@@ -10,13 +10,17 @@ class CollectionViewSectionViewMore: UICollectionReusableView {
         return label
     }()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
+    var view: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .systemGray6
         view.layer.cornerRadius = 15
+        return view
+    }()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
         addSubview(view)
 
         view.addSubview(label)

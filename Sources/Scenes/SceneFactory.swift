@@ -91,4 +91,15 @@ class SceneFactory {
 
         return viewController
     }
+
+    static func createSearchResultsViewController(type: APIClient.SearchIndex, keyword: String) -> SearchResultsViewController {
+        let viewController = SearchResultsViewController()
+        viewController.type = type
+        let presenter = SearchResultsPresenter(output: viewController)
+
+        let interactor = SearchResultsInteractor(output: presenter, keyword: keyword, type: type, api: APIClient())
+        viewController.output = interactor
+
+        return viewController
+    }
 }
