@@ -11,8 +11,6 @@ class SearchInteractor {
     private let api: APIClient
 
     private var keyword: String?
-    private var offset = 0
-    private var limit = 10
 
     init(output: SearchInteractorOutput, api: APIClient) {
         self.output = output
@@ -23,10 +21,8 @@ class SearchInteractor {
 extension SearchInteractor: SearchViewControllerOutput {
     func search(_ keyword: String) {
         self.keyword = keyword
-        limit = 3
-        offset = 0
-
-        api.search(keyword, types: [.users, .groups], limit: limit, offset: offset, callback: { result in
+        
+        api.search(keyword, types: [.users, .groups], limit: 3, offset: 0, callback: { result in
             switch result {
             case .failure:
                 self.output.failedToFetch()
