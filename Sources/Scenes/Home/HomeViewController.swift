@@ -353,7 +353,28 @@ extension HomeViewController: UICollectionViewDelegate {
         switch presenter.sectionType(for: indexPath.section) {
         case .activeList:
             let user = presenter.item(for: indexPath, ofType: APIClient.ActiveUser.self)
-            output.didSelectRoom(room: Int(user.currentRoom))
+
+            let options = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+            options.addAction(
+                UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
+                    DispatchQueue.main.async {
+                        self.navigationController?.pushViewController(SceneFactory.createProfileViewController(id: user.id), animated: true)
+                    }
+                })
+            )
+
+            options.addAction(
+                UIAlertAction(title: NSLocalizedString("join_room", comment: ""), style: .default, handler: { _ in
+                    DispatchQueue.main.async {
+                        self.output.didSelectRoom(room: Int(user.currentRoom))
+                    }
+                })
+            )
+
+            options.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+
+            present(options, animated: true)
         case .roomList:
             let room = presenter.item(for: indexPath, ofType: RoomState.self)
             output.didSelectRoom(room: Int(room.id))
