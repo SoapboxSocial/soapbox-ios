@@ -17,7 +17,7 @@ class SearchInteractor {
 }
 
 extension SearchInteractor: SearchViewControllerOutput {
-    func search(_ keyword: String) {        
+    func search(_ keyword: String) {
         api.search(keyword, types: [.users, .groups], limit: 3, offset: 0, callback: { result in
             switch result {
             case .failure:

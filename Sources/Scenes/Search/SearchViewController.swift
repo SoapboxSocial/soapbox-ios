@@ -10,7 +10,6 @@ class SearchViewController: ViewController {
     var output: SearchViewControllerOutput!
 
     private var collection: UICollectionView!
-    private var users = [APIClient.User]()
 
     private var searchBar: TextField!
 
@@ -118,8 +117,14 @@ extension SearchViewController: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         view.endEditing(true)
 
-        let id = users[indexPath.item].id
-        navigationController?.pushViewController(SceneFactory.createProfileViewController(id: id), animated: true)
+        switch presenter.sectionType(for: indexPath.section) {
+        case .userList:
+            let user = presenter.item(for: IndexPath(item: indexPath.item, section: indexPath.section), ofType: APIClient.User.self)
+            navigationController?.pushViewController(SceneFactory.createProfileViewController(id: user.id), animated: true)
+        case .groupList:
+            let group = presenter.item(for: IndexPath(item: indexPath.item, section: indexPath.section), ofType: APIClient.Group.self)
+            navigationController?.pushViewController(SceneFactory.createGroupViewController(id: group.id), animated: true)
+        }
     }
 }
 
