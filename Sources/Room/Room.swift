@@ -60,8 +60,7 @@ class Room {
 
     private(set) var role = MemberRole.speaker
 
-    // @todo think about this for when users join and are muted by default
-    private(set) var isMuted = false
+    private(set) var isMuted = true
     private(set) var visibility = Visibility.public
 
     private(set) var members = [Member]()

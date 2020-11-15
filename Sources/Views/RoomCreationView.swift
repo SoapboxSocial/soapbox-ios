@@ -57,6 +57,14 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         button.backgroundColor = .lightBrandColor
         button.addTarget(self, action: #selector(createPressed), for: .touchUpInside)
         addSubview(button)
+
+        let mutedText = UILabel(frame: CGRect(x: 0, y: 0, width: frame.size.width - 40, height: 20))
+        mutedText.text = NSLocalizedString("you_will_be_muted_by_default", comment: "")
+        mutedText.font = .rounded(forTextStyle: .body, weight: .semibold)
+        mutedText.sizeThatFits(CGSize(width: frame.size.width - 40, height: CGFloat.greatestFiniteMagnitude))
+        mutedText.textColor = .white
+        mutedText.frame.origin = CGPoint(x: 20, y: button.frame.origin.y + button.frame.size.height + 20)
+        addSubview(mutedText)
     }
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
