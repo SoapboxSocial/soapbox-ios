@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Rooms: You are now muted by default when joining a room!
+
 ## [Build 96] - 2020-11-15
 
  - Search: Fix group images.
