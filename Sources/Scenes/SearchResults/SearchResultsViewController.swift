@@ -113,7 +113,7 @@ extension SearchResultsViewController: UICollectionViewDataSource {
 
             groupCell.image.image = nil
             if let image = group.image, image != "" {
-                groupCell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
+                groupCell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/group/" + image))
             }
 
             cell = groupCell
