@@ -35,6 +35,7 @@ class SearchViewController: ViewController {
         collection.register(cellWithClass: UserCell.self)
         collection.register(cellWithClass: GroupSearchCell.self)
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
+        collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: CollectionViewSectionViewMore.self)
 
         output.search("*")
 
@@ -68,7 +69,7 @@ class SearchViewController: ViewController {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             switch self.presenter.sectionType(for: sectionIndex) {
             case .groupList:
-                return self.userSection()
+                return self.groupSection()
             case .userList:
                 return self.userSection()
             }
@@ -76,6 +77,7 @@ class SearchViewController: ViewController {
 
         layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
         layout.configuration.interSectionSpacing = 20
+
         return layout
     }
 
@@ -94,7 +96,27 @@ class SearchViewController: ViewController {
         layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
         layoutSection.interGroupSpacing = 0
 
-        layoutSection.boundarySupplementaryItems = [createSectionHeader()]
+        layoutSection.boundarySupplementaryItems = [createSectionHeader(), createSectionFooter(height: 105 + 38)]
+
+        return layoutSection
+    }
+
+    private func groupSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalWidth(1))
+        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(88))
+
+        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitem: layoutItem, count: 1)
+
+        layoutGroup.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+        layoutGroup.interItemSpacing = .fixed(0)
+
+        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
+        layoutSection.interGroupSpacing = 0
+
+        layoutSection.boundarySupplementaryItems = [createSectionHeader(), createSectionFooter()]
 
         return layoutSection
     }
@@ -104,6 +126,14 @@ class SearchViewController: ViewController {
             layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(80)),
             elementKind: UICollectionView.elementKindSectionHeader,
             alignment: .top
+        )
+    }
+
+    private func createSectionFooter(height: CGFloat = 58) -> NSCollectionLayoutBoundarySupplementaryItem {
+        return NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(height)),
+            elementKind: UICollectionView.elementKindSectionFooter,
+            alignment: .bottom
         )
     }
 
@@ -151,6 +181,10 @@ extension SearchViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionFooter {
+            return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionViewMore.self, for: indexPath)
+        }
+
         let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
         cell.label.font = .rounded(forTextStyle: .title2, weight: .bold)
         cell.label.text = presenter.sectionTitle(for: indexPath.section)
