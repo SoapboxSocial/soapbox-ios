@@ -13,7 +13,6 @@ class UsersListWithSearch: UIView {
     private var filtered = [APIClient.User]()
 
     private var list: UICollectionView!
-    private let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
 
     private(set) var selected = [Int]()
 

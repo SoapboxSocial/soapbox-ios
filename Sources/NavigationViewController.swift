@@ -12,15 +12,12 @@ class NavigationViewController: UINavigationController {
 
     private let createRoomButton: CreateRoomButton
 
-    private var client: APIClient
-
     private var roomDrawer: DrawerView?
     private var roomView: RoomView?
     private var creationDrawer: DrawerView?
 
     override init(rootViewController: UIViewController) {
         createRoomButton = CreateRoomButton()
-        client = APIClient()
 
         super.init(rootViewController: rootViewController)
     }
