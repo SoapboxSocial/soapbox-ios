@@ -227,7 +227,6 @@ class ProfileViewController: ViewController {
     }
 
     @objc private func didTapFollowingLabel() {
-        debugPrint("fuck")
         let list = SceneFactory.createUserViewController(id: user.id, title: NSLocalizedString("following", comment: ""), userListFunc: APIClient().following)
         navigationController?.pushViewController(list, animated: true)
     }
