@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [Build 98] - 2020-11-15
+
  - Active Users: When clicking on your online friends you can now either join their room or view their profile.
  - Rooms: You are now muted by default when joining a room!
 
