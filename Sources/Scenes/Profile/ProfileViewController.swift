@@ -73,7 +73,6 @@ class ProfileViewController: ViewController {
         return view
     }()
 
-    private let downloader = ImageDownloader()
     private lazy var manager = FocusableImageViewManager()
 
     override func viewDidLoad() {

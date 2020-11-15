@@ -28,15 +28,6 @@ class HomeInteractor: HomeViewControllerOutput {
     private let controller: RoomController
     private let api: APIClient
 
-    private var token: String? {
-        guard let identifier = Bundle.main.bundleIdentifier else {
-            fatalError("no identifier")
-        }
-
-        let keychain = Keychain(service: identifier)
-        return keychain[string: "token"]
-    }
-
     init(output: HomeInteractorOutput, service: RoomServiceClient, controller: RoomController, api: APIClient) {
         self.output = output
         roomService = service

@@ -120,12 +120,4 @@ class SearchCollectionPresenter {
 
         dataSource.append(Section(type: .userList, title: NSLocalizedString("users", comment: ""), data: users))
     }
-
-    func index(of section: SectionType) -> Int? {
-        return dataSource.firstIndex(where: { $0.type == section })
-    }
-
-    func has(section: SectionType) -> Bool {
-        return dataSource.contains(where: { $0.type == section })
-    }
 }

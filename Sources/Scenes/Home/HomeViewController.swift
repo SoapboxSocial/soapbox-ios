@@ -12,8 +12,6 @@ class HomeViewController: ViewController {
     private let refresh = UIRefreshControl()
     private let downloader = ImageDownloader()
 
-    private var searchController: UISearchController!
-
     private var collection: CollectionView!
     private var rooms = [RoomState]()
     private let presenter = HomeCollectionPresenter()
