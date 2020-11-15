@@ -10,8 +10,6 @@ class SearchInteractor {
     private let output: SearchInteractorOutput
     private let api: APIClient
 
-    private var keyword: String?
-
     init(output: SearchInteractorOutput, api: APIClient) {
         self.output = output
         self.api = api
@@ -19,9 +17,7 @@ class SearchInteractor {
 }
 
 extension SearchInteractor: SearchViewControllerOutput {
-    func search(_ keyword: String) {
-        self.keyword = keyword
-        
+    func search(_ keyword: String) {        
         api.search(keyword, types: [.users, .groups], limit: 3, offset: 0, callback: { result in
             switch result {
             case .failure:
