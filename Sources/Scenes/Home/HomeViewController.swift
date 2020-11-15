@@ -354,9 +354,9 @@ extension HomeViewController: UICollectionViewDelegate {
         case .activeList:
             let user = presenter.item(for: indexPath, ofType: APIClient.ActiveUser.self)
 
-            let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            let options = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-            optionMenu.addAction(
+            options.addAction(
                 UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
                     DispatchQueue.main.async {
                         self.navigationController?.pushViewController(SceneFactory.createProfileViewController(id: user.id), animated: true)
@@ -364,7 +364,7 @@ extension HomeViewController: UICollectionViewDelegate {
                 })
             )
 
-            optionMenu.addAction(
+            options.addAction(
                 UIAlertAction(title: NSLocalizedString("join_room", comment: ""), style: .default, handler: { _ in
                     DispatchQueue.main.async {
                         self.output.didSelectRoom(room: Int(user.currentRoom))
@@ -372,9 +372,9 @@ extension HomeViewController: UICollectionViewDelegate {
                 })
             )
 
-            optionMenu.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+            options.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
 
-            present(optionMenu, animated: true)
+            present(options, animated: true)
         case .roomList:
             let room = presenter.item(for: indexPath, ofType: RoomState.self)
             output.didSelectRoom(room: Int(room.id))
