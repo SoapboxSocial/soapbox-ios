@@ -267,8 +267,22 @@ extension APIClient {
 }
 
 extension APIClient {
-    func search(_ text: String, limit: Int, offset: Int, callback: @escaping (Result<[User], Error>) -> Void) {
-        get(path: "/v1/users/search", parameters: ["query": text, "limit": limit, "offset": offset], callback: callback)
+    enum SearchIndex: String {
+        case users
+        case groups
+    }
+
+    struct SearchResponse: Decodable {
+        let users: [User]?
+        let groups: [Group]?
+    }
+
+    func search(_ text: String, types: [SearchIndex], limit: Int, offset: Int, callback: @escaping (Result<SearchResponse, Error>) -> Void) {
+        get(
+            path: "/v1/search",
+            parameters: ["query": text, "limit": limit, "offset": offset, "type": types.flatMap { $0.rawValue }.joined(separator: ",")],
+            callback: callback
+        )
     }
 }
 

@@ -2,17 +2,13 @@ import Foundation
 
 protocol SearchInteractorOutput {
     func didFetch(users: [APIClient.User])
-    func didFetch(nextPage: [APIClient.User])
+    func didFetch(groups: [APIClient.Group])
     func failedToFetch()
 }
 
 class SearchInteractor {
     private let output: SearchInteractorOutput
     private let api: APIClient
-
-    private var keyword: String?
-    private var offset = 0
-    private var limit = 10
 
     init(output: SearchInteractorOutput, api: APIClient) {
         self.output = output
@@ -22,35 +18,26 @@ class SearchInteractor {
 
 extension SearchInteractor: SearchViewControllerOutput {
     func search(_ keyword: String) {
-        self.keyword = keyword
-        limit = 10
-        offset = 0
-
-        api.search(keyword, limit: limit, offset: offset, callback: { result in
+        api.search(keyword, types: [.users, .groups], limit: 3, offset: 0, callback: { result in
             switch result {
             case .failure:
                 self.output.failedToFetch()
-            case let .success(users):
-                self.output.didFetch(users: users)
-            }
-        })
-    }
+            case let .success(response):
+                if let groups = response.groups {
+                    self.output.didFetch(groups: groups)
+                } else {
+                    self.output.didFetch(groups: [])
+                }
 
-    func nextPage() {
-        let nextOffset = offset + limit
+                if let users = response.users {
+                    self.output.didFetch(users: users)
+                } else {
+                    self.output.didFetch(users: [])
+                }
 
-        guard let term = keyword else {
-            return
-        }
-
-        // @TODO
-        api.search(term, limit: limit, offset: nextOffset, callback: { result in
-            switch result {
-            case .failure:
-                self.output.failedToFetch()
-            case let .success(users):
-                self.offset = nextOffset
-                self.output.didFetch(nextPage: users)
+                if response.users == nil, response.users == nil {
+                    self.output.failedToFetch()
+                }
             }
         })
     }

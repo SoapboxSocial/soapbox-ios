@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Search: We've updated search to allow the discovery of groups!
+
 ## [Build 93] - 2020-11-13
 
  - Room: Fixed the layout on smaller devices, and made the mute button a little more accessible.

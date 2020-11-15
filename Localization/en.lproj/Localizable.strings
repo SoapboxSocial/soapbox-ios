@@ -143,6 +143,7 @@
 
 "members" = "Members";
 "groups" = "Groups";
+"users" = "Users";
 
 "today" = "Today";
 "yesterday" = "Yesterday";
@@ -155,3 +156,5 @@
 "login_terms_notice" = "By clicking submit you agree to the Terms of Service, Privacy Policy and that you are above the age of 16";
 "terms" = "Terms of Service";
 "privacy" = "Privacy Policy";
+
+"view_more" = "View More";
