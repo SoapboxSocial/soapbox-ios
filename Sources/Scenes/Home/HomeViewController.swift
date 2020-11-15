@@ -359,7 +359,7 @@ extension HomeViewController: UICollectionViewDelegate {
             optionMenu.addAction(
                 UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
                     DispatchQueue.main.async {
-                        self.output.didSelectRoom(room: Int(user.id))
+                        self.navigationController?.pushViewController(SceneFactory.createProfileViewController(id: user.id), animated: true)
                     }
                 })
             )
