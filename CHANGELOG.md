@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [Build 95] - 2020-11-15
+
  - Search: We've updated search to allow the discovery of groups!
 
 ## [Build 93] - 2020-11-13
