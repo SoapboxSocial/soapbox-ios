@@ -1,11 +1,9 @@
 import AlamofireImage
-import CCBottomRefreshControl
 import NotificationBannerSwift
 import UIKit
 
 protocol SearchViewControllerOutput {
     func search(_ keyword: String)
-    func nextPage()
 }
 
 class SearchViewController: ViewController {
@@ -14,9 +12,9 @@ class SearchViewController: ViewController {
     private var collection: UICollectionView!
     private var users = [APIClient.User]()
 
-    private let paginate = UIRefreshControl()
-
     private var searchBar: TextField!
+
+    private let presenter = SearchCollectionPresenter()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,10 +22,7 @@ class SearchViewController: ViewController {
         view.backgroundColor = .background
         title = NSLocalizedString("search", comment: "")
 
-        let layout = UICollectionViewFlowLayout.usersLayout()
-        layout.sectionInset.top = 0
-
-        collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.delegate = self
         collection.dataSource = self
@@ -39,14 +34,12 @@ class SearchViewController: ViewController {
         collection.refreshControl = refresh
 
         collection.register(cellWithClass: UserCell.self)
+        collection.register(cellWithClass: GroupSearchCell.self)
+        collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
 
         output.search("*")
 
         view.addSubview(collection)
-
-        paginate.addTarget(self, action: #selector(loadMore), for: .valueChanged)
-        paginate.triggerVerticalOffset = 100
-        collection.bottomRefreshControl = paginate
 
         searchBar = TextField(frame: .zero, theme: .normal)
         searchBar.delegate = self
@@ -72,12 +65,51 @@ class SearchViewController: ViewController {
         ])
     }
 
-    @objc private func endRefresh() {
-        collection.refreshControl?.endRefreshing()
+    private func makeLayout() -> UICollectionViewLayout {
+        let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            switch self.presenter.sectionType(for: sectionIndex) {
+            case .groupList:
+                return self.userSection()
+            case .userList:
+                return self.userSection()
+            }
+        }
+
+        layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
+        layout.configuration.interSectionSpacing = 20
+        return layout
     }
 
-    @objc private func loadMore() {
-        output.nextPage()
+    private func userSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalWidth(1))
+        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(88))
+
+        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitem: layoutItem, count: 1)
+
+        layoutGroup.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+        layoutGroup.interItemSpacing = .fixed(0)
+
+        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
+        layoutSection.interGroupSpacing = 0
+
+        layoutSection.boundarySupplementaryItems = [createSectionHeader()]
+
+        return layoutSection
+    }
+
+    private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
+        return NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(80)),
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top
+        )
+    }
+
+    @objc private func endRefresh() {
+        collection.refreshControl?.endRefreshing()
     }
 }
 
@@ -92,46 +124,38 @@ extension SearchViewController: UICollectionViewDelegate {
 }
 
 extension SearchViewController: UICollectionViewDataSource {
-    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        return users.count
+    func numberOfSections(in _: UICollectionView) -> Int {
+        return presenter.numberOfSections
+    }
+
+    func collectionView(_: UICollectionView, numberOfItemsInSection index: Int) -> Int {
+        return presenter.numberOfItems(for: index)
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withClass: UserCell.self, for: indexPath)
-        cell.layer.mask = nil
-        cell.layer.cornerRadius = 0
-
-        if indexPath.item == 0 {
-            cell.roundCorners(corners: [.topLeft, .topRight], radius: 30)
+        switch presenter.sectionType(for: indexPath.section) {
+        case .groupList:
+            let cell = collectionView.dequeueReusableCell(withClass: GroupSearchCell.self, for: indexPath)
+            presenter.configure(item: cell, for: indexPath)
+            return cell
+        case .userList:
+            let cell = collectionView.dequeueReusableCell(withClass: UserCell.self, for: indexPath)
+            presenter.configure(item: cell, for: indexPath)
+            return cell
         }
+    }
 
-        if indexPath.item == (users.count - 1) {
-            cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 30)
-        }
-
-        if indexPath.item == 0, users.count == 1 {
-            cell.layer.mask = nil
-            cell.layer.cornerRadius = 30
-            cell.layer.masksToBounds = true
-        }
-
-        let user = users[indexPath.item]
-
-        cell.displayName.text = user.displayName
-        cell.username.text = "@" + user.username
-
-        cell.image.image = nil
-        if let image = user.image, image != "" {
-            cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
-        }
-
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
+        cell.label.font = .rounded(forTextStyle: .title2, weight: .bold)
+        cell.label.text = presenter.sectionTitle(for: indexPath.section)
         return cell
     }
 }
 
 extension SearchViewController: SearchPresenterOutput {
     func display(users: [APIClient.User]) {
-        self.users = users
+        presenter.set(users: users)
 
         DispatchQueue.main.async {
             self.collection.refreshControl?.endRefreshing()
@@ -139,18 +163,17 @@ extension SearchViewController: SearchPresenterOutput {
         }
     }
 
-    func display(nextPage users: [APIClient.User]) {
-        DispatchQueue.main.async {
-            self.collection.bottomRefreshControl?.endRefreshing()
+    func display(groups: [APIClient.Group]) {
+        presenter.set(groups: groups)
 
-            self.users.append(contentsOf: users)
+        DispatchQueue.main.async {
+            self.collection.refreshControl?.endRefreshing()
             self.collection.reloadData()
         }
     }
 
     func displaySearchError() {
         collection.refreshControl?.endRefreshing()
-        collection.bottomRefreshControl?.endRefreshing()
     }
 }
 

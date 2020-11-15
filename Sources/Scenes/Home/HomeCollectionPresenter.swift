@@ -1,23 +1,23 @@
 import AlamofireImage
 import UIKit
 
-enum SectionType: Int, CaseIterable {
-    case roomList
-    case activeList
-    case groupList
-    case noRooms
-}
-
-struct Section {
-    let type: SectionType
-    let title: String
-    let data: [Any]
-}
-
 class HomeCollectionPresenter {
     var currentRoom: Int?
 
     private var dataSource = [Section]()
+
+    enum SectionType: Int, CaseIterable {
+        case roomList
+        case activeList
+        case groupList
+        case noRooms
+    }
+
+    struct Section {
+        let type: SectionType
+        let title: String
+        let data: [Any]
+    }
 
     var numberOfSections: Int {
         return dataSource.count

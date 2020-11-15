@@ -143,6 +143,7 @@
 
 "members" = "Members";
 "groups" = "Groups";
+"users" = "Users";
 
 "today" = "Today";
 "yesterday" = "Yesterday";
