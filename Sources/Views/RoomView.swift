@@ -341,6 +341,9 @@ class RoomView: UIView {
             emojis.centerXAnchor.constraint(equalTo: centerXAnchor),
         ])
 
+        muteButton.isSelected = room.isMuted
+        bottomMuteButton.isSelected = room.isMuted
+
         if room.role != .admin {
             editNameButton.isHidden = true
         }
