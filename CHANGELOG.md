@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [Build 96] - 2020-11-15
+
  - Search: Fix group images.
 
 ## [Build 95] - 2020-11-15
