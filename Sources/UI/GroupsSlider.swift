@@ -2,6 +2,7 @@ import UIKit
 
 protocol GroupsSliderDelegate {
     func didSelect(group: Int)
+    func loadMoreGroups()
 }
 
 class GroupsSlider: UIView {
@@ -39,7 +40,15 @@ class GroupsSlider: UIView {
     }
 
     func set(groups: [APIClient.Group]) {
-        data = groups
+        if groups.isEmpty {
+            return
+        }
+
+        if data.isEmpty {
+            data = groups
+        } else {
+            data.append(contentsOf: groups)
+        }
 
         DispatchQueue.main.async {
             self.collection.reloadData()
@@ -69,6 +78,12 @@ class GroupsSlider: UIView {
 extension GroupsSlider: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         delegate?.didSelect(group: data[indexPath.item].id)
+    }
+
+    func collectionView(_: UICollectionView, willDisplay _: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if indexPath.row == data.count - 2 {
+            delegate?.loadMoreGroups()
+        }
     }
 }
 

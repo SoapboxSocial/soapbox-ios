@@ -16,7 +16,7 @@ class HomeCollectionPresenter {
     struct Section {
         let type: SectionType
         let title: String
-        let data: [Any]
+        var data: [Any]
     }
 
     var numberOfSections: Int {
@@ -113,6 +113,14 @@ class HomeCollectionPresenter {
     func set(groups: [APIClient.Group]) {
         dataSource.removeAll(where: { $0.type == .groupList })
         dataSource.insert(Section(type: .groupList, title: "", data: groups), at: 0)
+    }
+
+    func add(groups: [APIClient.Group]) {
+        guard let index = dataSource.firstIndex(where: { $0.type == .groupList }) else {
+            return
+        }
+
+        dataSource[index].data.append(contentsOf: groups)
     }
 
     func set(rooms: [RoomState]) {

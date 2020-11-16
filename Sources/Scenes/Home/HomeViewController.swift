@@ -6,6 +6,7 @@ protocol HomeViewControllerOutput {
     func fetchData()
     func didSelectRoom(room: Int)
     func fetchMe()
+    func fetchMoreGroups()
 }
 
 class HomeViewController: ViewController {
@@ -218,7 +219,7 @@ class HomeViewController: ViewController {
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
         layoutSection.interGroupSpacing = 10
         layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20)
-        layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
+        layoutSection.orthogonalScrollingBehavior = .continuous
 
         return layoutSection
     }
@@ -241,6 +242,14 @@ class HomeViewController: ViewController {
 }
 
 extension HomeViewController: HomePresenterOutput {
+    func didFetchMoreGroups(groups: [APIClient.Group]) {
+        presenter.add(groups: groups)
+
+        DispatchQueue.main.async {
+            self.collection.reloadData()
+        }
+    }
+
     func didFetchGroups(groups: [APIClient.Group]) {
         update(.groups(groups))
     }
@@ -349,6 +358,16 @@ extension HomeViewController {
 }
 
 extension HomeViewController: UICollectionViewDelegate {
+    func collectionView(_: UICollectionView, willDisplay _: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if presenter.sectionType(for: indexPath.section) != .groupList {
+            return
+        }
+
+        if indexPath.item == presenter.numberOfItems(for: indexPath.section) - 2 {
+            output.fetchMoreGroups()
+        }
+    }
+
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch presenter.sectionType(for: indexPath.section) {
         case .activeList:

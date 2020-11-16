@@ -335,8 +335,8 @@ extension APIClient {
         let id: Int
     }
 
-    func groups(id: Int, callback: @escaping (Result<[Group], Error>) -> Void) {
-        get(path: "/v1/users/" + String(id) + "/groups", callback: callback)
+    func groups(id: Int, limit: Int, offset: Int, callback: @escaping (Result<[Group], Error>) -> Void) {
+        get(path: "/v1/users/" + String(id) + "/groups", parameters: ["limit": limit, "offset": offset], callback: callback)
     }
 
     func inviteGroupMembers(id: Int, users: [Int], callback: @escaping (Result<Void, Error>) -> Void) {

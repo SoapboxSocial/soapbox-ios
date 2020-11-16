@@ -4,6 +4,7 @@ protocol HomePresenterOutput {
     func didFetchRooms(rooms: [RoomState])
     func didFetchActives(actives: [APIClient.ActiveUser])
     func didFetchGroups(groups: [APIClient.Group])
+    func didFetchMoreGroups(groups: [APIClient.Group])
     func displayError(title: String, description: String?)
     func displayCurrentRoom(_ id: Int)
     func removeCurrentRoom()
@@ -42,5 +43,9 @@ class HomePresenter: HomeInteractorOutput {
 
     func didFetchGroups(groups: [APIClient.Group]) {
         output.didFetchGroups(groups: groups)
+    }
+
+    func didFetchMoreGroups(groups: [APIClient.Group]) {
+        output.didFetchMoreGroups(groups: groups)
     }
 }
