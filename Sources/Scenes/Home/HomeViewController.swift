@@ -219,7 +219,7 @@ class HomeViewController: ViewController {
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
         layoutSection.interGroupSpacing = 10
         layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20)
-        layoutSection.orthogonalScrollingBehavior = .continuous
+        layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
 
         return layoutSection
     }
@@ -243,11 +243,7 @@ class HomeViewController: ViewController {
 
 extension HomeViewController: HomePresenterOutput {
     func didFetchMoreGroups(groups: [APIClient.Group]) {
-        presenter.add(groups: groups)
-
-        DispatchQueue.main.async {
-            self.collection.reloadData()
-        }
+        // @TODO
     }
 
     func didFetchGroups(groups: [APIClient.Group]) {
