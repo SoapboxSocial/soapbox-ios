@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Rooms: Fix an issue.
+
 ## [Build 100] - 2020-11-16
 
  - Home: Minor fix on groups

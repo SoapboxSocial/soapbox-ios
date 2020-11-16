@@ -468,6 +468,8 @@ class RoomView: UIView {
             self.exitRoom()
         }))
 
+        room.mute()
+
         UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
     }
 
