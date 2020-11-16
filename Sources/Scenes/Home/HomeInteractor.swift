@@ -78,16 +78,17 @@ class HomeInteractor: HomeViewControllerOutput {
     }
 
     func fetchMoreGroups() {
-        let nextOffset = groupOffset + groupLimit
-
-        api.groups(id: UserDefaults.standard.integer(forKey: "id"), limit: groupLimit, offset: nextOffset, callback: { result in
-            switch result {
-            case .failure: break
-            case let .success(groups):
-                self.output.didFetchMoreGroups(groups: groups)
-                self.groupOffset = nextOffset
-            }
-        })
+        // @TODO
+//        let nextOffset = groupOffset + groupLimit
+//
+//        api.groups(id: UserDefaults.standard.integer(forKey: "id"), limit: groupLimit, offset: nextOffset, callback: { result in
+//            switch result {
+//            case .failure: break
+//            case let .success(groups):
+//                self.output.didFetchMoreGroups(groups: groups)
+//                self.groupOffset = nextOffset
+//            }
+//        })
     }
 
     func fetchMe() {
