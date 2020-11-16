@@ -61,7 +61,7 @@ platform :ios do
       output_name: "Soapbox.ipa"
     )
 
-    stamp_changelog(section_identifier: "#{get_version_number(project)}")
+    stamp_changelog(section_identifier: "#{get_version_number(xcodeproj: project)}")
     upload_to_app_store
     set_changelog(changelog: changelog)
   end
