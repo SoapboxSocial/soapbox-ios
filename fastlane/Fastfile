@@ -44,7 +44,23 @@ platform :ios do
 
     changelog = read_changelog(section_identifier: '[Unreleased]')
     set_changelog(changelog: changelog)
-    build_app(workspace: "Soapbox.xcworkspace", scheme: "Soapbox")
+
+    gym(
+      workspace: "Soapbox.xcworkspace",
+      scheme:"Soapbox",
+      configuration: "Release",
+      clean: true,
+      export_method: "app-store",
+      output_directory:"./build/",
+      export_options: {
+        method: "app-store",
+        provisioningProfiles: {
+          "app.social.soapbox" => ENV["sigh_app.social.soapbox_appstore_profile-name"]
+        }
+      },
+      codesigning_identity:"Apple Distribution: Dean Eigenmann (Z9LC5GZ33U)",
+      output_name: "Soapbox.ipa"
+    )
 
     stamp_changelog(section_identifier: "#{get_version_number(project)}")
     upload_to_app_store
