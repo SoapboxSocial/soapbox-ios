@@ -243,7 +243,15 @@ class HomeViewController: ViewController {
 
 extension HomeViewController: HomePresenterOutput {
     func didFetchMoreGroups(groups: [APIClient.Group]) {
-        // @TODO
+        presenter.add(groups: groups)
+
+        if groups.isEmpty {
+            return
+        }
+
+        collection.performBatchUpdates({
+            self.collection.reloadSections(IndexSet(integer: 0))
+        })
     }
 
     func didFetchGroups(groups: [APIClient.Group]) {

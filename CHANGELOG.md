@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [Build 100] - 2020-11-16
+
  - Home: Minor fix on groups
 
 ## [Build 99] - 2020-11-16
