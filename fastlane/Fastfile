@@ -80,7 +80,7 @@ platform :ios do
       build_configuration: "Release"
     )
 
-    # build_number = latest_testflight_build_number + 1
+    build_number = latest_testflight_build_number + 1
 
     increment_build_number({
       build_number: build_number
