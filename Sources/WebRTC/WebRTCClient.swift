@@ -187,7 +187,6 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     func peerConnection(_: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
         if newState == .connected {
             configureAudioForConnectedState()
-            muteAudio()
         }
 
         debugPrint("peerConnection state did change \(newState)")
