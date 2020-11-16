@@ -7,12 +7,16 @@ protocol ProfileInteractorOutput {
     func displayUnfollowed()
     func displayFollowed()
     func displayError()
+    func display(moreGroups groups: [APIClient.Group])
 }
 
 class ProfileInteractor {
     private let output: ProfileInteractorOutput
     private let api: APIClient
     private let user: Int
+
+    private var groupOffset = 0
+    private let groupLimit = 10
 
     init(output: ProfileInteractorOutput, api: APIClient, user: Int) {
         self.output = output
@@ -22,6 +26,19 @@ class ProfileInteractor {
 }
 
 extension ProfileInteractor: ProfileViewControllerOutput {
+    func loadMoreGroups() {
+        let nextOffset = groupOffset + groupLimit
+
+        api.groups(id: user, limit: groupLimit, offset: nextOffset, callback: { result in
+            switch result {
+            case .failure: break
+            case let .success(groups):
+                self.output.display(moreGroups: groups)
+                self.groupOffset = nextOffset
+            }
+        })
+    }
+
     func loadData() {
         api.user(id: user) { result in
             switch result {
@@ -37,7 +54,7 @@ extension ProfileInteractor: ProfileViewControllerOutput {
             }
         }
 
-        api.groups(id: user, callback: { result in
+        api.groups(id: user, limit: groupLimit, offset: groupOffset, callback: { result in
             switch result {
             case .failure: break
             case let .success(groups):

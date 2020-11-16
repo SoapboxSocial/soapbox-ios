@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Groups: We are letting you now load more of your and your friends' groups if they are in more than 10.
+
 ## [Build 98] - 2020-11-15
 
  - Active Users: When clicking on your online friends you can now either join their room or view their profile.

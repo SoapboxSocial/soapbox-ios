@@ -7,6 +7,7 @@ protocol ProfilePresenterOutput {
     func didUnfollow()
     func didFollow()
     func displayError(title: String, description: String?)
+    func display(moreGroups groups: [APIClient.Group])
 }
 
 class ProfilePresenter: ProfileInteractorOutput {
@@ -41,5 +42,9 @@ class ProfilePresenter: ProfileInteractorOutput {
 
     func display(groups: [APIClient.Group]) {
         output.display(groups: groups)
+    }
+
+    func display(moreGroups groups: [APIClient.Group]) {
+        output.display(moreGroups: groups)
     }
 }

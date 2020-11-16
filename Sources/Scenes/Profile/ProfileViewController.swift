@@ -7,6 +7,7 @@ protocol ProfileViewControllerOutput {
     func loadData()
     func follow()
     func unfollow()
+    func loadMoreGroups()
 }
 
 class ProfileViewController: ViewController {
@@ -291,6 +292,10 @@ extension ProfileViewController: ProfilePresenterOutput {
         self.groups.set(groups: groups)
     }
 
+    func display(moreGroups groups: [APIClient.Group]) {
+        self.groups.set(groups: groups)
+    }
+
     func didFollow() {
         headerView.button.isUserInteractionEnabled = true
         headerView.button.isSelected.toggle()
@@ -340,6 +345,10 @@ extension ProfileViewController: ProfilePresenterOutput {
 }
 
 extension ProfileViewController: GroupsSliderDelegate {
+    func loadMoreGroups() {
+        output.loadMoreGroups()
+    }
+
     func didSelect(group: Int) {
         navigationController?.pushViewController(SceneFactory.createGroupViewController(id: group), animated: true)
     }

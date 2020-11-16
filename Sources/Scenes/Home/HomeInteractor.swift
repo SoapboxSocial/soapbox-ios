@@ -62,7 +62,8 @@ class HomeInteractor: HomeViewControllerOutput {
             }
         })
 
-        api.groups(id: UserDefaults.standard.integer(forKey: "id"), callback: { result in
+        // @TODO
+        api.groups(id: UserDefaults.standard.integer(forKey: "id"), limit: 10, offset: 0, callback: { result in
             switch result {
             case .failure:
                 self.output.didFetchGroups(groups: [])
