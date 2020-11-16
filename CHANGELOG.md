@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.0.0 (1)] - 2020-11-16 
+
  - Rooms: Fix an issue.
 
 ## [Build 100] - 2020-11-16
