@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Home: Minor fix on groups
+
 ## [Build 99] - 2020-11-16
 
  - Groups: We are letting you now load more of your and your friends' groups if they are in more than 10.
