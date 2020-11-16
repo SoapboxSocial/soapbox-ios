@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [Build 99] - 2020-11-16
+
  - Groups: We are letting you now load more of your and your friends' groups if they are in more than 10.
  - Rooms: Fixed mute by default
 
