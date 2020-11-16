@@ -43,7 +43,6 @@ platform :ios do
     increment_version_number(bump_type: type, xcodeproj: project)
 
     changelog = read_changelog(section_identifier: '[Unreleased]')
-    set_changelog(changelog: changelog)
 
     gym(
       workspace: "Soapbox.xcworkspace",
@@ -64,6 +63,7 @@ platform :ios do
 
     stamp_changelog(section_identifier: "#{get_version_number(project)}")
     upload_to_app_store
+    set_changelog(changelog: changelog)
   end
 
   lane :beta do
