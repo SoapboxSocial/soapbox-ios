@@ -220,13 +220,6 @@ class HomeViewController: ViewController {
         layoutSection.interGroupSpacing = 10
         layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20)
         layoutSection.orthogonalScrollingBehavior = .continuous
-        
-        layoutSection.visibleItemsInvalidationHandler = { (items, point, env) in
-            debugPrint(items)
-            debugPrint(point)
-            debugPrint(env)
-        }
-        
 
         return layoutSection
     }
