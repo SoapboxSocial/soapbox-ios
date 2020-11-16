@@ -344,6 +344,8 @@ class RoomView: UIView {
         muteButton.isSelected = room.isMuted
         bottomMuteButton.isSelected = room.isMuted
 
+        room.mute()
+
         if room.role != .admin {
             editNameButton.isHidden = true
         }
@@ -467,8 +469,6 @@ class RoomView: UIView {
         alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .destructive, handler: { _ in
             self.exitRoom()
         }))
-
-        room.mute()
 
         UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
     }

@@ -203,8 +203,6 @@ extension NavigationViewController: RoomController {
                 DispatchQueue.main.async {
                     self.activityIndicator.stopAnimating()
                     self.activityIndicator.isHidden = true
-                    
-                    debugPrint("ok")
 
                     switch result {
                     case let .failure(error):
