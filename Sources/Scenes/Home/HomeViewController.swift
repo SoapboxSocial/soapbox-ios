@@ -219,7 +219,14 @@ class HomeViewController: ViewController {
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
         layoutSection.interGroupSpacing = 10
         layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20)
-        layoutSection.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
+        layoutSection.orthogonalScrollingBehavior = .continuous
+        
+        layoutSection.visibleItemsInvalidationHandler = { (items, point, env) in
+            debugPrint(items)
+            debugPrint(point)
+            debugPrint(env)
+        }
+        
 
         return layoutSection
     }
@@ -243,12 +250,12 @@ class HomeViewController: ViewController {
 
 extension HomeViewController: HomePresenterOutput {
     func didFetchMoreGroups(groups: [APIClient.Group]) {
-        presenter.add(groups: groups)
-
         if groups.isEmpty {
             return
         }
 
+        presenter.add(groups: groups)
+        
         collection.performBatchUpdates({
             self.collection.reloadSections(IndexSet(integer: 0))
         })
