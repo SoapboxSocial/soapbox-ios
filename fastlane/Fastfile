@@ -20,6 +20,20 @@ project = "Soapbox.xcodeproj"
 platform :ios do
   desc "Push a new release build to the App Store"
   lane :release do
+    update_code_signing_settings(use_automatic_signing: false, path: "Soapbox.xcodeproj")
+
+    match(
+      app_identifier: "app.social.soapbox",
+      type: "appstore"
+    )
+
+    update_project_provisioning(
+      xcodeproj: "Soapbox.xcodeproj",
+      target_filter: "Soapbox",
+      profile:ENV["sigh_app.social.soapbox_appstore_profile-path"],
+      build_configuration: "Release"
+    )
+
     current = get_version_number(xcodeproj: project)
     increment_version_number(version_number: current)
 
