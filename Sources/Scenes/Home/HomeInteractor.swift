@@ -20,6 +20,7 @@ protocol HomeInteractorOutput {
     func didFetchImage()
     func didFetchActives(actives: [APIClient.ActiveUser])
     func didFetchGroups(groups: [APIClient.Group])
+    func didFetchMoreGroups(groups: [APIClient.Group])
 }
 
 class HomeInteractor: HomeViewControllerOutput {
@@ -27,6 +28,9 @@ class HomeInteractor: HomeViewControllerOutput {
     private let roomService: RoomServiceClient
     private let controller: RoomController
     private let api: APIClient
+
+    private let groupLimit = 10
+    private var groupOffset = 0
 
     init(output: HomeInteractorOutput, service: RoomServiceClient, controller: RoomController, api: APIClient) {
         self.output = output
@@ -63,12 +67,25 @@ class HomeInteractor: HomeViewControllerOutput {
         })
 
         // @TODO
-        api.groups(id: UserDefaults.standard.integer(forKey: "id"), limit: 10, offset: 0, callback: { result in
+        api.groups(id: UserDefaults.standard.integer(forKey: "id"), limit: groupLimit, offset: groupOffset, callback: { result in
             switch result {
             case .failure:
                 self.output.didFetchGroups(groups: [])
             case let .success(groups):
                 self.output.didFetchGroups(groups: groups)
+            }
+        })
+    }
+
+    func fetchMoreGroups() {
+        let nextOffset = groupOffset + groupLimit
+
+        api.groups(id: UserDefaults.standard.integer(forKey: "id"), limit: groupLimit, offset: nextOffset, callback: { result in
+            switch result {
+            case .failure: break
+            case let .success(groups):
+                self.output.didFetchMoreGroups(groups: groups)
+                self.groupOffset = nextOffset
             }
         })
     }
