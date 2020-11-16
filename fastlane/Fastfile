@@ -81,6 +81,7 @@ platform :ios do
     )
 
     build_number = latest_testflight_build_number + 1
+    version = get_version_number(xcodeproj: "Soapbox.xcodeproj")
 
     increment_build_number({
       build_number: build_number
@@ -105,6 +106,6 @@ platform :ios do
     
     changelog = read_changelog
     upload_to_testflight(distribute_external: true, changelog: changelog, groups: ["Link", "External", "Airport"])
-    stamp_changelog(section_identifier: "Build #{build_number}")
+    stamp_changelog(section_identifier: "#{version} (#{build_number})")
   end
 end
