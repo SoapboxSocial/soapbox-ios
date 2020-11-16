@@ -13,7 +13,7 @@ class CollectionViewSectionViewMore: UICollectionReusableView {
     var view: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .systemGray6
+        view.backgroundColor = .handle
         view.layer.cornerRadius = 15
         return view
     }()
