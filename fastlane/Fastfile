@@ -15,38 +15,47 @@
 
 default_platform(:ios)
 
-project = "Soapbox.xcodeproj"
+app_identifier = "app.social.soapbox"
+xcodeproj = "Soapbox.xcodeproj"
+workspace = "Soapbox.xcworkspace"
+scheme = soapbox
+output_name = "Soapbox.ipa"
+codesigning_identity = "Apple Distribution: Dean Eigenmann (Z9LC5GZ33U)"
 
 platform :ios do
   desc "Push a new release build to the App Store"
   lane :release do
-    update_code_signing_settings(use_automatic_signing: false, path: "Soapbox.xcodeproj")
+
+    ensure_git_status_clean
+    ensure_git_branch(branch: "master")
+
+    update_code_signing_settings(use_automatic_signing: false, path: xcodeproj)
 
     match(
-      app_identifier: "app.social.soapbox",
+      app_identifier: app_identifier,
       type: "appstore"
     )
 
     update_project_provisioning(
-      xcodeproj: "Soapbox.xcodeproj",
-      target_filter: "Soapbox",
-      profile:ENV["sigh_app.social.soapbox_appstore_profile-path"],
+      xcodeproj: xcodeproj,
+      target_filter: scheme,
+      profile: ENV["sigh_app.social.soapbox_appstore_profile-path"],
       build_configuration: "Release"
     )
 
-    current = get_version_number(xcodeproj: project)
+    current = get_version_number(xcodeproj: xcodeproj)
     increment_version_number(version_number: current)
 
     UI.message "current version is #{current}"
     type = UI.select("What type of release is this?: ", ["major", "minor", "patch"])
 
-    increment_version_number(bump_type: type, xcodeproj: project)
+    version = increment_version_number(bump_type: type, xcodeproj: xcodeproj)
 
     changelog = read_changelog(section_identifier: '[Unreleased]')
 
     gym(
-      workspace: "Soapbox.xcworkspace",
-      scheme:"Soapbox",
+      workspace: workspace,
+      scheme: scheme,
       configuration: "Release",
       clean: true,
       export_method: "app-store",
@@ -54,42 +63,55 @@ platform :ios do
       export_options: {
         method: "app-store",
         provisioningProfiles: {
-          "app.social.soapbox" => ENV["sigh_app.social.soapbox_appstore_profile-name"]
+            app_identifier => ENV["sigh_app.social.soapbox_appstore_profile-name"]
         }
       },
-      codesigning_identity:"Apple Distribution: Dean Eigenmann (Z9LC5GZ33U)",
-      output_name: "Soapbox.ipa"
+      codesigning_identity: codesigning_identity,
+      output_name: output_name
     )
 
-    stamp_changelog(section_identifier: "#{get_version_number(xcodeproj: project)}")
+    stamp_changelog(section_identifier: "#{version}")
     upload_to_app_store
+
+    set_changelog(changelog: changelog, version: version)
+
+    git_commit(path: ["*.md", "Info.plist"], message: "Release v#{version}")
+
+    add_git_tag(tag: "v#{version}", sign: true)
+
+    push_to_git_remote(tags: true)
   end
 
   lane :beta do
-    update_code_signing_settings(use_automatic_signing: false, path: "Soapbox.xcodeproj")
+    desc "Push a new build to the TestFlight"
+
+    ensure_git_status_clean
+    ensure_git_branch(branch: "master")
+
+    update_code_signing_settings(use_automatic_signing: false, path: xcodeproj)
 
     match(
-      app_identifier: "app.social.soapbox",
+      app_identifier: app_identifier,
       type: "appstore"
     )
 
     update_project_provisioning(
-      xcodeproj: "Soapbox.xcodeproj",
-      target_filter: "Soapbox",
-      profile:ENV["sigh_app.social.soapbox_appstore_profile-path"],
+      xcodeproj: xcodeproj,
+      target_filter: scheme,
+      profile: ENV["sigh_app.social.soapbox_appstore_profile-path"],
       build_configuration: "Release"
     )
 
     build_number = latest_testflight_build_number + 1
-    version = get_version_number(xcodeproj: "Soapbox.xcodeproj")
+    version = get_version_number(xcodeproj: xcodeproj)
 
     increment_build_number({
       build_number: build_number
     })
 
     gym(
-      workspace: "Soapbox.xcworkspace",
-      scheme:"Soapbox",
+      workspace: workspace,
+      scheme: scheme,
       configuration: "Release",
       clean: true,
       export_method: "app-store",
@@ -97,11 +119,11 @@ platform :ios do
       export_options: {
         method: "app-store",
         provisioningProfiles: {
-          "app.social.soapbox" => ENV["sigh_app.social.soapbox_appstore_profile-name"]
+            app_identifier => ENV["sigh_app.social.soapbox_appstore_profile-name"]
         }
       },
-      codesigning_identity:"Apple Distribution: Dean Eigenmann (Z9LC5GZ33U)",
-      output_name: "Soapbox.ipa"
+      codesigning_identity: codesigning_identity,
+      output_name: output_name
     )
     
     changelog = read_changelog
