@@ -24,6 +24,8 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         return field
     }()
 
+    private var groupView: UIView!
+
     init() {
         super.init(frame: CGRect.zero)
 
@@ -52,21 +54,54 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         textField.delegate = self
         addSubview(textField)
 
+        visibilityControl.addTarget(self, action: #selector(segmentedControlUpdated), for: .valueChanged)
         addSubview(visibilityControl)
+
+        let stack = UIStackView()
+        stack.spacing = 20
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.distribution = .fill
+        stack.alignment = .fill
+        stack.axis = .vertical
+        addSubview(stack)
+
+        groupView = UIView()
+        groupView.translatesAutoresizingMaskIntoConstraints = false
+
+        let label = UILabel()
+        label.text = NSLocalizedString("choose_a_group", comment: "")
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .rounded(forTextStyle: .title1, weight: .bold)
+        label.textColor = .white
+        groupView.addSubview(label)
+
+        NSLayoutConstraint.activate([
+            label.topAnchor.constraint(equalTo: groupView.topAnchor),
+            label.leftAnchor.constraint(equalTo: groupView.leftAnchor, constant: 20),
+            label.rightAnchor.constraint(equalTo: groupView.rightAnchor, constant: -20),
+            groupView.bottomAnchor.constraint(equalTo: label.bottomAnchor),
+        ])
+
+        stack.addArrangedSubview(groupView)
 
         let button = Button(size: .large)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(NSLocalizedString("create", comment: ""), for: .normal)
         button.backgroundColor = .lightBrandColor
         button.addTarget(self, action: #selector(createPressed), for: .touchUpInside)
-        addSubview(button)
+        stack.addArrangedSubview(button)
 
         let mutedText = UILabel()
         mutedText.text = NSLocalizedString("you_will_be_muted_by_default", comment: "")
         mutedText.font = .rounded(forTextStyle: .body, weight: .semibold)
         mutedText.textColor = .white
         mutedText.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(mutedText)
+        stack.addArrangedSubview(mutedText)
+
+        NSLayoutConstraint.activate([
+            groupView.leftAnchor.constraint(equalTo: leftAnchor),
+            groupView.rightAnchor.constraint(equalTo: rightAnchor),
+        ])
 
         NSLayoutConstraint.activate([
             cancel.topAnchor.constraint(equalTo: topAnchor, constant: 20),
@@ -93,16 +128,20 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         ])
 
         NSLayoutConstraint.activate([
+            stack.topAnchor.constraint(equalTo: visibilityControl.bottomAnchor, constant: 20),
+            stack.leftAnchor.constraint(equalTo: leftAnchor),
+            stack.rightAnchor.constraint(equalTo: leftAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
             button.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
             button.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
-            button.topAnchor.constraint(equalTo: visibilityControl.bottomAnchor, constant: 20),
             button.heightAnchor.constraint(equalToConstant: 56),
         ])
 
         NSLayoutConstraint.activate([
             mutedText.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
             mutedText.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
-            mutedText.topAnchor.constraint(equalTo: button.bottomAnchor, constant: 20),
         ])
     }
 
@@ -130,5 +169,16 @@ class RoomCreationView: UIView, UITextFieldDelegate {
 
     @objc private func cancelPressed() {
         delegate?.didCancelRoomCreation()
+    }
+
+    @objc private func segmentedControlUpdated() {
+        switch visibilityControl.index {
+        case 0:
+            groupView.isHidden = false
+        case 1:
+            groupView.isHidden = true
+        default:
+            break
+        }
     }
 }
