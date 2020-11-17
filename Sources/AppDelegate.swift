@@ -78,7 +78,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func transitionToLoginView() {
-        window?.setRootViewController(createLoginView(), options: UIWindow.TransitionOptions(direction: .fade, style: .easeOut))
+        window!.set(
+            rootViewController: createLoginView(),
+            options: UIWindow.TransitionOptions(direction: .fade, style: .easeOut)
+        )
     }
 
     func createLoggedIn() -> UIViewController {

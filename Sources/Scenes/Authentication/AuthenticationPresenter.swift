@@ -60,8 +60,8 @@ class AuthenticationPresenter: AuthenticationInteractorOutput {
 
     func presentLoggedInView() {
         let delegate = UIApplication.shared.delegate as! AppDelegate
-        delegate.window!.setRootViewController(
-            delegate.createLoggedIn(),
+        delegate.window!.set(
+            rootViewController: delegate.createLoggedIn(),
             options: UIWindow.TransitionOptions(direction: .fade, style: .easeOut)
         )
     }
