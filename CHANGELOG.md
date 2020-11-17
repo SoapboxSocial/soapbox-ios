@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Share the app with your friends!
+
 ## [1.0.0 (1)] - 2020-11-16 
 
  - Rooms: Fix an issue.

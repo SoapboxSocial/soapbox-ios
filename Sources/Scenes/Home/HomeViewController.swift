@@ -53,7 +53,17 @@ class HomeViewController: ViewController {
         containView.addTarget(self, action: #selector(openProfile), for: .touchUpInside)
 
         let barButtonItem = UIBarButtonItem(customView: containView)
-        navigationItem.leftBarButtonItem = barButtonItem
+
+        let iconConfig = UIImage.SymbolConfiguration(weight: .bold)
+
+        let searchButton = UIBarButtonItem(
+            image: UIImage(systemName: "magnifyingglass", withConfiguration: iconConfig),
+            style: .plain,
+            target: self,
+            action: #selector(openSearch)
+        )
+
+        navigationItem.leftBarButtonItems = [barButtonItem, searchButton]
 
         profileImageView = UIImageView(frame: containView.frame)
         profileImageView.layer.cornerRadius = containView.frame.size.height / 2
@@ -63,12 +73,11 @@ class HomeViewController: ViewController {
         profileImageView.contentMode = .scaleAspectFill
         containView.addSubview(profileImageView!)
 
-        let iconConfig = UIImage.SymbolConfiguration(weight: .bold)
-        let searchButton = UIBarButtonItem(
-            image: UIImage(systemName: "magnifyingglass", withConfiguration: iconConfig),
+        let share = UIBarButtonItem(
+            image: UIImage(systemName: "arrowshape.turn.up.right", withConfiguration: iconConfig),
             style: .plain,
             target: self,
-            action: #selector(openSearch)
+            action: #selector(shareApp)
         )
 
         let notificationsButton = UIBarButtonItem(
@@ -77,7 +86,7 @@ class HomeViewController: ViewController {
             target: self,
             action: #selector(openNotifications)
         )
-        navigationItem.rightBarButtonItems = [notificationsButton, searchButton]
+        navigationItem.rightBarButtonItems = [share, notificationsButton]
 
         NSLayoutConstraint.activate([
             collection.leftAnchor.constraint(equalTo: view.leftAnchor),
@@ -114,6 +123,17 @@ class HomeViewController: ViewController {
     @objc private func openNotifications() {
         let notifications = SceneFactory.createNotificationsViewController()
         navigationController?.pushViewController(notifications, animated: true)
+    }
+
+    @objc private func shareApp() {
+        let items: [Any] = [
+            NSLocalizedString("share_text", comment: ""),
+            URL(string: "https://apps.apple.com/us/app/soapbox-talk-with-anyone/id1529283270")!,
+        ]
+
+        let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        ac.excludedActivityTypes = [.markupAsPDF, .openInIBooks, .addToReadingList]
+        present(ac, animated: true)
     }
 
     @objc private func loadData() {
