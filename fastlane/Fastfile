@@ -51,8 +51,6 @@ platform :ios do
 
     version = increment_version_number(bump_type: type, xcodeproj: xcodeproj)
 
-    changelog = read_changelog(section_identifier: '[Unreleased]')
-
     gym(
       workspace: workspace,
       scheme: scheme,
@@ -70,9 +68,10 @@ platform :ios do
       output_name: output_name
     )
 
-    stamp_changelog(section_identifier: "#{version}")
     upload_to_app_store
 
+    changelog = read_changelog(section_identifier: '[Unreleased]')
+    stamp_changelog(section_identifier: "#{version}")
     set_changelog(changelog: changelog, version: version)
 
     git_commit(path: ["*.md", "Info.plist"], message: "Release v#{version}")
