@@ -18,7 +18,7 @@ default_platform(:ios)
 app_identifier = "app.social.soapbox"
 xcodeproj = "Soapbox.xcodeproj"
 workspace = "Soapbox.xcworkspace"
-scheme = soapbox
+scheme = "soapbox"
 output_name = "Soapbox.ipa"
 codesigning_identity = "Apple Distribution: Dean Eigenmann (Z9LC5GZ33U)"
 
