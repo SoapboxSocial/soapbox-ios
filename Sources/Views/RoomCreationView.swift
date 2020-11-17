@@ -26,6 +26,14 @@ class RoomCreationView: UIView, UITextFieldDelegate {
 
     private var groupView: UIView!
 
+    private let groupsSlider: GroupsSlider = {
+        let slider = GroupsSlider()
+        slider.backgroundColor = .brandColor
+        slider.
+            slider.translatesAutoresizingMaskIntoConstraints = false
+        return slider
+    }()
+
     init() {
         super.init(frame: CGRect.zero)
 
@@ -75,14 +83,24 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         label.textColor = .white
         groupView.addSubview(label)
 
+        groupView.addSubview(groupsSlider)
+
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: groupView.topAnchor),
             label.leftAnchor.constraint(equalTo: groupView.leftAnchor, constant: 20),
             label.rightAnchor.constraint(equalTo: groupView.rightAnchor, constant: -20),
-            groupView.bottomAnchor.constraint(equalTo: label.bottomAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            groupsSlider.heightAnchor.constraint(equalToConstant: 82),
+            groupsSlider.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 20),
+            groupsSlider.leftAnchor.constraint(equalTo: groupView.leftAnchor),
+            groupsSlider.rightAnchor.constraint(equalTo: groupView.rightAnchor),
+            groupsSlider.bottomAnchor.constraint(equalTo: groupView.bottomAnchor),
         ])
 
         stack.addArrangedSubview(groupView)
+        groupView.isHidden = true
 
         let button = Button(size: .large)
         button.translatesAutoresizingMaskIntoConstraints = false
