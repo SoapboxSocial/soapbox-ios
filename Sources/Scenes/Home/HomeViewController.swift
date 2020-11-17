@@ -248,7 +248,7 @@ extension HomeViewController: HomePresenterOutput {
         }
 
         presenter.add(groups: groups)
-        
+
         collection.performBatchUpdates({
             self.collection.reloadSections(IndexSet(integer: 0))
         })
