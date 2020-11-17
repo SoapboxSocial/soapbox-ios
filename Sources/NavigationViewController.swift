@@ -54,20 +54,22 @@ class NavigationViewController: UINavigationController {
 
     @objc func didTapCreateRoom() {
         requestMicrophone {
-            let roomView = RoomCreationView()
-            roomView.delegate = self
+            let creationView = RoomCreationView()
+            creationView.delegate = self
 
-            self.creationDrawer = DrawerView(withView: roomView)
-            self.creationDrawer!.delegate = self
+            self.creationDrawer = DrawerView(withView: creationView)
+            self.creationDrawer!.cornerRadius = 25.0
             self.creationDrawer!.attachTo(view: self.view)
             self.creationDrawer!.backgroundEffect = nil
-            self.creationDrawer!.snapPositions = [.open, .closed]
-            self.creationDrawer!.cornerRadius = 25
+            self.creationDrawer!.snapPositions = [.closed, .open]
             self.creationDrawer!.backgroundColor = .brandColor
+            self.creationDrawer!.delegate = self
 
-            self.creationDrawer!.setPosition(.closed, animated: false)
             self.view.addSubview(self.creationDrawer!)
 
+            creationView.autoPinEdgesToSuperview()
+
+            self.creationDrawer!.setPosition(.closed, animated: false)
             self.creationDrawer!.setPosition(.open, animated: true) { _ in
                 self.createRoomButton.isHidden = true
                 UIApplication.shared.isIdleTimerDisabled = true

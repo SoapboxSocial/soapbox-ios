@@ -8,15 +8,26 @@ protocol RoomCreationDelegate {
 class RoomCreationView: UIView, UITextFieldDelegate {
     var delegate: RoomCreationDelegate?
 
-    private var visibilityControl: SegmentedControl!
-    private var textField: UITextField!
+    private let visibilityControl: SegmentedControl = {
+        let control = SegmentedControl(frame: CGRect.zero, titles: [
+            NSLocalizedString("public", comment: ""),
+            NSLocalizedString("private", comment: ""),
+        ])
+        control.translatesAutoresizingMaskIntoConstraints = false
+        return control
+    }()
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    private let textField: UITextField = {
+        let field = TextField(frame: CGRect.zero, theme: .light)
+        field.placeholder = NSLocalizedString("enter_name", comment: "")
+        field.translatesAutoresizingMaskIntoConstraints = false
+        return field
+    }()
 
-        if textField != nil { return }
+    init() {
+        super.init(frame: CGRect.zero)
 
-        roundCorners(corners: [.topLeft, .topRight], radius: 25.0)
+        translatesAutoresizingMaskIntoConstraints = false
 
         backgroundColor = .brandColor
 
@@ -26,45 +37,77 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         cancel.font = .rounded(forTextStyle: .body, weight: .medium)
         cancel.text = NSLocalizedString("cancel", comment: "")
         cancel.textColor = .white
-        cancel.sizeToFit()
-        cancel.frame = CGRect(origin: CGPoint(x: 20, y: 20), size: cancel.frame.size)
         cancel.addGestureRecognizer(recognizer)
         cancel.isUserInteractionEnabled = true
+        cancel.translatesAutoresizingMaskIntoConstraints = false
         addSubview(cancel)
 
         let title = UILabel()
         title.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
         title.text = NSLocalizedString("create_a_room", comment: "")
         title.textColor = .white
-        title.sizeToFit()
-        title.frame = CGRect(origin: CGPoint(x: 20, y: cancel.frame.size.height + cancel.frame.origin.y + 20), size: title.frame.size)
+        title.translatesAutoresizingMaskIntoConstraints = false
         addSubview(title)
 
-        textField = TextField(frame: CGRect(x: 20, y: title.frame.origin.y + title.frame.size.height + 30, width: frame.size.width - 40, height: 56), theme: .light)
-        textField.placeholder = NSLocalizedString("enter_name", comment: "")
         textField.delegate = self
         addSubview(textField)
 
-        visibilityControl = SegmentedControl(
-            frame: CGRect(x: 20, y: textField.frame.origin.y + title.frame.size.height + 30, width: frame.size.width - 40, height: 56),
-            titles: [NSLocalizedString("public", comment: ""), NSLocalizedString("private", comment: "")]
-        )
         addSubview(visibilityControl)
 
         let button = Button(size: .large)
+        button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(NSLocalizedString("create", comment: ""), for: .normal)
-        button.frame = CGRect(x: 20, y: visibilityControl.frame.origin.y + visibilityControl.frame.size.height + 20, width: frame.size.width - 40, height: 54)
         button.backgroundColor = .lightBrandColor
         button.addTarget(self, action: #selector(createPressed), for: .touchUpInside)
         addSubview(button)
 
-        let mutedText = UILabel(frame: CGRect(x: 0, y: 0, width: frame.size.width - 40, height: 20))
+        let mutedText = UILabel()
         mutedText.text = NSLocalizedString("you_will_be_muted_by_default", comment: "")
         mutedText.font = .rounded(forTextStyle: .body, weight: .semibold)
-        mutedText.sizeThatFits(CGSize(width: frame.size.width - 40, height: CGFloat.greatestFiniteMagnitude))
         mutedText.textColor = .white
-        mutedText.frame.origin = CGPoint(x: 20, y: button.frame.origin.y + button.frame.size.height + 20)
+        mutedText.translatesAutoresizingMaskIntoConstraints = false
         addSubview(mutedText)
+
+        NSLayoutConstraint.activate([
+            cancel.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            cancel.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            title.topAnchor.constraint(equalTo: cancel.bottomAnchor, constant: 20),
+            title.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            textField.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 30),
+            textField.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            textField.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            textField.heightAnchor.constraint(equalToConstant: 56),
+        ])
+
+        NSLayoutConstraint.activate([
+            visibilityControl.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            visibilityControl.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            visibilityControl.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 20),
+            visibilityControl.heightAnchor.constraint(equalToConstant: 56),
+        ])
+
+        NSLayoutConstraint.activate([
+            button.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            button.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            button.topAnchor.constraint(equalTo: visibilityControl.bottomAnchor, constant: 20),
+            button.heightAnchor.constraint(equalToConstant: 56),
+        ])
+
+        NSLayoutConstraint.activate([
+            mutedText.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            mutedText.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            mutedText.topAnchor.constraint(equalTo: button.bottomAnchor, constant: 20),
+        ])
+    }
+
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
