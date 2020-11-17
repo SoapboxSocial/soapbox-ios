@@ -176,8 +176,8 @@ extension NavigationViewController: RoomViewDelegate {
                 self.roomDrawer = nil
             }
 
-            if let c = completion {
-                c()
+            if completion != nil {
+                completion!()
             }
         }
     }
