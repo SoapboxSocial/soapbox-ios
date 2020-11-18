@@ -19,10 +19,13 @@ class GroupsSlider: UIView {
 
     private let textColor: UIColor
     private let imageBackground: UIColor
+    private let markSelection: Bool
 
-    init(textColor: UIColor = .label, imageBackground: UIColor = .brandColor) {
+    init(textColor: UIColor = .label, imageBackground: UIColor = .brandColor, markSelection: Bool = false) {
         self.textColor = textColor
         self.imageBackground = imageBackground
+        self.markSelection = markSelection
+
         super.init(frame: CGRect.zero)
 
         addSubview(collection)
@@ -33,6 +36,10 @@ class GroupsSlider: UIView {
         collection.dataSource = self
         collection.alwaysBounceVertical = false
         collection.backgroundColor = .clear
+
+        if markSelection {
+            collection.allowsMultipleSelection = true
+        }
 
         NSLayoutConstraint.activate([
             collection.topAnchor.constraint(equalTo: topAnchor),
@@ -83,11 +90,49 @@ class GroupsSlider: UIView {
 extension GroupsSlider: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         delegate?.didSelect(group: data[indexPath.item].id)
+
+        if !markSelection {
+            return
+        }
+
+        guard let cell = collectionView.cellForItem(at: indexPath) as? SelectableImageTextCell else {
+            return
+        }
+
+        cell.selectedView.isHidden = false
     }
 
     func collectionView(_: UICollectionView, willDisplay _: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if indexPath.row == data.count - 2 {
             delegate?.loadMoreGroups()
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        let item = collectionView.cellForItem(at: indexPath)
+        if item?.isSelected ?? false {
+            return false
+        }
+
+        return true
+    }
+
+    func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
+        if !markSelection {
+            return false
+        }
+
+        let item = collectionView.cellForItem(at: indexPath)
+        if item?.isSelected ?? false {
+            return true
+        }
+
+        return false
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? SelectableImageTextCell else {
+            return
         }
     }
 }
