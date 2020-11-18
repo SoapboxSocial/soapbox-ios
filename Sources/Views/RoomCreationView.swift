@@ -27,7 +27,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
     private var groupView: UIView!
 
     private let groupsSlider: GroupsSlider = {
-        let slider = GroupsSlider(textColor: .white, imageBackground: .lightBrandColor)
+        let slider = GroupsSlider(textColor: .white, imageBackground: .lightBrandColor, markSelection: true)
         slider.backgroundColor = .brandColor
         slider.translatesAutoresizingMaskIntoConstraints = false
         return slider

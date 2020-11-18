@@ -89,13 +89,15 @@ class GroupsSlider: UIView {
 
 extension GroupsSlider: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // @TODO DESELECT OTHER
+
         delegate?.didSelect(group: data[indexPath.item].id)
 
         if !markSelection {
             return
         }
 
-        guard let cell = collectionView.cellForItem(at: indexPath) as? SelectableImageTextCell else {
+        guard let cell = collection.cellForItem(at: indexPath) as? SelectableImageTextCell else {
             return
         }
 
@@ -134,6 +136,8 @@ extension GroupsSlider: UICollectionViewDelegate {
         guard let cell = collectionView.cellForItem(at: indexPath) as? SelectableImageTextCell else {
             return
         }
+
+        cell.selectedView.isHidden = true
     }
 }
 
