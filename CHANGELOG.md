@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.0.1 (7)] - 2020-11-17
 
  - We are now integrating with CallKit!
 
