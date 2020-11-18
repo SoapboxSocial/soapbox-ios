@@ -1,6 +1,12 @@
 # Changelog
 
-## [Unreleased]
+## [1.0.1 (7)] - 2020-11-17
+
+ - We are now integrating with CallKit!
+
+## [1.0.1 (5)] - 2020-11-17
+
+ - Share the app with your friends!
 
 ## [1.0.0 (1)] - 2020-11-16 
 
