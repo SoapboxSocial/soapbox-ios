@@ -87,6 +87,7 @@ class Room: NSObject {
         let providerConfiguration = CXProviderConfiguration(localizedName: "Soapbox")
         providerConfiguration.supportsVideo = false
         providerConfiguration.maximumCallsPerCallGroup = 1
+        providerConfiguration.includesCallsInRecents = true
         providerConfiguration.supportedHandleTypes = [.generic]
 
         return providerConfiguration
