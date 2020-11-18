@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.0.1 (8)] - 2020-11-18
+
  - Removed CallKit for china.
 
 ## [1.0.1 (7)] - 2020-11-17
