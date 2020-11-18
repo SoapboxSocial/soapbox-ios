@@ -80,8 +80,8 @@ class Room: NSObject {
         let usernameFragment: String?
     }
 
-    private let provider: CXProvider
-    private let callController: CXCallController
+    private let provider: CXProvider?
+    private let callController: CXCallController?
 
     static var providerConfiguration: CXProviderConfiguration = {
         let providerConfiguration = CXProviderConfiguration(localizedName: "Soapbox")
@@ -98,12 +98,18 @@ class Room: NSObject {
     init(rtc: WebRTCClient, grpc: RoomServiceClient) {
         self.rtc = rtc
         self.grpc = grpc
-        provider = CXProvider(configuration: Room.providerConfiguration)
-        callController = CXCallController()
+
+        if Room.isCallKitAllowed() {
+            provider = CXProvider(configuration: Room.providerConfiguration)
+            callController = CXCallController()
+        } else {
+            provider = nil
+            callController = nil
+        }
 
         super.init()
 
-        provider.setDelegate(self, queue: nil)
+        provider?.setDelegate(self, queue: nil)
 
         stream = grpc.signal(handler: handle)
         rtc.delegate = self
@@ -527,8 +533,12 @@ extension Room {
     }
 
     private func startCallKit() {
+        if !Room.isCallKitAllowed() {
+            return
+        }
+
         let action = CXStartCallAction(call: callID, handle: CXHandle(type: .generic, value: name ?? "Soapbox Room"))
-        callController.request(CXTransaction(action: action), completion: { error in
+        callController?.request(CXTransaction(action: action), completion: { error in
             if let error = error {
                 debugPrint(error)
             }
@@ -536,12 +546,33 @@ extension Room {
     }
 
     private func endCallKit() {
+        if !Room.isCallKitAllowed() {
+            return
+        }
+
         let transaction = CXTransaction(action: CXEndCallAction(call: callID))
-        callController.request(transaction, completion: { error in
+        callController?.request(transaction, completion: { error in
             if let error = error {
                 debugPrint(error)
             }
         })
+    }
+
+    // We need this to disable CallKit in china.
+    private static func isCallKitAllowed() -> Bool {
+        guard let code = Locale.current.regionCode else {
+            return true
+        }
+
+        if code.contains("CN") {
+            return false
+        }
+
+        if code.contains("CHN") {
+            return false
+        }
+
+        return true
     }
 }
 
@@ -609,17 +640,17 @@ extension Room: CXProviderDelegate {
         } else {
             unmute()
         }
-        
+
         action.fulfill()
     }
-    
-    func provider(_ provider: CXProvider, perform action: CXSetHeldCallAction) {
+
+    func provider(_: CXProvider, perform action: CXSetHeldCallAction) {
         if action.isOnHold {
             mute()
         } else {
             unmute()
         }
-        
+
         action.fulfill()
     }
 }
