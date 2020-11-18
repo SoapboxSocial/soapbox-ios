@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - We are now integrating with CallKit!
+
 ## [1.0.1 (5)] - 2020-11-17
 
  - Share the app with your friends!
