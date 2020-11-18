@@ -37,9 +37,7 @@ class GroupsSlider: UIView {
         collection.alwaysBounceVertical = false
         collection.backgroundColor = .clear
 
-        if markSelection {
-            collection.allowsMultipleSelection = true
-        }
+        collection.allowsMultipleSelection = true
 
         NSLayoutConstraint.activate([
             collection.topAnchor.constraint(equalTo: topAnchor),
@@ -91,6 +89,21 @@ extension GroupsSlider: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         // @TODO DESELECT OTHER
 
+        collection.indexPathsForSelectedItems?.forEach { path in
+            if indexPath == path {
+                return
+            }
+
+            guard let cell = collection.cellForItem(at: path) as? SelectableImageTextCell else {
+                return
+            }
+
+            DispatchQueue.main.async {
+                cell.selectedView.isHidden = true
+                self.collection.deselectItem(at: path, animated: false)
+            }
+        }
+
         delegate?.didSelect(group: data[indexPath.item].id)
 
         if !markSelection {
@@ -120,10 +133,6 @@ extension GroupsSlider: UICollectionViewDelegate {
     }
 
     func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
-        if !markSelection {
-            return false
-        }
-
         let item = collectionView.cellForItem(at: indexPath)
         if item?.isSelected ?? false {
             return true
