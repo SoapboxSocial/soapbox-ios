@@ -2,7 +2,7 @@ import UIKit
 
 protocol RoomCreationDelegate {
     func didCancelRoomCreation()
-    func didEnterWithName(_ name: String?, isPrivate: Bool)
+    func didEnterWithName(_ name: String?, isPrivate: Bool, group: Int?)
 }
 
 class RoomCreationView: UIView, UITextFieldDelegate {
@@ -196,7 +196,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
     }
 
     @objc private func createPressed() {
-        delegate?.didEnterWithName(textField.text, isPrivate: visibilityControl.index == 1)
+        delegate?.didEnterWithName(textField.text, isPrivate: visibilityControl.index == 1, group: groupsSlider.selectedGroup)
     }
 
     @objc private func cancelPressed() {
