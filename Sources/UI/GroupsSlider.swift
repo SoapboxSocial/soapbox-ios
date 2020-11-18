@@ -8,6 +8,8 @@ protocol GroupsSliderDelegate {
 class GroupsSlider: UIView {
     var delegate: GroupsSliderDelegate?
 
+    var selectedGroup: Int?
+
     private var data = [APIClient.Group]()
 
     private let collection: UICollectionView = {
@@ -87,8 +89,6 @@ class GroupsSlider: UIView {
 
 extension GroupsSlider: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // @TODO DESELECT OTHER
-
         collection.indexPathsForSelectedItems?.forEach { path in
             if indexPath == path {
                 return
@@ -104,7 +104,9 @@ extension GroupsSlider: UICollectionViewDelegate {
             }
         }
 
-        delegate?.didSelect(group: data[indexPath.item].id)
+        let id = data[indexPath.item].id
+        selectedGroup = id
+        delegate?.didSelect(group: id)
 
         if !markSelection {
             return
@@ -147,6 +149,7 @@ extension GroupsSlider: UICollectionViewDelegate {
         }
 
         cell.selectedView.isHidden = true
+        selectedGroup = nil
     }
 }
 
