@@ -609,17 +609,17 @@ extension Room: CXProviderDelegate {
         } else {
             unmute()
         }
-        
+
         action.fulfill()
     }
-    
-    func provider(_ provider: CXProvider, perform action: CXSetHeldCallAction) {
+
+    func provider(_: CXProvider, perform action: CXSetHeldCallAction) {
         if action.isOnHold {
             mute()
         } else {
             unmute()
         }
-        
+
         action.fulfill()
     }
 }

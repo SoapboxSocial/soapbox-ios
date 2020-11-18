@@ -17,7 +17,12 @@ class GroupsSlider: UIView {
         return collection
     }()
 
-    init() {
+    private let textColor: UIColor
+    private let imageBackground: UIColor
+
+    init(textColor: UIColor = .label, imageBackground: UIColor = .brandColor) {
+        self.textColor = textColor
+        self.imageBackground = imageBackground
         super.init(frame: CGRect.zero)
 
         addSubview(collection)
@@ -98,7 +103,9 @@ extension GroupsSlider: UICollectionViewDataSource {
         cell.title.font = .rounded(forTextStyle: .caption2, weight: .semibold)
         cell.selectedView.isHidden = true
         cell.title.text = group.name
+        cell.title.textColor = textColor
 
+        cell.image.backgroundColor = imageBackground
         cell.image.image = nil
         if let image = group.image, image != "" {
             cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))

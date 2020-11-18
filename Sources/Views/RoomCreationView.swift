@@ -27,10 +27,9 @@ class RoomCreationView: UIView, UITextFieldDelegate {
     private var groupView: UIView!
 
     private let groupsSlider: GroupsSlider = {
-        let slider = GroupsSlider()
+        let slider = GroupsSlider(textColor: .white, imageBackground: .lightBrandColor)
         slider.backgroundColor = .brandColor
-        slider.
-            slider.translatesAutoresizingMaskIntoConstraints = false
+        slider.translatesAutoresizingMaskIntoConstraints = false
         return slider
     }()
 
@@ -148,7 +147,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         NSLayoutConstraint.activate([
             stack.topAnchor.constraint(equalTo: visibilityControl.bottomAnchor, constant: 20),
             stack.leftAnchor.constraint(equalTo: leftAnchor),
-            stack.rightAnchor.constraint(equalTo: leftAnchor),
+            stack.rightAnchor.constraint(equalTo: rightAnchor),
         ])
 
         NSLayoutConstraint.activate([
@@ -161,10 +160,25 @@ class RoomCreationView: UIView, UITextFieldDelegate {
             mutedText.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
             mutedText.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
         ])
+
+        loadGroups()
     }
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // @TODO
+    func loadGroups() {
+        APIClient().groups(id: UserDefaults.standard.integer(forKey: "id"), limit: 10, offset: 0, callback: { result in
+            switch result {
+            case .failure:
+                self.groupView.isHidden = true
+            case let .success(groups):
+                self.groupsSlider.set(groups: groups)
+                self.groupView.isHidden = false
+            }
+        })
     }
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
