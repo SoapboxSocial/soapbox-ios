@@ -100,7 +100,7 @@ final class WebRTCClient: NSObject {
         rtcAudioSession.lockForConfiguration()
         do {
             try rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
-            try rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
+            try rtcAudioSession.setMode(AVAudioSession.Mode.videoChat.rawValue)
         } catch {
             debugPrint("Error changeing AVAudioSession category: \(error)")
         }
@@ -232,8 +232,8 @@ extension WebRTCClient {
 
             self.rtcAudioSession.lockForConfiguration()
             do {
-                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.mixWithOthers, .defaultToSpeaker, .allowBluetooth, .allowBluetoothA2DP])
-                try self.rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
+                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.mixWithOthers, .allowBluetooth, .allowBluetoothA2DP])
+                try self.rtcAudioSession.setMode(AVAudioSession.Mode.videoChat.rawValue)
                 try self.rtcAudioSession.setActive(true)
             } catch {
                 debugPrint("Couldn't force audio to speaker: \(error)")

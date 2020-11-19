@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fixed an issue that caused the phone screen to turn off.
+
 ## [1.1.0] - 2020-11-19
 
  - Fixes on the login screen.
