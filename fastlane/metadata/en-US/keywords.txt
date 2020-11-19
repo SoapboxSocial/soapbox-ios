@@ -1,1 +1,1 @@
-voice, chat, soapbox, audio, drop-in
+voice, chat, soapbox, audio, drop-in, clubhouse

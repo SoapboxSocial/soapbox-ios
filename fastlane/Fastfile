@@ -72,7 +72,7 @@ platform :ios do
       output_name: output_name
     )
 
-    upload_to_app_store
+    upload_to_app_store(overwrite_screenshots: true)
 
     changelog = read_changelog(section_identifier: '[Unreleased]')
     stamp_changelog(section_identifier: "#{version}")
