@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Actives: We redesigned the way the active users look.
+
 ## [1.0.1 (8)] - 2020-11-18
 
  - Removed CallKit for china.

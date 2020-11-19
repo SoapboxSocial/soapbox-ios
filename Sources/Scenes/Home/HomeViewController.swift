@@ -194,7 +194,7 @@ class HomeViewController: ViewController {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
 
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .absolute(96), heightDimension: .absolute(125))
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .absolute(64), heightDimension: .absolute(90))
         let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitem: layoutItem, count: 1)
 
         layoutGroup.interItemSpacing = .fixed(10)
@@ -238,8 +238,12 @@ class HomeViewController: ViewController {
 
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
         layoutSection.interGroupSpacing = 10
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
         layoutSection.orthogonalScrollingBehavior = .continuous
+
+        if presenter.has(section: .activeList) {
+            layoutSection.boundarySupplementaryItems = [createSectionHeader()]
+        }
 
         return layoutSection
     }
@@ -269,8 +273,12 @@ extension HomeViewController: HomePresenterOutput {
 
         presenter.add(groups: groups)
 
+        guard let index = presenter.index(of: .groupList) else {
+            return
+        }
+
         collection.performBatchUpdates({
-            self.collection.reloadSections(IndexSet(integer: 0))
+            self.collection.reloadSections(IndexSet(integer: index))
         })
     }
 
@@ -371,8 +379,9 @@ extension HomeViewController {
         case let .groups(groups):
             presenter.set(groups: groups)
 
+            let index = presenter.index(of: .groupList)!
             UIView.performWithoutAnimation {
-                self.collection.reloadSections(IndexSet(integer: 0))
+                self.collection.reloadSections(IndexSet(integer: index))
             }
         }
 
@@ -472,7 +481,15 @@ extension HomeViewController: UICollectionViewDataSource {
         }
 
         let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
-        cell.label.text = NSLocalizedString("rooms", comment: "")
+
+        cell.label.text = presenter.title(for: indexPath.section)
+
+        if presenter.sectionType(for: indexPath.section) == .groupList {
+            cell.label.font = .rounded(forTextStyle: .title1, weight: .bold)
+        } else {
+            cell.label.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
+        }
+
         return cell
     }
 }
