@@ -99,6 +99,8 @@ class Room: NSObject {
         self.rtc = rtc
         self.grpc = grpc
 
+        UIDevice.current.isProximityMonitoringEnabled = false
+
         if Room.isCallKitAllowed() {
             provider = CXProvider(configuration: Room.providerConfiguration)
             callController = CXCallController()
@@ -196,6 +198,8 @@ class Room: NSObject {
     }
 
     func close() {
+        UIDevice.current.isProximityMonitoringEnabled = true
+
         isClosed = true
         rtc.delegate = nil
         rtc.close()
