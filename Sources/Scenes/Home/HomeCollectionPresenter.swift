@@ -28,6 +28,10 @@ class HomeCollectionPresenter {
         set(rooms: [])
     }
 
+    func title(for sectionIndex: Int) -> String {
+        return dataSource[sectionIndex].title
+    }
+
     func sectionType(for sectionIndex: Int) -> SectionType {
         return dataSource[sectionIndex].type
     }
@@ -58,7 +62,6 @@ class HomeCollectionPresenter {
         }
 
         item.displayName.text = user.displayName.firstName()
-        item.username.text = "@" + user.username
 
         item.image.image = nil
         if let image = user.image, image != "" {
@@ -112,7 +115,13 @@ class HomeCollectionPresenter {
 
     func set(groups: [APIClient.Group]) {
         dataSource.removeAll(where: { $0.type == .groupList })
-        dataSource.insert(Section(type: .groupList, title: "", data: groups), at: 0)
+
+        var at = 0
+        if has(section: .activeList) {
+            at = 1
+        }
+
+        dataSource.insert(Section(type: .groupList, title: NSLocalizedString("groups", comment: ""), data: groups), at: at)
     }
 
     func add(groups: [APIClient.Group]) {
@@ -140,12 +149,7 @@ class HomeCollectionPresenter {
             return
         }
 
-        var at = 0
-        if has(section: .groupList) {
-            at = 1
-        }
-
-        dataSource.insert(Section(type: .activeList, title: "", data: actives), at: at)
+        dataSource.insert(Section(type: .activeList, title: "", data: actives), at: 0)
     }
 
     func index(of section: SectionType) -> Int? {
