@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.1.0 (9)] - 2020-11-19
 
  - Fixed an issue that caused the phone screen to turn off.
 
