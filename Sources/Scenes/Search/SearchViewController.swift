@@ -47,7 +47,7 @@ class SearchViewController: ViewController {
         searchBar.addTarget(self, action: #selector(updateSearchResults), for: .editingChanged)
         searchBar.clearButtonMode = .whileEditing
         searchBar.returnKeyType = .done
-        searchBar.placeholder = NSLocalizedString("search_for_friends", comment: "")
+        searchBar.placeholder = NSLocalizedString("search_placeholder", comment: "")
         view.addSubview(searchBar)
 
         NSLayoutConstraint.activate([
