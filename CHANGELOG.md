@@ -2,7 +2,8 @@
 
 ## [Unreleased]
  
-- Changed Search placeholder (yes, you can search for groups!) 
+ - Changed Search placeholder (yes, you can search for groups!) 
+ - Fixed issues that caused the screen to dim.
 
 ## [1.1.0 (9)] - 2020-11-19
 
