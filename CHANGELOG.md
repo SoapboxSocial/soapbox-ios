@@ -1,7 +1,8 @@
 # Changelog
 
 ## [Unreleased]
- 
+
+ - Made calls a bit more reliable for those of you who were having connection issues. 
  - Changed Search placeholder (yes, you can search for groups!) 
  - Fixed issues that caused the screen to dim.
 
