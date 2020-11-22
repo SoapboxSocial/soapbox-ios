@@ -170,8 +170,6 @@ class Room: NSObject {
     }
 
     func close() {
-        UIDevice.current.isProximityMonitoringEnabled = true
-
         isClosed = true
         rtc.delegate = nil
         rtc.close()
