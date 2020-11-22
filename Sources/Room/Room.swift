@@ -1,4 +1,3 @@
-import CallKit
 import Foundation
 import GRPC
 import KeychainAccess
@@ -79,18 +78,6 @@ class Room: NSObject {
         let sdpMLineIndex: Int32
         let usernameFragment: String?
     }
-
-    static var providerConfiguration: CXProviderConfiguration = {
-        let providerConfiguration = CXProviderConfiguration(localizedName: "Soapbox")
-        providerConfiguration.supportsVideo = false
-        providerConfiguration.maximumCallsPerCallGroup = 1
-        providerConfiguration.includesCallsInRecents = true
-        providerConfiguration.supportedHandleTypes = [.generic]
-
-        return providerConfiguration
-    }()
-
-    private let callID = UUID()
 
     init(rtc: WebRTCClient, grpc: RoomServiceClient) {
         self.rtc = rtc
@@ -565,35 +552,5 @@ extension Room: WebRTCClientDelegate {
         if state == .failed || state == .closed {
             delegate?.roomWasClosedByRemote()
         }
-    }
-}
-
-extension Room: CXProviderDelegate {
-    func providerDidReset(_: CXProvider) {
-        close()
-    }
-
-    func provider(_: CXProvider, perform _: CXEndCallAction) {
-        close()
-    }
-
-    func provider(_: CXProvider, perform action: CXSetMutedCallAction) {
-        if action.isMuted {
-            mute()
-        } else {
-            unmute()
-        }
-
-        action.fulfill()
-    }
-
-    func provider(_: CXProvider, perform action: CXSetHeldCallAction) {
-        if action.isOnHold {
-            mute()
-        } else {
-            unmute()
-        }
-
-        action.fulfill()
     }
 }
