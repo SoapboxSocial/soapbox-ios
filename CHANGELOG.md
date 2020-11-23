@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Room: Fixed Room UI for previously unanticipated iPhone sizes.
  - Home Screen: Rooms now no longer randomly change ordering.
 
 ## [1.2.0] - 2020-11-21
