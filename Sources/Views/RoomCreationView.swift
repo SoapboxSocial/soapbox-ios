@@ -168,13 +168,18 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // @TODO
+    // @TODO Paginate
     func loadGroups() {
         APIClient().groups(id: UserDefaults.standard.integer(forKey: "id"), limit: 10, offset: 0, callback: { result in
             switch result {
             case .failure:
                 self.groupView.isHidden = true
             case let .success(groups):
+                if groups.count == 0 {
+                    self.groupView.isHidden = true
+                    return
+                }
+
                 self.groupsSlider.set(groups: groups)
                 self.groupView.isHidden = false
             }
@@ -206,7 +211,9 @@ class RoomCreationView: UIView, UITextFieldDelegate {
     @objc private func segmentedControlUpdated() {
         switch visibilityControl.index {
         case 0:
-            groupView.isHidden = false
+            if groupsSlider.count > 1 {
+                groupView.isHidden = false
+            }
         case 1:
             groupView.isHidden = true
         default:

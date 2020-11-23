@@ -12,6 +12,10 @@ class GroupsSlider: UIView {
 
     private var data = [APIClient.Group]()
 
+    var count: Int {
+        return data.count
+    }
+
     private let collection: UICollectionView = {
         let collection = UICollectionView(frame: CGRect.zero, collectionViewLayout: GroupsSlider.makeLayout())
         collection.register(cellWithClass: SelectableImageTextCell.self)
