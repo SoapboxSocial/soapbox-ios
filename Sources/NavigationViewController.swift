@@ -95,7 +95,7 @@ class NavigationViewController: UINavigationController {
         roomDrawer!.delegate = self
 
         // check that we are in an iphone 11 or higher.
-        if view.frame.size.height > 736 {
+        if view.frame.size.height > (RoomView.height() + view.safeAreaInsets.bottom + 68.0) {
             roomDrawer!.openHeightBehavior = .fixed(height: RoomView.height() + view.safeAreaInsets.bottom)
         }
 

@@ -3,7 +3,9 @@
 ## [Unreleased]
 
  - Rooms: This is a big one! You can now create rooms for groups you're in!
- - Home Screen: Rooms now no longer randomly change ordering.
+ - When scrolling through your groups on the home screen, it should no longer bounce to the start when loading new groups.
+ - We fixed the Room for previously unanticipated iPhone sizes, all buttons should now be tappable!
+ - When refreshing the home screen, rooms will no longer change their order.
 
 ## [1.2.0] - 2020-11-21
 
