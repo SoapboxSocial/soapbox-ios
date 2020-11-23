@@ -71,6 +71,33 @@ class RoomCell: UICollectionViewCell {
         return lock
     }()
 
+    var group: RoomState.Group? {
+        didSet {
+            groupLabel.text = group?.name
+            groupView.isHidden = false
+        }
+    }
+
+    private var groupLabel: UILabel {
+        let label = UILabel()
+        label.font = .rounded(forTextStyle: .footnote, weight: .semibold)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }
+
+    private var groupImage: UIImageView {
+        let image = UIImageView()
+        image.layer.cornerRadius = 24 / 2
+        image.translatesAutoresizingMaskIntoConstraints = false
+        return image
+    }
+
+    private var groupView: UIView {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }
+
     private var titleLeftAnchorConstraint: NSLayoutConstraint!
 
     private var imageViews = [UIView]()
