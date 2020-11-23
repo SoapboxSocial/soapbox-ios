@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Rooms: This is a big one! You can now create rooms for groups you're in!
  - Home Screen: Rooms now no longer randomly change ordering.
 
 ## [1.2.0] - 2020-11-21
