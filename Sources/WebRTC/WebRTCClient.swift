@@ -45,9 +45,9 @@ final class WebRTCClient: NSObject {
         fatalError("WebRTCClient:init is unavailable")
     }
 
-    required init(iceServers: [String]) {
+    required init(iceServers: [RTCIceServer]) {
         let config = RTCConfiguration()
-        config.iceServers = [RTCIceServer(urlStrings: iceServers)]
+        config.iceServers = iceServers
 
         // Unified plan is more superior than planB
         config.sdpSemantics = .unifiedPlan
@@ -232,7 +232,7 @@ extension WebRTCClient {
 
             self.rtcAudioSession.lockForConfiguration()
             do {
-                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.mixWithOthers, .defaultToSpeaker, .allowBluetooth, .allowBluetoothA2DP])
+                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.mixWithOthers, .allowBluetooth, .allowBluetoothA2DP])
                 try self.rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
                 try self.rtcAudioSession.setActive(true)
             } catch {

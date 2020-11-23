@@ -1,4 +1,3 @@
-import CallKit
 import Foundation
 import GRPC
 import KeychainAccess
@@ -80,30 +79,11 @@ class Room: NSObject {
         let usernameFragment: String?
     }
 
-    private let provider: CXProvider
-    private let callController: CXCallController
-
-    static var providerConfiguration: CXProviderConfiguration = {
-        let providerConfiguration = CXProviderConfiguration(localizedName: "Soapbox")
-        providerConfiguration.supportsVideo = false
-        providerConfiguration.maximumCallsPerCallGroup = 1
-        providerConfiguration.includesCallsInRecents = true
-        providerConfiguration.supportedHandleTypes = [.generic]
-
-        return providerConfiguration
-    }()
-
-    private let callID = UUID()
-
     init(rtc: WebRTCClient, grpc: RoomServiceClient) {
         self.rtc = rtc
         self.grpc = grpc
-        provider = CXProvider(configuration: Room.providerConfiguration)
-        callController = CXCallController()
 
         super.init()
-
-        provider.setDelegate(self, queue: nil)
 
         stream = grpc.signal(handler: handle)
         rtc.delegate = self
@@ -202,7 +182,6 @@ class Room: NSObject {
 
         _ = stream.sendEnd()
         _ = grpc.channel.close()
-        endCallKit()
     }
 
     func mute() {
@@ -531,24 +510,6 @@ extension Room {
 
         delegate?.didChangeUserRole(user: user, role: role)
     }
-
-    private func startCallKit() {
-        let action = CXStartCallAction(call: callID, handle: CXHandle(type: .generic, value: name ?? "Soapbox Room"))
-        callController.request(CXTransaction(action: action), completion: { error in
-            if let error = error {
-                debugPrint(error)
-            }
-        })
-    }
-
-    private func endCallKit() {
-        let transaction = CXTransaction(action: CXEndCallAction(call: callID))
-        callController.request(transaction, completion: { error in
-            if let error = error {
-                debugPrint(error)
-            }
-        })
-    }
 }
 
 extension Room: WebRTCClientDelegate {
@@ -589,43 +550,11 @@ extension Room: WebRTCClientDelegate {
         if state == .connected && completion != nil {
             completion(.success(()))
             completion = nil
-            startCallKit()
             return
         }
 
         if state == .failed || state == .closed {
-            endCallKit()
             delegate?.roomWasClosedByRemote()
         }
-    }
-}
-
-extension Room: CXProviderDelegate {
-    func providerDidReset(_: CXProvider) {
-        close()
-    }
-
-    func provider(_: CXProvider, perform _: CXEndCallAction) {
-        close()
-    }
-
-    func provider(_: CXProvider, perform action: CXSetMutedCallAction) {
-        if action.isMuted {
-            mute()
-        } else {
-            unmute()
-        }
-
-        action.fulfill()
-    }
-
-    func provider(_: CXProvider, perform action: CXSetHeldCallAction) {
-        if action.isOnHold {
-            mute()
-        } else {
-            unmute()
-        }
-
-        action.fulfill()
     }
 }

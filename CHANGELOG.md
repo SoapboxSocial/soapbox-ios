@@ -1,5 +1,26 @@
 # Changelog
 
+## [Unreleased]
+
+## [1.2.0] - 2020-11-21
+
+ - Made calls a bit more reliable for those of you who were having connection issues. 
+ - Changed Search placeholder (yes, you can search for groups!) 
+ - Fixed issues that caused the screen to dim.
+
+## [1.1.0 (9)] - 2020-11-19
+
+ - Fixed an issue that caused the phone screen to turn off.
+
+## [1.1.0] - 2020-11-19
+
+ - Fixes on the login screen.
+ - Actives: We redesigned the way the active users look.
+
+## [1.0.1 (8)] - 2020-11-18
+
+ - Removed CallKit for china.
+
 ## [1.0.1 (7)] - 2020-11-17
 
  - We are now integrating with CallKit!

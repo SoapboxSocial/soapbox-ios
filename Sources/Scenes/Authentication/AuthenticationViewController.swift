@@ -180,6 +180,7 @@ extension AuthenticationViewController {
 
         let terms = UITextView(frame: CGRect(x: 20, y: 0, width: view.frame.size.width - 40, height: 30))
         terms.isScrollEnabled = false
+        terms.isEditable = false
         terms.backgroundColor = .clear
         terms.contentInset = .zero
         terms.font = .rounded(forTextStyle: .caption1, weight: .regular)

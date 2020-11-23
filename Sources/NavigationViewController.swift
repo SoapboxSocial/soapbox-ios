@@ -200,31 +200,34 @@ extension NavigationViewController: RoomController {
             activityIndicator.startAnimating()
             activityIndicator.isHidden = false
 
-            room = RoomFactory.createRoom()
-            room?.join(id: id) { result in
-                DispatchQueue.main.async {
-                    self.activityIndicator.stopAnimating()
-                    self.activityIndicator.isHidden = true
+            RoomFactory.create(callback: { room in
+                self.room = room
 
-                    switch result {
-                    case let .failure(error):
-                        // @toodo investigate error type
-                        self.room = nil
+                room.join(id: id) { result in
+                    DispatchQueue.main.async {
+                        self.activityIndicator.stopAnimating()
+                        self.activityIndicator.isHidden = true
 
-                        switch error {
-                        case .closed:
-                            return self.showClosedError()
-                        case .fullRoom:
-                            return self.showFullRoomError()
-                        default:
-                            return self.showNetworkError()
+                        switch result {
+                        case let .failure(error):
+                            // @toodo investigate error type
+                            self.room = nil
+
+                            switch error {
+                            case .closed:
+                                return self.showClosedError()
+                            case .fullRoom:
+                                return self.showFullRoomError()
+                            default:
+                                return self.showNetworkError()
+                            }
+                        case .success:
+                            self.roomControllerDelegate?.didJoin(room: id)
+                            return self.presentCurrentRoom()
                         }
-                    case .success:
-                        self.roomControllerDelegate?.didJoin(room: id)
-                        return self.presentCurrentRoom()
                     }
                 }
-            }
+            })
         }
 
         if room != nil {
@@ -294,28 +297,31 @@ extension NavigationViewController: RoomCreationDelegate {
             self.activityIndicator.isHidden = false
         }
 
-        room = RoomFactory.createRoom()
-        room?.create(name: name, isPrivate: isPrivate, group: group) { result in
-            DispatchQueue.main.async {
-                self.activityIndicator.stopAnimating()
-                self.activityIndicator.isHidden = true
+        RoomFactory.create(callback: { room in
+            self.room = room
 
-                switch result {
-                case .failure:
-                    self.createRoomButton.isHidden = false
-                    self.room = nil
-                    return self.showNetworkError()
-                case .success:
-                    if let id = self.room?.id {
-                        self.roomControllerDelegate?.didJoin(room: id)
+            room.create(name: name, isPrivate: isPrivate, group: group) { result in
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                    self.activityIndicator.isHidden = true
+
+                    switch result {
+                    case .failure:
+                        self.createRoomButton.isHidden = false
+                        self.room = nil
+                        return self.showNetworkError()
+                    case .success:
+                        if let id = self.room?.id {
+                            self.roomControllerDelegate?.didJoin(room: id)
+                        }
+
+                        self.roomControllerDelegate?.reloadRooms()
+
+                        return self.presentCurrentRoom()
                     }
-
-                    self.roomControllerDelegate?.reloadRooms()
-
-                    return self.presentCurrentRoom()
                 }
             }
-        }
+        })
     }
 }
 

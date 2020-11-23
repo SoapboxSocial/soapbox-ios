@@ -74,7 +74,7 @@
 "is_currently_in_room" = "%@ is currently in a room!";
 "click_to_join" = "Click to join";
 
-"search_for_friends" = "Search for friends";
+"search_placeholder" = "Search groups and friends...";
 
 "rooms" = "Rooms";
 "no_one_talking" = "No one’s talking";

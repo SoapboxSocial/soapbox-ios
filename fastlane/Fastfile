@@ -51,6 +51,10 @@ platform :ios do
 
     version = increment_version_number(bump_type: type, xcodeproj: xcodeproj)
 
+    increment_build_number({
+      build_number: 1
+    })
+
     gym(
       workspace: workspace,
       scheme: scheme,
@@ -68,7 +72,7 @@ platform :ios do
       output_name: output_name
     )
 
-    upload_to_app_store
+    upload_to_app_store(overwrite_screenshots: true)
 
     changelog = read_changelog(section_identifier: '[Unreleased]')
     stamp_changelog(section_identifier: "#{version}")
