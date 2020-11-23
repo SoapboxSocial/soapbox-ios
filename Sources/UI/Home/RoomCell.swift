@@ -73,8 +73,12 @@ class RoomCell: UICollectionViewCell {
 
     var group: RoomState.Group? {
         didSet {
-            groupLabel.text = group?.name
-            groupView.isHidden = false
+            if group == nil {
+                groupView.isHidden = true
+            } else {
+                groupLabel.text = group?.name
+                groupView.isHidden = false
+            }
         }
     }
 
