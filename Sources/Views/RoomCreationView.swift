@@ -211,7 +211,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
     @objc private func segmentedControlUpdated() {
         switch visibilityControl.index {
         case 0:
-            if groupsSlider.count > 1 {
+            if groupsSlider.groupsCount > 1 {
                 groupView.isHidden = false
             }
         case 1:

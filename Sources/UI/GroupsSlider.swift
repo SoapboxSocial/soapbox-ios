@@ -12,7 +12,7 @@ class GroupsSlider: UIView {
 
     private var data = [APIClient.Group]()
 
-    var count: Int {
+    var groupsCount: Int {
         return data.count
     }
 
