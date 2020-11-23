@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Home Screen: Rooms now no longer randomly change ordering.
+
 ## [1.2.0] - 2020-11-21
 
  - Made calls a bit more reliable for those of you who were having connection issues. 

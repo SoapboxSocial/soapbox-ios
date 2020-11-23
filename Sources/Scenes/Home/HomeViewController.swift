@@ -287,7 +287,8 @@ extension HomeViewController: HomePresenterOutput {
     }
 
     func didFetchRooms(rooms: [RoomState]) {
-        update(.rooms(rooms))
+        // sorted is temporary
+        update(.rooms(rooms.sorted(by: { $0.id < $1.id })))
     }
 
     func didFetchActives(actives: [APIClient.ActiveUser]) {
