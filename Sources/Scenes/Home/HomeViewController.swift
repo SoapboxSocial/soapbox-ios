@@ -228,10 +228,11 @@ class HomeViewController: ViewController {
     }
 
     private func createGroupSection() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .estimated(1), heightDimension: .fractionalHeight(1))
+        let estimatedWidth = view.frame.size.width * 0.7
+        let itemSize = NSCollectionLayoutSize(widthDimension: .estimated(estimatedWidth), heightDimension: .fractionalHeight(1))
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
 
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .estimated(1), heightDimension: .absolute(56))
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .estimated(estimatedWidth), heightDimension: .absolute(56))
         let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitems: [layoutItem])
 
         layoutGroup.interItemSpacing = .fixed(10)
@@ -271,15 +272,19 @@ extension HomeViewController: HomePresenterOutput {
             return
         }
 
-        presenter.add(groups: groups)
-
         guard let index = presenter.index(of: .groupList) else {
             return
         }
 
-        collection.performBatchUpdates({
-            self.collection.reloadSections(IndexSet(integer: index))
-        })
+        let count = presenter.numberOfItems(for: index)
+        presenter.add(groups: groups)
+
+        var paths = [IndexPath]()
+        for i in count ..< (count + groups.count) {
+            paths.append(IndexPath(item: i, section: index))
+        }
+
+        collection.insertItems(at: paths)
     }
 
     func didFetchGroups(groups: [APIClient.Group]) {
