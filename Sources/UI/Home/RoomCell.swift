@@ -36,14 +36,8 @@ class RoomCell: UICollectionViewCell {
         didSet {
             if visibility == .private {
                 lock.isHidden = false
-                titleLeftAnchorConstraint.constant = 5
             } else {
                 lock.isHidden = true
-                titleLeftAnchorConstraint.constant = -20
-            }
-
-            DispatchQueue.main.async {
-                self.layoutIfNeeded()
             }
         }
     }
@@ -76,33 +70,36 @@ class RoomCell: UICollectionViewCell {
             if group == nil {
                 groupView.isHidden = true
             } else {
+                if let image = group?.image, image != "" {
+                    groupImage.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
+                }
+
                 groupLabel.text = group?.name
                 groupView.isHidden = false
             }
         }
     }
 
-    private var groupLabel: UILabel {
+    private var groupLabel: UILabel = {
         let label = UILabel()
         label.font = .rounded(forTextStyle: .footnote, weight: .semibold)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
-    }
+    }()
 
-    private var groupImage: UIImageView {
+    private var groupImage: UIImageView = {
         let image = UIImageView()
         image.layer.cornerRadius = 24 / 2
+        image.backgroundColor = .background
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
-    }
+    }()
 
-    private var groupView: UIView {
+    private var groupView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
-    }
-
-    private var titleLeftAnchorConstraint: NSLayoutConstraint!
+    }()
 
     private var imageViews = [UIView]()
 
@@ -112,22 +109,54 @@ class RoomCell: UICollectionViewCell {
         backgroundColor = .clear
         widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.width).isActive = true
 
+        let topScroll = UIStackView()
+        topScroll.translatesAutoresizingMaskIntoConstraints = false
+        topScroll.spacing = 10
+        topScroll.distribution = .fill
+        topScroll.alignment = .fill
+        topScroll.axis = .vertical
+        contentView.addSubview(topScroll)
+
+        let titleScroll = UIStackView()
+        titleScroll.translatesAutoresizingMaskIntoConstraints = false
+        titleScroll.spacing = 10
+        titleScroll.distribution = .fill
+        titleScroll.alignment = .fill
+        titleScroll.axis = .horizontal
+
         contentView.backgroundColor = .foreground
         contentView.translatesAutoresizingMaskIntoConstraints = false
         contentView.layer.cornerRadius = 30
 
-        contentView.addSubview(title)
+        groupView.addSubview(groupImage)
+        groupView.addSubview(groupLabel)
+
+        groupLabel.text = "this is a test"
+
+        topScroll.addArrangedSubview(groupView)
+        topScroll.addArrangedSubview(titleScroll)
+
+        titleScroll.addArrangedSubview(lock)
+        titleScroll.addArrangedSubview(title)
+
         contentView.addSubview(badge)
 
-        contentView.addSubview(lock)
+        NSLayoutConstraint.activate([
+            groupImage.leftAnchor.constraint(equalTo: groupView.leftAnchor),
+            groupImage.widthAnchor.constraint(equalToConstant: 24),
+            groupImage.heightAnchor.constraint(equalToConstant: 24),
+        ])
 
-        titleLeftAnchorConstraint = title.leftAnchor.constraint(equalTo: lock.rightAnchor, constant: 5)
+        NSLayoutConstraint.activate([
+            groupLabel.centerYAnchor.constraint(equalTo: groupImage.centerYAnchor),
+            groupLabel.leftAnchor.constraint(equalTo: groupImage.rightAnchor, constant: 8),
+            groupLabel.rightAnchor.constraint(equalTo: groupView.rightAnchor),
+        ])
 
-        // @TODO MAYBE USE STACK VIEW?
         NSLayoutConstraint.activate([
             lock.heightAnchor.constraint(equalToConstant: 20),
             lock.widthAnchor.constraint(equalToConstant: 20),
-            lock.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
+            lock.leftAnchor.constraint(equalTo: titleScroll.leftAnchor),
             lock.centerYAnchor.constraint(equalTo: title.centerYAnchor),
         ])
 
@@ -137,9 +166,24 @@ class RoomCell: UICollectionViewCell {
         ])
 
         NSLayoutConstraint.activate([
-            title.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
-            titleLeftAnchorConstraint,
-            title.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
+            groupView.leftAnchor.constraint(equalTo: topScroll.leftAnchor),
+            groupView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
+            groupView.heightAnchor.constraint(equalToConstant: 24),
+        ])
+
+        groupView.isHidden = true
+
+        NSLayoutConstraint.activate([
+            topScroll.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
+            topScroll.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
+            topScroll.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
+            topScroll.bottomAnchor.constraint(equalTo: titleScroll.bottomAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            titleScroll.leftAnchor.constraint(equalTo: topScroll.leftAnchor),
+            titleScroll.rightAnchor.constraint(equalTo: topScroll.rightAnchor),
+            titleScroll.heightAnchor.constraint(equalToConstant: 28),
         ])
 
         NSLayoutConstraint.activate([
