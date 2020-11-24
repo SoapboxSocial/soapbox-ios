@@ -13,11 +13,13 @@ class RoomCell: UICollectionViewCell {
                 badge.style = .normal
                 title.textColor = .label
                 lock.tintColor = .label
+                groupLabel.textColor = .secondaryLabel
             case .current:
                 badge.style = .current
                 contentView.backgroundColor = .brandColor
                 lock.tintColor = .white
                 title.textColor = .white
+                groupLabel.textColor = .white
             }
 
             createImageViews()
