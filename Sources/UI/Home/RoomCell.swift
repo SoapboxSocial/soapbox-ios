@@ -83,6 +83,7 @@ class RoomCell: UICollectionViewCell {
     private var groupLabel: UILabel = {
         let label = UILabel()
         label.font = .rounded(forTextStyle: .footnote, weight: .semibold)
+        label.textColor = .secondaryLabel
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
