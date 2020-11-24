@@ -64,6 +64,7 @@ class NavigationViewController: UINavigationController {
             self.creationDrawer!.snapPositions = [.closed, .open]
             self.creationDrawer!.backgroundColor = .brandColor
             self.creationDrawer!.delegate = self
+            self.creationDrawer!.childScrollViewsPanningCanDismissDrawer = false
 
             self.view.addSubview(self.creationDrawer!)
 
