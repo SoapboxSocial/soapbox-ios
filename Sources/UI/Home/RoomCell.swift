@@ -182,11 +182,6 @@ class RoomCell: UICollectionViewCell {
         ])
 
         NSLayoutConstraint.activate([
-            contentView.leftAnchor.constraint(equalTo: leftAnchor),
-            contentView.rightAnchor.constraint(equalTo: rightAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
             groupView.leftAnchor.constraint(equalTo: topScroll.leftAnchor),
             groupView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
             groupView.heightAnchor.constraint(equalToConstant: 24),
@@ -210,6 +205,13 @@ class RoomCell: UICollectionViewCell {
             badge.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 20),
             badge.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
             badge.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
+        ])
+
+        NSLayoutConstraint.activate([
+            contentView.topAnchor.constraint(equalTo: topAnchor),
+            contentView.leftAnchor.constraint(equalTo: leftAnchor),
+            contentView.rightAnchor.constraint(equalTo: rightAnchor),
+            bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
     }
 
