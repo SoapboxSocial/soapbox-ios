@@ -12,12 +12,12 @@ class RoomCell: UICollectionViewCell {
                 contentView.backgroundColor = .foreground
                 badge.style = .normal
                 title.textColor = .label
-                lock.tintColor = .label
+                lockImage.tintColor = .label
                 groupLabel.textColor = .secondaryLabel
             case .current:
                 badge.style = .current
                 contentView.backgroundColor = .brandColor
-                lock.tintColor = .white
+                lockImage.tintColor = .white
                 title.textColor = .white
                 groupLabel.textColor = .white
             }
@@ -60,11 +60,18 @@ class RoomCell: UICollectionViewCell {
         return badge
     }()
 
-    private var lock: UIImageView = {
+    private var lockImage: UIImageView = {
         let lock = UIImageView(image: UIImage(systemName: "lock", withConfiguration: UIImage.SymbolConfiguration(weight: .medium)))
         lock.tintColor = .label
+        lock.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
         lock.translatesAutoresizingMaskIntoConstraints = false
         return lock
+    }()
+
+    private var lock: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
 
     var group: RoomState.Group? {
@@ -93,6 +100,7 @@ class RoomCell: UICollectionViewCell {
     private var groupImage: UIImageView = {
         let image = UIImageView()
         image.layer.cornerRadius = 24 / 2
+        image.layer.masksToBounds = true
         image.backgroundColor = .background
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
@@ -142,6 +150,8 @@ class RoomCell: UICollectionViewCell {
         titleScroll.addArrangedSubview(lock)
         titleScroll.addArrangedSubview(title)
 
+        lock.addSubview(lockImage)
+
         contentView.addSubview(badge)
 
         NSLayoutConstraint.activate([
@@ -157,10 +167,18 @@ class RoomCell: UICollectionViewCell {
         ])
 
         NSLayoutConstraint.activate([
+            lockImage.heightAnchor.constraint(equalToConstant: 20),
+            lockImage.widthAnchor.constraint(equalToConstant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
             lock.heightAnchor.constraint(equalToConstant: 20),
             lock.widthAnchor.constraint(equalToConstant: 20),
             lock.leftAnchor.constraint(equalTo: titleScroll.leftAnchor),
-            lock.centerYAnchor.constraint(equalTo: title.centerYAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            title.centerYAnchor.constraint(equalTo: titleScroll.centerYAnchor),
         ])
 
         NSLayoutConstraint.activate([
@@ -186,7 +204,6 @@ class RoomCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             titleScroll.leftAnchor.constraint(equalTo: topScroll.leftAnchor),
             titleScroll.rightAnchor.constraint(equalTo: topScroll.rightAnchor),
-            titleScroll.heightAnchor.constraint(equalToConstant: 28),
         ])
 
         NSLayoutConstraint.activate([
