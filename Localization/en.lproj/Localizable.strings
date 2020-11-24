@@ -61,6 +61,9 @@
 "room_invite_notification" = "%@ invited you to join a room";
 "group_invite_notification" = "%@ invited you to join the group \"%@\"";
 
+"new_room_with_group_notification" = "%@ created a room in \"%@\", why not join them?";
+"new_room_with_group_and_name_notification" = "%@ created the room \"%@\" in \"%@\", why not join them?";
+
 "save" = "Save";
 "invalid_display_name" = "Valid display name required";
 
@@ -162,5 +165,5 @@
 "join_room" = "Join room";
 
 "you_will_be_muted_by_default" = "You will be muted by default.";
-
+"choose_a_group" = "Choose a group";
 "share_text" = "Good conversations don't need good lighting, join me on Soapbox!";

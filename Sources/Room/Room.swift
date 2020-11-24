@@ -132,7 +132,7 @@ class Room: NSObject {
         }
     }
 
-    func create(name: String?, isPrivate: Bool, completion: @escaping (Result<Void, RoomError>) -> Void) {
+    func create(name: String?, isPrivate: Bool, group: Int? = nil, completion: @escaping (Result<Void, RoomError>) -> Void) {
         self.name = name
         self.completion = completion
 
@@ -142,11 +142,17 @@ class Room: NSObject {
             visibility = Visibility.private
         }
 
+        var request = CreateRequest.with {
+            $0.name = name ?? ""
+            $0.visibility = visibility
+        }
+
+        if let id = group {
+            request.group = Int64(id)
+        }
+
         _ = stream.sendMessage(SignalRequest.with {
-            $0.create = CreateRequest.with {
-                $0.name = name ?? ""
-                $0.visibility = visibility
-            }
+            $0.create = request
         })
 
         stream.status.whenComplete { result in

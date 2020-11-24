@@ -8,7 +8,13 @@ protocol GroupsSliderDelegate {
 class GroupsSlider: UIView {
     var delegate: GroupsSliderDelegate?
 
+    var selectedGroup: Int?
+
     private var data = [APIClient.Group]()
+
+    var groupsCount: Int {
+        return data.count
+    }
 
     private let collection: UICollectionView = {
         let collection = UICollectionView(frame: CGRect.zero, collectionViewLayout: GroupsSlider.makeLayout())
@@ -17,7 +23,15 @@ class GroupsSlider: UIView {
         return collection
     }()
 
-    init() {
+    private let textColor: UIColor
+    private let imageBackground: UIColor
+    private let markSelection: Bool
+
+    init(textColor: UIColor = .label, imageBackground: UIColor = .brandColor, markSelection: Bool = false) {
+        self.textColor = textColor
+        self.imageBackground = imageBackground
+        self.markSelection = markSelection
+
         super.init(frame: CGRect.zero)
 
         addSubview(collection)
@@ -27,7 +41,9 @@ class GroupsSlider: UIView {
         collection.delegate = self
         collection.dataSource = self
         collection.alwaysBounceVertical = false
-        collection.backgroundColor = .background
+        collection.backgroundColor = .clear
+
+        collection.allowsMultipleSelection = true
 
         NSLayoutConstraint.activate([
             collection.topAnchor.constraint(equalTo: topAnchor),
@@ -77,13 +93,67 @@ class GroupsSlider: UIView {
 
 extension GroupsSlider: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        delegate?.didSelect(group: data[indexPath.item].id)
+        collection.indexPathsForSelectedItems?.forEach { path in
+            if indexPath == path {
+                return
+            }
+
+            guard let cell = collection.cellForItem(at: path) as? SelectableImageTextCell else {
+                return
+            }
+
+            DispatchQueue.main.async {
+                cell.selectedView.isHidden = true
+                self.collection.deselectItem(at: path, animated: false)
+            }
+        }
+
+        let id = data[indexPath.item].id
+        selectedGroup = id
+        delegate?.didSelect(group: id)
+
+        if !markSelection {
+            return
+        }
+
+        guard let cell = collection.cellForItem(at: indexPath) as? SelectableImageTextCell else {
+            return
+        }
+
+        cell.selectedView.isHidden = false
     }
 
     func collectionView(_: UICollectionView, willDisplay _: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if indexPath.row == data.count - 2 {
             delegate?.loadMoreGroups()
         }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        let item = collectionView.cellForItem(at: indexPath)
+        if item?.isSelected ?? false {
+            return false
+        }
+
+        return true
+    }
+
+    func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
+        let item = collectionView.cellForItem(at: indexPath)
+        if item?.isSelected ?? false {
+            return true
+        }
+
+        return false
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? SelectableImageTextCell else {
+            return
+        }
+
+        cell.selectedView.isHidden = true
+        selectedGroup = nil
     }
 }
 
@@ -98,7 +168,9 @@ extension GroupsSlider: UICollectionViewDataSource {
         cell.title.font = .rounded(forTextStyle: .caption2, weight: .semibold)
         cell.selectedView.isHidden = true
         cell.title.text = group.name
+        cell.title.textColor = textColor
 
+        cell.image.backgroundColor = imageBackground
         cell.image.image = nil
         if let image = group.image, image != "" {
             cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
