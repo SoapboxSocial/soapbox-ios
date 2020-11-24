@@ -168,9 +168,9 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // @TODO Paginate
     func loadGroups() {
-        APIClient().groups(id: UserDefaults.standard.integer(forKey: "id"), limit: 10, offset: 0, callback: { result in
+        // @TODO Paginate
+        APIClient().groups(id: UserDefaults.standard.integer(forKey: "id"), limit: 100, offset: 0, callback: { result in
             switch result {
             case .failure:
                 self.groupView.isHidden = true
