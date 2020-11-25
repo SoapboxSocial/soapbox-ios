@@ -143,6 +143,10 @@ extension GroupViewController: GroupPresenterOutput {
             showJoinedBadge()
 
             if role == .admin {
+                headerView.button.isSelected = false
+                headerView.button.setTitle(NSLocalizedString("edit", comment: ""), for: .normal)
+                headerView.button.removeTarget(self, action: #selector(didTapJoin), for: .touchUpInside)
+                headerView.button.addTarget(self, action: #selector(editPressed), for: .touchUpInside)
                 inviteButton.isHidden = false
             }
         }
@@ -219,5 +223,10 @@ extension GroupViewController: GroupPresenterOutput {
         }
 
         output.join()
+    }
+
+    @objc private func editPressed() {
+        let view = EditGroupViewController()
+        present(view, animated: true)
     }
 }
