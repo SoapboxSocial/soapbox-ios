@@ -328,4 +328,11 @@ class RoomCell: UICollectionViewCell {
             view.layer.borderColor = contentView.backgroundColor?.cgColor
         }
     }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        imageViews.forEach { $0.removeFromSuperview() }
+        title.text = ""
+    }
 }

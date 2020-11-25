@@ -80,4 +80,11 @@ class ActiveUserCell: UICollectionViewCell {
         super.traitCollectionDidChange(previousTraitCollection)
         active.layer.borderColor = UIColor.background.cgColor
     }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        image.image = nil
+        displayName.text = ""
+    }
 }

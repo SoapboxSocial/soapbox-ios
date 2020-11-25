@@ -63,7 +63,6 @@ class HomeCollectionPresenter {
 
         item.displayName.text = user.displayName.firstName()
 
-        item.image.image = nil
         if let image = user.image, image != "" {
             item.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
         }
@@ -78,7 +77,6 @@ class HomeCollectionPresenter {
 
         item.name.text = group.name
 
-        item.image.image = nil
         if let image = group.image, image != "" {
             item.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
         }

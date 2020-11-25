@@ -88,4 +88,11 @@ class SelectableImageTextCell: UICollectionViewCell {
         image.layer.cornerRadius = frame.width / 2
         selectedView.layer.cornerRadius = frame.width / 2
     }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        image.image = nil
+        title.text = ""
+    }
 }

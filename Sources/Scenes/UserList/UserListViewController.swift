@@ -98,7 +98,6 @@ extension UserListViewController: UICollectionViewDataSource {
         cell.displayName.text = user.displayName
         cell.username.text = "@" + user.username
 
-        cell.image.image = nil
         if let image = user.image, image != "" {
             cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
         }

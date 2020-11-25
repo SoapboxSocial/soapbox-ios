@@ -171,7 +171,6 @@ extension GroupsSlider: UICollectionViewDataSource {
         cell.title.textColor = textColor
 
         cell.image.backgroundColor = imageBackground
-        cell.image.image = nil
         if let image = group.image, image != "" {
             cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
         }
