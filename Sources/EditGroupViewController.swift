@@ -1,3 +1,4 @@
+import NotificationBannerSwift
 import UIKit
 
 class EditGroupViewController: UIViewController {
@@ -8,9 +9,12 @@ class EditGroupViewController: UIViewController {
     private var descriptionTextField: TextView!
 
     private let group: APIClient.Group
+    private let activityIndicator = UIActivityIndicatorView(style: .large)
+    private let parentVC: GroupViewController
 
-    init(group: APIClient.Group) {
+    init(group: APIClient.Group, parent: GroupViewController) {
         self.group = group
+        parentVC = parent
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -23,6 +27,13 @@ class EditGroupViewController: UIViewController {
 
         view.backgroundColor = .background
 
+        activityIndicator.isHidden = true
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.color = .black
+
+        activityIndicator.center = view.center
+        view.addSubview(activityIndicator)
+
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
@@ -32,7 +43,7 @@ class EditGroupViewController: UIViewController {
         saveButton.titleLabel?.font = .rounded(forTextStyle: .body, weight: .semibold)
         saveButton.setTitle(NSLocalizedString("save", comment: ""), for: .normal)
         saveButton.setTitleColor(.brandColor, for: .normal)
-//        saveButton.addTarget(self, action: #selector(savePressed), for: .touchUpInside)
+        saveButton.addTarget(self, action: #selector(savePressed), for: .touchUpInside)
         view.addSubview(saveButton)
 
         let cancelButton = UIButton()
@@ -97,6 +108,25 @@ class EditGroupViewController: UIViewController {
         ])
     }
 
+    @objc private func savePressed() {
+        APIClient().editGroup(group: group.id, description: descriptionTextField.text ?? "", image: image) { result in
+            DispatchQueue.main.async {
+                self.activityIndicator.stopAnimating()
+                self.activityIndicator.isHidden = true
+            }
+
+            switch result {
+            case .failure:
+                self.displayError()
+            case .success:
+                DispatchQueue.main.async {
+                    self.parentVC.output.loadData()
+                    self.dismiss(animated: true)
+                }
+            }
+        }
+    }
+
     @objc private func selectImage() {
         imagePicker.present(self)
     }
@@ -108,13 +138,22 @@ class EditGroupViewController: UIViewController {
     @objc private func dismissKeyboard() {
         view.endEditing(true)
     }
+
+    private func displayError() {
+        let banner = FloatingNotificationBanner(
+            title: NSLocalizedString("something_went_wrong", comment: ""),
+            subtitle: NSLocalizedString("please_try_again_later", comment: ""),
+            style: .danger
+        )
+        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+    }
 }
 
 extension EditGroupViewController: ImagePickerDelegate {
-    func didSelect(image _: UIImage?) {
+    func didSelect(image: UIImage?) {
         guard image != nil else { return }
         imageButton.image = image
-        image = image
+        self.image = image
     }
 }
 

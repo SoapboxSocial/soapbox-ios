@@ -405,6 +405,32 @@ extension APIClient {
     func join(group: Int, callback: @escaping (Result<Void, Error>) -> Void) {
         post(path: "/v1/groups/" + String(group) + "/join", callback: callback)
     }
+
+    func editGroup(group: Int, description: String, image: UIImage?, callback: @escaping (Result<Bool, Error>) -> Void) {
+        AF.upload(
+            multipartFormData: { multipartFormData in
+                if let uploadImage = image {
+                    guard let imgData = uploadImage.jpegData(compressionQuality: 0.5) else {
+                        return callback(.failure(.preprocessing))
+                    }
+
+                    multipartFormData.append(imgData, withName: "image", fileName: "image", mimeType: "image/jpg")
+                }
+
+                multipartFormData.append(description.data(using: String.Encoding.utf8)!, withName: "description")
+            },
+            to: Configuration.rootURL.appendingPathComponent("/v1/groups/" + String(group) + "/edit"),
+            headers: ["Authorization": token!]
+        )
+        .validate()
+        .response { result in
+            if let error = self.error(result) {
+                callback(.failure(error))
+            }
+
+            return callback(.success(true))
+        }
+    }
 }
 
 extension APIClient {
@@ -460,7 +486,7 @@ extension APIClient {
         }
     }
 
-    // @TODO
+    // @TODO THIS NEEDS IMPROVEMENT, use response.result ?
     private func error(_ response: AFDataResponse<Data?>) -> Error? {
         if response.response?.statusCode == 200 {
             return nil
@@ -479,5 +505,10 @@ extension APIClient {
         } catch {
             return (.decode)
         }
+
+//        @TODO?????
+//        if case response.result == .failure {
+//            return .requestFailed
+//        }
     }
 }

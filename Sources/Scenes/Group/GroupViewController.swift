@@ -229,7 +229,7 @@ extension GroupViewController: GroupPresenterOutput {
     }
 
     @objc private func editPressed() {
-        let view = EditGroupViewController(group: group)
+        let view = EditGroupViewController(group: group, parent: self)
         present(view, animated: true)
     }
 }
