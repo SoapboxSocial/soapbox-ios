@@ -205,10 +205,10 @@ extension APIClient {
         .validate()
         .response { result in
             if let error = self.validate(result) {
-                callback(.failure(error))
+                return callback(.failure(error))
             }
 
-            return callback(.success(true))
+            callback(.success(true))
         }
     }
 
@@ -426,10 +426,10 @@ extension APIClient {
         .validate()
         .response { result in
             if let error = self.validate(result) {
-                callback(.failure(error))
+                return callback(.failure(error))
             }
 
-            return callback(.success(true))
+            callback(.success(true))
         }
     }
 }
