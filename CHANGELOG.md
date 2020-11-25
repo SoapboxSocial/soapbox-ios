@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.4.0] - 2020-11-25
+
  - Groups can now be edited, add images or change descriptions!
  - Private Rooms: Only admins can now invite new users to private rooms.
 
