@@ -1,6 +1,19 @@
 import UIKit
 
 class EditGroupViewController: UIViewController {
+    private var imagePicker: ImagePicker!
+    private var imageButton: EditImageButton!
+
+    private let group: APIClient.Group
+
+    init(group: APIClient.Group) {
+        self.group = group
+    }
+
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -35,6 +48,25 @@ class EditGroupViewController: UIViewController {
             saveButton.topAnchor.constraint(equalTo: cancelButton.topAnchor),
             saveButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
+
+        imagePicker = ImagePicker()
+        imagePicker.delegate = self
+
+        imageButton = EditImageButton()
+//        imageButton.addTarget(self, action: #selector(selectImage))
+
+        if let image = group.image, image != "" {
+            imageButton.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
+        }
+
+        view.addSubview(imageButton)
+
+        NSLayoutConstraint.activate([
+            imageButton.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 40),
+            imageButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            imageButton.heightAnchor.constraint(equalToConstant: 96),
+            imageButton.widthAnchor.constraint(equalToConstant: 96),
+        ])
     }
 
     @objc private func cancelPressed() {
@@ -44,4 +76,8 @@ class EditGroupViewController: UIViewController {
     @objc private func dismissKeyboard() {
         view.endEditing(true)
     }
+}
+
+extension EditGroupViewController: ImagePickerDelegate {
+    func didSelect(image _: UIImage?) {}
 }
