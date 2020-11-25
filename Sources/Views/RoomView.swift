@@ -689,7 +689,7 @@ extension RoomView: RoomDelegate {
             } else {
                 self.hideEditNameButton()
 
-                if room.visibility == .private {
+                if self.room.visibility == .private {
                     self.hideInviteUserButton()
                 }
             }
