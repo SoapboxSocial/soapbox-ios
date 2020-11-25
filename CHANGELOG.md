@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Private Rooms: Only admins can now invite new users to private rooms.
+
 ## [1.3.0] - 2020-11-24
 
  - Rooms: This is a big one! You can now create rooms for groups you're in!
