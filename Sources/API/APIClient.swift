@@ -482,16 +482,16 @@ extension APIClient {
             return callback(.failure(.decode))
         }
     }
-    
+
     private func validate(_ response: AFDataResponse<Data?>) -> Error? {
-        guard case .failure(let err) = response.result else {
+        guard case let .failure(err) = response.result else {
             return nil
         }
-                
+
         guard let data = response.data else {
             return .other(err)
         }
-        
+
         do {
             return .endpoint(try decoder.decode(ErrorResponse.self, from: data))
         } catch {
