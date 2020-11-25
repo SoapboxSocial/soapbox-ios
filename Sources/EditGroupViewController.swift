@@ -3,6 +3,9 @@ import UIKit
 class EditGroupViewController: UIViewController {
     private var imagePicker: ImagePicker!
     private var imageButton: EditImageButton!
+    private var image: UIImage?
+
+    private var descriptionTextField: TextView!
 
     private let group: APIClient.Group
 
@@ -54,7 +57,7 @@ class EditGroupViewController: UIViewController {
         imagePicker.delegate = self
 
         imageButton = EditImageButton()
-//        imageButton.addTarget(self, action: #selector(selectImage))
+        imageButton.addTarget(self, action: #selector(selectImage))
 
         if let image = group.image, image != "" {
             imageButton.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
@@ -62,12 +65,40 @@ class EditGroupViewController: UIViewController {
 
         view.addSubview(imageButton)
 
+        let descriptionLabel = UILabel()
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        descriptionLabel.text = NSLocalizedString("description", comment: "")
+        descriptionLabel.font = .rounded(forTextStyle: .title3, weight: .bold)
+        view.addSubview(descriptionLabel)
+
+        descriptionTextField = TextView()
+        descriptionTextField.delegate = self
+        descriptionTextField.translatesAutoresizingMaskIntoConstraints = false
+        descriptionTextField.text = group.description
+        view.addSubview(descriptionTextField)
+
         NSLayoutConstraint.activate([
             imageButton.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 40),
             imageButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             imageButton.heightAnchor.constraint(equalToConstant: 96),
             imageButton.widthAnchor.constraint(equalToConstant: 96),
         ])
+
+        NSLayoutConstraint.activate([
+            descriptionLabel.topAnchor.constraint(equalTo: imageButton.bottomAnchor, constant: 20),
+            descriptionLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            descriptionTextField.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 20),
+            descriptionTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            descriptionTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            descriptionTextField.heightAnchor.constraint(equalToConstant: 80),
+        ])
+    }
+
+    @objc private func selectImage() {
+        imagePicker.present(self)
     }
 
     @objc private func cancelPressed() {
@@ -80,5 +111,15 @@ class EditGroupViewController: UIViewController {
 }
 
 extension EditGroupViewController: ImagePickerDelegate {
-    func didSelect(image _: UIImage?) {}
+    func didSelect(image _: UIImage?) {
+        guard image != nil else { return }
+        imageButton.image = image
+        image = image
+    }
+}
+
+extension EditGroupViewController: UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        return textView.text.count + (text.count - range.length) <= 300
+    }
 }
