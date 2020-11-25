@@ -48,6 +48,8 @@ class GroupViewController: ViewController {
 
     private var id: Int!
 
+    private var group: APIClient.Group!
+
     private lazy var manager = FocusableImageViewManager()
 
     override func viewDidLoad() {
@@ -127,6 +129,7 @@ class GroupViewController: ViewController {
 
 extension GroupViewController: GroupPresenterOutput {
     func display(group: APIClient.Group) {
+        self.group = group
         title = group.name
         headerView.titleLabel.text = group.name
         headerView.descriptionLabel.text = group.description
@@ -226,7 +229,7 @@ extension GroupViewController: GroupPresenterOutput {
     }
 
     @objc private func editPressed() {
-        let view = EditGroupViewController()
+        let view = EditGroupViewController(group: group)
         present(view, animated: true)
     }
 }

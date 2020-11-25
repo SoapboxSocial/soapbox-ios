@@ -8,6 +8,7 @@ class EditGroupViewController: UIViewController {
 
     init(group: APIClient.Group) {
         self.group = group
+        super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder _: NSCoder) {
