@@ -48,6 +48,8 @@ class GroupViewController: ViewController {
 
     private var id: Int!
 
+    private var group: APIClient.Group!
+
     private lazy var manager = FocusableImageViewManager()
 
     override func viewDidLoad() {
@@ -127,6 +129,7 @@ class GroupViewController: ViewController {
 
 extension GroupViewController: GroupPresenterOutput {
     func display(group: APIClient.Group) {
+        self.group = group
         title = group.name
         headerView.titleLabel.text = group.name
         headerView.descriptionLabel.text = group.description
@@ -143,6 +146,10 @@ extension GroupViewController: GroupPresenterOutput {
             showJoinedBadge()
 
             if role == .admin {
+                headerView.button.isSelected = false
+                headerView.button.setTitle(NSLocalizedString("edit", comment: ""), for: .normal)
+                headerView.button.removeTarget(self, action: #selector(didTapJoin), for: .touchUpInside)
+                headerView.button.addTarget(self, action: #selector(editPressed), for: .touchUpInside)
                 inviteButton.isHidden = false
             }
         }
@@ -219,5 +226,10 @@ extension GroupViewController: GroupPresenterOutput {
         }
 
         output.join()
+    }
+
+    @objc private func editPressed() {
+        let view = EditGroupViewController(group: group, parent: self)
+        present(view, animated: true)
     }
 }
