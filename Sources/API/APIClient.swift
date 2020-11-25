@@ -42,6 +42,7 @@ class APIClient {
         case decode
         case requestFailed
         case endpoint(ErrorResponse)
+        case other(AFError)
     }
 
     let decoder = JSONDecoder()
@@ -203,11 +204,11 @@ extension APIClient {
         )
         .validate()
         .response { result in
-            if let error = self.error(result) {
-                callback(.failure(error))
+            if let error = self.validate(result) {
+                return callback(.failure(error))
             }
 
-            return callback(.success(true))
+            callback(.success(true))
         }
     }
 
@@ -424,11 +425,11 @@ extension APIClient {
         )
         .validate()
         .response { result in
-            if let error = self.error(result) {
-                callback(.failure(error))
+            if let error = self.validate(result) {
+                return callback(.failure(error))
             }
 
-            return callback(.success(true))
+            callback(.success(true))
         }
     }
 }
@@ -462,7 +463,7 @@ extension APIClient {
         )
         .validate()
         .response { result in
-            if let err = self.error(result) {
+            if let err = self.validate(result) {
                 return callback(.failure(err))
             }
 
@@ -471,44 +472,30 @@ extension APIClient {
     }
 
     private func decodable<T: Decodable>(_ response: AFDataResponse<Data?>, callback: @escaping (Result<T, Error>) -> Void) {
-        if let err = error(response) {
+        if let err = validate(response) {
             return callback(.failure(err))
         }
 
-        guard let data = response.data else {
-            return callback(.failure(.requestFailed))
-        }
-
         do {
-            return callback(.success(try decoder.decode(T.self, from: data)))
+            return callback(.success(try decoder.decode(T.self, from: response.data!)))
         } catch {
             return callback(.failure(.decode))
         }
     }
 
-    // @TODO THIS NEEDS IMPROVEMENT, use response.result ?
-    private func error(_ response: AFDataResponse<Data?>) -> Error? {
-        if response.response?.statusCode == 200 {
+    private func validate(_ response: AFDataResponse<Data?>) -> Error? {
+        guard case let .failure(err) = response.result else {
             return nil
         }
 
-        if response.error == nil {
-            return nil
+        guard let data = response.data else {
+            return .other(err)
         }
 
         do {
-            guard let data = response.data else {
-                return .decode
-            }
-
             return .endpoint(try decoder.decode(ErrorResponse.self, from: data))
         } catch {
-            return (.decode)
+            return (.other(err))
         }
-
-//        @TODO?????
-//        if case response.result == .failure {
-//            return .requestFailed
-//        }
     }
 }
