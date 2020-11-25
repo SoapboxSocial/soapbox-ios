@@ -65,4 +65,11 @@ class NotificationCell: UICollectionViewCell {
 
         label.attributedText = content
     }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        image.image = nil
+        label.text = ""
+    }
 }

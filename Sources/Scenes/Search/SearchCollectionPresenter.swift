@@ -62,7 +62,6 @@ class SearchCollectionPresenter {
 
         item.name.text = group.name
 
-        item.image.image = nil
         if let image = group.image, image != "" {
             item.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
         }
@@ -95,7 +94,6 @@ class SearchCollectionPresenter {
         item.displayName.text = user.displayName
         item.username.text = "@" + user.username
 
-        item.image.image = nil
         if let image = user.image, image != "" {
             item.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
         }

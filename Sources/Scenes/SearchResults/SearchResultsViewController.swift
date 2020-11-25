@@ -111,7 +111,6 @@ extension SearchResultsViewController: UICollectionViewDataSource {
 
             groupCell.name.text = group.name
 
-            groupCell.image.image = nil
             if let image = group.image, image != "" {
                 groupCell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
             }
@@ -127,7 +126,6 @@ extension SearchResultsViewController: UICollectionViewDataSource {
             userCell.displayName.text = user.displayName
             userCell.username.text = "@" + user.username
 
-            userCell.image.image = nil
             if let image = user.image, image != "" {
                 userCell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
             }

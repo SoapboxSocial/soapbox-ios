@@ -81,8 +81,6 @@ class RoomMemberCell: UICollectionViewCell {
         reactionView.center = profileImage.center
         contentView.addSubview(reactionView)
 
-        profileImage.image = nil
-
         if image != "" {
             profileImage.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
         }
@@ -116,5 +114,12 @@ class RoomMemberCell: UICollectionViewCell {
         }
 
         speakingView.isHidden = false
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        profileImage.image = nil
+        user = nil
     }
 }

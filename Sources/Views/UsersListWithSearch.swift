@@ -150,7 +150,6 @@ extension UsersListWithSearch: UICollectionViewDataSource {
 
         let user = getUser(for: indexPath)
 
-        cell.image.image = nil
         cell.image.backgroundColor = .lightBrandColor
         if let image = user.image, image != "" {
             cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))

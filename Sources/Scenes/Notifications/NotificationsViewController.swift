@@ -161,7 +161,6 @@ extension NotificationsViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withClass: NotificationCell.self, for: indexPath)
         cell.setText(name: notification.from.username, body: body, time: notification.timestamp)
 
-        cell.image.image = nil
         if notification.from.image != "" {
             cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + notification.from.image))
         }
