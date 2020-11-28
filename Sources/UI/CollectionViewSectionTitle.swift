@@ -15,7 +15,7 @@ class CollectionViewSectionTitle: UICollectionReusableView {
         addSubview(label)
 
         NSLayoutConstraint.activate([
-            label.topAnchor.constraint(equalTo: topAnchor), // @TODO I DON'T WANT TO SET THIS HEAR, HAVE IT IN LAYOUT INSTEAD.
+            label.topAnchor.constraint(equalTo: topAnchor),
             label.bottomAnchor.constraint(equalTo: bottomAnchor),
             label.leftAnchor.constraint(equalTo: leftAnchor),
             label.rightAnchor.constraint(equalTo: rightAnchor),
