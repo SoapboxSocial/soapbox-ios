@@ -57,6 +57,8 @@ class RoomView: UIView {
     }()
 
     private let bottomMuteButton: EmojiButton = {
+        let iconConfig = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
+
         let button = EmojiButton(frame: .zero)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "mic", withConfiguration: iconConfig), for: .normal)
