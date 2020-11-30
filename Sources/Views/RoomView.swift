@@ -264,7 +264,7 @@ class RoomView: UIView {
         buttonStack.addArrangedSubview(inviteUsersButton)
 
         NSLayoutConstraint.activate([
-            buttonStack.topAnchor.constraint(equalTo: foreground.bottomAnchor, constant: 10),
+            buttonStack.centerYAnchor.constraint(equalTo: bottomMuteButton.centerYAnchor),
             buttonStack.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
         ])
 
@@ -288,7 +288,7 @@ class RoomView: UIView {
         ])
 
         NSLayoutConstraint.activate([
-            pasteButton.topAnchor.constraint(equalTo: foreground.bottomAnchor, constant: 10),
+            pasteButton.centerYAnchor.constraint(equalTo: bottomMuteButton.centerYAnchor),
             pasteButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
             pasteButton.heightAnchor.constraint(equalToConstant: 32),
             pasteButton.widthAnchor.constraint(equalToConstant: 32),
