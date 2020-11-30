@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Moved the group creation button, uncluttering your home screen!
+
 ## [1.4.2] - 2020-11-30
 
  - Fixed some UI issues.

@@ -1,8 +1,9 @@
 import UIKit
 
-protocol GroupsSliderDelegate {
+@objc protocol GroupsSliderDelegate {
     func didSelect(group: Int)
     func loadMoreGroups()
+    @objc optional func didTapGroupCreation()
 }
 
 class GroupsSlider: UIView {
@@ -19,6 +20,7 @@ class GroupsSlider: UIView {
     private let collection: UICollectionView = {
         let collection = UICollectionView(frame: CGRect.zero, collectionViewLayout: GroupsSlider.makeLayout())
         collection.register(cellWithClass: SelectableImageTextCell.self)
+        collection.register(cellWithClass: CreateGroupCell.self)
         collection.translatesAutoresizingMaskIntoConstraints = false
         return collection
     }()
@@ -26,6 +28,11 @@ class GroupsSlider: UIView {
     private let textColor: UIColor
     private let imageBackground: UIColor
     private let markSelection: Bool
+    var allowCreation: Bool = false {
+        didSet {
+            collection.reloadData()
+        }
+    }
 
     init(textColor: UIColor = .label, imageBackground: UIColor = .brandColor, markSelection: Bool = false) {
         self.textColor = textColor
@@ -93,6 +100,11 @@ class GroupsSlider: UIView {
 
 extension GroupsSlider: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if allowCreation, indexPath.item == 0 {
+            delegate?.didTapGroupCreation?()
+            return
+        }
+
         collection.indexPathsForSelectedItems?.forEach { path in
             if indexPath == path {
                 return
@@ -108,7 +120,12 @@ extension GroupsSlider: UICollectionViewDelegate {
             }
         }
 
-        let id = data[indexPath.item].id
+        var item = indexPath.item
+        if allowCreation {
+            item = item - 1
+        }
+
+        let id = data[item].id
         selectedGroup = id
         delegate?.didSelect(group: id)
 
@@ -159,11 +176,25 @@ extension GroupsSlider: UICollectionViewDelegate {
 
 extension GroupsSlider: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
+        if allowCreation {
+            return data.count + 1
+        }
+
         return data.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let group = data[indexPath.item]
+        if indexPath.item == 0, allowCreation {
+            let cell = collectionView.dequeueReusableCell(withClass: CreateGroupCell.self, for: indexPath)
+            return cell
+        }
+
+        var item = indexPath.item
+        if allowCreation {
+            item = item - 1
+        }
+
+        let group = data[item]
         let cell = collectionView.dequeueReusableCell(withClass: SelectableImageTextCell.self, for: indexPath)
         cell.title.font = .rounded(forTextStyle: .caption2, weight: .semibold)
         cell.selectedView.isHidden = true

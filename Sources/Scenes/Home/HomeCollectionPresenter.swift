@@ -24,7 +24,6 @@ class HomeCollectionPresenter {
     }
 
     init() {
-        set(groups: []) // @TODO MAYBE HAVE A FIRST ITEM?
         set(rooms: [])
     }
 
@@ -47,10 +46,6 @@ class HomeCollectionPresenter {
             return 1
         }
 
-        if section.type == .groupList {
-            return section.data.count + 1
-        }
-
         return section.data.count
     }
 
@@ -70,7 +65,7 @@ class HomeCollectionPresenter {
 
     func configure(item: GroupCell, for indexPath: IndexPath) {
         let section = dataSource[indexPath.section]
-        guard let group = section.data[indexPath.row - 1] as? APIClient.Group else {
+        guard let group = section.data[indexPath.row] as? APIClient.Group else {
             print("Error getting active user for indexPath: \(indexPath)")
             return
         }
