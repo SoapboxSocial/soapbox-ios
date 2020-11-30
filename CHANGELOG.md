@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.4.2] - 2020-11-30
+
  - Fixed some UI issues.
 
 ## [1.4.0] - 2020-11-25
