@@ -1,13 +1,12 @@
 import UIKit
 
 class TextView: UITextView {
-    
     public var maxLength: Int?
-    
+
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
         setup()
-        
+
         delegate = self
     }
 
@@ -46,7 +45,7 @@ extension TextView: UITextViewDelegate {
         guard let max = maxLength else {
             return true
         }
-        
+
         return textView.text.count + (text.count - range.length) <= max
     }
 }

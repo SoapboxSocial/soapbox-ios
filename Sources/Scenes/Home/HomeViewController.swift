@@ -39,7 +39,6 @@ class HomeViewController: ViewController {
         collection.register(cellWithClass: RoomCell.self)
         collection.register(cellWithClass: ActiveUserCell.self)
         collection.register(cellWithClass: GroupCell.self)
-        collection.register(cellWithClass: CreateGroupCell.self)
 
         collection.refreshControl = refresh
         refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -381,11 +380,16 @@ extension HomeViewController {
             }
 
         case let .groups(groups):
+
+            let previous = presenter.index(of: .groupList)
             presenter.set(groups: groups)
 
-            let index = presenter.index(of: .groupList)!
-            UIView.performWithoutAnimation {
-                self.collection.reloadSections(IndexSet(integer: index))
+            if let index = previous {
+                UIView.performWithoutAnimation {
+                    self.collection.reloadSections(IndexSet(integer: index))
+                }
+            } else {
+                collection.insertSections(IndexSet(integer: presenter.index(of: .groupList)!))
             }
         }
 
@@ -467,10 +471,6 @@ extension HomeViewController: UICollectionViewDataSource {
             presenter.configure(item: cell, for: indexPath)
             return cell
         case .groupList:
-            if indexPath.item == 0 {
-                return collectionView.dequeueReusableCell(withClass: CreateGroupCell.self, for: indexPath)
-            }
-
             let cell = collectionView.dequeueReusableCell(withClass: GroupCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
