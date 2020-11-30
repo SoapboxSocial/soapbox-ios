@@ -99,7 +99,7 @@ class RoomView: UIView {
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.register(cellWithClass: RoomMemberCell.self)
         collection.backgroundColor = .clear
-        collection.layer.masksToBounds = false
+        collection.layer.masksToBounds = true
 
         return collection
     }()
@@ -232,7 +232,7 @@ class RoomView: UIView {
         ])
 
         if UIScreen.main.bounds.height <= 736 {
-            members.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height - (68 + 20 + 32 + 40 + 104)).isActive = true
+            members.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height - (68 + 20 + 32 + 40 + 57 + 76)).isActive = true
         } else {
             members.heightAnchor.constraint(equalToConstant: UICollectionViewFlowLayout.heightForBubbleLayout(rows: 4, width: UIScreen.main.bounds.width)).isActive = true
         }
@@ -278,16 +278,18 @@ class RoomView: UIView {
             inviteUsersButton.widthAnchor.constraint(equalToConstant: 32),
         ])
 
+        bottomMuteButton.backgroundColor = .roomBackground
+
         NSLayoutConstraint.activate([
             bottomMuteButton.topAnchor.constraint(equalTo: foreground.bottomAnchor, constant: 10),
-            bottomMuteButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
-            bottomMuteButton.heightAnchor.constraint(equalToConstant: 32),
-            bottomMuteButton.widthAnchor.constraint(equalToConstant: 32),
+            bottomMuteButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+            bottomMuteButton.heightAnchor.constraint(equalToConstant: 56),
+            bottomMuteButton.widthAnchor.constraint(equalToConstant: 56),
         ])
 
         NSLayoutConstraint.activate([
             pasteButton.topAnchor.constraint(equalTo: foreground.bottomAnchor, constant: 10),
-            pasteButton.rightAnchor.constraint(equalTo: bottomMuteButton.leftAnchor, constant: -20),
+            pasteButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
             pasteButton.heightAnchor.constraint(equalToConstant: 32),
             pasteButton.widthAnchor.constraint(equalToConstant: 32),
         ])
@@ -296,7 +298,7 @@ class RoomView: UIView {
             buttonBar.topAnchor.constraint(equalTo: foreground.bottomAnchor, constant: -50),
             buttonBar.leftAnchor.constraint(equalTo: leftAnchor),
             buttonBar.rightAnchor.constraint(equalTo: rightAnchor),
-            buttonBar.bottomAnchor.constraint(equalTo: pasteButton.bottomAnchor, constant: 10),
+            buttonBar.bottomAnchor.constraint(equalTo: bottomMuteButton.bottomAnchor, constant: 10),
         ])
 
         let emojis = UIView()
@@ -332,7 +334,7 @@ class RoomView: UIView {
         }
 
         NSLayoutConstraint.activate([
-            emojis.topAnchor.constraint(equalTo: pasteButton.bottomAnchor, constant: 20),
+            emojis.topAnchor.constraint(equalTo: bottomMuteButton.bottomAnchor, constant: 20),
             emojis.rightAnchor.constraint(equalTo: left),
             emojis.heightAnchor.constraint(equalToConstant: 32),
             emojis.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -409,7 +411,7 @@ class RoomView: UIView {
     }
 
     static func height() -> CGFloat {
-        return UICollectionViewFlowLayout.heightForBubbleLayout(rows: 4, width: UIScreen.main.bounds.width) + 52 + 104
+        return UICollectionViewFlowLayout.heightForBubbleLayout(rows: 4, width: UIScreen.main.bounds.width) + 76 + 104
     }
 
     @objc private func pasteLink() {

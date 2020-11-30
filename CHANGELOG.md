@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - We made the mute button a bit more noticeable.
  - Moved the group creation button, uncluttering your home screen!
 
 ## [1.4.2] - 2020-11-30
