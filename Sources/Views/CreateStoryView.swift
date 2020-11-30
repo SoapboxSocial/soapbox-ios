@@ -30,7 +30,7 @@ class CreateStoryView: UIView {
         addSubview(image)
 
         let button = UIButton()
-        button.setImage(UIImage(systemName: "mic", withConfiguration: UIImage.SymbolConfiguration(pointSize: 30, weight: .heavy)), for: .normal)
+        button.setImage(UIImage(systemName: "mic.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 30, weight: .heavy)), for: .normal)
         button.tintColor = .black
         button.backgroundColor = .white
         button.translatesAutoresizingMaskIntoConstraints = false
