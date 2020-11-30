@@ -164,17 +164,18 @@ class RoomView: UIView {
         stack.translatesAutoresizingMaskIntoConstraints = false
         topBar.addSubview(stack)
 
-        if room.visibility == .private {
-            stack.addArrangedSubview(lock)
-
-            NSLayoutConstraint.activate([
-                lock.topAnchor.constraint(equalTo: stack.topAnchor, constant: 10),
-                lock.heightAnchor.constraint(equalToConstant: 20),
-                lock.widthAnchor.constraint(equalToConstant: 20),
-            ])
-        }
-
+        stack.addArrangedSubview(lock)
         stack.addArrangedSubview(name)
+
+        NSLayoutConstraint.activate([
+            lock.topAnchor.constraint(equalTo: name.topAnchor),
+            lock.heightAnchor.constraint(equalToConstant: 20),
+            lock.widthAnchor.constraint(equalToConstant: 20),
+        ])
+
+        if room.visibility == .public {
+            lock.isHidden = true
+        }
 
         let topButtonStack = UIStackView()
         topButtonStack.axis = .horizontal
@@ -216,10 +217,6 @@ class RoomView: UIView {
             exitButton.rightAnchor.constraint(equalTo: foreground.rightAnchor, constant: -20),
             exitButton.heightAnchor.constraint(equalToConstant: 32),
             exitButton.widthAnchor.constraint(equalToConstant: 32),
-        ])
-
-        NSLayoutConstraint.activate([
-            name.centerYAnchor.constraint(equalTo: stack.centerYAnchor),
         ])
 
         NSLayoutConstraint.activate([

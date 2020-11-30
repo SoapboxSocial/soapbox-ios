@@ -175,10 +175,12 @@ class RoomCell: UICollectionViewCell {
             lock.heightAnchor.constraint(equalToConstant: 20),
             lock.widthAnchor.constraint(equalToConstant: 20),
             lock.leftAnchor.constraint(equalTo: titleScroll.leftAnchor),
+            lock.centerYAnchor.constraint(equalTo: titleScroll.centerYAnchor),
         ])
 
         NSLayoutConstraint.activate([
-            title.centerYAnchor.constraint(equalTo: titleScroll.centerYAnchor),
+            titleScroll.heightAnchor.constraint(equalToConstant: 28),
+            titleScroll.bottomAnchor.constraint(equalTo: title.bottomAnchor),
         ])
 
         NSLayoutConstraint.activate([

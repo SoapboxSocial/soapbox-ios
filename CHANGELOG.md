@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fixed some UI issues.
+
 ## [1.4.0] - 2020-11-25
 
  - Groups can now be edited, add images or change descriptions!
