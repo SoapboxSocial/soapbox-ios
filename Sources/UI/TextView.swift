@@ -1,16 +1,14 @@
-//
-//  TextView.swift
-//  Soapbox
-//
-//  Created by Dean Eigenmann on 03.10.20.
-//
-
 import UIKit
 
 class TextView: UITextView {
+    
+    public var maxLength: Int?
+    
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
         setup()
+        
+        delegate = self
     }
 
     required init?(coder _: NSCoder) {
@@ -40,5 +38,15 @@ class TextView: UITextView {
         toolBar.setItems([flexible, barButton], animated: false)
 
         inputAccessoryView = toolBar
+    }
+}
+
+extension TextView: UITextViewDelegate {
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        guard let max = maxLength else {
+            return true
+        }
+        
+        return textView.text.count + (text.count - range.length) <= max
     }
 }
