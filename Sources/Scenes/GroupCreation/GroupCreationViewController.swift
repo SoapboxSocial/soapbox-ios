@@ -188,7 +188,7 @@ extension GroupCreationViewController {
         view.addSubview(button)
 
         descriptionText = TextView()
-        descriptionText.delegate = self
+        descriptionText.maxLength = 300
         descriptionText.translatesAutoresizingMaskIntoConstraints = false
         descriptionText.backgroundColor = .white
         descriptionText.textColor = .black
@@ -382,12 +382,6 @@ extension GroupCreationViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
-    }
-}
-
-extension GroupCreationViewController: UITextViewDelegate {
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        return textView.text.count + (text.count - range.length) <= 300
     }
 }
 

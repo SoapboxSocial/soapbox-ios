@@ -83,7 +83,7 @@ class EditGroupViewController: UIViewController {
         view.addSubview(descriptionLabel)
 
         descriptionTextField = TextView()
-        descriptionTextField.delegate = self
+        descriptionTextField.maxLength = 300
         descriptionTextField.translatesAutoresizingMaskIntoConstraints = false
         descriptionTextField.text = group.description
         view.addSubview(descriptionTextField)
@@ -154,11 +154,5 @@ extension EditGroupViewController: ImagePickerDelegate {
         guard image != nil else { return }
         imageButton.image = image
         self.image = image
-    }
-}
-
-extension EditGroupViewController: UITextViewDelegate {
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        return textView.text.count + (text.count - range.length) <= 300
     }
 }
