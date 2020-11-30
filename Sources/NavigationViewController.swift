@@ -54,8 +54,8 @@ class NavigationViewController: UINavigationController {
 
     @objc func didTapCreateRoom() {
         requestMicrophone {
-            let creationView = RoomCreationView()
-            creationView.delegate = self
+            let creationView = CreateStoryView()
+//            creationView.delegate = self
 
             self.creationDrawer = DrawerView(withView: creationView)
             self.creationDrawer!.cornerRadius = 25.0
