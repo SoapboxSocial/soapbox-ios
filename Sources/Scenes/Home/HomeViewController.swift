@@ -380,7 +380,6 @@ extension HomeViewController {
             }
 
         case let .groups(groups):
-
             let previous = presenter.index(of: .groupList)
             presenter.set(groups: groups)
 

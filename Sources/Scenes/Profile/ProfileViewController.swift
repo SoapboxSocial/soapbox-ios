@@ -180,7 +180,6 @@ class ProfileViewController: ViewController {
 
         groups.delegate = self
         groupsContainer.addSubview(groups)
-        groupsContainer.isHidden = true
 
         content.addArrangedSubview(groupsContainer)
 
