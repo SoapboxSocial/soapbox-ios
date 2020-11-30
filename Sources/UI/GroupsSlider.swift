@@ -28,13 +28,16 @@ class GroupsSlider: UIView {
     private let textColor: UIColor
     private let imageBackground: UIColor
     private let markSelection: Bool
-    private let allowCreation: Bool
+    var allowCreation: Bool = false {
+        didSet {
+            collection.reloadData()
+        }
+    }
 
-    init(textColor: UIColor = .label, imageBackground: UIColor = .brandColor, markSelection: Bool = false, allowCreation: Bool = false) {
+    init(textColor: UIColor = .label, imageBackground: UIColor = .brandColor, markSelection: Bool = false) {
         self.textColor = textColor
         self.imageBackground = imageBackground
         self.markSelection = markSelection
-        self.allowCreation = allowCreation
 
         super.init(frame: CGRect.zero)
 
@@ -98,7 +101,8 @@ class GroupsSlider: UIView {
 extension GroupsSlider: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if allowCreation, indexPath.item == 0 {
-            debugPrint("yay")
+            delegate?.didTapGroupCreation?()
+            return
         }
 
         collection.indexPathsForSelectedItems?.forEach { path in
@@ -116,7 +120,12 @@ extension GroupsSlider: UICollectionViewDelegate {
             }
         }
 
-        let id = data[indexPath.item].id
+        var item = indexPath.item
+        if allowCreation {
+            item = item - 1
+        }
+
+        let id = data[item].id
         selectedGroup = id
         delegate?.didSelect(group: id)
 
@@ -175,9 +184,14 @@ extension GroupsSlider: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if indexPath.item == 0, allowCreation {
+            let cell = collectionView.dequeueReusableCell(withClass: CreateGroupCell.self, for: indexPath)
+            return cell
+        }
+
         var item = indexPath.item
         if allowCreation {
-            item -= 1
+            item = item - 1
         }
 
         let group = data[item]

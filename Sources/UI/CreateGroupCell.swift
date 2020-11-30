@@ -1,38 +1,65 @@
 import UIKit
 
 class CreateGroupCell: UICollectionViewCell {
+    private var image: UIImageView = {
+        let view = UIImageView()
+        view.backgroundColor = UIColor.brandColor.withAlphaComponent(0.5)
+        view.tintColor = .brandColor
+        view.clipsToBounds = true
+        view.layer.masksToBounds = true
+        view.contentMode = .scaleAspectFill
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
+    private var title: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .rounded(forTextStyle: .caption2, weight: .semibold)
+        label.textColor = .label
+        label.textAlignment = .center
+        return label
+    }()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
 
         backgroundColor = .clear
 
-        contentView.backgroundColor = UIColor.brandColor.withAlphaComponent(0.5)
         contentView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.layer.cornerRadius = 40 / 2
 
-        let image = UIImageView(image: UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(weight: .semibold)))
-        image.translatesAutoresizingMaskIntoConstraints = false
-        image.tintColor = .brandColor
+        title.text = NSLocalizedString("new_group", comment: "")
+
+        contentView.addSubview(title)
         contentView.addSubview(image)
 
         NSLayoutConstraint.activate([
-            image.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 4),
-            image.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -4),
-            image.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
-            image.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
+            contentView.leftAnchor.constraint(equalTo: leftAnchor),
+            contentView.rightAnchor.constraint(equalTo: rightAnchor),
         ])
 
         NSLayoutConstraint.activate([
-            contentView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            contentView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
-            contentView.heightAnchor.constraint(equalToConstant: 40),
-            contentView.widthAnchor.constraint(equalToConstant: 40),
-            contentView.rightAnchor.constraint(equalTo: rightAnchor),
-            contentView.leftAnchor.constraint(equalTo: leftAnchor),
+            image.heightAnchor.constraint(equalToConstant: frame.size.width),
+            image.widthAnchor.constraint(equalToConstant: frame.size.width),
+            image.topAnchor.constraint(equalTo: contentView.topAnchor),
+            image.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 4),
+            title.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            title.rightAnchor.constraint(equalTo: contentView.rightAnchor),
         ])
     }
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        image.image = UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(weight: .semibold))
+        image.layer.cornerRadius = frame.width / 2
     }
 }

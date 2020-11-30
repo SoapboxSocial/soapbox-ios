@@ -180,6 +180,7 @@ class ProfileViewController: ViewController {
 
         groups.delegate = self
         groupsContainer.addSubview(groups)
+        groupsContainer.isHidden = true
 
         content.addArrangedSubview(groupsContainer)
 
@@ -279,6 +280,8 @@ extension ProfileViewController: ProfilePresenterOutput {
         headerView.button.setTitle(NSLocalizedString("edit", comment: ""), for: .normal)
         headerView.button.addTarget(self, action: #selector(editPressed), for: .touchUpInside)
         followsYouBadge.isHidden = true
+        groupsContainer.isHidden = false
+        groups.allowCreation = true
     }
 
     func display(groups: [APIClient.Group]) {
@@ -350,6 +353,10 @@ extension ProfileViewController: GroupsSliderDelegate {
 
     func didSelect(group: Int) {
         navigationController?.pushViewController(SceneFactory.createGroupViewController(id: group), animated: true)
+    }
+
+    func didTapGroupCreation() {
+        present(SceneFactory.createGroupCreationViewController(), animated: true)
     }
 }
 

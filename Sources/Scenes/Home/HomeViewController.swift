@@ -440,11 +440,7 @@ extension HomeViewController: UICollectionViewDelegate {
         case .noRooms:
             return
         case .groupList:
-            if indexPath.item == 0 {
-                return present(SceneFactory.createGroupCreationViewController(), animated: true)
-            }
-
-            let group = presenter.item(for: IndexPath(item: indexPath.item - 1, section: indexPath.section), ofType: APIClient.Group.self)
+            let group = presenter.item(for: IndexPath(item: indexPath.item, section: indexPath.section), ofType: APIClient.Group.self)
             navigationController?.pushViewController(SceneFactory.createGroupViewController(id: group.id), animated: true)
         }
     }
