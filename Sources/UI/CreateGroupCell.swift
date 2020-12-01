@@ -6,9 +6,10 @@ class CreateGroupCell: UICollectionViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = UIColor.brandColor.withAlphaComponent(0.5)
         view.clipsToBounds = true
+        view.layer.cornerRadius = 56 / 2
         view.layer.masksToBounds = true
 
-        let image = UIImageView(image: UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 56, weight: .semibold)))
+        let image = UIImageView(image: UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 40, weight: .semibold)))
         image.translatesAutoresizingMaskIntoConstraints = false
         image.tintColor = .brandColor
         view.addSubview(image)
@@ -64,11 +65,5 @@ class CreateGroupCell: UICollectionViewCell {
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-
-        image.layer.cornerRadius = image.frame.width / 2
     }
 }
