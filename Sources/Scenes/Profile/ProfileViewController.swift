@@ -42,15 +42,15 @@ class ProfileViewController: ViewController {
     }()
 
     private let followsYouBadge: UIView = {
-        let placeholder = UIView()
-        placeholder.translatesAutoresizingMaskIntoConstraints = false
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
 
         let badge = UIView()
         badge.backgroundColor = .systemGray5
         badge.translatesAutoresizingMaskIntoConstraints = false
         badge.layer.cornerRadius = 5
 
-        placeholder.addSubview(badge)
+        view.addSubview(badge)
 
         let followsYouLabel = UILabel()
         followsYouLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -60,8 +60,8 @@ class ProfileViewController: ViewController {
         badge.addSubview(followsYouLabel)
 
         NSLayoutConstraint.activate([
-            badge.topAnchor.constraint(equalTo: placeholder.topAnchor),
-            placeholder.bottomAnchor.constraint(equalTo: badge.bottomAnchor),
+            badge.topAnchor.constraint(equalTo: view.topAnchor),
+            view.bottomAnchor.constraint(equalTo: badge.bottomAnchor),
         ])
 
         NSLayoutConstraint.activate([
@@ -71,7 +71,7 @@ class ProfileViewController: ViewController {
             followsYouLabel.bottomAnchor.constraint(equalTo: badge.bottomAnchor),
         ])
 
-        return placeholder
+        return view
     }()
 
     private let groupsContainer: UIView = {
