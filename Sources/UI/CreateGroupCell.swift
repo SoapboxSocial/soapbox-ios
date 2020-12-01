@@ -1,14 +1,23 @@
 import UIKit
 
 class CreateGroupCell: UICollectionViewCell {
-    private var image: UIImageView = {
-        let view = UIImageView()
+    private var image: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = UIColor.brandColor.withAlphaComponent(0.5)
-        view.tintColor = .brandColor
         view.clipsToBounds = true
         view.layer.masksToBounds = true
-        view.contentMode = .scaleAspectFill
-        view.translatesAutoresizingMaskIntoConstraints = false
+
+        let image = UIImageView(image: UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 56, weight: .semibold)))
+        image.translatesAutoresizingMaskIntoConstraints = false
+        image.tintColor = .brandColor
+        view.addSubview(image)
+
+        NSLayoutConstraint.activate([
+            image.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            image.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+        ])
+
         return view
     }()
 
@@ -39,14 +48,15 @@ class CreateGroupCell: UICollectionViewCell {
         ])
 
         NSLayoutConstraint.activate([
-            image.heightAnchor.constraint(equalToConstant: frame.size.width),
-            image.widthAnchor.constraint(equalToConstant: frame.size.width),
-            image.topAnchor.constraint(equalTo: contentView.topAnchor),
+            image.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
+            image.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 4),
+            image.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -4),
+            image.heightAnchor.constraint(equalTo: image.widthAnchor),
             image.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
         ])
 
         NSLayoutConstraint.activate([
-            title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 4),
+            title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 8),
             title.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             title.rightAnchor.constraint(equalTo: contentView.rightAnchor),
         ])
@@ -59,7 +69,6 @@ class CreateGroupCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        image.image = UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(weight: .semibold))
-        image.layer.cornerRadius = frame.width / 2
+        image.layer.cornerRadius = image.frame.width / 2
     }
 }
