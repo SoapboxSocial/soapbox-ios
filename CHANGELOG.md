@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.5.0] - 2020-12-01
+
  - Added the ability to delete your groups.
  - Cleaned up some UI issues on the profile page.
  - We made the mute button a bit more noticeable.
