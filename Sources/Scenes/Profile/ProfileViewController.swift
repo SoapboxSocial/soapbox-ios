@@ -65,10 +65,10 @@ class ProfileViewController: ViewController {
         ])
 
         NSLayoutConstraint.activate([
-            followsYouLabel.topAnchor.constraint(equalTo: badge.topAnchor),
+            followsYouLabel.topAnchor.constraint(equalTo: badge.topAnchor, constant: 2),
             followsYouLabel.leftAnchor.constraint(equalTo: badge.leftAnchor, constant: 8),
             followsYouLabel.rightAnchor.constraint(equalTo: badge.rightAnchor, constant: -8),
-            followsYouLabel.bottomAnchor.constraint(equalTo: badge.bottomAnchor),
+            followsYouLabel.bottomAnchor.constraint(equalTo: badge.bottomAnchor, constant: -2),
         ])
 
         return view
