@@ -34,6 +34,16 @@ class ProfileHeaderView: UIView {
         return button
     }()
 
+    var stack: UIStackView = {
+        let view = UIStackView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.spacing = 10
+        view.distribution = .fill
+        view.alignment = .fill
+        view.axis = .vertical
+        return view
+    }()
+
     init() {
         super.init(frame: .zero)
 
@@ -41,8 +51,6 @@ class ProfileHeaderView: UIView {
 
         addSubview(image)
         addSubview(button)
-        addSubview(titleLabel)
-        addSubview(descriptionLabel)
 
         NSLayoutConstraint.activate([
             image.topAnchor.constraint(equalTo: topAnchor, constant: 20),
@@ -50,8 +58,19 @@ class ProfileHeaderView: UIView {
             image.heightAnchor.constraint(equalToConstant: 96),
         ])
 
+        addSubview(stack)
+
+        stack.addArrangedSubview(titleLabel)
+        stack.addArrangedSubview(descriptionLabel)
+
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 20),
+            stack.leftAnchor.constraint(equalTo: leftAnchor),
+            stack.rightAnchor.constraint(equalTo: rightAnchor),
+            stack.bottomAnchor.constraint(equalTo: descriptionLabel.bottomAnchor),
+            stack.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
             titleLabel.leftAnchor.constraint(equalTo: leftAnchor),
             titleLabel.rightAnchor.constraint(equalTo: rightAnchor),
         ])
@@ -62,7 +81,6 @@ class ProfileHeaderView: UIView {
         ])
 
         NSLayoutConstraint.activate([
-            descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10),
             descriptionLabel.leftAnchor.constraint(equalTo: leftAnchor),
             descriptionLabel.rightAnchor.constraint(equalTo: rightAnchor),
         ])

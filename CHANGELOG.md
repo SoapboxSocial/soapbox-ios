@@ -1,7 +1,8 @@
 # Changelog
 
 ## [Unreleased]
-
+ 
+ - Cleaned up some UI issues on the profile page.
  - We made the mute button a bit more noticeable.
  - Moved the group creation button, uncluttering your home screen!
 
