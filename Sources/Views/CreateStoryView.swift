@@ -1,4 +1,5 @@
 import AlamofireImage
+import AVFoundation
 import UIKit
 
 class CreateStoryView: UIView {
@@ -35,6 +36,8 @@ class CreateStoryView: UIView {
         button.backgroundColor = .white
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 70 / 2
+        button.addTarget(self, action: #selector(startRecording), for: .touchDown)
+        button.addTarget(self, action: #selector(endRecording), for: [.touchUpInside])
         addSubview(button)
 
         NSLayoutConstraint.activate([
@@ -62,9 +65,24 @@ class CreateStoryView: UIView {
             button.centerXAnchor.constraint(equalTo: centerXAnchor),
             button.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -40),
         ])
+
+        AVAudioSession.sharedInstance().requestRecordPermission { granted in
+            if granted {
+            } else {
+                // @TODO CLOSE SELF
+            }
+        }
     }
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    @objc private func startRecording() {
+        debugPrint("started")
+    }
+
+    @objc private func endRecording() {
+        debugPrint("ended")
     }
 }
