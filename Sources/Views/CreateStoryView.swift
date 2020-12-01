@@ -67,9 +67,8 @@ class CreateStoryView: UIView {
         ])
 
         AVAudioSession.sharedInstance().requestRecordPermission { granted in
-            if granted {
-            } else {
-                // @TODO CLOSE SELF
+            if !granted {
+                // @TODO ERROR
             }
         }
     }
