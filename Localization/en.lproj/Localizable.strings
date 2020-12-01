@@ -170,3 +170,5 @@
 
 "description" = "Description";
 "new_group" = "New Group";
+
+"delete" = "Delete";

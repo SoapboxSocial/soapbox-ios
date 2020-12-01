@@ -232,4 +232,8 @@ extension GroupViewController: GroupPresenterOutput {
         let view = EditGroupViewController(group: group, parent: self)
         present(view, animated: true)
     }
+
+    public func popToRoot() {
+        navigationController?.popViewController(animated: true)
+    }
 }

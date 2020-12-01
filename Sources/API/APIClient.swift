@@ -432,6 +432,10 @@ extension APIClient {
             callback(.success(true))
         }
     }
+
+    func deleteGroup(group: Int, callback: @escaping (Result<Void, Error>) -> Void) {
+        void(path: "/v1/groups/" + String(group), method: .delete, callback: callback)
+    }
 }
 
 extension APIClient {
