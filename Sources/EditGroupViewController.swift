@@ -88,6 +88,14 @@ class EditGroupViewController: UIViewController {
         descriptionTextField.text = group.description
         view.addSubview(descriptionTextField)
 
+        let deleteButton = Button(size: .regular)
+        deleteButton.translatesAutoresizingMaskIntoConstraints = false
+        deleteButton.backgroundColor = .systemRed
+        deleteButton.setTitleColor(.black, for: [.normal, .selected])
+        deleteButton.setTitle(NSLocalizedString("delete", comment: ""), for: .normal)
+        deleteButton.addTarget(self, action: #selector(deleteGroup), for: .touchUpInside)
+        view.addSubview(deleteButton)
+
         NSLayoutConstraint.activate([
             imageButton.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 40),
             imageButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
@@ -105,6 +113,13 @@ class EditGroupViewController: UIViewController {
             descriptionTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             descriptionTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             descriptionTextField.heightAnchor.constraint(equalToConstant: 80),
+        ])
+
+        NSLayoutConstraint.activate([
+            deleteButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            deleteButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            deleteButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            deleteButton.heightAnchor.constraint(equalToConstant: 48),
         ])
     }
 
@@ -125,6 +140,39 @@ class EditGroupViewController: UIViewController {
                 }
             }
         }
+    }
+
+    @objc private func deleteGroup() {
+        let alert = UIAlertController(
+            title: NSLocalizedString("are_you_sure", comment: ""),
+            message: nil,
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .destructive, handler: { _ in
+            APIClient().deleteGroup(group: self.group.id) { result in
+                DispatchQueue.main.async {
+                    self.activityIndicator.stopAnimating()
+                    self.activityIndicator.isHidden = true
+                }
+
+                switch result {
+                case .failure:
+                    self.displayError()
+                case .success:
+                    DispatchQueue.main.async {
+                        self.dismiss(animated: true, completion: {
+                            DispatchQueue.main.async {
+                                self.parentVC.popToRoot()
+                            }
+                        })
+                    }
+                }
+            }
+        }))
+
+        present(alert, animated: true)
     }
 
     @objc private func selectImage() {

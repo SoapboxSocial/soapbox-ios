@@ -43,9 +43,34 @@ class ProfileViewController: ViewController {
 
     private let followsYouBadge: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemGray5
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.cornerRadius = 5
+
+        let badge = UIView()
+        badge.backgroundColor = .systemGray5
+        badge.translatesAutoresizingMaskIntoConstraints = false
+        badge.layer.cornerRadius = 5
+
+        view.addSubview(badge)
+
+        let followsYouLabel = UILabel()
+        followsYouLabel.translatesAutoresizingMaskIntoConstraints = false
+        followsYouLabel.font = .rounded(forTextStyle: .body, weight: .semibold)
+        followsYouLabel.textColor = .systemGray2
+        followsYouLabel.text = NSLocalizedString("follows_you", comment: "")
+        badge.addSubview(followsYouLabel)
+
+        NSLayoutConstraint.activate([
+            badge.topAnchor.constraint(equalTo: view.topAnchor),
+            view.bottomAnchor.constraint(equalTo: badge.bottomAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            followsYouLabel.topAnchor.constraint(equalTo: badge.topAnchor, constant: 2),
+            followsYouLabel.leftAnchor.constraint(equalTo: badge.leftAnchor, constant: 8),
+            followsYouLabel.rightAnchor.constraint(equalTo: badge.rightAnchor, constant: -8),
+            followsYouLabel.bottomAnchor.constraint(equalTo: badge.bottomAnchor, constant: -2),
+        ])
+
         return view
     }()
 
@@ -93,24 +118,12 @@ class ProfileViewController: ViewController {
         headerView.descriptionLabel.font = .rounded(forTextStyle: .body, weight: .regular)
         content.addArrangedSubview(headerView)
 
-        let followsYouLabel = UILabel()
-        followsYouLabel.translatesAutoresizingMaskIntoConstraints = false
-        followsYouLabel.font = .rounded(forTextStyle: .body, weight: .semibold)
-        followsYouLabel.textColor = .systemGray2
-        followsYouLabel.text = NSLocalizedString("follows_you", comment: "")
-        followsYouBadge.addSubview(followsYouLabel)
-        headerView.addSubview(followsYouBadge)
+        headerView.stack.insertArrangedSubview(followsYouBadge, at: 1)
 
         NSLayoutConstraint.activate([
-            followsYouBadge.centerYAnchor.constraint(equalTo: headerView.button.centerYAnchor),
-            followsYouBadge.rightAnchor.constraint(equalTo: headerView.button.leftAnchor, constant: -20),
-        ])
-
-        NSLayoutConstraint.activate([
-            followsYouLabel.topAnchor.constraint(equalTo: followsYouBadge.topAnchor),
-            followsYouLabel.leftAnchor.constraint(equalTo: followsYouBadge.leftAnchor, constant: 8),
-            followsYouLabel.rightAnchor.constraint(equalTo: followsYouBadge.rightAnchor, constant: -8),
-            followsYouLabel.bottomAnchor.constraint(equalTo: followsYouBadge.bottomAnchor),
+            followsYouBadge.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            followsYouBadge.rightAnchor.constraint(equalTo: view.rightAnchor),
+            followsYouBadge.bottomAnchor.constraint(equalTo: followsYouBadge.bottomAnchor),
         ])
 
         let statistics = UIView()

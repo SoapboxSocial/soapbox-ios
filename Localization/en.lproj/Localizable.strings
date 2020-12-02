@@ -170,5 +170,6 @@
 
 "description" = "Description";
 "new_group" = "New Group";
+"delete" = "Delete";
 
 "hold_to_record" = "Hold to record";
