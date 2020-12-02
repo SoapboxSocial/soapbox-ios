@@ -59,6 +59,7 @@ class NavigationViewController: UINavigationController {
 
             self.creationDrawer = DrawerView(withView: creationView)
             self.creationDrawer!.cornerRadius = 25.0
+            self.creationDrawer!.enabled = false
             self.creationDrawer!.attachTo(view: self.view)
             self.creationDrawer!.backgroundEffect = nil
             self.creationDrawer!.snapPositions = [.closed, .open]

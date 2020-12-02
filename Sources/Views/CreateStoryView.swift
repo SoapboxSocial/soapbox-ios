@@ -3,6 +3,19 @@ import AVFoundation
 import UIKit
 
 class CreateStoryView: UIView {
+    private static let configuration = UIImage.SymbolConfiguration(pointSize: 30, weight: .heavy)
+
+    private let button: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "mic.fill", withConfiguration: CreateStoryView.configuration), for: .normal)
+        button.setImage(UIImage(systemName: "stop.fill", withConfiguration: CreateStoryView.configuration), for: [.highlighted, .selected])
+        button.tintColor = .black
+        button.backgroundColor = .white
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 70 / 2
+        return button
+    }()
+
     init() {
         super.init(frame: CGRect.zero)
 
@@ -30,14 +43,8 @@ class CreateStoryView: UIView {
         image.translatesAutoresizingMaskIntoConstraints = false
         addSubview(image)
 
-        let button = UIButton()
-        button.setImage(UIImage(systemName: "mic.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 30, weight: .heavy)), for: .normal)
-        button.tintColor = .black
-        button.backgroundColor = .white
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 70 / 2
         button.addTarget(self, action: #selector(startRecording), for: .touchDown)
-        button.addTarget(self, action: #selector(endRecording), for: [.touchUpInside])
+        button.addTarget(self, action: #selector(endRecording), for: [.touchUpInside, .touchUpOutside])
         addSubview(button)
 
         NSLayoutConstraint.activate([
@@ -78,10 +85,12 @@ class CreateStoryView: UIView {
     }
 
     @objc private func startRecording() {
+        button.isSelected.toggle()
         debugPrint("started")
     }
 
     @objc private func endRecording() {
+        button.isSelected.toggle()
         debugPrint("ended")
     }
 }
