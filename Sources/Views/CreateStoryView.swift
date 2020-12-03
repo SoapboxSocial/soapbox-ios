@@ -67,6 +67,7 @@ class CreateStoryView: UIView {
         addSubview(label)
 
         let image = UIImageView()
+        image.backgroundColor = .lightBrandColor
         image.layer.cornerRadius = 140 / 2
         image.layer.masksToBounds = true
         image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: "image")!))
@@ -170,6 +171,7 @@ class CreateStoryView: UIView {
         })
 
         recorder.stop()
+        progress.progress = 0.0
     }
 
     private func recordingText() -> NSAttributedString {

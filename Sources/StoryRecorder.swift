@@ -30,6 +30,10 @@ class StoryRecorder {
     }
 
     func clear() {
+        // @todo delete samples
+        chunkFileNumber = 0
+        outputFramesPerSecond = 0
+        chunkFrames = 0
         engine.inputNode.removeTap(onBus: bus)
     }
 
