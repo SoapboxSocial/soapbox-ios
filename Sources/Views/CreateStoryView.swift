@@ -16,6 +16,18 @@ class CreateStoryView: UIView {
         return button
     }()
 
+    private let progress: ProgressView = {
+        let progress = ProgressView()
+        progress.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+        progress.progressTintColor = .white
+        progress.translatesAutoresizingMaskIntoConstraints = false
+        progress.progress = 0.0
+        return progress
+    }()
+
+    private var time: Float = 0.0
+    private var timer: Timer!
+
     init() {
         super.init(frame: CGRect.zero)
 
@@ -47,6 +59,8 @@ class CreateStoryView: UIView {
         button.addTarget(self, action: #selector(endRecording), for: [.touchUpInside, .touchUpOutside])
         addSubview(button)
 
+        addSubview(progress)
+
         NSLayoutConstraint.activate([
             image.centerXAnchor.constraint(equalTo: centerXAnchor),
             image.heightAnchor.constraint(equalToConstant: 140),
@@ -59,6 +73,13 @@ class CreateStoryView: UIView {
             handle.heightAnchor.constraint(equalToConstant: 5),
             handle.widthAnchor.constraint(equalToConstant: 36),
             handle.topAnchor.constraint(equalTo: topAnchor, constant: 5),
+        ])
+
+        NSLayoutConstraint.activate([
+            progress.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            progress.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            progress.bottomAnchor.constraint(equalTo: button.topAnchor, constant: -80),
+            progress.heightAnchor.constraint(equalToConstant: 10),
         ])
 
         NSLayoutConstraint.activate([
@@ -86,11 +107,18 @@ class CreateStoryView: UIView {
 
     @objc private func startRecording() {
         button.isSelected.toggle()
-        debugPrint("started")
+        progress.progress = 0.0
+
+        timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
+            self.time += 0.001
+            self.progress.setProgress(self.time / 10, animated: true)
+        })
+
+        timer.fire()
     }
 
     @objc private func endRecording() {
         button.isSelected.toggle()
-        debugPrint("ended")
+        timer.invalidate()
     }
 }
