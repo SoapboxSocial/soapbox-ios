@@ -141,7 +141,7 @@ class CreateStoryView: UIView {
 
     @objc private func startRecording() {
         button.isSelected.toggle()
-        progress.progress = 0.0
+        reset()
 
         timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
             self.time += 0.001
@@ -185,5 +185,14 @@ class CreateStoryView: UIView {
         ]))
 
         return str
+    }
+
+    private func reset() {
+        progress.progress = 0.0
+        maxLength = snippetLength
+        time = 0.0
+        playButton.isHidden = true
+        playButton.isSelected = false
+        recorder.clear()
     }
 }

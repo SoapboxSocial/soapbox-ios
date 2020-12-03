@@ -4,6 +4,7 @@ class StoryRecorder {
     private let storyLength: Double
 
     private let engine = AVAudioEngine()
+    private let bus = 0
 
     private var chunkFile: AVAudioFile!
     private var outputFramesPerSecond = Float64(0) // aka input sample rate
@@ -17,7 +18,6 @@ class StoryRecorder {
     func start() {
         let input = engine.inputNode
 
-        let bus = 0
         let inputFormat = input.inputFormat(forBus: bus)
 
         input.installTap(onBus: bus, bufferSize: 512, format: inputFormat) { (buffer, _) -> Void in
@@ -27,6 +27,10 @@ class StoryRecorder {
         }
 
         try! engine.start()
+    }
+
+    func clear() {
+        engine.inputNode.removeTap(onBus: bus)
     }
 
     func stop() {
