@@ -35,13 +35,17 @@ class CreateStoryView: UIView {
 
     private let playButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "play", withConfiguration: CreateStoryView.configuration), for: .normal)
-        button.setImage(UIImage(systemName: "pause", withConfiguration: CreateStoryView.configuration), for: .selected)
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .heavy)
+        button.setImage(UIImage(systemName: "play", withConfiguration: config), for: .normal)
+        button.setImage(UIImage(systemName: "pause", withConfiguration: config), for: .selected)
         button.tintColor = .white
         return button
     }()
 
-    private let maxLength = Float(10.0)
+    private let snippetLength = Float(10.0)
+    private var maxLength = Float(10.0)
+
+    private let recorder = StoryRecorder(length: 10.0)
 
     private var time: Float = 0.0
     private var timer: Timer!
@@ -142,10 +146,16 @@ class CreateStoryView: UIView {
         timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
             self.time += 0.001
             self.progress.setProgress(self.time / self.maxLength, animated: true)
+
+            if self.time >= self.maxLength {
+                self.maxLength += self.snippetLength
+                self.progress.setProgress(self.time / self.maxLength, animated: false)
+            }
         })
 
         label.attributedText = recordingText()
         timer.fire()
+        recorder.start()
     }
 
     @objc private func endRecording() {
@@ -158,6 +168,8 @@ class CreateStoryView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.playButton.isHidden = false
         })
+
+        recorder.stop()
     }
 
     private func recordingText() -> NSAttributedString {
