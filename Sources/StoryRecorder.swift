@@ -5,10 +5,10 @@ class StoryRecorder {
 
     private let engine = AVAudioEngine()
 
-    var chunkFile: AVAudioFile!
-    var outputFramesPerSecond: Float64 = 0 // aka input sample rate
-    var chunkFrames: AVAudioFrameCount = 0
-    var chunkFileNumber: Int = 0
+    private var chunkFile: AVAudioFile!
+    private var outputFramesPerSecond = Float64(0) // aka input sample rate
+    private var chunkFrames = AVAudioFrameCount(0)
+    private var chunkFileNumber = 0
 
     init(length: Double) {
         storyLength = length
