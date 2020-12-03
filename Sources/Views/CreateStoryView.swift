@@ -25,6 +25,24 @@ class CreateStoryView: UIView {
         return progress
     }()
 
+    private let label: UILabel = {
+        let label = UILabel()
+        label.font = .rounded(forTextStyle: .title1, weight: .bold)
+        label.textColor = .white
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private let playButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "play", withConfiguration: CreateStoryView.configuration), for: .normal)
+        button.setImage(UIImage(systemName: "pause", withConfiguration: CreateStoryView.configuration), for: .selected)
+        button.tintColor = .white
+        return button
+    }()
+
+    private let maxLength = Float(10.0)
+
     private var time: Float = 0.0
     private var timer: Timer!
 
@@ -41,11 +59,7 @@ class CreateStoryView: UIView {
         handle.layer.cornerRadius = 2.5
         addSubview(handle)
 
-        let label = UILabel()
-        label.font = .rounded(forTextStyle: .title1, weight: .bold)
-        label.textColor = .white
         label.text = NSLocalizedString("hold_to_record", comment: "")
-        label.translatesAutoresizingMaskIntoConstraints = false
         addSubview(label)
 
         let image = UIImageView()
@@ -59,7 +73,18 @@ class CreateStoryView: UIView {
         button.addTarget(self, action: #selector(endRecording), for: [.touchUpInside, .touchUpOutside])
         addSubview(button)
 
-        addSubview(progress)
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.spacing = 20
+        stack.distribution = .fill
+        stack.alignment = .center
+        stack.axis = .horizontal
+        addSubview(stack)
+
+        stack.addArrangedSubview(playButton)
+        stack.addArrangedSubview(progress)
+
+        playButton.isHidden = true
 
         NSLayoutConstraint.activate([
             image.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -76,9 +101,14 @@ class CreateStoryView: UIView {
         ])
 
         NSLayoutConstraint.activate([
-            progress.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            stack.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            stack.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            stack.bottomAnchor.constraint(equalTo: button.topAnchor, constant: -80),
+            stack.heightAnchor.constraint(equalToConstant: 25),
+        ])
+
+        NSLayoutConstraint.activate([
             progress.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
-            progress.bottomAnchor.constraint(equalTo: button.topAnchor, constant: -80),
             progress.heightAnchor.constraint(equalToConstant: 10),
         ])
 
@@ -111,14 +141,37 @@ class CreateStoryView: UIView {
 
         timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
             self.time += 0.001
-            self.progress.setProgress(self.time / 10, animated: true)
+            self.progress.setProgress(self.time / self.maxLength, animated: true)
         })
 
+        label.attributedText = recordingText()
         timer.fire()
     }
 
     @objc private func endRecording() {
         button.isSelected.toggle()
         timer.invalidate()
+
+        let paused = NSLocalizedString("paused", comment: "")
+        label.text = "● " + paused
+
+        UIView.animate(withDuration: 0.3, animations: {
+            self.playButton.isHidden = false
+        })
+    }
+
+    private func recordingText() -> NSAttributedString {
+        let str = NSMutableAttributedString()
+        str.append(NSAttributedString(string: "● ", attributes: [
+            NSAttributedString.Key.foregroundColor: UIColor.systemRed,
+            NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .title1, weight: .bold),
+        ]))
+
+        str.append(NSAttributedString(string: NSLocalizedString("recording", comment: ""), attributes: [
+            NSAttributedString.Key.foregroundColor: UIColor.white,
+            NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .title1, weight: .bold),
+        ]))
+
+        return str
     }
 }
