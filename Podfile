@@ -20,7 +20,6 @@ target 'Soapbox' do
   pod 'Swifter', git: 'git@github.com:mattdonnelly/Swifter.git'
   pod 'CCBottomRefreshControl'
   pod 'BetterSegmentedControl', '~> 2.0'
-  pod 'DDProgressView'
 
   target 'SoapboxTests' do
     inherit! :search_paths
