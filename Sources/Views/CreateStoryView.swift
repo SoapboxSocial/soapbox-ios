@@ -2,6 +2,11 @@ import AlamofireImage
 import AVFoundation
 import UIKit
 
+protocol CreateStoryViewDelegate {
+    func didStartRecording()
+    func didEndRecording()
+}
+
 class CreateStoryView: UIView {
     private static let configuration = UIImage.SymbolConfiguration(pointSize: 30, weight: .heavy)
 
@@ -42,6 +47,15 @@ class CreateStoryView: UIView {
         return button
     }()
 
+    private let shareButton: UIButton = {
+        let button = Button(size: .regular)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = .white
+        button.setTitleColor(.black, for: .normal)
+        button.setTitle(NSLocalizedString("post", comment: ""), for: .normal)
+        return button
+    }()
+
     private let snippetLength = Float(10.0)
     private var maxLength = Float(10.0)
 
@@ -50,6 +64,8 @@ class CreateStoryView: UIView {
     private var timer: Timer!
 
     private var playTime = Float(0.0)
+
+    var delegate: CreateStoryViewDelegate?
 
     init() {
         super.init(frame: CGRect.zero)
@@ -78,6 +94,9 @@ class CreateStoryView: UIView {
         button.addTarget(self, action: #selector(startRecording), for: .touchDown)
         button.addTarget(self, action: #selector(endRecording), for: [.touchUpInside, .touchUpOutside])
         addSubview(button)
+
+        shareButton.isHidden = true
+        addSubview(shareButton)
 
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -131,6 +150,12 @@ class CreateStoryView: UIView {
             button.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -40),
         ])
 
+        NSLayoutConstraint.activate([
+            shareButton.heightAnchor.constraint(equalToConstant: 40),
+            shareButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            shareButton.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+        ])
+
         AVAudioSession.sharedInstance().requestRecordPermission { granted in
             if !granted {
                 // @TODO ERROR
@@ -143,6 +168,8 @@ class CreateStoryView: UIView {
     }
 
     @objc private func startRecording() {
+        delegate?.didStartRecording()
+
         button.isSelected.toggle()
         reset()
 
@@ -163,6 +190,8 @@ class CreateStoryView: UIView {
     }
 
     @objc private func endRecording() {
+        delegate?.didEndRecording()
+
         button.isSelected.toggle()
         timer.invalidate()
 
@@ -172,6 +201,7 @@ class CreateStoryView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.playButton.isHidden = false
             self.button.isHidden = true
+            self.shareButton.isHidden = false
         })
 
         recorder.stop()
