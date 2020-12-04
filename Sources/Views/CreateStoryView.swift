@@ -171,10 +171,12 @@ class CreateStoryView: UIView {
 
         UIView.animate(withDuration: 0.3, animations: {
             self.playButton.isHidden = false
+            self.button.isHidden = true
         })
 
         recorder.stop()
         progress.progress = 0.0
+        play()
     }
 
     @objc private func play() {
@@ -197,8 +199,7 @@ class CreateStoryView: UIView {
                         self.progress.setProgress(0.0, animated: false)
                         self.playButton.isSelected = false
                         self.timer.invalidate()
-//                        self.recorder.restartPlayer()
-//                        self.play()
+                        self.play()
                     }
                 }
             })

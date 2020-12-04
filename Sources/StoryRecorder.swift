@@ -50,6 +50,7 @@ class StoryRecorder {
     }
 
     func loadPlayer() {
+        player.removeAllItems()
         var item: AVPlayerItem!
         for i in 0 ..< chunkFileNumber {
             item = AVPlayerItem(url: url(for: i))
