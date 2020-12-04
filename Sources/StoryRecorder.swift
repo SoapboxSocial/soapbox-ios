@@ -1,5 +1,7 @@
 import AVFoundation
 
+// @TODO CLEAN UP ERRORS
+
 class StoryRecorder {
     private let storyLength: Double
 
@@ -32,7 +34,10 @@ class StoryRecorder {
     }
 
     func clear() {
-        // @todo delete samples
+        for i in 0 ..< (chunkFileNumber + 1) {
+            try? FileManager.default.removeItem(at: url(for: i))
+        }
+
         chunkFileNumber = 0
         outputFramesPerSecond = 0
         chunkFrames = 0
