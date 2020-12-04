@@ -90,6 +90,7 @@ class CreateStoryView: UIView {
         stack.addArrangedSubview(progress)
 
         playButton.isHidden = true
+        playButton.addTarget(self, action: #selector(play), for: .touchUpInside)
 
         NSLayoutConstraint.activate([
             image.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -172,6 +173,14 @@ class CreateStoryView: UIView {
 
         recorder.stop()
         progress.progress = 0.0
+
+        recorder.loadPlayer()
+        debugPrint(recorder.duration())
+    }
+
+    @objc private func play() {
+        playButton.isSelected.toggle()
+        recorder.play()
     }
 
     private func recordingText() -> NSAttributedString {

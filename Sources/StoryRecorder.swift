@@ -34,10 +34,11 @@ class StoryRecorder {
     }
 
     func clear() {
-        for i in 0 ..< (chunkFileNumber + 1) {
+        for i in 0 ..< chunkFileNumber {
             try? FileManager.default.removeItem(at: url(for: i))
         }
 
+        player.removeAllItems()
         chunkFileNumber = 0
         outputFramesPerSecond = 0
         chunkFrames = 0
@@ -48,16 +49,24 @@ class StoryRecorder {
         engine.stop()
     }
 
-    func play() {
-        for i in 0 ..< (chunkFileNumber + 1) {
-            player.insert(AVPlayerItem(url: url(for: i)), after: nil)
+    func loadPlayer() {
+        var item: AVPlayerItem!
+        for i in 0 ..< chunkFileNumber {
+            item = AVPlayerItem(url: url(for: i))
+            player.insert(item, after: nil)
         }
+    }
 
+    func play() {
         player.play()
     }
 
     func pause() {
         player.pause()
+    }
+
+    func duration() -> Float {
+        return player.items().reduce(0.0) { $0 + Float(CMTimeGetSeconds($1.asset.duration)) }
     }
 
     private func writeBuffer(_ buffer: AVAudioPCMBuffer) {
@@ -92,7 +101,7 @@ class StoryRecorder {
         chunkFrames = 0
     }
 
-    private func url(for _: Int) -> URL {
-        return URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("chunk-\(chunkFileNumber).aac")
+    private func url(for chunk: Int) -> URL {
+        return URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("chunk-\(chunk).aac")
     }
 }
