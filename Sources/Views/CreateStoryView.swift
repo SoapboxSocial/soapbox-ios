@@ -5,6 +5,7 @@ import UIKit
 protocol CreateStoryViewDelegate {
     func didStartRecording()
     func didEndRecording()
+    func didFailToRequestPermission()
 }
 
 class CreateStoryView: UIView {
@@ -158,7 +159,7 @@ class CreateStoryView: UIView {
 
         AVAudioSession.sharedInstance().requestRecordPermission { granted in
             if !granted {
-                // @TODO ERROR
+                self.delegate?.didFailToRequestPermission()
             }
         }
     }

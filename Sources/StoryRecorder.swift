@@ -92,7 +92,6 @@ class StoryRecorder {
 
     private func createNewChunkFile(numChannels: AVAudioChannelCount, samplesPerSecond: Float64) {
         let fileUrl = url(for: chunkFileNumber)
-        print("writing chunk to \(fileUrl)")
 
         let settings: [String: Any] = [
             AVFormatIDKey: kAudioFormatMPEG4AAC,
