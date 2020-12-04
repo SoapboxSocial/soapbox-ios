@@ -65,6 +65,11 @@ class StoryRecorder {
         player.pause()
     }
 
+//    @TODO
+//    func restartPlayer() {
+//        player.seek(to: CMTime.zero)
+//    }
+
     func duration() -> Float {
         return player.items().reduce(0.0) { $0 + Float(CMTimeGetSeconds($1.asset.duration)) }
     }

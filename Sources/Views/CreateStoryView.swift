@@ -49,6 +49,8 @@ class CreateStoryView: UIView {
 
     private var timer: Timer!
 
+    private var playTime = Float(0.0)
+
     init() {
         super.init(frame: CGRect.zero)
 
@@ -173,27 +175,36 @@ class CreateStoryView: UIView {
 
         recorder.stop()
         progress.progress = 0.0
-
-        recorder.loadPlayer()
-        debugPrint(recorder.duration())
     }
 
     @objc private func play() {
+        if playButton.isSelected {
+            timer.invalidate()
+            recorder.pause()
+        } else {
+            recorder.loadPlayer()
+            recorder.play()
+
+            let duration = recorder.duration()
+
+            timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
+                self.playTime += 0.001
+                self.progress.setProgress(self.playTime / duration, animated: true)
+
+                if self.playTime >= duration {
+                    DispatchQueue.main.async {
+                        self.playTime = 0.0
+                        self.progress.setProgress(0.0, animated: false)
+                        self.playButton.isSelected = false
+                        self.timer.invalidate()
+//                        self.recorder.restartPlayer()
+//                        self.play()
+                    }
+                }
+            })
+        }
+
         playButton.isSelected.toggle()
-        recorder.play()
-
-        let duration = recorder.duration()
-        var time = Float(0.0)
-
-        timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
-            time += 0.001
-            self.progress.setProgress(time / duration, animated: true)
-
-            if time >= duration {
-                self.playButton.isSelected = false
-                self.timer.invalidate()
-            }
-        })
     }
 
     private func recordingText() -> NSAttributedString {
