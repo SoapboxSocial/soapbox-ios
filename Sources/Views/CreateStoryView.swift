@@ -187,7 +187,19 @@ class CreateStoryView: UIView {
 
         label.attributedText = recordingText()
         timer.fire()
-        recorder.start()
+
+        recorder.start { result in
+            switch result {
+            case .success:
+                break
+            case .failure:
+                // @TODO PROBABLY WORTH MAKING NICER?
+                self.recorder.stop()
+                self.recorder.clear()
+                self.recorder.pause()
+                // @TODO
+            }
+        }
     }
 
     @objc private func endRecording() {
