@@ -14,7 +14,6 @@ PODS:
   - CNIOLinux (2.25.0)
   - CNIOSHA1 (2.25.0)
   - CNIOWindows (2.25.0)
-  - DDProgressView (0.1)
   - DrawerView (1.3.1)
   - FocusableImageView (0.1.0)
   - GoogleWebRTC (1.1.31999)
@@ -81,7 +80,6 @@ DEPENDENCIES:
   - AlamofireImage
   - BetterSegmentedControl (~> 2.0)
   - CCBottomRefreshControl
-  - DDProgressView
   - "DrawerView (from `git@github.com:mkko/DrawerView.git`, commit `5df6e05ca14dcf622bfe23304cf6c81f055f7b3f`)"
   - FocusableImageView
   - GoogleWebRTC
@@ -108,7 +106,6 @@ SPEC REPOS:
     - CNIOLinux
     - CNIOSHA1
     - CNIOWindows
-    - DDProgressView
     - FocusableImageView
     - GoogleWebRTC
     - gRPC-Swift
@@ -159,7 +156,6 @@ SPEC CHECKSUMS:
   CNIOLinux: dbcbe20bf8ab6baeb424aa58107ece92fb955aa8
   CNIOSHA1: 1ff64088bd91417abef09db5e3e1936dbfd3bf0b
   CNIOWindows: cda9fd9fb08758e842fcf7d5954e49e4733d3317
-  DDProgressView: d5a8983e5585217ee58f4a046bb4038f6e1b6306
   DrawerView: 0c7e6c40e5076b2fb64c394fa5fc8166ff917eff
   FocusableImageView: 1af6a7e0ab00bc1677743c30829b867e3d3b84fa
   GoogleWebRTC: b39a78c4f5cc6b0323415b9233db03a2faa7b0f0
@@ -183,6 +179,6 @@ SPEC CHECKSUMS:
   SwiftProtobuf: ed465ed18402f998fd117f631da27e0168e6b59c
   UIWindowTransitions: 2237083382e11f100db7de934041bba0c4669c86
 
-PODFILE CHECKSUM: d82f5cee9153974e2f6560fc81fb480ed597804d
+PODFILE CHECKSUM: e7ad79d735a0a12b850d47d2c33cb599bf115f67
 
 COCOAPODS: 1.10.0
