@@ -47,7 +47,6 @@ class CreateStoryView: UIView {
 
     private let recorder = StoryRecorder(length: 10.0)
 
-    private var time: Float = 0.0
     private var timer: Timer!
 
     init() {
@@ -145,13 +144,14 @@ class CreateStoryView: UIView {
         button.isSelected.toggle()
         reset()
 
+        var time = Float(0.0)
         timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
-            self.time += 0.001
-            self.progress.setProgress(self.time / self.maxLength, animated: true)
+            time += 0.001
+            self.progress.setProgress(time / self.maxLength, animated: true)
 
-            if self.time >= self.maxLength {
+            if time >= self.maxLength {
                 self.maxLength += self.snippetLength
-                self.progress.setProgress(self.time / self.maxLength, animated: false)
+                self.progress.setProgress(time / self.maxLength, animated: false)
             }
         })
 
@@ -181,6 +181,19 @@ class CreateStoryView: UIView {
     @objc private func play() {
         playButton.isSelected.toggle()
         recorder.play()
+
+        let duration = recorder.duration()
+        var time = Float(0.0)
+
+        timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
+            time += 0.001
+            self.progress.setProgress(time / duration, animated: true)
+
+            if time >= duration {
+                self.playButton.isSelected = false
+                self.timer.invalidate()
+            }
+        })
     }
 
     private func recordingText() -> NSAttributedString {
@@ -201,7 +214,6 @@ class CreateStoryView: UIView {
     private func reset() {
         progress.progress = 0.0
         maxLength = snippetLength
-        time = 0.0
         playButton.isHidden = true
         playButton.isSelected = false
         recorder.clear()
