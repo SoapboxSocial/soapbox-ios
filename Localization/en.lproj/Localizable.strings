@@ -11,8 +11,6 @@
 "microphone_permission_denied" = "You'll need to turn on your microphone for that!";
 "to_settings" = "To settings";
 
-"make_speaker" = "Make a speaker";
-"move_to_audience" = "Move to audience";
 "cancel" = "Cancel";
 
 "something_went_wrong" = "oops, something went wrong!";
@@ -24,8 +22,6 @@
 "submit" = "Submit";
 "create" = "Create";
 "create_account" = "Create Account";
-
-"your_room" = "Your room";
 
 "username" = "Username";
 "display_name" = "Display Name";
@@ -73,9 +69,6 @@
 
 "room_is_full" = "This room is full!";
 "why_not_create_a_new_room" = "Why not create a new room?";
-
-"is_currently_in_room" = "%@ is currently in a room!";
-"click_to_join" = "Click to join";
 
 "search_placeholder" = "Search groups and friends...";
 
