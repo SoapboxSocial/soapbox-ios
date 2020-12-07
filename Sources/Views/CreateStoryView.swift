@@ -224,22 +224,21 @@ class CreateStoryView: UIView {
         play()
     }
 
+    // @TODO FAULT TOLERANCE?
     @objc private func share() {
         shareButton.isEnabled = false
-        // @TODO THIS IS UGLY AND NEEDS TO BE MORE FAULT TOLERANT
 
         // @TODO UIACTIVITYINDICATOR
 
-        // @TODO DISPATCH GROUP:
-        //    - https://stackoverflow.com/a/47385329/7884554
-
         let group = DispatchGroup()
+        var failed = false
 
         for i in 0 ..< recorder.chunkFileNumber {
             group.enter()
             APIClient().uploadStory(file: recorder.url(for: i), timestamp: Int64(round(Date().timeIntervalSince1970)) + Int64(i)) { result in
                 switch result {
-                case .failure: break
+                case .failure:
+                    failed = true
                 // @TODO REGISTER WHICH ONES FAILED?
                 case .success: break
                     // @TODO CLOSE
@@ -250,6 +249,11 @@ class CreateStoryView: UIView {
         }
 
         group.notify(queue: .main) {
+            if failed {
+                // @TODO
+                return
+            }
+
             self.delegate?.didFinishUploading()
         }
     }
