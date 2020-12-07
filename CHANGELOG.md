@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.5.1] - 2020-12-07
+
  - Some minor changes to the room creation UI.
 
 ## [1.5.0] - 2020-12-01
