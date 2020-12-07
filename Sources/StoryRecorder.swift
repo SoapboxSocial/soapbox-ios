@@ -16,7 +16,7 @@ class StoryRecorder {
     private var chunkFile: AVAudioFile!
     private var outputFramesPerSecond = Float64(0) // aka input sample rate
     private var chunkFrames = AVAudioFrameCount(0)
-    private var chunkFileNumber = 0
+    private(set) var chunkFileNumber = 0
 
     init(length: Double) {
         storyLength = length
@@ -57,6 +57,10 @@ class StoryRecorder {
         engine.stop()
     }
 
+    func url(for chunk: Int) -> URL {
+        return URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("chunk-\(chunk).aac")
+    }
+
     private func writeBuffer(_ buffer: AVAudioPCMBuffer, callback: @escaping (Result<Void, RecorderError>) -> Void) {
         let samplesPerSecond = buffer.format.sampleRate
 
@@ -91,10 +95,6 @@ class StoryRecorder {
 
         chunkFileNumber += 1
         chunkFrames = 0
-    }
-
-    private func url(for chunk: Int) -> URL {
-        return URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("chunk-\(chunk).aac")
     }
 }
 

@@ -97,6 +97,7 @@ class CreateStoryView: UIView {
         addSubview(button)
 
         shareButton.isHidden = true
+        shareButton.addTarget(self, action: #selector(share), for: .touchUpInside)
         addSubview(shareButton)
 
         let stack = UIStackView()
@@ -220,6 +221,23 @@ class CreateStoryView: UIView {
         recorder.stop()
         progress.progress = 0.0
         play()
+    }
+
+    @objc private func share() {
+        // @TODO THIS IS UGLY AND NEEDS TO BE MORE FAULT TOLERANT
+
+        // @TODO UIACTIVITYINDICATOR
+
+        for i in 0 ..< recorder.chunkFileNumber {
+            APIClient().uploadStory(file: recorder.url(for: i), timestamp: Int64(round(NSDate().timeIntervalSince1970)) + Int64(i)) { result in
+                switch result {
+                case .failure: break
+                // @TODO REGISTER WHICH ONES FAILED?
+                case .success: break
+                    // @TODO CLOSE
+                }
+            }
+        }
     }
 
     @objc private func play() {
