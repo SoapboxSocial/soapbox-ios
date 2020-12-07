@@ -117,7 +117,8 @@ extension GroupCreationViewController {
 
         let button = Button(size: .large)
         button.setTitle(NSLocalizedString("next", comment: ""), for: .normal)
-        button.backgroundColor = .lightBrandColor
+        button.backgroundColor = .white
+        button.setTitleColor(.black, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(nextPressed), for: .touchUpInside)
         view.addSubview(button)
