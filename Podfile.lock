@@ -80,7 +80,7 @@ DEPENDENCIES:
   - AlamofireImage
   - BetterSegmentedControl (~> 2.0)
   - CCBottomRefreshControl
-  - "DrawerView (from `git@github.com:mkko/DrawerView.git`, commit `5df6e05ca14dcf622bfe23304cf6c81f055f7b3f`)"
+  - "DrawerView (from `git@github.com:mkko/DrawerView.git`, commit `812a2ac4c01306817f5838da73ce46a45bc98830`)"
   - FocusableImageView
   - GoogleWebRTC
   - gRPC-Swift (~> 1.0.0-alpha.20)
@@ -129,14 +129,14 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   DrawerView:
-    :commit: 5df6e05ca14dcf622bfe23304cf6c81f055f7b3f
+    :commit: 812a2ac4c01306817f5838da73ce46a45bc98830
     :git: "git@github.com:mkko/DrawerView.git"
   Swifter:
     :git: "git@github.com:mattdonnelly/Swifter.git"
 
 CHECKOUT OPTIONS:
   DrawerView:
-    :commit: 5df6e05ca14dcf622bfe23304cf6c81f055f7b3f
+    :commit: 812a2ac4c01306817f5838da73ce46a45bc98830
     :git: "git@github.com:mkko/DrawerView.git"
   Swifter:
     :commit: 7906c9476f612fc2a77c38f4731d4bc618cea6a8
@@ -179,6 +179,6 @@ SPEC CHECKSUMS:
   SwiftProtobuf: ed465ed18402f998fd117f631da27e0168e6b59c
   UIWindowTransitions: 2237083382e11f100db7de934041bba0c4669c86
 
-PODFILE CHECKSUM: e7ad79d735a0a12b850d47d2c33cb599bf115f67
+PODFILE CHECKSUM: 5187b9c0f57631f065d3a40e0961ac692c9e04db
 
 COCOAPODS: 1.10.0
