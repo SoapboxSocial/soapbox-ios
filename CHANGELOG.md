@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Some minor changes to the room creation UI.
+
 ## [1.5.0] - 2020-12-01
 
  - Added the ability to delete your groups.

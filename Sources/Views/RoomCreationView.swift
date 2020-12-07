@@ -101,19 +101,21 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         stack.addArrangedSubview(groupView)
         groupView.isHidden = true
 
-        let button = Button(size: .large)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle(NSLocalizedString("create", comment: ""), for: .normal)
-        button.backgroundColor = .lightBrandColor
-        button.addTarget(self, action: #selector(createPressed), for: .touchUpInside)
-        stack.addArrangedSubview(button)
-
         let mutedText = UILabel()
         mutedText.text = NSLocalizedString("you_will_be_muted_by_default", comment: "")
         mutedText.font = .rounded(forTextStyle: .body, weight: .semibold)
         mutedText.textColor = .white
+        mutedText.textAlignment = .center
         mutedText.translatesAutoresizingMaskIntoConstraints = false
         stack.addArrangedSubview(mutedText)
+
+        let button = Button(size: .large)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle(NSLocalizedString("create", comment: ""), for: .normal)
+        button.backgroundColor = .white
+        button.setTitleColor(.black, for: .normal)
+        button.addTarget(self, action: #selector(createPressed), for: .touchUpInside)
+        stack.addArrangedSubview(button)
 
         NSLayoutConstraint.activate([
             groupView.leftAnchor.constraint(equalTo: leftAnchor),
