@@ -6,6 +6,7 @@ protocol CreateStoryViewDelegate {
     func didStartRecording()
     func didEndRecording()
     func didFailToRequestPermission()
+    func didFinishUploading()
 }
 
 class CreateStoryView: UIView {
@@ -224,22 +225,32 @@ class CreateStoryView: UIView {
     }
 
     @objc private func share() {
+        shareButton.isEnabled = false
         // @TODO THIS IS UGLY AND NEEDS TO BE MORE FAULT TOLERANT
 
         // @TODO UIACTIVITYINDICATOR
-        
+
         // @TODO DISPATCH GROUP:
         //    - https://stackoverflow.com/a/47385329/7884554
 
+        let group = DispatchGroup()
+
         for i in 0 ..< recorder.chunkFileNumber {
-            APIClient().uploadStory(file: recorder.url(for: i), timestamp: Int64(round(NSDate().timeIntervalSince1970)) + Int64(i)) { result in
+            group.enter()
+            APIClient().uploadStory(file: recorder.url(for: i), timestamp: Int64(round(Date().timeIntervalSince1970)) + Int64(i)) { result in
                 switch result {
                 case .failure: break
                 // @TODO REGISTER WHICH ONES FAILED?
                 case .success: break
                     // @TODO CLOSE
                 }
+
+                group.leave()
             }
+        }
+
+        group.notify(queue: .main) {
+            self.delegate?.didFinishUploading()
         }
     }
 

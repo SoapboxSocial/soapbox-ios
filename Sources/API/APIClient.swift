@@ -450,7 +450,6 @@ extension APIClient {
         )
         .validate()
         .response { result in
-            debugPrint(result)
             if let error = self.validate(result) {
                 return callback(.failure(error))
             }
