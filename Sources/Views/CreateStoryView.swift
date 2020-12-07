@@ -227,6 +227,9 @@ class CreateStoryView: UIView {
         // @TODO THIS IS UGLY AND NEEDS TO BE MORE FAULT TOLERANT
 
         // @TODO UIACTIVITYINDICATOR
+        
+        // @TODO DISPATCH GROUP:
+        //    - https://stackoverflow.com/a/47385329/7884554
 
         for i in 0 ..< recorder.chunkFileNumber {
             APIClient().uploadStory(file: recorder.url(for: i), timestamp: Int64(round(NSDate().timeIntervalSince1970)) + Int64(i)) { result in
