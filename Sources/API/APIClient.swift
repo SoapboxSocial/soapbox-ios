@@ -439,6 +439,26 @@ extension APIClient {
 }
 
 extension APIClient {
+    private func uploadStory(file: URL, timestamp _: Int64, callback: @escaping (Result<Void, Error>) -> Void) {
+        AF.upload(
+            multipartFormData: { multipartFormData in
+                multipartFormData.append(file, withName: "story", fileName: "story", mimeType: "audio/aac")
+            },
+            to: Configuration.rootURL.appendingPathComponent("/v1/stories/upload"),
+            headers: ["Authorization": token!]
+        )
+        .validate()
+        .response { result in
+            if let error = self.validate(result) {
+                return callback(.failure(error))
+            }
+
+            callback(.success(()))
+        }
+    }
+}
+
+extension APIClient {
     private func get<T: Decodable>(path: String, parameters: Parameters? = nil, callback: @escaping (Result<T, Error>) -> Void) {
         AF.request(
             Configuration.rootURL.appendingPathComponent(path),
