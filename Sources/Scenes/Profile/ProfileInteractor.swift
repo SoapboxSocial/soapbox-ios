@@ -61,6 +61,10 @@ extension ProfileInteractor: ProfileViewControllerOutput {
                 self.output.display(groups: groups)
             }
         })
+
+        api.stories(user: user, callback: { result in
+            debugPrint(result)
+        })
     }
 
     func follow() {
