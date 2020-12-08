@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Changed the room control icons just a little!
+
 ## [1.5.1] - 2020-12-07
 
  - Some minor changes to the room creation UI.
