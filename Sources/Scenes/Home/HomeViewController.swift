@@ -536,7 +536,6 @@ extension HomeViewController: CreateStoryViewDelegate {
         storyDrawer!.backgroundEffect = nil
         storyDrawer!.snapPositions = [.closed, .open]
         storyDrawer!.backgroundColor = .brandColor
-//        self.storyDrawer!.delegate = self
         storyDrawer!.childScrollViewsPanningCanDismissDrawer = false
 
         navigationController?.view.addSubview(storyDrawer)
@@ -560,5 +559,14 @@ extension HomeViewController: CreateStoryViewDelegate {
     }
 
     func didFailToRequestPermission() {}
-    func didFinishUploading() {}
+
+    func didFinishUploading(_ storyView: CreateStoryView) {
+        storyView.stop()
+        storyDrawer.setPosition(.closed, animated: true) { _ in
+            DispatchQueue.main.async {
+                self.storyDrawer.removeFromSuperview()
+                self.storyDrawer = nil
+            }
+        }
+    }
 }

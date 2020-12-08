@@ -6,7 +6,7 @@ protocol CreateStoryViewDelegate {
     func didStartRecording()
     func didEndRecording()
     func didFailToRequestPermission()
-    func didFinishUploading()
+    func didFinishUploading(_ storyView: CreateStoryView)
 }
 
 class CreateStoryView: UIView {
@@ -256,7 +256,7 @@ class CreateStoryView: UIView {
                 return
             }
 
-            self.delegate?.didFinishUploading()
+            self.delegate?.didFinishUploading(self)
         }
     }
 
@@ -287,6 +287,11 @@ class CreateStoryView: UIView {
         }
 
         playButton.isSelected.toggle()
+    }
+
+    func stop() {
+        recorder.clear()
+        recorder.pause()
     }
 
     private func recordingText() -> NSAttributedString {
