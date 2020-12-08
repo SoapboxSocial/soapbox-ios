@@ -45,9 +45,33 @@ class StoriesViewController: UIViewController {
         name.translatesAutoresizingMaskIntoConstraints = false
         content.addSubview(name)
 
+        let thumbsUp = StoryReactionView(reaction: "👍", count: 30)
+        background.addSubview(thumbsUp)
+
+        let fire = StoryReactionView(reaction: "🔥", count: 140)
+        background.addSubview(fire)
+
+        let heart = StoryReactionView(reaction: "❤️", count: 235)
+        background.addSubview(heart)
+
+        NSLayoutConstraint.activate([
+            thumbsUp.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -10),
+            thumbsUp.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            fire.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -10),
+            fire.leftAnchor.constraint(equalTo: thumbsUp.rightAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            heart.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -10),
+            heart.rightAnchor.constraint(equalTo: thumbsUp.leftAnchor, constant: -20),
+        ])
+
         NSLayoutConstraint.activate([
             content.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            content.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -52),
+            content.bottomAnchor.constraint(equalTo: thumbsUp.topAnchor, constant: -10),
             content.leftAnchor.constraint(equalTo: view.leftAnchor),
             content.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
