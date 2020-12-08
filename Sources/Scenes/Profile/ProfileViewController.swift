@@ -313,7 +313,7 @@ extension ProfileViewController: ProfilePresenterOutput {
 
     func display(stories _: [APIClient.Story]) {
         let frame = headerView.image.frame
-        let width = 5.0
+        let width = CGFloat(5.0)
 
         let start = (3 * Double.pi) / 2
         let path = UIBezierPath(
