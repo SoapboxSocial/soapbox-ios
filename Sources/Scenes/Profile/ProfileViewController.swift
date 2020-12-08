@@ -315,7 +315,10 @@ extension ProfileViewController: ProfilePresenterOutput {
         self.groups.set(groups: groups)
     }
 
-    func display(stories _: [APIClient.Story]) {
+    func display(stories: [APIClient.Story]) {
+        
+        self.stories = stories
+        
         let frame = headerView.image.frame
         let width = CGFloat(5.0)
 
