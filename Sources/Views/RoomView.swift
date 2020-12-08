@@ -14,7 +14,7 @@ class RoomView: UIView {
 
     private var audioPlayer: AVAudioPlayer!
 
-    private static let iconConfig = UIImage.SymbolConfiguration(weight: .medium)
+    private static let iconConfig = UIImage.SymbolConfiguration(weight: .semibold)
 
     private let muteButton: EmojiButton = {
         let button = EmojiButton(frame: .zero)
@@ -39,7 +39,7 @@ class RoomView: UIView {
     private let editNameButton: EmojiButton = {
         let button = EmojiButton(frame: .zero)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "gear", withConfiguration: iconConfig), for: .normal)
+        button.setImage(UIImage(systemName: "gearshape", withConfiguration: iconConfig), for: .normal)
         button.tintColor = .brandColor
         button.backgroundColor = .clear
         button.addTarget(self, action: #selector(editRoomNameButtonTapped), for: .touchUpInside)
@@ -57,7 +57,7 @@ class RoomView: UIView {
     }()
 
     private let bottomMuteButton: EmojiButton = {
-        let iconConfig = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
+        let iconConfig = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold)
 
         let button = EmojiButton(frame: .zero)
         button.translatesAutoresizingMaskIntoConstraints = false
