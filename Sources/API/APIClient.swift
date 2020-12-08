@@ -439,6 +439,20 @@ extension APIClient {
 }
 
 extension APIClient {
+    struct Story: Decodable {
+        let id: String
+        let expiresAt: Int64
+        let deviceTimestamp: Int64
+
+        private enum CodingKeys: String, CodingKey {
+            case id, expiresAt = "expires_at", deviceTimestamp = "device_timestamp"
+        }
+    }
+
+    func stories(user: Int, callback: @escaping (Result<[Story], Error>) -> Void) {
+        get(path: "/v1/users/" + String(user) + "/stories", callback: callback)
+    }
+
     func uploadStory(file: URL, timestamp: Int64, callback: @escaping (Result<Void, Error>) -> Void) {
         AF.upload(
             multipartFormData: { multipartFormData in
