@@ -14,7 +14,7 @@ class ProfileViewController: ViewController {
     private var user: APIClient.Profile!
 
     private var stories: [APIClient.Story]?
-    
+
     var output: ProfileViewControllerOutput!
 
     private let content: UIStackView = {
@@ -316,9 +316,8 @@ extension ProfileViewController: ProfilePresenterOutput {
     }
 
     func display(stories: [APIClient.Story]) {
-        
         self.stories = stories
-        
+
         let frame = headerView.image.frame
         let width = CGFloat(5.0)
 

@@ -4,11 +4,17 @@ class StoriesViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .black
 
+        let background = UIView()
+        background.translatesAutoresizingMaskIntoConstraints = false
+        background.backgroundColor = .reactionsBackground
+        background.layer.cornerRadius = 30
+        view.addSubview(background)
+
         let content = UIView()
         content.translatesAutoresizingMaskIntoConstraints = false
         content.layer.cornerRadius = 30
         content.backgroundColor = .brandColor
-        view.addSubview(content)
+        background.addSubview(content)
 
         let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
 
@@ -41,9 +47,16 @@ class StoriesViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             content.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            content.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            content.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -52),
             content.leftAnchor.constraint(equalTo: view.leftAnchor),
             content.rightAnchor.constraint(equalTo: view.rightAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            background.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            background.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            background.leftAnchor.constraint(equalTo: view.leftAnchor),
+            background.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
 
         NSLayoutConstraint.activate([
@@ -58,7 +71,7 @@ class StoriesViewController: UIViewController {
         ])
 
         NSLayoutConstraint.activate([
-            image.centerYAnchor.constraint(equalTo: content.centerYAnchor),
+            image.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             image.centerXAnchor.constraint(equalTo: content.centerXAnchor),
             image.heightAnchor.constraint(equalToConstant: 140),
             image.widthAnchor.constraint(equalToConstant: 140),
