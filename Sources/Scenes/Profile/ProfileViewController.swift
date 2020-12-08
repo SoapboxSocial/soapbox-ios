@@ -13,6 +13,8 @@ protocol ProfileViewControllerOutput {
 class ProfileViewController: ViewController {
     private var user: APIClient.Profile!
 
+    private var stories: [APIClient.Story]?
+    
     var output: ProfileViewControllerOutput!
 
     private let content: UIStackView = {
