@@ -561,15 +561,14 @@ extension HomeViewController: CreateStoryViewDelegate {
     func didFailToRequestPermission() {}
 
     func didFinishUploading(_: CreateStoryView) {
-        storyDrawer.setPosition(.closed, animated: true) { _ in
-            DispatchQueue.main.async {
-                self.storyDrawer.removeFromSuperview()
-                self.storyDrawer = nil
-            }
-        }
+        closeStoryDrawer()
     }
 
     func didCancel() {
+        closeStoryDrawer()
+    }
+
+    private func closeStoryDrawer() {
         storyDrawer.setPosition(.closed, animated: true) { _ in
             DispatchQueue.main.async {
                 self.storyDrawer.removeFromSuperview()
