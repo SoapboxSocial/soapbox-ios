@@ -407,6 +407,10 @@ extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch presenter.sectionType(for: indexPath.section) {
         case .storiesList:
+            if presenter.currentRoom != nil {
+                // @TODO SHOW TOAST THAT YOU CAN'T USE STORIES WHILE IN A ROOM
+                return
+            }
 
             if indexPath.item == 0 {
                 return openCreateStory()
@@ -521,15 +525,14 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-extension HomeViewController {
+extension HomeViewController: CreateStoryViewDelegate {
     func openCreateStory() {
         let creationView = CreateStoryView()
-//            creationView.delegate = self
+        creationView.delegate = self
 
         storyDrawer = DrawerView(withView: creationView)
         storyDrawer!.cornerRadius = 25.0
-        storyDrawer!.enabled = false
-        storyDrawer!.attachTo(view: view)
+        storyDrawer!.attachTo(view: (navigationController?.view)!)
         storyDrawer!.backgroundEffect = nil
         storyDrawer!.snapPositions = [.closed, .open]
         storyDrawer!.backgroundColor = .brandColor
@@ -545,4 +548,17 @@ extension HomeViewController {
             UIApplication.shared.isIdleTimerDisabled = true
         }
     }
+
+    // This removes the pan functionality to close the drawer temporarily.
+    // We do this because if the user drags their thumb while recording things go weird.
+    func didStartRecording() {
+        storyDrawer.enabled = false
+    }
+
+    func didEndRecording() {
+        storyDrawer.enabled = true
+    }
+
+    func didFailToRequestPermission() {}
+    func didFinishUploading() {}
 }

@@ -54,12 +54,11 @@ class NavigationViewController: UINavigationController {
 
     @objc func didTapCreateRoom() {
         requestMicrophone {
-            let creationView = CreateStoryView()
-//            creationView.delegate = self
+            let creationView = RoomCreationView()
+            creationView.delegate = self
 
             self.creationDrawer = DrawerView(withView: creationView)
             self.creationDrawer!.cornerRadius = 25.0
-            self.creationDrawer!.enabled = false
             self.creationDrawer!.attachTo(view: self.view)
             self.creationDrawer!.backgroundEffect = nil
             self.creationDrawer!.snapPositions = [.closed, .open]
