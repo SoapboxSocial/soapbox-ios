@@ -1,6 +1,6 @@
 import UIKit
 
-class CreateGroupCell: UICollectionViewCell {
+class CreateCell: UICollectionViewCell {
     private var image: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -22,7 +22,7 @@ class CreateGroupCell: UICollectionViewCell {
         return view
     }()
 
-    private var title: UILabel = {
+    var title: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .rounded(forTextStyle: .caption2, weight: .semibold)

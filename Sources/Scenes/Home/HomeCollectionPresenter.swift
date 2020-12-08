@@ -8,7 +8,7 @@ class HomeCollectionPresenter {
 
     enum SectionType: Int, CaseIterable {
         case roomList
-        case activeList
+        case storiesList
         case groupList
         case noRooms
     }
@@ -24,6 +24,7 @@ class HomeCollectionPresenter {
     }
 
     init() {
+        set(stories: [])
         set(rooms: [])
     }
 
@@ -42,11 +43,14 @@ class HomeCollectionPresenter {
 
     func numberOfItems(for sectionIndex: Int) -> Int {
         let section = dataSource[sectionIndex]
-        if section.type == .noRooms {
+        switch section.type {
+        case .noRooms:
             return 1
+        case .storiesList:
+            return section.data.count + 1
+        default:
+            return section.data.count
         }
-
-        return section.data.count
     }
 
     func configure(item: ActiveUserCell, for indexPath: IndexPath) {
@@ -115,8 +119,12 @@ class HomeCollectionPresenter {
         dataSource.removeAll(where: { $0.type == .groupList })
 
         var at = 0
-        if has(section: .activeList) {
+        if has(section: .storiesList) {
             at = 1
+        }
+
+        if groups.isEmpty {
+            return
         }
 
         dataSource.insert(Section(type: .groupList, title: NSLocalizedString("groups", comment: ""), data: groups), at: at)
@@ -140,14 +148,9 @@ class HomeCollectionPresenter {
         dataSource.append(Section(type: .roomList, title: NSLocalizedString("rooms", comment: ""), data: rooms))
     }
 
-    func set(actives: [APIClient.ActiveUser]) {
-        dataSource.removeAll(where: { $0.type == .activeList })
-
-        if actives.isEmpty {
-            return
-        }
-
-        dataSource.insert(Section(type: .activeList, title: "", data: actives), at: 0)
+    func set(stories: [APIClient.ActiveUser]) {
+        dataSource.removeAll(where: { $0.type == .storiesList })
+        dataSource.insert(Section(type: .storiesList, title: "", data: stories), at: 0)
     }
 
     func index(of section: SectionType) -> Int? {
