@@ -311,6 +311,37 @@ extension ProfileViewController: ProfilePresenterOutput {
         self.groups.set(groups: groups)
     }
 
+    func display(stories _: [APIClient.Story]) {
+        let frame = headerView.image.frame
+
+        let path = UIBezierPath(
+            arcCenter: CGPoint(x: frame.size.width / 2.0, y: frame.size.height / 2.0),
+            radius: (frame.size.width - 5) / 2,
+            startAngle: 0.0,
+            endAngle: CGFloat(Double.pi * 2.0),
+            clockwise: true
+        )
+
+        let circleLayer = CAShapeLayer()
+        circleLayer.path = path.cgPath
+        circleLayer.fillColor = UIColor.clear.cgColor
+        circleLayer.strokeColor = UIColor.brandColor.cgColor
+        circleLayer.lineWidth = 5.0
+
+        circleLayer.strokeEnd = 0.0
+        headerView.image.layer.addSublayer(circleLayer)
+
+        let animation = CABasicAnimation(keyPath: "strokeEnd")
+        animation.duration = 1
+        animation.fromValue = 0
+        animation.toValue = 1
+
+        animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
+        circleLayer.strokeEnd = 1.0
+
+        circleLayer.add(animation, forKey: "animateCircle")
+    }
+
     func didFollow() {
         headerView.button.isUserInteractionEnabled = true
         headerView.button.isSelected.toggle()

@@ -8,6 +8,7 @@ protocol ProfilePresenterOutput {
     func didFollow()
     func displayError(title: String, description: String?)
     func display(moreGroups groups: [APIClient.Group])
+    func display(stories: [APIClient.Story])
 }
 
 class ProfilePresenter: ProfileInteractorOutput {
@@ -46,5 +47,9 @@ class ProfilePresenter: ProfileInteractorOutput {
 
     func display(moreGroups groups: [APIClient.Group]) {
         output.display(moreGroups: groups)
+    }
+
+    func display(stories: [APIClient.Story]) {
+        output.display(stories: stories)
     }
 }
