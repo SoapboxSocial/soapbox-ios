@@ -313,11 +313,12 @@ extension ProfileViewController: ProfilePresenterOutput {
 
     func display(stories _: [APIClient.Story]) {
         let frame = headerView.image.frame
+        let width = 5.0
 
         let start = (3 * Double.pi) / 2
         let path = UIBezierPath(
             arcCenter: CGPoint(x: frame.size.width / 2.0, y: frame.size.height / 2.0),
-            radius: (frame.size.width - 5) / 2,
+            radius: (frame.size.width - width) / 2,
             startAngle: CGFloat(start),
             endAngle: CGFloat(start + (Double.pi * 2)),
             clockwise: true
@@ -327,7 +328,7 @@ extension ProfileViewController: ProfilePresenterOutput {
         circleLayer.path = path.cgPath
         circleLayer.fillColor = UIColor.clear.cgColor
         circleLayer.strokeColor = UIColor.brandColor.cgColor
-        circleLayer.lineWidth = 5.0
+        circleLayer.lineWidth = width
 
         circleLayer.strokeEnd = 0.0
         headerView.image.layer.addSublayer(circleLayer)
