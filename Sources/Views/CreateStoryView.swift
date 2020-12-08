@@ -242,8 +242,6 @@ class CreateStoryView: UIView {
 
         // @TODO UIACTIVITYINDICATOR
 
-        // @TODO ENSURE WE STOP PLAYING ON CLOSE!
-
         let group = DispatchGroup()
         var failed = false
 
