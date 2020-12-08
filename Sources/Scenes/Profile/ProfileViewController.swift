@@ -387,7 +387,7 @@ extension ProfileViewController: ProfilePresenterOutput {
         if profile.image != "" {
             headerView.image.inner.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + profile.image))
             headerView.image.inner.contentMode = .scaleAspectFill
-            manager.register(parentViewController: self, imageViews: [headerView.image])
+            manager.register(parentViewController: self, imageViews: [])
         }
     }
 }
