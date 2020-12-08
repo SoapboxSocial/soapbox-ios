@@ -314,11 +314,12 @@ extension ProfileViewController: ProfilePresenterOutput {
     func display(stories _: [APIClient.Story]) {
         let frame = headerView.image.frame
 
+        let start = (3 * Double.pi) / 2
         let path = UIBezierPath(
             arcCenter: CGPoint(x: frame.size.width / 2.0, y: frame.size.height / 2.0),
             radius: (frame.size.width - 5) / 2,
-            startAngle: 0.0,
-            endAngle: CGFloat(Double.pi * 2.0),
+            startAngle: CGFloat(start),
+            endAngle: CGFloat(start + (Double.pi * 2)),
             clockwise: true
         )
 
