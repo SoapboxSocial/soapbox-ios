@@ -7,6 +7,7 @@ protocol CreateStoryViewDelegate {
     func didEndRecording()
     func didFailToRequestPermission()
     func didFinishUploading(_ storyView: CreateStoryView)
+    func didCancel()
 }
 
 class CreateStoryView: UIView {
@@ -101,6 +102,12 @@ class CreateStoryView: UIView {
         shareButton.addTarget(self, action: #selector(share), for: .touchUpInside)
         addSubview(shareButton)
 
+        let cancelButton = UIButton()
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        cancelButton.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
+        cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
+        addSubview(cancelButton)
+
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.spacing = 20
@@ -157,6 +164,11 @@ class CreateStoryView: UIView {
             shareButton.heightAnchor.constraint(equalToConstant: 40),
             shareButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
             shareButton.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            cancelButton.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            cancelButton.topAnchor.constraint(equalTo: topAnchor, constant: 20),
         ])
 
         AVAudioSession.sharedInstance().requestRecordPermission { granted in
@@ -256,6 +268,7 @@ class CreateStoryView: UIView {
                 return
             }
 
+            self.stop()
             self.delegate?.didFinishUploading(self)
         }
     }
@@ -289,7 +302,12 @@ class CreateStoryView: UIView {
         playButton.isSelected.toggle()
     }
 
-    func stop() {
+    @objc private func cancel() {
+        stop()
+        delegate?.didCancel()
+    }
+
+    private func stop() {
         recorder.clear()
         recorder.pause()
     }
