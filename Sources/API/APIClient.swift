@@ -449,6 +449,11 @@ extension APIClient {
         }
     }
 
+    struct StoryFeed: Decodable {
+        let user: User
+        let story: Story
+    }
+
     func stories(user: Int, callback: @escaping (Result<[Story], Error>) -> Void) {
         get(path: "/v1/users/" + String(user) + "/stories", callback: callback)
     }
