@@ -37,7 +37,7 @@ class StoriesViewController: UIViewController {
         let duration = player.duration()
 
         var playTime = Float(0.0)
-        let timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
+        Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
             playTime += 0.001
             self.progress.setProgress(playTime / duration, animated: true)
 
