@@ -13,6 +13,15 @@ class StoriesViewController: UIViewController {
         return progress
     }()
 
+    private let posted: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .rounded(forTextStyle: .body, weight: .semibold)
+        label.textColor = UIColor.white.withAlphaComponent(0.5)
+        label.textAlignment = .center
+        return label
+    }()
+
     private let player: StoryPlayer
 
     init(feed: APIClient.StoryFeed) {
@@ -87,12 +96,6 @@ class StoriesViewController: UIViewController {
         name.translatesAutoresizingMaskIntoConstraints = false
         content.addSubview(name)
 
-        let posted = UILabel()
-        posted.translatesAutoresizingMaskIntoConstraints = false
-        posted.font = .rounded(forTextStyle: .body, weight: .semibold)
-        posted.textColor = UIColor.white.withAlphaComponent(0.5)
-        posted.textAlignment = .center
-        posted.text = "30m"
         content.addSubview(posted)
 
         let thumbsUp = StoryReactionView(reaction: "👍", count: 30)
@@ -177,6 +180,6 @@ extension StoriesViewController: StoryPlayerDelegate {
     }
 
     func startedPlaying(story: APIClient.Story) {
-        debugPrint(story)
+        posted.text = Date(timeIntervalSince1970: TimeInterval(story.deviceTimestamp)).timeAgoDisplay()
     }
 }
