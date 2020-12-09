@@ -111,7 +111,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
 
         let button = Button(size: .large)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle(NSLocalizedString("create", comment: ""), for: .normal)
+        button.setTitle(NSLocalizedString("start_room", comment: ""), for: .normal)
         button.backgroundColor = .white
         button.setTitleColor(.black, for: .normal)
         button.addTarget(self, action: #selector(createPressed), for: .touchUpInside)
