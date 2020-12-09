@@ -449,10 +449,10 @@ extension APIClient {
         let expiresAt: Int64
         let deviceTimestamp: Int64
 
-//        let reactions: [Reaction]
+        let reactions: [Reaction]
 
         private enum CodingKeys: String, CodingKey {
-            case id, expiresAt = "expires_at", deviceTimestamp = "device_timestamp"
+            case id, expiresAt = "expires_at", deviceTimestamp = "device_timestamp", reactions
         }
     }
 

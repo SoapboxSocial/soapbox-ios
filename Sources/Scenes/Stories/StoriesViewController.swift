@@ -98,13 +98,13 @@ class StoriesViewController: UIViewController {
 
         content.addSubview(posted)
 
-        let thumbsUp = StoryReactionView(reaction: "👍", count: 30)
+        let thumbsUp = StoryReactionButton(reaction: "👍")
         background.addSubview(thumbsUp)
 
-        let fire = StoryReactionView(reaction: "🔥", count: 140)
+        let fire = StoryReactionButton(reaction: "🔥")
         background.addSubview(fire)
 
-        let heart = StoryReactionView(reaction: "❤️", count: 235)
+        let heart = StoryReactionButton(reaction: "❤️")
         background.addSubview(heart)
 
         NSLayoutConstraint.activate([
