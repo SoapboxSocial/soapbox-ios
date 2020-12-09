@@ -336,6 +336,10 @@ extension ProfileViewController: ProfilePresenterOutput {
     }
 
     func display(stories: [APIClient.Story]) {
+        if stories.isEmpty {
+            return
+        }
+
         self.stories = stories
 
         let frame = headerView.image.frame
