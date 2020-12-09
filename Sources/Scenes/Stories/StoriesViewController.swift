@@ -48,13 +48,20 @@ class StoriesViewController: UIViewController {
         exit.translatesAutoresizingMaskIntoConstraints = false
         exit.setImage(UIImage(systemName: "xmark", withConfiguration: config), for: .normal)
         exit.tintColor = .white
+        exit.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         content.addSubview(exit)
 
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.backgroundColor = .lightBrandColor
         image.layer.cornerRadius = 140 / 2
+        image.clipsToBounds = true
+        image.layer.masksToBounds = true
         content.addSubview(image)
+
+        if let url = feed.user.image, url != "" {
+            image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + url))
+        }
 
         let progress = ProgressView()
         progress.translatesAutoresizingMaskIntoConstraints = false
@@ -65,7 +72,7 @@ class StoriesViewController: UIViewController {
 
         let name = UILabel()
         name.font = .rounded(forTextStyle: .title1, weight: .bold)
-        name.text = "Dean"
+        name.text = feed.user.displayName
         name.textColor = .white
         name.textAlignment = .center
         name.translatesAutoresizingMaskIntoConstraints = false
@@ -132,5 +139,10 @@ class StoriesViewController: UIViewController {
             name.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -20),
             name.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 40),
         ])
+    }
+
+    @objc private func exitTapped() {
+        player.pause()
+        dismiss(animated: true)
     }
 }
