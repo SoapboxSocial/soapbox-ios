@@ -176,5 +176,7 @@ extension StoriesViewController: StoryPlayerDelegate {
         dismiss(animated: true)
     }
 
-    func startedPlaying(story _: APIClient.Story) {}
+    func startedPlaying(story: APIClient.Story) {
+        debugPrint(story)
+    }
 }

@@ -8,7 +8,7 @@ protocol StoryPlayerDelegate {
 class StoryPlayer {
     private let player = AVQueuePlayer()
 
-    private var currentItem = -1
+    private var currentItem = 0
 
     private let items: [APIClient.Story]
 
@@ -26,6 +26,7 @@ class StoryPlayer {
     func play() {
         NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlayToEnd), name: .AVPlayerItemDidPlayToEndTime, object: nil)
         player.play()
+        delegate?.startedPlaying(story: items[currentItem])
     }
 
     func stop() {
@@ -39,7 +40,7 @@ class StoryPlayer {
     @objc private func itemDidPlayToEnd() {
         currentItem += 1
 
-        if currentItem == items.count - 1 {
+        if currentItem == items.count {
             delegate?.didReachEnd()
             return
         }
