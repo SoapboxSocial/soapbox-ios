@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.5.2] - 2020-12-09
+
  - Changed the room control icons just a little!
 
 ## [1.5.1] - 2020-12-07
