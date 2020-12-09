@@ -34,7 +34,7 @@ class StoriesViewController: UIViewController {
 
         player.play()
 
-        let duration = player.items().reduce(0.0) { $0 + Float(CMTimeGetSeconds($1.asset.duration)) }
+        let duration = player.duration()
 
         var playTime = Float(0.0)
         let timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
