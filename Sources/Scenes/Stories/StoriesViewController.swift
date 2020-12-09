@@ -6,6 +6,15 @@ class StoriesViewController: UIViewController {
 
     private let feed: APIClient.StoryFeed
 
+    private let progress: ProgressView = {
+        let progress = ProgressView()
+        progress.translatesAutoresizingMaskIntoConstraints = false
+        progress.progress = 0.0
+        progress.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+        progress.progressTintColor = .white
+        return progress
+    }()
+
     init(feed: APIClient.StoryFeed) {
         self.feed = feed
         super.init(nibName: nil, bundle: nil)
@@ -25,10 +34,18 @@ class StoriesViewController: UIViewController {
 
         player.play()
 
-        player.items().forEach { item in
-            debugPrint(item.duration)
-            debugPrint(item.asset.duration)
-        }
+        let duration = player.items().reduce(0.0) { $0 + Float(CMTimeGetSeconds($1.asset.duration)) }
+
+        var playTime = Float(0.0)
+        let timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
+            playTime += 0.001
+            self.progress.setProgress(playTime / duration, animated: true)
+
+            if playTime >= duration {
+//                exitTapped()
+                // @TODO invalidate
+            }
+        })
 
         let background = UIView()
         background.translatesAutoresizingMaskIntoConstraints = false
@@ -63,11 +80,6 @@ class StoriesViewController: UIViewController {
             image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + url))
         }
 
-        let progress = ProgressView()
-        progress.translatesAutoresizingMaskIntoConstraints = false
-        progress.progress = 0.5
-        progress.backgroundColor = UIColor.white.withAlphaComponent(0.1)
-        progress.progressTintColor = .white
         content.addSubview(progress)
 
         let name = UILabel()
