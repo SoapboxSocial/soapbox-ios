@@ -16,6 +16,7 @@ class StoryPlayer {
 
     init(items: [APIClient.Story]) {
         self.items = items
+        currentItem = 0
 
         for item in items {
             let url = Configuration.cdn.appendingPathComponent("/stories/" + item.id + ".aac")
@@ -30,6 +31,7 @@ class StoryPlayer {
     }
 
     func stop() {
+        NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: nil)
         player.pause()
     }
 
