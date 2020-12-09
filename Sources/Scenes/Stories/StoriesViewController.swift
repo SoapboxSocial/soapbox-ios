@@ -2,8 +2,6 @@ import AVFoundation
 import UIKit
 
 class StoriesViewController: UIViewController {
-    private let player = AVQueuePlayer()
-
     private let feed: APIClient.StoryFeed
 
     private let progress: ProgressView = {
@@ -15,14 +13,13 @@ class StoriesViewController: UIViewController {
         return progress
     }()
 
-    init(feed: APIClient.StoryFeed) {
-        self.feed = feed
-        super.init(nibName: nil, bundle: nil)
+    private let player: StoryPlayer
 
-        for story in feed.stories {
-            let url = Configuration.cdn.appendingPathComponent("/stories/" + story.id + ".aac")
-            player.insert(AVPlayerItem(asset: AVURLAsset(url: url)), after: nil)
-        }
+    init(feed: APIClient.StoryFeed) {
+        self.feed = feed // @TODO MAY ONLY NEED TO BE USER
+        player = StoryPlayer(items: feed.stories)
+        super.init(nibName: nil, bundle: nil)
+        player.delegate = self
     }
 
     required init?(coder _: NSCoder) {
@@ -168,7 +165,16 @@ class StoriesViewController: UIViewController {
     }
 
     @objc private func exitTapped() {
-        player.pause()
+        player.stop()
         dismiss(animated: true)
     }
+}
+
+extension StoriesViewController: StoryPlayerDelegate {
+    func didReachEnd() {
+        player.stop()
+        dismiss(animated: true)
+    }
+
+    func startedPlaying(story _: APIClient.Story) {}
 }
