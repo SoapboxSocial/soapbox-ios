@@ -122,6 +122,9 @@ class ProfileViewController: ViewController {
         headerView.descriptionLabel.font = .rounded(forTextStyle: .body, weight: .regular)
         content.addArrangedSubview(headerView)
 
+        let imageTap = UITapGestureRecognizer(target: self, action: #selector(didTapImage))
+        headerView.image.addGestureRecognizer(imageTap)
+
         headerView.stack.insertArrangedSubview(followsYouBadge, at: 1)
 
         NSLayoutConstraint.activate([
@@ -221,6 +224,23 @@ class ProfileViewController: ViewController {
         ])
 
         output.loadData()
+    }
+
+    @objc private func didTapImage() {
+        guard let stories = stories else {
+            return
+        }
+
+        let vc = StoriesViewController(
+            feed: APIClient.StoryFeed(
+                user: APIClient.User(id: user.id, displayName: user.displayName, username: user.username, email: nil, image: user.image),
+                stories: stories
+            )
+        )
+
+        vc.modalPresentationStyle = .fullScreen
+
+        present(vc, animated: true)
     }
 
     @objc private func openTwitterProfile() {
