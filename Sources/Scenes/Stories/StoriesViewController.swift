@@ -78,6 +78,14 @@ class StoriesViewController: UIViewController {
         name.translatesAutoresizingMaskIntoConstraints = false
         content.addSubview(name)
 
+        let posted = UILabel()
+        posted.translatesAutoresizingMaskIntoConstraints = false
+        posted.font = .rounded(forTextStyle: .body, weight: .semibold)
+        posted.textColor = UIColor.white.withAlphaComponent(0.5)
+        posted.textAlignment = .center
+        posted.text = "30m"
+        content.addSubview(posted)
+
         let thumbsUp = StoryReactionView(reaction: "👍", count: 30)
         background.addSubview(thumbsUp)
 
@@ -138,6 +146,12 @@ class StoriesViewController: UIViewController {
             name.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
             name.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -20),
             name.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 40),
+        ])
+
+        NSLayoutConstraint.activate([
+            posted.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
+            posted.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -20),
+            posted.topAnchor.constraint(equalTo: name.bottomAnchor),
         ])
     }
 
