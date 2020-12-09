@@ -451,7 +451,7 @@ extension APIClient {
 
     struct StoryFeed: Decodable {
         let user: User
-        let story: Story
+        let stories: [Story]
     }
 
     func stories(user: Int, callback: @escaping (Result<[Story], Error>) -> Void) {

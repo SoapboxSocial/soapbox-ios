@@ -1,6 +1,26 @@
 import UIKit
+import AVFoundation
 
 class StoriesViewController: UIViewController {
+    
+    private let player = AVQueuePlayer()
+    
+    private let feed: APIClient.StoryFeed
+    
+    init(feed: APIClient.StoryFeed) {
+        self.feed = feed
+        super.init(nibName: nil, bundle: nil)
+        
+        for story in feed.stories {
+            let url = Configuration.cdn.appendingPathComponent("/stories/" + story.id + ".aac")
+            player.insert(AVPlayerItem(asset: AVURLAsset(url: url)), after: nil)
+        }
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         view.backgroundColor = .black
 
