@@ -439,13 +439,20 @@ extension APIClient {
 }
 
 extension APIClient {
+    struct Reaction: Decodable {
+        let emoji: String
+        let count: Int
+    }
+
     struct Story: Decodable {
         let id: String
         let expiresAt: Int64
         let deviceTimestamp: Int64
 
+        let reactions = [Reaction]
+
         private enum CodingKeys: String, CodingKey {
-            case id, expiresAt = "expires_at", deviceTimestamp = "device_timestamp"
+            case id, expiresAt = "expires_at", deviceTimestamp = "device_timestamp", reactions
         }
     }
 
