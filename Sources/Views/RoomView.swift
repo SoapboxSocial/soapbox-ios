@@ -638,7 +638,11 @@ extension RoomView: UICollectionViewDataSource {
 extension RoomView: RoomDelegate {
     func userDidReact(user: Int, reaction: Room.Reaction) {
         DispatchQueue.main.async {
-            if let cell = (self.members.visibleCells as! [RoomMemberCell]).first(where: { $0.user == user }) {
+            guard let cells = self.members.visibleCells as? [RoomMemberCell] else {
+                return
+            }
+
+            if let cell = cells.first(where: { $0.user == user }) {
                 cell.didReact(with: reaction)
             }
         }
@@ -699,7 +703,11 @@ extension RoomView: RoomDelegate {
 
     func didChangeSpeakVolume(user: Int, volume: Float) {
         DispatchQueue.main.async {
-            if let cell = (self.members.visibleCells as! [RoomMemberCell]).first(where: { $0.user == user }) {
+            guard let cells = self.members.visibleCells as? [RoomMemberCell] else {
+                return
+            }
+
+            if let cell = cells.first(where: { $0.user == user }) {
                 cell.didChangeSpeakVolume(volume)
             }
         }
