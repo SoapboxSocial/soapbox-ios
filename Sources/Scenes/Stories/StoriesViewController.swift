@@ -24,6 +24,10 @@ class StoriesViewController: UIViewController {
 
     private let player: StoryPlayer
 
+    private let thumbsUp = StoryReactionButton(reaction: "👍")
+    private let fire = StoryReactionButton(reaction: "🔥")
+    private let heart = StoryReactionButton(reaction: "❤️")
+
     init(feed: APIClient.StoryFeed) {
         self.feed = feed // @TODO MAY ONLY NEED TO BE USER
         player = StoryPlayer(items: feed.stories)
@@ -98,13 +102,8 @@ class StoriesViewController: UIViewController {
 
         content.addSubview(posted)
 
-        let thumbsUp = StoryReactionButton(reaction: "👍")
         background.addSubview(thumbsUp)
-
-        let fire = StoryReactionButton(reaction: "🔥")
         background.addSubview(fire)
-
-        let heart = StoryReactionButton(reaction: "❤️")
         background.addSubview(heart)
 
         NSLayoutConstraint.activate([
@@ -181,5 +180,18 @@ extension StoriesViewController: StoryPlayerDelegate {
 
     func startedPlaying(story: APIClient.Story) {
         posted.text = Date(timeIntervalSince1970: TimeInterval(story.deviceTimestamp)).timeAgoDisplay()
+
+        story.reactions.forEach { reaction in
+            switch reaction.emoji {
+            case "👍":
+                self.thumbsUp.count = reaction.count
+            case "🔥":
+                self.fire.count = reaction.count
+            case "❤️":
+                self.heart.count = reaction.count
+            default:
+                return
+            }
+        }
     }
 }
