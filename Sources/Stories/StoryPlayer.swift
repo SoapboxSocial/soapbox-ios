@@ -8,7 +8,7 @@ protocol StoryPlayerDelegate {
 class StoryPlayer {
     private let player = AVQueuePlayer()
 
-    private var currentItem = 0
+    private var currentIndex = 0
 
     private let items: [APIClient.Story]
 
@@ -16,7 +16,7 @@ class StoryPlayer {
 
     init(items: [APIClient.Story]) {
         self.items = items
-        currentItem = 0
+        currentIndex = 0
 
         for item in items {
             let url = Configuration.cdn.appendingPathComponent("/stories/" + item.id + ".aac")
@@ -24,10 +24,14 @@ class StoryPlayer {
         }
     }
 
+    func currentItem() -> APIClient.Story {
+        return items[currentIndex]
+    }
+
     func play() {
         NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlayToEnd), name: .AVPlayerItemDidPlayToEndTime, object: nil)
         player.play()
-        delegate?.startedPlaying(story: items[currentItem])
+        delegate?.startedPlaying(story: items[currentIndex])
     }
 
     func stop() {
@@ -40,13 +44,13 @@ class StoryPlayer {
     }
 
     @objc private func itemDidPlayToEnd() {
-        currentItem += 1
+        currentIndex += 1
 
-        if currentItem == items.count {
+        if currentIndex == items.count {
             delegate?.didReachEnd()
             return
         }
 
-        delegate?.startedPlaying(story: items[currentItem])
+        delegate?.startedPlaying(story: items[currentIndex])
     }
 }
