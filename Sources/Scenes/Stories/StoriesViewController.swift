@@ -192,10 +192,15 @@ class StoriesViewController: UIViewController {
     }
 
     @objc private func menuTapped() {
+        let item = player.currentItem()
+
         let menu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
         let delete = UIAlertAction(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in
             // @TODO
+            APIClient().deleteStory(id: item.id, callback: { _ in
+                menu.dismiss(animated: true)
+            })
         })
         menu.addAction(delete)
 

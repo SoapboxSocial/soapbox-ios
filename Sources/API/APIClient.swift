@@ -483,6 +483,10 @@ extension APIClient {
             callback(.success(()))
         }
     }
+
+    func deleteStory(id: String, callback: @escaping (Result<Void, Error>) -> Void) {
+        void(path: "/v1/stories/" + id, method: .delete, callback: callback)
+    }
 }
 
 extension APIClient {
