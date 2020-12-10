@@ -20,6 +20,7 @@ class StoriesViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "ellipsis", withConfiguration: StoriesViewController.iconConfig), for: .normal)
         button.tintColor = .white
+        button.addTarget(self, action: #selector(menuTapped), for: .touchUpInside)
         return button
     }()
 
@@ -188,6 +189,20 @@ class StoriesViewController: UIViewController {
     @objc private func exitTapped() {
         player.stop()
         dismiss(animated: true)
+    }
+
+    @objc private func menuTapped() {
+        let menu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+        let delete = UIAlertAction(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in
+            // @TODO
+        })
+        menu.addAction(delete)
+
+        let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
+        menu.addAction(cancel)
+
+        present(menu, animated: true)
     }
 }
 
