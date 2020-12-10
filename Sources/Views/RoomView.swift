@@ -523,11 +523,11 @@ class RoomView: UIView {
     }
 
     @objc private func editRoomNameButtonTapped() {
-        let ac = UIAlertController(title: NSLocalizedString("enter_name", comment: ""), message: nil, preferredStyle: .alert)
-        ac.addTextField()
+        let alert = UIAlertController(title: NSLocalizedString("enter_name", comment: ""), message: nil, preferredStyle: .alert)
+        alert.addTextField()
 
-        let submitAction = UIAlertAction(title: NSLocalizedString("submit", comment: ""), style: .default) { [unowned ac] _ in
-            let answer = ac.textFields![0]
+        let submitAction = UIAlertAction(title: NSLocalizedString("submit", comment: ""), style: .default) { [unowned alert] _ in
+            let answer = alert.textFields![0]
             guard let text = answer.text else {
                 return
             }
@@ -535,12 +535,12 @@ class RoomView: UIView {
             self.room.rename(text)
         }
 
-        ac.addAction(submitAction)
+        alert.addAction(submitAction)
 
         let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
-        ac.addAction(cancel)
+        alert.addAction(cancel)
 
-        UIApplication.shared.keyWindow?.rootViewController!.present(ac, animated: true)
+        UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
     }
 
     @objc private func inviteTapped() {

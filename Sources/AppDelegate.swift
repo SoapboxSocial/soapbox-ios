@@ -111,7 +111,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         let keychain = Keychain(service: identifier)
-        guard let _ = keychain[string: "token"] else {
+        if keychain[string: "token"] == nil {
             return false
         }
 
