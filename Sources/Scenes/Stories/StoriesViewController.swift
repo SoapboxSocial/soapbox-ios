@@ -50,11 +50,6 @@ class StoriesViewController: UIViewController {
         Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
             playTime += 0.001
             self.progress.setProgress(playTime / duration, animated: true)
-
-            if playTime >= duration {
-//                exitTapped()
-                // @TODO invalidate
-            }
         })
 
         let background = UIView()
