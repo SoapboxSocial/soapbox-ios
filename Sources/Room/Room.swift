@@ -306,13 +306,13 @@ class Room: NSObject {
     }
 
     private func on(join: JoinReply) {
-        guard let r = MemberRole(rawValue: join.room.role) else {
+        guard let role = MemberRole(rawValue: join.room.role) else {
             return completion(.failure(RoomError.general))
         }
 
         visibility = join.room.visibility
 
-        role = r
+        self.role = role
 
         for member in join.room.members {
             members.append(
@@ -387,8 +387,8 @@ class Room: NSObject {
 
         let sessionDescription = RTCSessionDescription(type: .offer, sdp: sdp)
 
-        rtc.set(remoteSdp: sessionDescription) { e in
-            if let error = e {
+        rtc.set(remoteSdp: sessionDescription) { error in
+            if error != nil {
                 debugPrint(error)
                 return
             }
