@@ -2,6 +2,8 @@ import AVFoundation
 import UIKit
 
 class StoriesViewController: UIViewController {
+    private static let iconConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
+
     private let feed: APIClient.StoryFeed
 
     private let progress: ProgressView = {
@@ -11,6 +13,14 @@ class StoriesViewController: UIViewController {
         progress.backgroundColor = UIColor.white.withAlphaComponent(0.1)
         progress.progressTintColor = .white
         return progress
+    }()
+
+    private let menuButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "ellipsis", withConfiguration: StoriesViewController.iconConfig), for: .normal)
+        button.tintColor = .white
+        return button
     }()
 
     private let posted: UILabel = {
@@ -64,14 +74,28 @@ class StoriesViewController: UIViewController {
         content.backgroundColor = .brandColor
         background.addSubview(content)
 
-        let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
+        content.addSubview(progress)
+
+        let buttonStack = UIStackView()
+        buttonStack.translatesAutoresizingMaskIntoConstraints = false
+        buttonStack.spacing = 20
+        buttonStack.distribution = .equalSpacing
+        buttonStack.alignment = .center
+        buttonStack.axis = .horizontal
+        content.addSubview(buttonStack)
+
+        buttonStack.addArrangedSubview(menuButton)
 
         let exit = UIButton()
         exit.translatesAutoresizingMaskIntoConstraints = false
-        exit.setImage(UIImage(systemName: "xmark", withConfiguration: config), for: .normal)
+        exit.setImage(UIImage(systemName: "xmark", withConfiguration: StoriesViewController.iconConfig), for: .normal)
         exit.tintColor = .white
         exit.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
-        content.addSubview(exit)
+        buttonStack.addArrangedSubview(exit)
+
+        if feed.user.id != UserDefaults.standard.integer(forKey: "id") {
+            menuButton.isHidden = true
+        }
 
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
@@ -84,8 +108,6 @@ class StoriesViewController: UIViewController {
         if let url = feed.user.image, url != "" {
             image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + url))
         }
-
-        content.addSubview(progress)
 
         let name = UILabel()
         name.font = .rounded(forTextStyle: .title1, weight: .bold)
@@ -131,14 +153,16 @@ class StoriesViewController: UIViewController {
         ])
 
         NSLayoutConstraint.activate([
-            exit.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -20),
-            exit.topAnchor.constraint(equalTo: content.topAnchor, constant: 20),
+            buttonStack.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            buttonStack.topAnchor.constraint(equalTo: content.topAnchor, constant: 20),
+            buttonStack.heightAnchor.constraint(equalToConstant: 32),
         ])
 
         NSLayoutConstraint.activate([
             progress.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
-            progress.rightAnchor.constraint(equalTo: exit.leftAnchor, constant: -20),
-            progress.centerYAnchor.constraint(equalTo: exit.centerYAnchor),
+            progress.rightAnchor.constraint(equalTo: buttonStack.leftAnchor, constant: -20),
+            progress.heightAnchor.constraint(equalToConstant: 5),
+            progress.centerYAnchor.constraint(equalTo: buttonStack.centerYAnchor),
         ])
 
         NSLayoutConstraint.activate([
