@@ -25,7 +25,7 @@ class UserListInteractor: UserListViewControllerOutput {
             case .failure:
                 self.output.presentGeneralError()
             case let .success(list):
-                self.offset = self.offset + self.limit
+                self.offset += self.limit
                 self.output.present(users: list)
             }
         }
