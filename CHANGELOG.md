@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - We are launching Stories! This is a big one, if you have something interesting to say you can record it as a story allowing all your followers to listen to it on their own time.
+
 ## [1.5.2] - 2020-12-09
 
  - Changed the room control icons just a little!
