@@ -1,7 +1,7 @@
 import UIKit
 
 class StoryReactionButton: UIButton {
-    private let reaction: UILabel = {
+    let reaction: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .white

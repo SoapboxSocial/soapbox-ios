@@ -124,6 +124,10 @@ class StoriesViewController: UIViewController {
         background.addSubview(fire)
         background.addSubview(heart)
 
+        thumbsUp.addTarget(self, action: #selector(didReact), for: .touchUpInside)
+        fire.addTarget(self, action: #selector(didReact), for: .touchUpInside)
+        heart.addTarget(self, action: #selector(didReact), for: .touchUpInside)
+
         NSLayoutConstraint.activate([
             thumbsUp.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -10),
             thumbsUp.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -184,6 +188,24 @@ class StoriesViewController: UIViewController {
             posted.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -20),
             posted.topAnchor.constraint(equalTo: name.bottomAnchor),
         ])
+    }
+
+    @objc private func didReact(_ sender: UIButton) {
+        let item = player.currentItem()
+
+        guard let button = sender as? StoryReactionButton else {
+            return
+        }
+
+        guard let reaction = button.reaction.text else {
+            return
+        }
+
+        APIClient().react(story: item.id, reaction: reaction, callback: { result in
+            if case .success = result {
+                button.count += 1
+            }
+        })
     }
 
     @objc private func exitTapped() {
