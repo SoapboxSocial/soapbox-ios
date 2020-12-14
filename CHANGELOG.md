@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Ensure group creation is always shown on personal profile.
+
 ## [1.5.2] - 2020-12-09
 
  - Changed the room control icons just a little!
