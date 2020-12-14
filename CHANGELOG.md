@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Show cursor on user related search bars.
  - Ensure group creation is always shown on personal profile.
 
 ## [1.5.2] - 2020-12-09
