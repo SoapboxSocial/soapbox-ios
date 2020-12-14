@@ -22,7 +22,7 @@ class EmptyRoomCollectionViewCell: UICollectionViewCell {
         messageLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20).isActive = true
         messageLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 20).isActive = true
         messageLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -20).isActive = true
-        titleLabel.text = NSLocalizedString("no_one_talking", comment: "")
+        titleLabel.text = NSLocalizedString("got_something_to_say", comment: "")
         titleLabel.textAlignment = .center
         messageLabel.text = NSLocalizedString("start_a_room", comment: "")
         messageLabel.textAlignment = .center
