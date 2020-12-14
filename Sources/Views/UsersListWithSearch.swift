@@ -37,8 +37,6 @@ class UsersListWithSearch: UIView {
         searchBar.addTarget(self, action: #selector(updateSearchResults), for: .editingChanged)
         searchBar.backgroundColor = .lightBrandColor
         searchBar.clearButtonMode = .whileEditing
-        searchBar.textColor = .white
-        searchBar.tintColor = .white
         searchBar.returnKeyType = .done
         searchBar.attributedPlaceholder = NSAttributedString(
             string: NSLocalizedString("search", comment: ""),
