@@ -190,8 +190,13 @@ class StoriesViewController: UIViewController {
         ])
     }
 
+    // @TODO allow deselecting reaction?
     @objc private func didReact(_ sender: UIButton) {
         let item = player.currentItem()
+
+        if feed.user.id == UserDefaults.standard.integer(forKey: "id") {
+            return
+        }
 
         guard let button = sender as? StoryReactionButton else {
             return
