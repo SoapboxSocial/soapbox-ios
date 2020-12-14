@@ -28,9 +28,9 @@ PODS:
   - KeychainAccess (4.2.1)
   - Logging (1.4.0)
   - MarqueeLabel (4.0.5)
-  - NotificationBannerSwift (3.0.2):
-    - MarqueeLabel (~> 4.0.0)
-    - SnapKit (~> 5.0.0)
+  - NotificationBannerSwift (3.0.5):
+    - MarqueeLabel (~> 4.0.5)
+    - SnapKit (~> 5.0.1)
   - SnapKit (5.0.1)
   - SwiftConfettiView (0.1.0)
   - Swifter (2.4.0)
@@ -163,7 +163,7 @@ SPEC CHECKSUMS:
   KeychainAccess: 9b07f665298d13c3a85881bd3171f6f49b8151c1
   Logging: beeb016c9c80cf77042d62e83495816847ef108b
   MarqueeLabel: 00cc0bcd087111dca575878b3531af980559707d
-  NotificationBannerSwift: 713e20f21b6105f4a36a00e5d9fa414a930d3d8e
+  NotificationBannerSwift: 7642b11ee9c2ac8a0abda33f9a5b4cb665f068b1
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SwiftConfettiView: 1bdbc2e6913b6b1c76d8070802b212508ad5c352
   Swifter: 0955a05325dc182fabfb1468305aef887180e0f1
