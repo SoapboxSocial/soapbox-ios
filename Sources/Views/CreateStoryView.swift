@@ -26,8 +26,8 @@ class CreateStoryView: UIView {
 
     private let progress: ProgressView = {
         let progress = ProgressView()
-        progress.backgroundColor = UIColor.white.withAlphaComponent(0.2)
         progress.progressTintColor = .white
+        progress.trackTintColor = UIColor.white.withAlphaComponent(0.2)
         progress.translatesAutoresizingMaskIntoConstraints = false
         progress.progress = 0.0
         return progress
