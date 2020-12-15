@@ -57,8 +57,8 @@ class StoriesViewController: UIViewController {
             try AVAudioSession.sharedInstance().setActive(false)
             try AVAudioSession.sharedInstance().setCategory(.playback, options: [.defaultToSpeaker, .mixWithOthers])
             try AVAudioSession.sharedInstance().setActive(true)
-        } catch let error as NSError {
-            print("AVAudioSession error: \(error.localizedDescription)")
+        } catch {
+            print("AVAudioSession error: \(error)")
         }
 
         player.play()
