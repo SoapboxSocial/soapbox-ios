@@ -79,7 +79,7 @@ class CreateStoryView: UIView {
 
         let handle = UIView()
         handle.translatesAutoresizingMaskIntoConstraints = false
-        handle.backgroundColor = .handle
+        handle.backgroundColor = UIColor.white.withAlphaComponent(0.3)
         handle.layer.cornerRadius = 2.5
         addSubview(handle)
 
