@@ -14,15 +14,6 @@ class StoryCell: UICollectionViewCell {
         return view
     }()
 
-    var displayName: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .rounded(forTextStyle: .body, weight: .semibold)
-        label.textColor = .label
-        label.textAlignment = .center
-        return label
-    }()
-
     override init(frame: CGRect) {
         super.init(frame: frame)
 
@@ -32,7 +23,6 @@ class StoryCell: UICollectionViewCell {
         contentView.translatesAutoresizingMaskIntoConstraints = false
 
         contentView.addSubview(image)
-        contentView.addSubview(displayName)
 
         NSLayoutConstraint.activate([
             contentView.leftAnchor.constraint(equalTo: leftAnchor),
@@ -46,12 +36,6 @@ class StoryCell: UICollectionViewCell {
             image.widthAnchor.constraint(equalToConstant: 64),
             image.topAnchor.constraint(equalTo: contentView.topAnchor),
             image.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
-            displayName.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 8),
-            displayName.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            displayName.rightAnchor.constraint(equalTo: contentView.rightAnchor),
         ])
     }
 
@@ -67,6 +51,5 @@ class StoryCell: UICollectionViewCell {
         super.prepareForReuse()
 
         image.image = nil
-        displayName.text = ""
     }
 }

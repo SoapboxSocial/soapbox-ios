@@ -42,7 +42,7 @@ class HomeViewController: ViewController {
         collection.register(cellWithClass: RoomCell.self)
         collection.register(cellWithClass: StoryCell.self)
         collection.register(cellWithClass: GroupCell.self)
-        collection.register(cellWithClass: CreateCell.self)
+        collection.register(cellWithClass: CreateStoryCell.self)
 
         collection.refreshControl = refresh
         refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -197,7 +197,7 @@ class HomeViewController: ViewController {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
 
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .absolute(64), heightDimension: .absolute(90))
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .absolute(64), heightDimension: .absolute(64))
         let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitem: layoutItem, count: 1)
 
         layoutGroup.interItemSpacing = .fixed(10)
@@ -446,8 +446,7 @@ extension HomeViewController: UICollectionViewDataSource {
         switch presenter.sectionType(for: indexPath.section) {
         case .storiesList:
             if indexPath.item == 0 {
-                let cell = collectionView.dequeueReusableCell(withClass: CreateCell.self, for: indexPath)
-                cell.title.text = NSLocalizedString("add", comment: "")
+                let cell = collectionView.dequeueReusableCell(withClass: CreateStoryCell.self, for: indexPath)
                 return cell
             }
 

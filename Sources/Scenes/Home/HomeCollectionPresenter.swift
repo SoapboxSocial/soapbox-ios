@@ -69,8 +69,6 @@ class HomeCollectionPresenter {
 
         let user = story.user
 
-        item.displayName.text = user.displayName.firstName()
-
         if let image = user.image, image != "" {
             item.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
         }
