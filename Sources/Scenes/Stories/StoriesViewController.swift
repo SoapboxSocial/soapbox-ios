@@ -10,7 +10,7 @@ class StoriesViewController: UIViewController {
         let progress = ProgressView()
         progress.translatesAutoresizingMaskIntoConstraints = false
         progress.progress = 0.0
-        progress.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+        progress.backgroundColor = UIColor.white.withAlphaComponent(0.2)
         progress.progressTintColor = .white
         return progress
     }()
