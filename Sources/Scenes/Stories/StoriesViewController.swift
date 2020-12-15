@@ -53,6 +53,14 @@ class StoriesViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .black
 
+        do {
+            try AVAudioSession.sharedInstance().setActive(false)
+            try AVAudioSession.sharedInstance().setCategory(.playback, options: [.defaultToSpeaker, .mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("AVAudioSession error: \(error)")
+        }
+
         player.play()
 
         let duration = player.duration()
