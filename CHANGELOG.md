@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.6.0] - 2020-12-15
+
  - We are launching Stories! This is a big one, if you have something interesting to say you can record it as a story allowing all your followers to listen to it on their own time.
  - Show cursor on user related search bars.
  - Ensure group creation is always shown on personal profile.
