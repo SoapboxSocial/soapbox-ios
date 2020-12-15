@@ -171,7 +171,7 @@ class StoriesViewController: UIViewController {
         ])
 
         NSLayoutConstraint.activate([
-            image.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            image.centerYAnchor.constraint(equalTo: content.centerYAnchor),
             image.centerXAnchor.constraint(equalTo: content.centerXAnchor),
             image.heightAnchor.constraint(equalToConstant: 140),
             image.widthAnchor.constraint(equalToConstant: 140),
