@@ -288,24 +288,6 @@ extension APIClient {
 }
 
 extension APIClient {
-    struct ActiveUser: Decodable {
-        let id: Int
-        let displayName: String
-        let username: String
-        let image: String?
-        let currentRoom: Int
-
-        private enum CodingKeys: String, CodingKey {
-            case id, displayName = "display_name", username, image, currentRoom = "current_room"
-        }
-    }
-
-    func actives(callback: @escaping (Result<[ActiveUser], Error>) -> Void) {
-        get(path: "/v1/users/active", callback: callback)
-    }
-}
-
-extension APIClient {
     enum GroupType: String, Decodable, CaseIterable {
         case restricted
         case `private`
@@ -435,6 +417,65 @@ extension APIClient {
 
     func deleteGroup(group: Int, callback: @escaping (Result<Void, Error>) -> Void) {
         void(path: "/v1/groups/" + String(group), method: .delete, callback: callback)
+    }
+}
+
+extension APIClient {
+    struct Reaction: Decodable {
+        let emoji: String
+        let count: Int
+    }
+
+    struct Story: Decodable {
+        let id: String
+        let expiresAt: Int64
+        let deviceTimestamp: Int64
+
+        let reactions: [Reaction]
+
+        private enum CodingKeys: String, CodingKey {
+            case id, expiresAt = "expires_at", deviceTimestamp = "device_timestamp", reactions
+        }
+    }
+
+    struct StoryFeed: Decodable {
+        let user: User
+        let stories: [Story]
+    }
+
+    func stories(user: Int, callback: @escaping (Result<[Story], Error>) -> Void) {
+        get(path: "/v1/users/" + String(user) + "/stories", callback: callback)
+    }
+
+    func uploadStory(file: URL, timestamp: Int64, callback: @escaping (Result<Void, Error>) -> Void) {
+        AF.upload(
+            multipartFormData: { multipartFormData in
+                multipartFormData.append(file, withName: "story", fileName: "story", mimeType: "audio/aac")
+                multipartFormData.append(String(timestamp).data(using: String.Encoding.utf8)!, withName: "device_timestamp")
+            },
+            to: Configuration.rootURL.appendingPathComponent("/v1/stories/upload"),
+            headers: ["Authorization": token!]
+        )
+        .validate()
+        .response { result in
+            if let error = self.validate(result) {
+                return callback(.failure(error))
+            }
+
+            callback(.success(()))
+        }
+    }
+
+    func deleteStory(id: String, callback: @escaping (Result<Void, Error>) -> Void) {
+        void(path: "/v1/stories/" + id, method: .delete, callback: callback)
+    }
+
+    func react(story: String, reaction: String, callback: @escaping (Result<Void, Error>) -> Void) {
+        void(path: "/v1/stories/" + story + "/react", method: .post, parameters: ["reaction": reaction], callback: callback)
+    }
+
+    func feed(callback: @escaping (Result<[StoryFeed], Error>) -> Void) {
+        get(path: "/v1/me/feed", callback: callback)
     }
 }
 

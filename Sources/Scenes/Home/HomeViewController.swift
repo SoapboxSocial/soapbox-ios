@@ -1,4 +1,5 @@
 import AlamofireImage
+import DrawerView
 import NotificationBannerSwift
 import UIKit
 
@@ -23,6 +24,8 @@ class HomeViewController: ViewController {
 
     private var updateQueue = [Update]()
 
+    private var storyDrawer: DrawerView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -37,8 +40,9 @@ class HomeViewController: ViewController {
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
         collection.register(cellWithClass: EmptyRoomCollectionViewCell.self)
         collection.register(cellWithClass: RoomCell.self)
-        collection.register(cellWithClass: ActiveUserCell.self)
+        collection.register(cellWithClass: StoryCell.self)
         collection.register(cellWithClass: GroupCell.self)
+        collection.register(cellWithClass: CreateStoryCell.self)
 
         collection.refreshControl = refresh
         refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -143,8 +147,8 @@ class HomeViewController: ViewController {
     private func makeLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             switch self.presenter.sectionType(for: sectionIndex) {
-            case .activeList:
-                return self.createActiveListSection()
+            case .storiesList:
+                return self.createStoriesListSection()
             case .roomList:
                 return self.createRoomListSection()
             case .noRooms:
@@ -168,7 +172,7 @@ class HomeViewController: ViewController {
         var height = NSCollectionLayoutDimension.fractionalHeight(0.9)
 
         var heightAbsolute = view.frame.size.height
-        if presenter.has(section: .activeList) {
+        if presenter.has(section: .storiesList) {
             heightAbsolute -= 300
         }
 
@@ -189,11 +193,11 @@ class HomeViewController: ViewController {
         return layoutSection
     }
 
-    private func createActiveListSection() -> NSCollectionLayoutSection {
+    private func createStoriesListSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
 
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .absolute(64), heightDimension: .absolute(90))
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .absolute(64), heightDimension: .absolute(64))
         let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitem: layoutItem, count: 1)
 
         layoutGroup.interItemSpacing = .fixed(10)
@@ -239,7 +243,7 @@ class HomeViewController: ViewController {
         layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
         layoutSection.orthogonalScrollingBehavior = .continuous
 
-        if presenter.has(section: .activeList) {
+        if presenter.has(section: .storiesList) {
             layoutSection.boundarySupplementaryItems = [createSectionHeader()]
         }
 
@@ -293,8 +297,8 @@ extension HomeViewController: HomePresenterOutput {
         update(.rooms(rooms.sorted(by: { $0.id < $1.id })))
     }
 
-    func didFetchActives(actives: [APIClient.ActiveUser]) {
-        update(.actives(actives))
+    func didFetchFeed(_ feed: [APIClient.StoryFeed]) {
+        update(.feed(feed))
     }
 
     func displayError(title: String, description: String?) {
@@ -339,7 +343,7 @@ extension HomeViewController: HomePresenterOutput {
 extension HomeViewController {
     enum Update {
         case rooms([RoomState])
-        case actives([APIClient.ActiveUser])
+        case feed([APIClient.StoryFeed])
         case groups([APIClient.Group])
     }
 
@@ -362,10 +366,14 @@ extension HomeViewController {
         case let .rooms(rooms):
             presenter.set(rooms: rooms)
             collection.reloadSections(IndexSet(integer: presenter.numberOfSections - 1))
-        case let .actives(actives):
-            let previous = presenter.index(of: .activeList)
-            presenter.set(actives: actives)
-            if actives.isEmpty {
+        case let .feed(feed):
+            presenter.set(stories: feed)
+            collection.reloadSections(IndexSet(integer: 0))
+        case let .groups(groups):
+            let previous = presenter.index(of: .groupList)
+            presenter.set(groups: groups)
+
+            if groups.isEmpty {
                 if let index = previous {
                     collection.deleteSections(IndexSet(integer: index))
                 }
@@ -375,20 +383,8 @@ extension HomeViewController {
                         self.collection.reloadSections(IndexSet(integer: index))
                     }
                 } else {
-                    collection.insertSections(IndexSet(integer: presenter.index(of: .activeList)!))
+                    collection.insertSections(IndexSet(integer: presenter.index(of: .groupList)!))
                 }
-            }
-
-        case let .groups(groups):
-            let previous = presenter.index(of: .groupList)
-            presenter.set(groups: groups)
-
-            if let index = previous {
-                UIView.performWithoutAnimation {
-                    self.collection.reloadSections(IndexSet(integer: index))
-                }
-            } else {
-                collection.insertSections(IndexSet(integer: presenter.index(of: .groupList)!))
             }
         }
 
@@ -410,30 +406,21 @@ extension HomeViewController: UICollectionViewDelegate {
 
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch presenter.sectionType(for: indexPath.section) {
-        case .activeList:
-            let user = presenter.item(for: indexPath, ofType: APIClient.ActiveUser.self)
+        case .storiesList:
+            if presenter.currentRoom != nil {
+                // @TODO SHOW TOAST THAT YOU CAN'T USE STORIES WHILE IN A ROOM
+                return
+            }
 
-            let options = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            if indexPath.item == 0 {
+                return openCreateStory()
+            }
 
-            options.addAction(
-                UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
-                    DispatchQueue.main.async {
-                        self.navigationController?.pushViewController(SceneFactory.createProfileViewController(id: user.id), animated: true)
-                    }
-                })
-            )
+            let feed = presenter.item(for: indexPath, ofType: APIClient.StoryFeed.self)
+            let vc = StoriesViewController(feed: feed)
+            vc.modalPresentationStyle = .fullScreen
 
-            options.addAction(
-                UIAlertAction(title: NSLocalizedString("join_room", comment: ""), style: .default, handler: { _ in
-                    DispatchQueue.main.async {
-                        self.output.didSelectRoom(room: Int(user.currentRoom))
-                    }
-                })
-            )
-
-            options.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-
-            present(options, animated: true)
+            present(vc, animated: true)
         case .roomList:
             let room = presenter.item(for: indexPath, ofType: RoomState.self)
             output.didSelectRoom(room: Int(room.id))
@@ -457,8 +444,13 @@ extension HomeViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch presenter.sectionType(for: indexPath.section) {
-        case .activeList:
-            let cell = collectionView.dequeueReusableCell(withClass: ActiveUserCell.self, for: indexPath)
+        case .storiesList:
+            if indexPath.item == 0 {
+                let cell = collectionView.dequeueReusableCell(withClass: CreateStoryCell.self, for: indexPath)
+                return cell
+            }
+
+            let cell = collectionView.dequeueReusableCell(withClass: StoryCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
         case .roomList:
@@ -511,5 +503,58 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
         }
 
         return collection.collectionView(collectionView, layout: layout, referenceSizeForFooterInSection: section)
+    }
+}
+
+extension HomeViewController: CreateStoryViewDelegate {
+    func openCreateStory() {
+        let creationView = CreateStoryView()
+        creationView.delegate = self
+
+        storyDrawer = DrawerView(withView: creationView)
+        storyDrawer!.cornerRadius = 25.0
+        storyDrawer!.attachTo(view: (navigationController?.view)!)
+        storyDrawer!.backgroundEffect = nil
+        storyDrawer!.snapPositions = [.closed, .open]
+        storyDrawer!.backgroundColor = .brandColor
+        storyDrawer!.childScrollViewsPanningCanDismissDrawer = false
+
+        navigationController?.view.addSubview(storyDrawer)
+
+        creationView.autoPinEdgesToSuperview()
+
+        storyDrawer!.setPosition(.closed, animated: false)
+        storyDrawer!.setPosition(.open, animated: true) { _ in
+            UIApplication.shared.isIdleTimerDisabled = true
+        }
+    }
+
+    // This removes the pan functionality to close the drawer temporarily.
+    // We do this because if the user drags their thumb while recording things go weird.
+    func didStartRecording() {
+        storyDrawer.enabled = false
+    }
+
+    func didEndRecording() {
+        storyDrawer.enabled = true
+    }
+
+    func didFailToRequestPermission() {}
+
+    func didFinishUploading(_: CreateStoryView) {
+        closeStoryDrawer()
+    }
+
+    func didCancel() {
+        closeStoryDrawer()
+    }
+
+    private func closeStoryDrawer() {
+        storyDrawer.setPosition(.closed, animated: true) { _ in
+            DispatchQueue.main.async {
+                self.storyDrawer.removeFromSuperview()
+                self.storyDrawer = nil
+            }
+        }
     }
 }

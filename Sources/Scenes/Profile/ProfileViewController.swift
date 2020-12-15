@@ -13,6 +13,8 @@ protocol ProfileViewControllerOutput {
 class ProfileViewController: ViewController {
     private var user: APIClient.Profile!
 
+    private var stories: [APIClient.Story]?
+
     var output: ProfileViewControllerOutput!
 
     private let content: UIStackView = {
@@ -112,11 +114,16 @@ class ProfileViewController: ViewController {
 
         scrollView.addSubview(content)
 
+        // @TODO REGISTER IMAGE TAP HANDLER
+
         headerView.button.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
         headerView.button.setTitle(NSLocalizedString("unfollow", comment: ""), for: .selected)
         headerView.button.isHidden = false
         headerView.descriptionLabel.font = .rounded(forTextStyle: .body, weight: .regular)
         content.addArrangedSubview(headerView)
+
+        let imageTap = UITapGestureRecognizer(target: self, action: #selector(didTapImage))
+        headerView.image.addGestureRecognizer(imageTap)
 
         headerView.stack.insertArrangedSubview(followsYouBadge, at: 1)
 
@@ -219,6 +226,23 @@ class ProfileViewController: ViewController {
         output.loadData()
     }
 
+    @objc private func didTapImage() {
+        guard let stories = stories else {
+            return
+        }
+
+        let vc = StoriesViewController(
+            feed: APIClient.StoryFeed(
+                user: APIClient.User(id: user.id, displayName: user.displayName, username: user.username, email: nil, image: user.image),
+                stories: stories
+            )
+        )
+
+        vc.modalPresentationStyle = .fullScreen
+
+        present(vc, animated: true)
+    }
+
     @objc private func openTwitterProfile() {
         guard let account = user.linkedAccounts.first(where: { $0.provider == "twitter" }) else {
             return
@@ -314,6 +338,45 @@ extension ProfileViewController: ProfilePresenterOutput {
         self.groups.set(groups: groups)
     }
 
+    func display(stories: [APIClient.Story]) {
+        if stories.isEmpty {
+            return
+        }
+
+        self.stories = stories
+
+        let frame = headerView.image.frame
+        let width = CGFloat(5.0)
+
+        let start = (3 * Double.pi) / 2
+        let path = UIBezierPath(
+            arcCenter: CGPoint(x: frame.size.width / 2.0, y: frame.size.height / 2.0),
+            radius: (frame.size.width - width) / 2,
+            startAngle: CGFloat(start),
+            endAngle: CGFloat(start + (Double.pi * 2)),
+            clockwise: true
+        )
+
+        let circleLayer = CAShapeLayer()
+        circleLayer.path = path.cgPath
+        circleLayer.fillColor = UIColor.clear.cgColor
+        circleLayer.strokeColor = UIColor.brandColor.cgColor
+        circleLayer.lineWidth = width
+
+        circleLayer.strokeEnd = 0.0
+        headerView.image.layer.addSublayer(circleLayer)
+
+        let animation = CABasicAnimation(keyPath: "strokeEnd")
+        animation.duration = 1
+        animation.fromValue = 0
+        animation.toValue = 1
+
+        animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
+        circleLayer.strokeEnd = 1.0
+
+        circleLayer.add(animation, forKey: "animateCircle")
+    }
+
     func didFollow() {
         headerView.button.isUserInteractionEnabled = true
         headerView.button.isSelected.toggle()
@@ -357,7 +420,7 @@ extension ProfileViewController: ProfilePresenterOutput {
         if profile.image != "" {
             headerView.image.inner.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + profile.image))
             headerView.image.inner.contentMode = .scaleAspectFill
-            manager.register(parentViewController: self, imageViews: [headerView.image])
+            manager.register(parentViewController: self, imageViews: [])
         }
     }
 }

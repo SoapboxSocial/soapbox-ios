@@ -20,7 +20,7 @@ class GroupsSlider: UIView {
     private let collection: UICollectionView = {
         let collection = UICollectionView(frame: CGRect.zero, collectionViewLayout: GroupsSlider.makeLayout())
         collection.register(cellWithClass: SelectableImageTextCell.self)
-        collection.register(cellWithClass: CreateGroupCell.self)
+        collection.register(cellWithClass: CreateCell.self)
         collection.translatesAutoresizingMaskIntoConstraints = false
         return collection
     }()
@@ -185,7 +185,7 @@ extension GroupsSlider: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if indexPath.item == 0, allowCreation {
-            let cell = collectionView.dequeueReusableCell(withClass: CreateGroupCell.self, for: indexPath)
+            let cell = collectionView.dequeueReusableCell(withClass: CreateCell.self, for: indexPath)
             return cell
         }
 

@@ -8,7 +8,7 @@ class HomeCollectionPresenter {
 
     enum SectionType: Int, CaseIterable {
         case roomList
-        case activeList
+        case storiesList
         case groupList
         case noRooms
     }
@@ -24,6 +24,7 @@ class HomeCollectionPresenter {
     }
 
     init() {
+        set(stories: [])
         set(rooms: [])
     }
 
@@ -37,26 +38,36 @@ class HomeCollectionPresenter {
 
     func item<T: Any>(for index: IndexPath, ofType _: T.Type) -> T {
         let section = dataSource[index.section]
-        return section.data[index.row] as! T
+
+        // @TODO NOT SURE IF PRETTY
+        var row = index.row
+        if T.self == APIClient.StoryFeed.self {
+            row -= 1
+        }
+
+        return section.data[row] as! T
     }
 
     func numberOfItems(for sectionIndex: Int) -> Int {
         let section = dataSource[sectionIndex]
-        if section.type == .noRooms {
+        switch section.type {
+        case .noRooms:
             return 1
+        case .storiesList:
+            return section.data.count + 1
+        default:
+            return section.data.count
         }
-
-        return section.data.count
     }
 
-    func configure(item: ActiveUserCell, for indexPath: IndexPath) {
+    func configure(item: StoryCell, for indexPath: IndexPath) {
         let section = dataSource[indexPath.section]
-        guard let user = section.data[indexPath.row] as? APIClient.ActiveUser else {
+        guard let story = section.data[indexPath.row - 1] as? APIClient.StoryFeed else {
             print("Error getting active user for indexPath: \(indexPath)")
             return
         }
 
-        item.displayName.text = user.displayName.firstName()
+        let user = story.user
 
         if let image = user.image, image != "" {
             item.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
@@ -115,8 +126,12 @@ class HomeCollectionPresenter {
         dataSource.removeAll(where: { $0.type == .groupList })
 
         var at = 0
-        if has(section: .activeList) {
+        if has(section: .storiesList) {
             at = 1
+        }
+
+        if groups.isEmpty {
+            return
         }
 
         dataSource.insert(Section(type: .groupList, title: NSLocalizedString("groups", comment: ""), data: groups), at: at)
@@ -140,14 +155,9 @@ class HomeCollectionPresenter {
         dataSource.append(Section(type: .roomList, title: NSLocalizedString("rooms", comment: ""), data: rooms))
     }
 
-    func set(actives: [APIClient.ActiveUser]) {
-        dataSource.removeAll(where: { $0.type == .activeList })
-
-        if actives.isEmpty {
-            return
-        }
-
-        dataSource.insert(Section(type: .activeList, title: "", data: actives), at: 0)
+    func set(stories: [APIClient.StoryFeed]) {
+        dataSource.removeAll(where: { $0.type == .storiesList })
+        dataSource.insert(Section(type: .storiesList, title: "", data: stories), at: 0)
     }
 
     func index(of section: SectionType) -> Int? {

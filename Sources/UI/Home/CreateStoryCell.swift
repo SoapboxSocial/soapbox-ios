@@ -1,15 +1,15 @@
 import UIKit
 
-class CreateGroupCell: UICollectionViewCell {
+class CreateStoryCell: UICollectionViewCell {
     private var image: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = UIColor.brandColor.withAlphaComponent(0.5)
         view.clipsToBounds = true
-        view.layer.cornerRadius = 56 / 2
+        view.layer.cornerRadius = 48 / 2
         view.layer.masksToBounds = true
 
-        let image = UIImageView(image: UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 40, weight: .semibold)))
+        let image = UIImageView(image: UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 33, weight: .semibold)))
         image.translatesAutoresizingMaskIntoConstraints = false
         image.tintColor = .brandColor
         view.addSubview(image)
@@ -22,15 +22,6 @@ class CreateGroupCell: UICollectionViewCell {
         return view
     }()
 
-    private var title: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .rounded(forTextStyle: .caption2, weight: .semibold)
-        label.textColor = .label
-        label.textAlignment = .center
-        return label
-    }()
-
     override init(frame: CGRect) {
         super.init(frame: frame)
 
@@ -38,9 +29,6 @@ class CreateGroupCell: UICollectionViewCell {
 
         contentView.translatesAutoresizingMaskIntoConstraints = false
 
-        title.text = NSLocalizedString("new_group", comment: "")
-
-        contentView.addSubview(title)
         contentView.addSubview(image)
 
         NSLayoutConstraint.activate([
@@ -49,17 +37,11 @@ class CreateGroupCell: UICollectionViewCell {
         ])
 
         NSLayoutConstraint.activate([
-            image.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
-            image.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 4),
-            image.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -4),
+            image.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            image.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 8),
+            image.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -8),
             image.heightAnchor.constraint(equalTo: image.widthAnchor),
             image.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
-            title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 8),
-            title.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            title.rightAnchor.constraint(equalTo: contentView.rightAnchor),
         ])
     }
 

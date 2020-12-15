@@ -8,6 +8,7 @@ protocol ProfileInteractorOutput {
     func displayFollowed()
     func displayError()
     func display(moreGroups groups: [APIClient.Group])
+    func display(stories: [APIClient.Story])
 }
 
 class ProfileInteractor {
@@ -59,6 +60,14 @@ extension ProfileInteractor: ProfileViewControllerOutput {
             case .failure: break
             case let .success(groups):
                 self.output.display(groups: groups)
+            }
+        })
+
+        api.stories(user: user, callback: { result in
+            switch result {
+            case .failure: break
+            case let .success(stories):
+                self.output.display(stories: stories)
             }
         })
     }

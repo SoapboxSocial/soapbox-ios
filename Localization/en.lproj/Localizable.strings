@@ -163,7 +163,13 @@
 
 "description" = "Description";
 "new_group" = "New Group";
-
 "delete" = "Delete";
+
+"hold_to_record" = "Hold to record";
+"recording" = "Recording";
+"paused" = "Paused";
+"post" = "Post";
+
+"add" = "Add";
 
 "start_room" = "Start room";
