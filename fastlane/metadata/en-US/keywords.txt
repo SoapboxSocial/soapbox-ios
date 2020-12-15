@@ -1,1 +1,1 @@
-social,voice,chat,soapbox,audio,clubhouse,community,groups
+social,voice,chat,soapbox,audio,community,groups,chat with strangers,group chat, audio chat
