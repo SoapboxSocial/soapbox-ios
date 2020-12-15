@@ -38,7 +38,14 @@ class HomeCollectionPresenter {
 
     func item<T: Any>(for index: IndexPath, ofType _: T.Type) -> T {
         let section = dataSource[index.section]
-        return section.data[index.row] as! T
+
+        // @TODO NOT SURE IF PRETTY
+        var row = index.row
+        if T.self == APIClient.StoryFeed.self {
+            row -= 1
+        }
+
+        return section.data[row] as! T
     }
 
     func numberOfItems(for sectionIndex: Int) -> Int {
@@ -53,12 +60,14 @@ class HomeCollectionPresenter {
         }
     }
 
-    func configure(item: ActiveUserCell, for indexPath: IndexPath) {
+    func configure(item: StoryCell, for indexPath: IndexPath) {
         let section = dataSource[indexPath.section]
-        guard let user = section.data[indexPath.row] as? APIClient.ActiveUser else {
+        guard let story = section.data[indexPath.row - 1] as? APIClient.StoryFeed else {
             print("Error getting active user for indexPath: \(indexPath)")
             return
         }
+
+        let user = story.user
 
         item.displayName.text = user.displayName.firstName()
 
@@ -148,7 +157,7 @@ class HomeCollectionPresenter {
         dataSource.append(Section(type: .roomList, title: NSLocalizedString("rooms", comment: ""), data: rooms))
     }
 
-    func set(stories: [APIClient.ActiveUser]) {
+    func set(stories: [APIClient.StoryFeed]) {
         dataSource.removeAll(where: { $0.type == .storiesList })
         dataSource.insert(Section(type: .storiesList, title: "", data: stories), at: 0)
     }

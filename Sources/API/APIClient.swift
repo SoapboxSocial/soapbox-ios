@@ -288,24 +288,6 @@ extension APIClient {
 }
 
 extension APIClient {
-    struct ActiveUser: Decodable {
-        let id: Int
-        let displayName: String
-        let username: String
-        let image: String?
-        let currentRoom: Int
-
-        private enum CodingKeys: String, CodingKey {
-            case id, displayName = "display_name", username, image, currentRoom = "current_room"
-        }
-    }
-
-    func actives(callback: @escaping (Result<[ActiveUser], Error>) -> Void) {
-        get(path: "/v1/users/active", callback: callback)
-    }
-}
-
-extension APIClient {
     enum GroupType: String, Decodable, CaseIterable {
         case restricted
         case `private`
@@ -490,6 +472,10 @@ extension APIClient {
 
     func react(story: String, reaction: String, callback: @escaping (Result<Void, Error>) -> Void) {
         void(path: "/v1/stories/" + story + "/react", method: .post, parameters: ["reaction": reaction], callback: callback)
+    }
+
+    func feed(callback: @escaping (Result<[StoryFeed], Error>) -> Void) {
+        get(path: "/v1/me/feed", callback: callback)
     }
 }
 

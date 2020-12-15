@@ -1,6 +1,6 @@
 import UIKit
 
-class ActiveUserCell: UICollectionViewCell {
+class StoryCell: UICollectionViewCell {
     var image: UIImageView = {
         let view = UIImageView()
         view.layer.cornerRadius = 64 / 2
@@ -9,6 +9,8 @@ class ActiveUserCell: UICollectionViewCell {
         view.layer.masksToBounds = true
         view.contentMode = .scaleAspectFill
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.borderColor = UIColor.brandColor.cgColor
+        view.layer.borderWidth = 4
         return view
     }()
 
@@ -21,17 +23,6 @@ class ActiveUserCell: UICollectionViewCell {
         return label
     }()
 
-    private var active: UIView = {
-        let view = UIView()
-        view.backgroundColor = .systemGreen
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.cornerRadius = 20 / 2
-        view.layer.borderWidth = 4.0
-        view.layer.borderColor = UIColor.background.cgColor
-
-        return view
-    }()
-
     override init(frame: CGRect) {
         super.init(frame: frame)
 
@@ -42,20 +33,12 @@ class ActiveUserCell: UICollectionViewCell {
 
         contentView.addSubview(image)
         contentView.addSubview(displayName)
-        contentView.addSubview(active)
 
         NSLayoutConstraint.activate([
             contentView.leftAnchor.constraint(equalTo: leftAnchor),
             contentView.rightAnchor.constraint(equalTo: rightAnchor),
             contentView.heightAnchor.constraint(equalTo: heightAnchor),
             contentView.widthAnchor.constraint(equalTo: widthAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
-            active.heightAnchor.constraint(equalToConstant: 20),
-            active.widthAnchor.constraint(equalToConstant: 20),
-            active.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 4),
-            active.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: 4),
         ])
 
         NSLayoutConstraint.activate([
@@ -78,7 +61,6 @@ class ActiveUserCell: UICollectionViewCell {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        active.layer.borderColor = UIColor.background.cgColor
     }
 
     override func prepareForReuse() {

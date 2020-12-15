@@ -2,9 +2,9 @@ import Foundation
 
 protocol HomePresenterOutput {
     func didFetchRooms(rooms: [RoomState])
-    func didFetchActives(actives: [APIClient.ActiveUser])
     func didFetchGroups(groups: [APIClient.Group])
     func didFetchMoreGroups(groups: [APIClient.Group])
+    func didFetchFeed(_ feed: [APIClient.StoryFeed])
     func displayError(title: String, description: String?)
     func displayCurrentRoom(_ id: Int)
     func removeCurrentRoom()
@@ -37,8 +37,8 @@ class HomePresenter: HomeInteractorOutput {
         output.updateProfileImage()
     }
 
-    func didFetchActives(actives: [APIClient.ActiveUser]) {
-        output.didFetchActives(actives: actives)
+    func didFetchFeed(_ feed: [APIClient.StoryFeed]) {
+        output.didFetchFeed(feed)
     }
 
     func didFetchGroups(groups: [APIClient.Group]) {

@@ -18,7 +18,7 @@ protocol HomeInteractorOutput {
     func didJoin(room: Int)
     func didLeaveRoom()
     func didFetchImage()
-    func didFetchActives(actives: [APIClient.ActiveUser])
+    func didFetchFeed(_ feed: [APIClient.StoryFeed])
     func didFetchGroups(groups: [APIClient.Group])
     func didFetchMoreGroups(groups: [APIClient.Group])
 }
@@ -55,14 +55,12 @@ class HomeInteractor: HomeViewControllerOutput {
             }
         }
 
-        api.actives(callback: { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .failure:
-                    self.output.didFetchActives(actives: [])
-                case let .success(users):
-                    self.output.didFetchActives(actives: users)
-                }
+        api.feed(callback: { result in
+            switch result {
+            case .failure:
+                self.output.didFetchFeed([])
+            case let .success(stories):
+                self.output.didFetchFeed(stories)
             }
         })
 

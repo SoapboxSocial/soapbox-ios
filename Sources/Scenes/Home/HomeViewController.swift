@@ -40,7 +40,7 @@ class HomeViewController: ViewController {
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
         collection.register(cellWithClass: EmptyRoomCollectionViewCell.self)
         collection.register(cellWithClass: RoomCell.self)
-        collection.register(cellWithClass: ActiveUserCell.self)
+        collection.register(cellWithClass: StoryCell.self)
         collection.register(cellWithClass: GroupCell.self)
         collection.register(cellWithClass: CreateCell.self)
 
@@ -297,8 +297,8 @@ extension HomeViewController: HomePresenterOutput {
         update(.rooms(rooms.sorted(by: { $0.id < $1.id })))
     }
 
-    func didFetchActives(actives: [APIClient.ActiveUser]) {
-        update(.actives(actives))
+    func didFetchFeed(_ feed: [APIClient.StoryFeed]) {
+        update(.feed(feed))
     }
 
     func displayError(title: String, description: String?) {
@@ -343,7 +343,7 @@ extension HomeViewController: HomePresenterOutput {
 extension HomeViewController {
     enum Update {
         case rooms([RoomState])
-        case actives([APIClient.ActiveUser])
+        case feed([APIClient.StoryFeed])
         case groups([APIClient.Group])
     }
 
@@ -366,8 +366,8 @@ extension HomeViewController {
         case let .rooms(rooms):
             presenter.set(rooms: rooms)
             collection.reloadSections(IndexSet(integer: presenter.numberOfSections - 1))
-        case let .actives(actives):
-            presenter.set(stories: actives)
+        case let .feed(feed):
+            presenter.set(stories: feed)
             collection.reloadSections(IndexSet(integer: 0))
         case let .groups(groups):
             let previous = presenter.index(of: .groupList)
@@ -416,29 +416,11 @@ extension HomeViewController: UICollectionViewDelegate {
                 return openCreateStory()
             }
 
-//            let user = presenter.item(for: indexPath, ofType: APIClient.ActiveUser.self)
-//
-//            let options = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-//
-//            options.addAction(
-//                UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
-//                    DispatchQueue.main.async {
-//                        self.navigationController?.pushViewController(SceneFactory.createProfileViewController(id: user.id), animated: true)
-//                    }
-//                })
-//            )
-//
-//            options.addAction(
-//                UIAlertAction(title: NSLocalizedString("join_room", comment: ""), style: .default, handler: { _ in
-//                    DispatchQueue.main.async {
-//                        self.output.didSelectRoom(room: Int(user.currentRoom))
-//                    }
-//                })
-//            )
-//
-//            options.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-//
-//            present(options, animated: true)
+            let feed = presenter.item(for: indexPath, ofType: APIClient.StoryFeed.self)
+            let vc = StoriesViewController(feed: feed)
+            vc.modalPresentationStyle = .fullScreen
+
+            present(vc, animated: true)
         case .roomList:
             let room = presenter.item(for: indexPath, ofType: RoomState.self)
             output.didSelectRoom(room: Int(room.id))
@@ -469,7 +451,7 @@ extension HomeViewController: UICollectionViewDataSource {
                 return cell
             }
 
-            let cell = collectionView.dequeueReusableCell(withClass: ActiveUserCell.self, for: indexPath)
+            let cell = collectionView.dequeueReusableCell(withClass: StoryCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
         case .roomList:
