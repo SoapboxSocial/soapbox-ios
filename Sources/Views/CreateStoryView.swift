@@ -70,6 +70,12 @@ class CreateStoryView: UIView {
 
     var delegate: CreateStoryViewDelegate?
 
+    private var activity: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView(style: .whiteLarge)
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        return spinner
+    }()
+
     init() {
         super.init(frame: CGRect.zero)
 
@@ -121,6 +127,13 @@ class CreateStoryView: UIView {
 
         playButton.isHidden = true
         playButton.addTarget(self, action: #selector(play), for: .touchUpInside)
+
+        addSubview(activity)
+
+        NSLayoutConstraint.activate([
+            activity.centerYAnchor.constraint(equalTo: centerYAnchor),
+            activity.centerXAnchor.constraint(equalTo: centerXAnchor),
+        ])
 
         NSLayoutConstraint.activate([
             image.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -240,7 +253,8 @@ class CreateStoryView: UIView {
     @objc private func share() {
         shareButton.isEnabled = false
 
-        // @TODO UIACTIVITYINDICATOR
+        activity.isHidden = false
+        activity.startAnimating()
 
         let group = DispatchGroup()
         var failed = false
@@ -261,6 +275,9 @@ class CreateStoryView: UIView {
         }
 
         group.notify(queue: .main) {
+            self.activity.isHidden = true
+            self.activity.stopAnimating()
+
             if failed {
                 // @TODO
                 return
