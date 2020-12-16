@@ -203,7 +203,13 @@ class RoomCreationView: UIView, UITextFieldDelegate {
     }
 
     @objc private func createPressed() {
-        delegate?.didEnterWithName(textField.text, isPrivate: visibilityControl.index == 1, group: groupsSlider.selectedGroup)
+        var isPrivate = visibilityControl.index == 1
+        var group: Int?
+        if !isPrivate {
+            group = groupsSlider.selectedGroup
+        }
+
+        delegate?.didEnterWithName(textField.text, isPrivate: isPrivate, group: group)
     }
 
     @objc private func cancelPressed() {
