@@ -317,14 +317,14 @@ class CreateStoryView: UIView {
         playButton.isSelected.toggle()
     }
 
+    func stop() {
+        recorder.clear()
+        recorder.pause()
+    }
+
     @objc private func cancel() {
         stop()
         delegate?.didCancel()
-    }
-
-    private func stop() {
-        recorder.clear()
-        recorder.pause()
     }
 
     private func recordingText() -> NSAttributedString {

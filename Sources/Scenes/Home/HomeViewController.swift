@@ -25,6 +25,7 @@ class HomeViewController: ViewController {
     private var updateQueue = [Update]()
 
     private var storyDrawer: DrawerView!
+    private var creationView: CreateStoryView?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -506,13 +507,14 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-extension HomeViewController: CreateStoryViewDelegate {
+extension HomeViewController: CreateStoryViewDelegate, DrawerViewDelegate {
     func openCreateStory() {
-        let creationView = CreateStoryView()
-        creationView.delegate = self
+        creationView = CreateStoryView()
+        creationView!.delegate = self
 
-        storyDrawer = DrawerView(withView: creationView)
+        storyDrawer = DrawerView(withView: creationView!)
         storyDrawer!.cornerRadius = 25.0
+        storyDrawer!.delegate = self
         storyDrawer!.attachTo(view: (navigationController?.view)!)
         storyDrawer!.backgroundEffect = nil
         storyDrawer!.snapPositions = [.closed, .open]
@@ -521,7 +523,7 @@ extension HomeViewController: CreateStoryViewDelegate {
 
         navigationController?.view.addSubview(storyDrawer)
 
-        creationView.autoPinEdgesToSuperview()
+        creationView!.autoPinEdgesToSuperview()
 
         storyDrawer!.setPosition(.closed, animated: false)
         storyDrawer!.setPosition(.open, animated: true) { _ in
@@ -547,6 +549,15 @@ extension HomeViewController: CreateStoryViewDelegate {
 
     func didCancel() {
         closeStoryDrawer()
+    }
+
+    func drawer(_: DrawerView, didTransitionTo position: DrawerPosition) {
+        if position != .closed {
+            return
+        }
+
+        creationView?.stop()
+        creationView = nil
     }
 
     private func closeStoryDrawer() {
