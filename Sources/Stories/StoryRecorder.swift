@@ -23,9 +23,15 @@ class StoryRecorder {
     }
 
     func start(callback: @escaping (Result<Void, RecorderError>) -> Void) {
-        let input = engine.inputNode
+        do {
+            try AVAudioSession.sharedInstance().setActive(false)
+            try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: [.defaultToSpeaker])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            return callback(.failure(.failedToStart))
+        }
 
-        input.removeTap(onBus: bus)
+        let input = engine.inputNode
 
         let inputFormat = input.inputFormat(forBus: bus)
 
