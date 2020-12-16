@@ -11,16 +11,19 @@ class StoryPlayer {
     private var currentIndex = 0
 
     private let items: [APIClient.Story]
+    private var playerItems = [AVPlayerItem]()
 
     var delegate: StoryPlayerDelegate?
 
     init(items: [APIClient.Story]) {
-        self.items = items
+        self.items = items.sorted(by: { $0.deviceTimestamp < $1.deviceTimestamp })
         currentIndex = 0
 
-        for item in items {
+        for item in self.items {
             let url = Configuration.cdn.appendingPathComponent("/stories/" + item.id + ".aac")
-            player.insert(AVPlayerItem(asset: AVURLAsset(url: url)), after: nil)
+            let item = AVPlayerItem(asset: AVURLAsset(url: url))
+            player.insert(item, after: nil)
+            playerItems.append(item)
         }
     }
 
@@ -54,9 +57,8 @@ class StoryPlayer {
     func playTime() -> Float {
         var totalElapsed = Float(0.0)
 
-        let items = player.items()
         for i in 0 ..< currentIndex {
-            totalElapsed += Float(CMTimeGetSeconds(items[i].asset.duration))
+            totalElapsed += Float(CMTimeGetSeconds(playerItems[i].asset.duration))
         }
 
         if let item = player.currentItem {

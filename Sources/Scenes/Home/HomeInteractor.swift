@@ -60,7 +60,7 @@ class HomeInteractor: HomeViewControllerOutput {
             case .failure:
                 self.output.didFetchFeed([])
             case let .success(stories):
-                self.output.didFetchFeed(stories)
+                self.output.didFetchFeed(stories.sorted(by: { $0.user.id > $1.user.id }))
             }
         })
 
