@@ -8,7 +8,7 @@ class NavigationViewController: UINavigationController {
 
     var activityIndicator = UIActivityIndicatorView(style: .large)
 
-    private var room: Room?
+    private(set) var room: Room?
 
     private let createRoomButton: CreateRoomButton
 
