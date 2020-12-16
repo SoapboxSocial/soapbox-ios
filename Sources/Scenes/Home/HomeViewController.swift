@@ -558,14 +558,12 @@ extension HomeViewController: CreateStoryViewDelegate, DrawerViewDelegate {
 
         creationView?.stop()
         creationView = nil
+
+        storyDrawer.removeFromSuperview()
+        storyDrawer = nil
     }
 
     private func closeStoryDrawer() {
-        storyDrawer.setPosition(.closed, animated: true) { _ in
-            DispatchQueue.main.async {
-                self.storyDrawer.removeFromSuperview()
-                self.storyDrawer = nil
-            }
-        }
+        storyDrawer.setPosition(.closed, animated: true)
     }
 }
