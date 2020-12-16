@@ -231,6 +231,14 @@ class ProfileViewController: ViewController {
             return
         }
 
+        guard let nav = self.window?.rootViewController as? NavigationViewController else {
+            return
+        }
+
+        if nav.room != nil {
+            return
+        }
+
         let vc = StoriesViewController(
             feed: APIClient.StoryFeed(
                 user: APIClient.User(id: user.id, displayName: user.displayName, username: user.username, email: nil, image: user.image),
