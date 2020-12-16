@@ -39,6 +39,14 @@ class StoryPlayer {
         player.pause()
     }
 
+    func pause() {
+        player.pause()
+    }
+
+    func unpause() {
+        player.play()
+    }
+
     func duration() -> Float {
         return player.duration()
     }

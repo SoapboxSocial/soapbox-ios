@@ -34,6 +34,8 @@ class StoriesViewController: UIViewController {
     }()
 
     private let player: StoryPlayer
+    private var timer: Timer?
+    private var playTime = Float(0.0)
 
     private let thumbsUp = StoryReactionButton(reaction: "👍")
     private let fire = StoryReactionButton(reaction: "🔥")
@@ -65,10 +67,9 @@ class StoriesViewController: UIViewController {
 
         let duration = player.duration()
 
-        var playTime = Float(0.0)
-        Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
-            playTime += 0.001
-            self.progress.setProgress(playTime / duration, animated: true)
+        timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
+            self.playTime += 0.001
+            self.progress.setProgress(self.playTime / duration, animated: true)
         })
 
         let background = UIView()
@@ -229,18 +230,29 @@ class StoriesViewController: UIViewController {
     @objc private func menuTapped() {
         let item = player.currentItem()
 
-        let menu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        player.pause()
+        timer?.invalidate()
+
+        let menu = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        menu.willDismissHandler = {
+            self.player.unpause()
+            let duration = self.player.duration()
+            self.timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
+                self.playTime += 0.001
+                self.progress.setProgress(self.playTime / duration, animated: true)
+            })
+
+            self.timer?.fire()
+        }
 
         let delete = UIAlertAction(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in
-            // @TODO
             APIClient().deleteStory(id: item.id, callback: { _ in
                 menu.dismiss(animated: true)
             })
         })
         menu.addAction(delete)
 
-        let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
-        menu.addAction(cancel)
+        menu.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
 
         present(menu, animated: true)
     }

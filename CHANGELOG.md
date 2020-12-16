@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Deleting story used to cause the app to crash, that should be ended!
  - Disabling viewing story from profile when a user is in a room.
  - Preventing an issue that caused certain private rooms to have groups associated to them.
 
