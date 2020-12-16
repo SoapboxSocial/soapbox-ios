@@ -25,6 +25,8 @@ class StoryRecorder {
     func start(callback: @escaping (Result<Void, RecorderError>) -> Void) {
         let input = engine.inputNode
 
+        input.removeTap(onBus: bus)
+
         let inputFormat = input.inputFormat(forBus: bus)
 
         input.installTap(onBus: bus, bufferSize: 512, format: inputFormat) { (buffer, _) -> Void in
