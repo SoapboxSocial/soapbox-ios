@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Errors when trying to listen to stories in the room.
+
 ## [1.6.1] - 2020-12-16
 
  - Deleting story used to cause the app to crash, that should be ended!

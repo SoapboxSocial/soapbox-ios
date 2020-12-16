@@ -409,7 +409,8 @@ extension HomeViewController: UICollectionViewDelegate {
         switch presenter.sectionType(for: indexPath.section) {
         case .storiesList:
             if presenter.currentRoom != nil {
-                // @TODO SHOW TOAST THAT YOU CAN'T USE STORIES WHILE IN A ROOM
+                let banner = FloatingNotificationBanner(title: NSLocalizedString("cant_listen_in_room", comment: ""), style: .info)
+                banner.show()
                 return
             }
 
