@@ -254,6 +254,10 @@ extension StoriesViewController: StoryPlayerDelegate {
 
     func startedPlaying(story: APIClient.Story) {
         posted.text = Date(timeIntervalSince1970: TimeInterval(story.deviceTimestamp)).timeAgoDisplay()
+        
+        thumbsUp.count = 0
+        fire.count = 0
+        heart.count = 0
 
         story.reactions.forEach { reaction in
             switch reaction.emoji {
