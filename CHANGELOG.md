@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Issues where a story stopped playing too early has been fixed!
+
 ## [1.6.1] - 2020-12-16
 
  - Deleting story used to cause the app to crash, that should be ended!
