@@ -236,6 +236,8 @@ class ProfileViewController: ViewController {
         }
 
         if nav.room != nil {
+            let banner = FloatingNotificationBanner(title: NSLocalizedString("cant_listen_in_room", comment: ""), style: .info)
+            banner.show()
             return
         }
 

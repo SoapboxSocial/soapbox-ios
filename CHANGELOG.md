@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - Issues where a story stopped playing too early has been fixed!
+ - Errors when trying to listen to stories in the room.
 
 ## [1.6.1] - 2020-12-16
 

@@ -173,3 +173,5 @@
 "add" = "Add";
 
 "start_room" = "Start room";
+
+"cant_listen_in_room" = "You can't listen to stories while in a room.";
