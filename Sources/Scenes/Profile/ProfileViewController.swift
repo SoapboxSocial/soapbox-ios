@@ -231,7 +231,7 @@ class ProfileViewController: ViewController {
             return
         }
 
-        guard let nav = self.window?.rootViewController as? NavigationViewController else {
+        guard let nav = UIApplication.shared.keyWindow?.rootViewController as? NavigationViewController else {
             return
         }
 
