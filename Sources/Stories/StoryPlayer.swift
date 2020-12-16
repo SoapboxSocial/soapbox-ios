@@ -51,6 +51,21 @@ class StoryPlayer {
         return player.duration()
     }
 
+    func playTime() -> Float {
+        var totalElapsed = Float(0.0)
+
+        let items = player.items()
+        for i in 0 ..< currentIndex {
+            totalElapsed += Float(CMTimeGetSeconds(items[i].asset.duration))
+        }
+
+        if let item = player.currentItem {
+            totalElapsed += Float(CMTimeGetSeconds(item.currentTime()))
+        }
+
+        return totalElapsed
+    }
+
     @objc private func itemDidPlayToEnd() {
         currentIndex += 1
 

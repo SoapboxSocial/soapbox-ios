@@ -66,10 +66,8 @@ class StoriesViewController: UIViewController {
         player.play()
 
         let duration = player.duration()
-
         timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
-            self.playTime += 0.001
-            self.progress.setProgress(self.playTime / duration, animated: true)
+            self.progress.setProgress(self.player.playTime() / duration, animated: true)
         })
 
         let background = UIView()
@@ -238,8 +236,7 @@ class StoriesViewController: UIViewController {
             self.player.unpause()
             let duration = self.player.duration()
             self.timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
-                self.playTime += 0.001
-                self.progress.setProgress(self.playTime / duration, animated: true)
+                self.progress.setProgress(self.player.playTime() / duration, animated: true)
             })
 
             self.timer?.fire()
@@ -261,6 +258,7 @@ class StoriesViewController: UIViewController {
 extension StoriesViewController: StoryPlayerDelegate {
     func didReachEnd() {
         player.stop()
+        timer?.invalidate()
         dismiss(animated: true)
     }
 
