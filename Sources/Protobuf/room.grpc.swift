@@ -25,8 +25,11 @@ import NIO
 import SwiftProtobuf
 
 
-/// Usage: instantiate RoomServiceClient, then call methods of this protocol to make API calls.
+/// Usage: instantiate `RoomServiceClient`, then call methods of this protocol to make API calls.
 internal protocol RoomServiceClientProtocol: GRPCClient {
+  var serviceName: String { get }
+  var interceptors: RoomServiceClientInterceptorFactoryProtocol? { get }
+
   func signal(
     callOptions: CallOptions?,
     handler: @escaping (SignalReply) -> Void
@@ -36,10 +39,12 @@ internal protocol RoomServiceClientProtocol: GRPCClient {
     _ request: SwiftProtobuf.Google_Protobuf_Empty,
     callOptions: CallOptions?
   ) -> UnaryCall<SwiftProtobuf.Google_Protobuf_Empty, RoomList>
-
 }
 
 extension RoomServiceClientProtocol {
+  internal var serviceName: String {
+    return "RoomService"
+  }
 
   /// Bidirectional streaming call to Signal
   ///
@@ -57,6 +62,7 @@ extension RoomServiceClientProtocol {
     return self.makeBidirectionalStreamingCall(
       path: "/RoomService/Signal",
       callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeSignalInterceptors() ?? [],
       handler: handler
     )
   }
@@ -74,23 +80,40 @@ extension RoomServiceClientProtocol {
     return self.makeUnaryCall(
       path: "/RoomService/ListRooms",
       request: request,
-      callOptions: callOptions ?? self.defaultCallOptions
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeListRoomsInterceptors() ?? []
     )
   }
+}
+
+internal protocol RoomServiceClientInterceptorFactoryProtocol {
+
+  /// - Returns: Interceptors to use when invoking 'signal'.
+  func makeSignalInterceptors() -> [ClientInterceptor<SignalRequest, SignalReply>]
+
+  /// - Returns: Interceptors to use when invoking 'listRooms'.
+  func makeListRoomsInterceptors() -> [ClientInterceptor<SwiftProtobuf.Google_Protobuf_Empty, RoomList>]
 }
 
 internal final class RoomServiceClient: RoomServiceClientProtocol {
   internal let channel: GRPCChannel
   internal var defaultCallOptions: CallOptions
+  internal var interceptors: RoomServiceClientInterceptorFactoryProtocol?
 
   /// Creates a client for the RoomService service.
   ///
   /// - Parameters:
   ///   - channel: `GRPCChannel` to the service host.
   ///   - defaultCallOptions: Options to use for each service call if the user doesn't provide them.
-  internal init(channel: GRPCChannel, defaultCallOptions: CallOptions = CallOptions()) {
+  ///   - interceptors: A factory providing interceptors for each RPC.
+  internal init(
+    channel: GRPCChannel,
+    defaultCallOptions: CallOptions = CallOptions(),
+    interceptors: RoomServiceClientInterceptorFactoryProtocol? = nil
+  ) {
     self.channel = channel
     self.defaultCallOptions = defaultCallOptions
+    self.interceptors = interceptors
   }
 }
 
