@@ -23,6 +23,14 @@ class StoryRecorder {
     }
 
     func start(callback: @escaping (Result<Void, RecorderError>) -> Void) {
+        do {
+            try AVAudioSession.sharedInstance().setActive(false)
+            try AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: [.defaultToSpeaker])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            return callback(.failure(.failedToStart))
+        }
+
         let input = engine.inputNode
 
         let inputFormat = input.inputFormat(forBus: bus)
@@ -76,7 +84,11 @@ class StoryRecorder {
         }
     }
 
-    private func newChunkFile(numChannels: AVAudioChannelCount, samplesPerSecond: Float64, callback: @escaping (Result<Void, RecorderError>) -> Void) {
+    private func newChunkFile(
+        numChannels: AVAudioChannelCount,
+        samplesPerSecond: Float64,
+        callback: @escaping (Result<Void, RecorderError>) -> Void
+    ) {
         let fileUrl = url(for: chunkFileNumber)
 
         let settings: [String: Any] = [
