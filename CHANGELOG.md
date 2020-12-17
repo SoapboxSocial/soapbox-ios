@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.6.3] - 2020-12-18
+
  - Stories are now sorted by posted time.
 
 ## [1.6.2] - 2020-12-16
