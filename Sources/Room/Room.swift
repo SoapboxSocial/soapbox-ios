@@ -79,9 +79,13 @@ class Room: NSObject {
         let usernameFragment: String?
     }
 
+    let started: Date
+
     init(rtc: WebRTCClient, grpc: RoomServiceClient) {
         self.rtc = rtc
         self.grpc = grpc
+
+        started = Date(timeIntervalSince1970: Date().timeIntervalSince1970)
 
         super.init()
 

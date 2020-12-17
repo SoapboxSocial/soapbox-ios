@@ -1,6 +1,7 @@
 import AVFoundation
 import DrawerView
 import NotificationBannerSwift
+import StoreKit
 import UIKit
 
 class NavigationViewController: UINavigationController {
@@ -161,7 +162,16 @@ extension NavigationViewController: RoomViewDelegate {
     }
 
     func roomDidExit() {
+        var askForReview = false
+        if let room = self.room {
+            askForReview = shouldPromptForReview(room: room)
+        }
+
         shutdownRoom()
+
+        if askForReview {
+            promptForReview()
+        }
     }
 
     private func shutdownRoom(completion: (() -> Void)? = nil) {
@@ -342,5 +352,25 @@ extension NavigationViewController: DrawerViewDelegate {
             roomControllerDelegate?.reloadRooms()
             roomView?.showMuteButton()
         }
+    }
+}
+
+extension NavigationViewController {
+    func shouldPromptForReview(room: Room) -> Bool {
+        if UserDefaults.standard.bool(forKey: UserDefaultsKeys.hasBeenReviewed) {
+            return false
+        }
+
+        let interval = Calendar.current.dateComponents([.year, .month, .day], from: room.started, to: Date())
+        guard let minutes = interval.minute else {
+            return false
+        }
+
+        return minutes >= 5
+    }
+
+    func promptForReview() {
+        SKStoreReviewController.requestReview()
+        UserDefaults.standard.set(true, forKey: UserDefaultsKeys.hasBeenReviewed)
     }
 }
