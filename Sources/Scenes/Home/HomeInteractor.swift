@@ -60,7 +60,11 @@ class HomeInteractor: HomeViewControllerOutput {
             case .failure:
                 self.output.didFetchFeed([])
             case let .success(stories):
-                self.output.didFetchFeed(stories.sorted(by: { $0.user.id > $1.user.id }))
+                self.output.didFetchFeed(
+                    stories.sorted(by: {
+                        ($0.stories.map { $0.deviceTimestamp }.max() ?? 0) > ($1.stories.map { $0.deviceTimestamp }.max() ?? 0)
+                    })
+                )
             }
         })
 

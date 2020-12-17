@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Stories are now sorted by posted time.
+
 ## [1.6.2] - 2020-12-16
 
  - Issues where a story stopped playing too early has been fixed!
