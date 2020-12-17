@@ -361,7 +361,7 @@ extension NavigationViewController {
             return false
         }
 
-        let interval = Calendar.current.dateComponents([.year, .month, .day], from: room.started, to: Date())
+        let interval = Calendar.current.dateComponents([.minute], from: room.started, to: Date())
         guard let minutes = interval.minute else {
             return false
         }
