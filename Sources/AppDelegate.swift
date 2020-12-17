@@ -123,7 +123,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return false
         }
 
-        if UserDefaults.standard.integer(forKey: "id") == 0 {
+        if UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) == 0 {
             return false
         }
 

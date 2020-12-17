@@ -101,7 +101,7 @@ class StoriesViewController: UIViewController {
         exit.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         buttonStack.addArrangedSubview(exit)
 
-        if feed.user.id != UserDefaults.standard.integer(forKey: "id") {
+        if feed.user.id != UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
             menuButton.isHidden = true
         }
 
@@ -201,7 +201,7 @@ class StoriesViewController: UIViewController {
     @objc private func didReact(_ sender: UIButton) {
         let item = player.currentItem()
 
-        if feed.user.id == UserDefaults.standard.integer(forKey: "id") {
+        if feed.user.id == UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
             return
         }
 
