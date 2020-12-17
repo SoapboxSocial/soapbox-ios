@@ -307,7 +307,7 @@ class RoomView: UIView {
         emojis.translatesAutoresizingMaskIntoConstraints = false
         addSubview(emojis)
 
-        let userId = UserDefaults.standard.integer(forKey: "id")
+        let userId = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
 
         var left = emojis.leftAnchor
         var leftOffset = CGFloat(0)
@@ -557,7 +557,7 @@ extension RoomView: UICollectionViewDelegate {
             let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
             let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
                 DispatchQueue.main.async {
-                    self.delegate?.didSelectViewProfile(id: UserDefaults.standard.integer(forKey: "id"))
+                    self.delegate?.didSelectViewProfile(id: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))
                 }
             })
             optionMenu.addAction(profileAction)
@@ -622,8 +622,8 @@ extension RoomView: UICollectionViewDataSource {
         if indexPath.item == 0 {
             // @todo this is a bit ugly
             cell.setup(
-                name: UserDefaults.standard.string(forKey: "display") ?? "",
-                image: UserDefaults.standard.string(forKey: "image") ?? "",
+                name: UserDefaults.standard.string(forKey: UserDefaultsKeys.userDisplay) ?? "",
+                image: UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage) ?? "",
                 muted: room.isMuted,
                 role: room.role
             )
@@ -683,7 +683,7 @@ extension RoomView: RoomDelegate {
             self.members.reloadData()
         }
 
-        if user != UserDefaults.standard.integer(forKey: "id") {
+        if user != UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
             return
         }
 

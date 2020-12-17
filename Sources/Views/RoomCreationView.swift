@@ -172,7 +172,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
 
     func loadGroups() {
         // @TODO Paginate
-        APIClient().groups(id: UserDefaults.standard.integer(forKey: "id"), limit: 100, offset: 0, callback: { result in
+        APIClient().groups(id: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId), limit: 100, offset: 0, callback: { result in
             switch result {
             case .failure:
                 self.groupView.isHidden = true

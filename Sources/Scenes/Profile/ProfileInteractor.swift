@@ -46,7 +46,7 @@ extension ProfileInteractor: ProfileViewControllerOutput {
             case .failure:
                 self.output.displayError()
             case let .success(user):
-                if self.user == UserDefaults.standard.integer(forKey: "id") {
+                if self.user == UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
                     self.output.displayPersonal(profile: user)
                     return
                 }

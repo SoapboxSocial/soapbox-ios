@@ -70,7 +70,7 @@ class HomeInteractor: HomeViewControllerOutput {
 
         // @TODO
         groupOffset = 0
-        api.groups(id: UserDefaults.standard.integer(forKey: "id"), limit: 10, offset: 0, callback: { result in
+        api.groups(id: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId), limit: 10, offset: 0, callback: { result in
             switch result {
             case .failure:
                 self.output.didFetchGroups(groups: [])
@@ -83,7 +83,7 @@ class HomeInteractor: HomeViewControllerOutput {
     func fetchMoreGroups() {
         let nextOffset = groupOffset + groupLimit
 
-        api.groups(id: UserDefaults.standard.integer(forKey: "id"), limit: groupLimit, offset: nextOffset, callback: { result in
+        api.groups(id: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId), limit: groupLimit, offset: nextOffset, callback: { result in
             switch result {
             case .failure: break
             case let .success(groups):

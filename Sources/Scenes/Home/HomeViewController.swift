@@ -110,7 +110,7 @@ class HomeViewController: ViewController {
 
     // @todo this needs to be in the interactor
     @objc private func openProfile() {
-        let id = UserDefaults.standard.integer(forKey: "id")
+        let id = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
         if id == 0 {
             return (UIApplication.shared.delegate as! AppDelegate).transitionToLoginView()
         }
@@ -328,7 +328,7 @@ extension HomeViewController: HomePresenterOutput {
     }
 
     func updateProfileImage() {
-        let urlRequest = URLRequest(url: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: "image")!))
+        let urlRequest = URLRequest(url: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!))
 
         downloader.download(urlRequest, completion: { response in
             switch response.result {

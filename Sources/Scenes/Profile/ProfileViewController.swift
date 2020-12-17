@@ -333,7 +333,7 @@ extension ProfileViewController: ProfilePresenterOutput {
 
     func display(groups: [APIClient.Group]) {
         if groups.isEmpty {
-            if user != nil, user.id != UserDefaults.standard.integer(forKey: "id") {
+            if user != nil, user.id != UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
                 groupsContainer.isHidden = true
             }
 

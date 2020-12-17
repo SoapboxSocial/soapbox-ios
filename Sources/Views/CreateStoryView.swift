@@ -96,7 +96,7 @@ class CreateStoryView: UIView {
         image.backgroundColor = .lightBrandColor
         image.layer.cornerRadius = 140 / 2
         image.layer.masksToBounds = true
-        image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: "image")!))
+        image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!))
         image.translatesAutoresizingMaskIntoConstraints = false
         addSubview(image)
 
