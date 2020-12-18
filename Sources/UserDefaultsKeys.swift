@@ -1,8 +1,8 @@
 import Foundation
 
 class UserDefaultsKeys {
-    class var hasBeenReviewed: String {
-        return "hasBeenReviewed"
+    class var lastReviewed: String {
+        return "lastReviewed"
     }
 
     class var userId: String {

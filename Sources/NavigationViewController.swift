@@ -357,20 +357,24 @@ extension NavigationViewController: DrawerViewDelegate {
 
 extension NavigationViewController {
     func shouldPromptForReview(room: Room) -> Bool {
-        if UserDefaults.standard.bool(forKey: UserDefaultsKeys.hasBeenReviewed) {
+        let now = Date()
+
+        let last = Date(timeIntervalSince1970: TimeInterval(UserDefaults.standard.integer(forKey: UserDefaultsKeys.lastReviewed)))
+        let reviewInterval = Calendar.current.dateComponents([.month], from: last, to: now)
+        guard let monthsSince = reviewInterval.month else {
             return false
         }
 
         let interval = Calendar.current.dateComponents([.minute], from: room.started, to: Date())
-        guard let minutes = interval.minute else {
+        guard let minutesInRoom = interval.minute else {
             return false
         }
 
-        return minutes >= 5
+        return minutesInRoom >= 5 && monthsSince >= 4
     }
 
     func promptForReview() {
         SKStoreReviewController.requestReview()
-        UserDefaults.standard.set(true, forKey: UserDefaultsKeys.hasBeenReviewed)
+        UserDefaults.standard.set(Int(Date().timeIntervalSince1970), forKey: UserDefaultsKeys.lastReviewed)
     }
 }
