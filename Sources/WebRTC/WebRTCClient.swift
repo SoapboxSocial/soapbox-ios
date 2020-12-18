@@ -40,6 +40,10 @@ final class WebRTCClient: NSObject {
     private var previousAudioSampleData = [UInt32: AudioSampleData]()
     private var timer: Timer!
 
+    var state: RTCPeerConnectionState {
+        peerConnection.connectionState
+    }
+
     @available(*, unavailable)
     override init() {
         fatalError("WebRTCClient:init is unavailable")

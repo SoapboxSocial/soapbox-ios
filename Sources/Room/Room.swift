@@ -579,6 +579,11 @@ extension Room {
     }
 
     @objc private func warnOnRecord() {
+        debugPrint("yay")
+        if rtc.state != .connected, rtc.state != .connecting {
+            return
+        }
+
         _ = stream.sendMessage(SignalRequest.with {
             $0.screenRecorded = ScreenRecorded()
         })
