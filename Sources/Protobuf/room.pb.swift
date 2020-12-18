@@ -123,6 +123,14 @@ struct SignalRequest {
     set {payload = .kick(newValue)}
   }
 
+  var screenRecorded: ScreenRecorded {
+    get {
+      if case .screenRecorded(let v)? = payload {return v}
+      return ScreenRecorded()
+    }
+    set {payload = .screenRecorded(newValue)}
+  }
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum OneOf_Payload: Equatable {
@@ -133,6 +141,7 @@ struct SignalRequest {
     case command(SignalRequest.Command)
     case invite(Invite)
     case kick(Kick)
+    case screenRecorded(ScreenRecorded)
 
   #if !swift(>=4.1)
     static func ==(lhs: SignalRequest.OneOf_Payload, rhs: SignalRequest.OneOf_Payload) -> Bool {
@@ -144,6 +153,7 @@ struct SignalRequest {
       case (.command(let l), .command(let r)): return l == r
       case (.invite(let l), .invite(let r)): return l == r
       case (.kick(let l), .kick(let r)): return l == r
+      case (.screenRecorded(let l), .screenRecorded(let r)): return l == r
       default: return false
       }
     }
@@ -664,6 +674,16 @@ struct RemovedAdmin {
   init() {}
 }
 
+struct ScreenRecorded {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension Visibility: SwiftProtobuf._ProtoNameProviding {
@@ -683,6 +703,7 @@ extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     5: .same(proto: "command"),
     6: .same(proto: "invite"),
     7: .same(proto: "kick"),
+    8: .same(proto: "screenRecorded"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -744,6 +765,14 @@ extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .kick(v)}
+      case 8:
+        var v: ScreenRecorded?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .screenRecorded(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .screenRecorded(v)}
       default: break
       }
     }
@@ -765,6 +794,8 @@ extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
       try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
     case .kick(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+    case .screenRecorded(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -1526,6 +1557,25 @@ extension RemovedAdmin: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
 
   static func ==(lhs: RemovedAdmin, rhs: RemovedAdmin) -> Bool {
     if lhs.id != rhs.id {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension ScreenRecorded: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "ScreenRecorded"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: ScreenRecorded, rhs: ScreenRecorded) -> Bool {
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
