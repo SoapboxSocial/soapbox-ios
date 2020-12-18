@@ -17,7 +17,6 @@ protocol HomeInteractorOutput {
     func didFetchRooms(rooms: RoomList)
     func didJoin(room: Int)
     func didLeaveRoom()
-    func didFetchImage()
     func didFetchFeed(_ feed: [APIClient.StoryFeed])
     func didFetchGroups(groups: [APIClient.Group])
     func didFetchMoreGroups(groups: [APIClient.Group])
@@ -101,7 +100,6 @@ class HomeInteractor: HomeViewControllerOutput {
                     break // @TODO
                 case let .success(user):
                     UserStore.store(user: user)
-                    self.output.didFetchImage()
                 }
             }
         })

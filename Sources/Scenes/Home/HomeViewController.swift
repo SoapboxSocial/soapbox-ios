@@ -18,8 +18,6 @@ class HomeViewController: ViewController {
     private var rooms = [RoomState]()
     private let presenter = HomeCollectionPresenter()
 
-    private var profileImageView: UIImageView!
-
     var output: HomeViewControllerOutput!
 
     private var updateQueue = [Update]()
@@ -50,15 +48,14 @@ class HomeViewController: ViewController {
 
         view.addSubview(collection)
 
-        let containView = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        containView.backgroundColor = .brandColor
-        containView.layer.cornerRadius = 40 / 2
-        containView.clipsToBounds = true
-        containView.addTarget(self, action: #selector(openProfile), for: .touchUpInside)
-
-        let barButtonItem = UIBarButtonItem(customView: containView)
-
         let iconConfig = UIImage.SymbolConfiguration(weight: .bold)
+
+        let profileButton = UIBarButtonItem(
+            image: UIImage(systemName: "person.crop.circle", withConfiguration: iconConfig),
+            style: .plain,
+            target: self,
+            action: #selector(openProfile)
+        )
 
         let searchButton = UIBarButtonItem(
             image: UIImage(systemName: "magnifyingglass", withConfiguration: iconConfig),
@@ -67,15 +64,7 @@ class HomeViewController: ViewController {
             action: #selector(openSearch)
         )
 
-        navigationItem.leftBarButtonItems = [barButtonItem, searchButton]
-
-        profileImageView = UIImageView(frame: containView.frame)
-        profileImageView.layer.cornerRadius = containView.frame.size.height / 2
-        profileImageView.backgroundColor = .brandColor
-        profileImageView.clipsToBounds = true
-        profileImageView.layer.masksToBounds = true
-        profileImageView.contentMode = .scaleAspectFill
-        containView.addSubview(profileImageView!)
+        navigationItem.leftBarButtonItems = [profileButton, searchButton]
 
         let share = UIBarButtonItem(
             image: UIImage(systemName: "arrowshape.turn.up.right", withConfiguration: iconConfig),
@@ -325,19 +314,6 @@ extension HomeViewController: HomePresenterOutput {
         DispatchQueue.main.async {
             self.collection.reloadData()
         }
-    }
-
-    func updateProfileImage() {
-        let urlRequest = URLRequest(url: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!))
-
-        downloader.download(urlRequest, completion: { response in
-            switch response.result {
-            case let .success(image):
-                self.profileImageView!.image = image
-            case .failure:
-                break
-            }
-        })
     }
 }
 

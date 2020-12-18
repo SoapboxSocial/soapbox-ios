@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Made the story creation icon a bit more recognizable.
+
 ## [1.6.3] - 2020-12-18
 
  - Stories are now sorted by posted time.
