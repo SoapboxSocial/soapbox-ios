@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Soapbox now uses a bit less of your network!
+
 ## [1.6.3] - 2020-12-18
 
  - Stories are now sorted by posted time.
