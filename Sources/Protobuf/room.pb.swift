@@ -342,6 +342,7 @@ struct SignalReply {
       case addedAdmin // = 9
       case removedAdmin // = 10
       case renamedRoom // = 11
+      case recordedScreen // = 12
       case UNRECOGNIZED(Int)
 
       init() {
@@ -361,6 +362,7 @@ struct SignalReply {
         case 9: self = .addedAdmin
         case 10: self = .removedAdmin
         case 11: self = .renamedRoom
+        case 12: self = .recordedScreen
         default: self = .UNRECOGNIZED(rawValue)
         }
       }
@@ -378,6 +380,7 @@ struct SignalReply {
         case .addedAdmin: return 9
         case .removedAdmin: return 10
         case .renamedRoom: return 11
+        case .recordedScreen: return 12
         case .UNRECOGNIZED(let i): return i
         }
       }
@@ -406,6 +409,7 @@ extension SignalReply.Event.TypeEnum: CaseIterable {
     .addedAdmin,
     .removedAdmin,
     .renamedRoom,
+    .recordedScreen,
   ]
 }
 
@@ -993,6 +997,7 @@ extension SignalReply.Event.TypeEnum: SwiftProtobuf._ProtoNameProviding {
     9: .same(proto: "ADDED_ADMIN"),
     10: .same(proto: "REMOVED_ADMIN"),
     11: .same(proto: "RENAMED_ROOM"),
+    12: .same(proto: "RECORDED_SCREEN"),
   ]
 }
 
