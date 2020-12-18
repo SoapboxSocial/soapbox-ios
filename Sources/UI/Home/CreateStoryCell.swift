@@ -14,14 +14,14 @@ class CreateStoryCell: UICollectionViewCell {
     private var image: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = UIColor.brandColor.withAlphaComponent(0.5)
+        view.backgroundColor = .brandColor
         view.clipsToBounds = true
-        view.layer.cornerRadius = 48 / 2
+        view.layer.cornerRadius = 20 / 2
         view.layer.masksToBounds = true
 
-        let image = UIImageView(image: UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 33, weight: .semibold)))
+        let image = UIImageView(image: UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 14, weight: .bold)))
         image.translatesAutoresizingMaskIntoConstraints = false
-        image.tintColor = .brandColor
+        image.tintColor = .white
         view.addSubview(image)
 
         NSLayoutConstraint.activate([
@@ -40,6 +40,7 @@ class CreateStoryCell: UICollectionViewCell {
         contentView.translatesAutoresizingMaskIntoConstraints = false
 
         contentView.addSubview(profileImage)
+        contentView.addSubview(image)
 
         NSLayoutConstraint.activate([
             contentView.leftAnchor.constraint(equalTo: leftAnchor),
@@ -47,11 +48,19 @@ class CreateStoryCell: UICollectionViewCell {
         ])
 
         NSLayoutConstraint.activate([
-            profileImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            profileImage.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 8),
-            profileImage.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -8),
+            profileImage.topAnchor.constraint(equalTo: contentView.topAnchor),
+            profileImage.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            profileImage.rightAnchor.constraint(equalTo: contentView.rightAnchor),
             profileImage.heightAnchor.constraint(equalTo: profileImage.widthAnchor),
             profileImage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            contentView.bottomAnchor.constraint(equalTo: profileImage.bottomAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            image.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            image.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            image.widthAnchor.constraint(equalToConstant: 20),
+            image.heightAnchor.constraint(equalToConstant: 20),
         ])
     }
 
