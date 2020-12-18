@@ -283,6 +283,10 @@ class Room: NSObject {
         delegate?.roomWasRenamed(name)
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
     private func handle(_ reply: SignalReply) {
         switch reply.payload {
         case let .join(join):
@@ -554,11 +558,29 @@ extension Room: WebRTCClientDelegate {
         if state == .connected && completion != nil {
             completion(.success(()))
             completion = nil
+
+            startPreventing()
             return
         }
 
         if state == .failed || state == .closed {
             delegate?.roomWasClosedByRemote()
         }
+    }
+}
+
+extension Room {
+    func startPreventing() {
+        NotificationCenter.default.addObserver(self, selector: #selector(warnOnRecord), name: UIScreen.capturedDidChangeNotification, object: nil)
+
+        if UIScreen.main.isCaptured {
+            warnOnRecord()
+        }
+    }
+
+    @objc private func warnOnRecord() {
+        _ = stream.sendMessage(SignalRequest.with {
+            $0.screenRecorded = ScreenRecorded()
+        })
     }
 }
