@@ -1,6 +1,16 @@
+import AlamofireImage
 import UIKit
 
 class CreateStoryCell: UICollectionViewCell {
+    private var profileImage: UIImageView = {
+        let view = UIImageView()
+        view.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!))
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.masksToBounds = true
+        view.clipsToBounds = true
+        return view
+    }()
+
     private var image: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -29,7 +39,7 @@ class CreateStoryCell: UICollectionViewCell {
 
         contentView.translatesAutoresizingMaskIntoConstraints = false
 
-        contentView.addSubview(image)
+        contentView.addSubview(profileImage)
 
         NSLayoutConstraint.activate([
             contentView.leftAnchor.constraint(equalTo: leftAnchor),
@@ -37,12 +47,17 @@ class CreateStoryCell: UICollectionViewCell {
         ])
 
         NSLayoutConstraint.activate([
-            image.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            image.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 8),
-            image.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -8),
-            image.heightAnchor.constraint(equalTo: image.widthAnchor),
-            image.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            profileImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            profileImage.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 8),
+            profileImage.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -8),
+            profileImage.heightAnchor.constraint(equalTo: profileImage.widthAnchor),
+            profileImage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
         ])
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        profileImage.layer.cornerRadius = profileImage.frame.size.width / 2
     }
 
     required init?(coder _: NSCoder) {
