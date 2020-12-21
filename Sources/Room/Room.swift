@@ -591,6 +591,10 @@ extension Room {
             return
         }
 
+        if !UIScreen.main.isCaptured {
+            return
+        }
+
         _ = stream.sendMessage(SignalRequest.with {
             $0.screenRecorded = ScreenRecorded()
         })
