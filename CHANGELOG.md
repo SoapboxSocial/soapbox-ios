@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Removes the joined sound that caused lag in room audio.
+
 ## [1.7.0] - 2020-12-21
 
  - No more screen recording! We now warn other users when someone has started screen recording.
