@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Soapbox now uses a bit less of your network!
  - Made the story creation icon a bit more recognizable.
 
 ## [1.6.3] - 2020-12-18
