@@ -8,6 +8,7 @@ class CreateStoryCell: UICollectionViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.masksToBounds = true
         view.clipsToBounds = true
+        view.backgroundColor = .brandColor
         return view
     }()
 
