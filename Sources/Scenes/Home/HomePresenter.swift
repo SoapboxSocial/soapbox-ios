@@ -8,7 +8,6 @@ protocol HomePresenterOutput {
     func displayError(title: String, description: String?)
     func displayCurrentRoom(_ id: Int)
     func removeCurrentRoom()
-    func updateProfileImage()
 }
 
 class HomePresenter: HomeInteractorOutput {
@@ -31,10 +30,6 @@ class HomePresenter: HomeInteractorOutput {
 
     func didLeaveRoom() {
         output.removeCurrentRoom()
-    }
-
-    func didFetchImage() {
-        output.updateProfileImage()
     }
 
     func didFetchFeed(_ feed: [APIClient.StoryFeed]) {
