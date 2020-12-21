@@ -175,3 +175,5 @@
 "start_room" = "Start room";
 
 "cant_listen_in_room" = "You can't listen to stories while in a room.";
+
+"user_started_recording_screen" = "It looks like %@ started recording their screen!";
