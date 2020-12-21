@@ -20,18 +20,31 @@ class CreateStoryCell: UICollectionViewCell {
         view.layer.cornerRadius = 26 / 2
         view.layer.masksToBounds = true
 
-        let image = UIImageView(image: UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 4, weight: .bold)))
+        let imageContainer = UIView()
+        imageContainer.translatesAutoresizingMaskIntoConstraints = false
+        imageContainer.backgroundColor = .brandColor
+        imageContainer.clipsToBounds = true
+        imageContainer.layer.cornerRadius = 20 / 2
+        imageContainer.layer.masksToBounds = true
+        view.addSubview(imageContainer)
+
+        let image = UIImageView(image: UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 14, weight: .bold)))
         image.translatesAutoresizingMaskIntoConstraints = false
         image.tintColor = .white
         image.backgroundColor = .brandColor
         image.layer.cornerRadius = 20 / 2
-        view.addSubview(image)
+        imageContainer.addSubview(image)
 
         NSLayoutConstraint.activate([
             image.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             image.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            image.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -6),
-            image.heightAnchor.constraint(equalTo: image.widthAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            imageContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            imageContainer.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            imageContainer.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -6),
+            imageContainer.heightAnchor.constraint(equalTo: imageContainer.widthAnchor),
         ])
 
         return view
