@@ -1,4 +1,3 @@
-import AVFoundation
 import DrawerView
 import NotificationBannerSwift
 import UIKit
@@ -11,8 +10,6 @@ protocol RoomViewDelegate {
 
 class RoomView: UIView {
     var delegate: RoomViewDelegate?
-
-    private var audioPlayer: AVAudioPlayer!
 
     private static let iconConfig = UIImage.SymbolConfiguration(weight: .semibold)
 
