@@ -13,6 +13,7 @@ protocol RoomDelegate {
     func didChangeSpeakVolume(user: Int, volume: Float)
     func didReceiveLink(from: Int, link: URL)
     func roomWasRenamed(_ name: String)
+    func userDidRecordScreen(_ user: Int)
 }
 
 enum RoomError: Error {
@@ -283,6 +284,10 @@ class Room: NSObject {
         delegate?.roomWasRenamed(name)
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
     private func handle(_ reply: SignalReply) {
         switch reply.payload {
         case let .join(join):
@@ -378,6 +383,8 @@ class Room: NSObject {
             didReceiveRemovedAdmin(event)
         case .renamedRoom:
             didReceiveRenamedRoom(event)
+        case .recordedScreen:
+            didRecordScreen(event)
         case .UNRECOGNIZED:
             return
         }
@@ -489,6 +496,10 @@ extension Room {
         delegate?.roomWasRenamed(value)
     }
 
+    private func didRecordScreen(_ event: SignalReply.Event) {
+        delegate?.userDidRecordScreen(Int(event.from))
+    }
+
     private func updateMemberMuteState(user: Int, isMuted: Bool) {
         DispatchQueue.main.async {
             let index = self.members.firstIndex(where: { $0.id == user })
@@ -554,11 +565,37 @@ extension Room: WebRTCClientDelegate {
         if state == .connected && completion != nil {
             completion(.success(()))
             completion = nil
+
+            startPreventing()
             return
         }
 
         if state == .failed || state == .closed {
             delegate?.roomWasClosedByRemote()
         }
+    }
+}
+
+extension Room {
+    func startPreventing() {
+        NotificationCenter.default.addObserver(self, selector: #selector(warnOnRecord), name: UIScreen.capturedDidChangeNotification, object: nil)
+
+        if UIScreen.main.isCaptured {
+            warnOnRecord()
+        }
+    }
+
+    @objc private func warnOnRecord() {
+        if rtc.state != .connected, rtc.state != .connecting {
+            return
+        }
+
+        if !UIScreen.main.isCaptured {
+            return
+        }
+
+        _ = stream.sendMessage(SignalRequest.with {
+            $0.screenRecorded = ScreenRecorded()
+        })
     }
 }
