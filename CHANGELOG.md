@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.7.0] - 2020-12-21
+
  - No more screen recording! We now warn other users when someone has started screen recording.
  - Soapbox now uses a bit less of your network!
  - Made the story creation icon a bit more recognizable.
