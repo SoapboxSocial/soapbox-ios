@@ -349,7 +349,7 @@ extension NavigationViewController: DrawerViewDelegate {
         }
 
         if position == .collapsed || position == .closed {
-            if navigationController?.topViewController is HomeViewController {
+            if topViewController is HomeViewController {
                 roomControllerDelegate?.reloadRooms()
             }
 
