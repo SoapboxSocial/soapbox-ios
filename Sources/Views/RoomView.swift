@@ -736,6 +736,23 @@ extension RoomView: RoomDelegate {
         }
     }
 
+    func userDidRecordScreen(_ user: Int) {
+        guard let user = room.members.first(where: { $0.id == user }) else {
+            return
+        }
+
+        let message = NSLocalizedString("user_started_recording_screen", comment: "")
+
+        DispatchQueue.main.async {
+            let banner = GrowingNotificationBanner(
+                title: String(format: message, user.displayName.firstName()),
+                style: .info
+            )
+
+            banner.show()
+        }
+    }
+
     private func playJoinedSound() {
         guard let url = Bundle.main.url(forResource: "blop", withExtension: "mp3") else {
             return
