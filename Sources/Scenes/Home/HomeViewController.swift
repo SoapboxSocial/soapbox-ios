@@ -66,20 +66,13 @@ class HomeViewController: ViewController {
 
         navigationItem.leftBarButtonItems = [profileButton, searchButton]
 
-        let share = UIBarButtonItem(
-            image: UIImage(systemName: "arrowshape.turn.up.right", withConfiguration: iconConfig),
-            style: .plain,
-            target: self,
-            action: #selector(shareApp)
-        )
-
         let notificationsButton = UIBarButtonItem(
             image: UIImage(systemName: "bell", withConfiguration: iconConfig),
             style: .plain,
             target: self,
             action: #selector(openNotifications)
         )
-        navigationItem.rightBarButtonItems = [share, notificationsButton]
+        navigationItem.rightBarButtonItems = [notificationsButton]
 
         NSLayoutConstraint.activate([
             collection.leftAnchor.constraint(equalTo: view.leftAnchor),
@@ -116,17 +109,6 @@ class HomeViewController: ViewController {
     @objc private func openNotifications() {
         let notifications = SceneFactory.createNotificationsViewController()
         navigationController?.pushViewController(notifications, animated: true)
-    }
-
-    @objc private func shareApp() {
-        let items: [Any] = [
-            NSLocalizedString("share_text", comment: ""),
-            URL(string: "https://apps.apple.com/us/app/soapbox-talk-with-anyone/id1529283270")!,
-        ]
-
-        let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
-        ac.excludedActivityTypes = [.markupAsPDF, .openInIBooks, .addToReadingList]
-        present(ac, animated: true)
     }
 
     @objc private func loadData() {
