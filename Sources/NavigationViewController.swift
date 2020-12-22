@@ -80,8 +80,8 @@ class NavigationViewController: UINavigationController {
     }
 
     func presentCurrentRoom() {
-        if let drawer = roomDrawer, drawer.position == .collapsed {
-            roomDrawer?.setPosition(.open, animated: true)
+        if let drawer = roomDrawer {
+            drawer.setPosition(.open, animated: true)
             return
         }
 
@@ -201,7 +201,6 @@ extension NavigationViewController: RoomController {
         if activityIndicator.isAnimating {
             return
         }
-
         if room != nil, let roomid = room?.id, id == roomid {
             presentCurrentRoom()
             return
