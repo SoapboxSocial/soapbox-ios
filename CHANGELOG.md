@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Added a sharing button to rooms!
  - You can now directly hop into a room from a link!
  - Removes the joined sound that caused lag in room audio.
 
