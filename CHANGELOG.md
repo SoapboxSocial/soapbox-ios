@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.8.0] - 2020-12-22
+
  - Added a sharing button to rooms!
  - You can now directly hop into a room from a link!
  - Removes the joined sound that caused lag in room audio.
