@@ -16,4 +16,8 @@ class UserDefaultsKeys {
     class var userDisplay: String {
         return "display"
     }
+
+    class var tooltipShownAmount: String {
+        return "tooltipShownAmount"
+    }
 }
