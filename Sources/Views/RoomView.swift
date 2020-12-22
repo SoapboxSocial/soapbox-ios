@@ -76,6 +76,16 @@ class RoomView: UIView {
         return button
     }()
 
+    private let shareRoomButton: EmojiButton = {
+        let button = EmojiButton(frame: .zero)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "square.and.arrow.up.on.square", withConfiguration: RoomView.iconConfig), for: .normal)
+        button.tintColor = .brandColor
+        button.backgroundColor = .clear
+        button.addTarget(self, action: #selector(shareRoom), for: .touchUpInside)
+        return button
+    }()
+
     private let name: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -123,6 +133,10 @@ class RoomView: UIView {
         generator.prepare()
         return generator
     }()
+
+    private let tooltip = Tooltip.create(text: NSLocalizedString("share_room_tooltip", comment: ""))
+
+    private var didShowTooltip = false
 
     init(room: Room) {
         self.room = room
@@ -264,6 +278,11 @@ class RoomView: UIView {
 
         addSubview(pasteButton)
         addSubview(bottomMuteButton)
+        addSubview(shareRoomButton)
+
+        if room.visibility == .private {
+            shareRoomButton.isHidden = true
+        }
 
         buttonStack.addArrangedSubview(editNameButton)
         buttonStack.addArrangedSubview(inviteUsersButton)
@@ -297,6 +316,13 @@ class RoomView: UIView {
             pasteButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
             pasteButton.heightAnchor.constraint(equalToConstant: 32),
             pasteButton.widthAnchor.constraint(equalToConstant: 32),
+        ])
+
+        NSLayoutConstraint.activate([
+            shareRoomButton.centerYAnchor.constraint(equalTo: bottomMuteButton.centerYAnchor),
+            shareRoomButton.rightAnchor.constraint(equalTo: pasteButton.leftAnchor, constant: -10),
+            shareRoomButton.heightAnchor.constraint(equalToConstant: 32),
+            shareRoomButton.widthAnchor.constraint(equalToConstant: 32),
         ])
 
         NSLayoutConstraint.activate([
@@ -359,6 +385,12 @@ class RoomView: UIView {
         }
     }
 
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        showTooltip()
+    }
+
     func showMuteButton() {
         UIView.animate(
             withDuration: 0.1,
@@ -417,6 +449,23 @@ class RoomView: UIView {
 
     static func height() -> CGFloat {
         return UICollectionViewFlowLayout.heightForBubbleLayout(rows: 4, width: UIScreen.main.bounds.width) + 76 + 104
+    }
+
+    @objc private func shareRoom() {
+        tooltip.dismiss()
+
+        guard let id = room.id else {
+            return
+        }
+
+        let items: [Any] = [
+            NSLocalizedString("join_me_in_room", comment: ""),
+            URL(string: "https://soapbox.social/room?id=" + String(id))!,
+        ]
+
+        let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        ac.excludedActivityTypes = [.markupAsPDF, .openInIBooks, .addToReadingList, .assignToContact]
+        UIApplication.shared.keyWindow?.rootViewController!.present(ac, animated: true)
     }
 
     @objc private func pasteLink() {
@@ -755,5 +804,27 @@ extension RoomView: RoomDelegate {
 
             banner.show()
         }
+    }
+}
+
+extension RoomView {
+    private func showTooltip() {
+        if didShowTooltip {
+            return
+        }
+
+        let count = UserDefaults.standard.integer(forKey: UserDefaultsKeys.tooltipShownAmount)
+        if count >= 3 {
+            return
+        }
+
+        didShowTooltip = true
+        tooltip.show(forView: shareRoomButton, withinSuperview: self)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+            self.tooltip.dismiss()
+        }
+
+        UserDefaults.standard.set(count + 1, forKey: UserDefaultsKeys.tooltipShownAmount)
     }
 }
