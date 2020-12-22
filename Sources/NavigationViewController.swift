@@ -221,7 +221,6 @@ extension NavigationViewController: RoomController {
 
                         switch result {
                         case let .failure(error):
-                            // @toodo investigate error type
                             self.room = nil
 
                             switch error {
