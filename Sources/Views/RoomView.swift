@@ -1,4 +1,3 @@
-import AVFoundation
 import DrawerView
 import NotificationBannerSwift
 import UIKit
@@ -11,8 +10,6 @@ protocol RoomViewDelegate {
 
 class RoomView: UIView {
     var delegate: RoomViewDelegate?
-
-    private var audioPlayer: AVAudioPlayer!
 
     private static let iconConfig = UIImage.SymbolConfiguration(weight: .semibold)
 
@@ -120,6 +117,12 @@ class RoomView: UIView {
     }()
 
     private let room: Room
+
+    private let feedbackGenerator: UINotificationFeedbackGenerator = {
+        let generator = UINotificationFeedbackGenerator()
+        generator.prepare()
+        return generator
+    }()
 
     init(room: Room) {
         self.room = room
@@ -662,7 +665,8 @@ extension RoomView: RoomDelegate {
     func userDidJoinRoom(user _: Int) {
         DispatchQueue.main.async {
             self.members.reloadData()
-            self.playJoinedSound()
+            self.feedbackGenerator.notificationOccurred(.success)
+            self.feedbackGenerator.prepare()
         }
     }
 
@@ -750,21 +754,6 @@ extension RoomView: RoomDelegate {
             )
 
             banner.show()
-        }
-    }
-
-    private func playJoinedSound() {
-        guard let url = Bundle.main.url(forResource: "blop", withExtension: "mp3") else {
-            return
-        }
-
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: url)
-            DispatchQueue.global(qos: .background).async {
-                self.audioPlayer.play()
-            }
-        } catch {
-            debugPrint("\(error)")
         }
     }
 }
