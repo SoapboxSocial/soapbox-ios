@@ -62,6 +62,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return false
         }
 
+        switch components.path {
+        case "/login-pin":
+            return handlePinURL(components: components)
+        case "/room":
+            return handleRoomURL(components: components)
+        default:
+            return false
+        }
+    }
+
+    private func handlePinURL(components: NSURLComponents) -> Bool {
         guard let param = components.queryItems?.first(where: { $0.name == "pin" }), let pin = param.value else {
             return false
         }
@@ -75,6 +86,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         return auth.inject(pin: pin)
+    }
+
+    private func handleRoomURL(components: NSURLComponents) -> Bool {
+        guard let param = components.queryItems?.first(where: { $0.name == "id" }), let str = param.value else {
+            return false
+        }
+
+        guard let room = Int(str) else {
+            return false
+        }
+
+        guard let nav = window?.rootViewController as? NavigationViewController else {
+            return false
+        }
+
+        nav.didSelect(room: room)
+        return true
     }
 
     func transitionToLoginView() {
