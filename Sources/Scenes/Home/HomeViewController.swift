@@ -273,6 +273,10 @@ extension HomeViewController: HomePresenterOutput {
         update(.feed(feed))
     }
 
+    func didFetchOwnStories(_: [APIClient.Story]) {
+        // @TODO
+    }
+
     func displayError(title: String, description: String?) {
         let banner = FloatingNotificationBanner(
             title: title,
@@ -407,6 +411,17 @@ extension HomeViewController: UICollectionViewDataSource {
         case .storiesList:
             if indexPath.item == 0 {
                 let cell = collectionView.dequeueReusableCell(withClass: CreateStoryCell.self, for: indexPath)
+                if presenter.hasOwnStory {
+                    cell.profileImage.image = UIImage(systemName: "waveform", withConfiguration: UIImage.SymbolConfiguration(weight: .bold))
+                    cell.profileImage.tintColor = .white
+                }
+
+                return cell
+            }
+
+            if indexPath.item == 1, presenter.hasOwnStory {
+                let cell = collectionView.dequeueReusableCell(withClass: StoryCell.self, for: indexPath)
+                cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!))
                 return cell
             }
 
