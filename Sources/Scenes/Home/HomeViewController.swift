@@ -565,6 +565,8 @@ extension HomeViewController: CreateStoryViewDelegate, DrawerViewDelegate {
     }
 
     private func closeStoryDrawer() {
-        storyDrawer.setPosition(.closed, animated: true)
+        storyDrawer.setPosition(.closed, animated: true, completion: { _ in
+            self.output.fetchData()
+        })
     }
 }
