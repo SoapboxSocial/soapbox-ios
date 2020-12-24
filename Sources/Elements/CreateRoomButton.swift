@@ -1,8 +1,10 @@
 import UIKit
 
-class CreateRoomButton: UIButton {
-    init() {
-        super.init(frame: CGRect(x: 0, y: 0, width: 70, height: 70))
+class CreateRoomButton: ButtonWithSpringAnimation {
+    override init() {
+        super.init()
+
+        frame.size = CGSize(width: 70, height: 70)
 
         backgroundColor = .brandColor
         layer.cornerRadius = frame.size.height / 2
