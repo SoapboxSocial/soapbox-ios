@@ -1,6 +1,12 @@
 import UIKit
 
 class CreateRoomButton: ButtonWithSpringAnimation {
+    private let feedback: UIImpactFeedbackGenerator = {
+        let feedback = UIImpactFeedbackGenerator(style: .medium)
+        feedback.prepare()
+        return feedback
+    }()
+
     override init() {
         super.init()
 
@@ -23,9 +29,16 @@ class CreateRoomButton: ButtonWithSpringAnimation {
 
         tintColor = .white
         imageEdgeInsets = UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 0)
+
+        addTarget(self, action: #selector(didPress), for: [.touchUpInside])
     }
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    @objc private func didPress() {
+        feedback.impactOccurred()
+        feedback.prepare()
     }
 }
