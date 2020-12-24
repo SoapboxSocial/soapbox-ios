@@ -1,5 +1,5 @@
 import AlamofireImage
-import FocusableImageView
+import GSImageViewerController
 import NotificationBannerSwift
 import UIKit
 
@@ -101,8 +101,6 @@ class ProfileViewController: ViewController {
         return view
     }()
 
-    private lazy var manager = FocusableImageViewManager()
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -123,6 +121,7 @@ class ProfileViewController: ViewController {
         content.addArrangedSubview(headerView)
 
         let imageTap = UITapGestureRecognizer(target: self, action: #selector(didTapImage))
+        headerView.image.isUserInteractionEnabled = true
         headerView.image.addGestureRecognizer(imageTap)
 
         headerView.stack.insertArrangedSubview(followsYouBadge, at: 1)
@@ -227,30 +226,63 @@ class ProfileViewController: ViewController {
     }
 
     @objc private func didTapImage() {
+        func presentImage() {
+            guard let image = headerView.image.image else {
+                return
+            }
+
+            let imageInfo = GSImageInfo(image: image, imageMode: .aspectFit)
+            let transitionInfo = GSTransitionInfo(fromView: headerView.image)
+            let imageViewer = GSImageViewerController(imageInfo: imageInfo, transitionInfo: transitionInfo)
+            present(imageViewer, animated: true)
+        }
+
         guard let stories = stories else {
-            return
+            return presentImage()
         }
 
-        guard let nav = UIApplication.shared.keyWindow?.rootViewController as? NavigationViewController else {
-            return
-        }
-
-        if nav.room != nil {
-            let banner = FloatingNotificationBanner(title: NSLocalizedString("cant_listen_in_room", comment: ""), style: .info)
-            banner.show()
-            return
-        }
-
-        let vc = StoriesViewController(
-            feed: APIClient.StoryFeed(
-                user: APIClient.User(id: user.id, displayName: user.displayName, username: user.username, email: nil, image: user.image),
-                stories: stories
-            )
+        let alert = UIAlertController(
+            title: nil,
+            message: nil,
+            preferredStyle: .actionSheet
         )
 
-        vc.modalPresentationStyle = .fullScreen
+        // @TODO only show action when not in room
 
-        present(vc, animated: true)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("view_image", comment: ""), style: .default, handler: { _ in
+            presentImage()
+        }))
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("listen_to_story", comment: ""), style: .default, handler: { _ in
+            guard let nav = UIApplication.shared.keyWindow?.rootViewController as? NavigationViewController else {
+                return
+            }
+
+            if nav.room != nil {
+                let banner = FloatingNotificationBanner(title: NSLocalizedString("cant_listen_in_room", comment: ""), style: .info)
+                banner.show()
+                return
+            }
+
+            let vc = StoriesViewController(
+                feed: APIClient.StoryFeed(
+                    user: APIClient.User(
+                        id: self.user.id,
+                        displayName: self.user.displayName,
+                        username: self.user.username,
+                        email: nil,
+                        image: self.user.image
+                    ),
+                    stories: stories
+                )
+            )
+
+            vc.modalPresentationStyle = .fullScreen
+
+            self.present(vc, animated: true)
+        }))
+
+        present(alert, animated: true)
     }
 
     @objc private func openTwitterProfile() {
@@ -428,9 +460,8 @@ extension ProfileViewController: ProfilePresenterOutput {
         updateFollowerLabels()
 
         if profile.image != "" {
-            headerView.image.inner.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + profile.image))
-            headerView.image.inner.contentMode = .scaleAspectFill
-            manager.register(parentViewController: self, imageViews: [])
+            headerView.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + profile.image))
+            headerView.image.contentMode = .scaleAspectFill
         }
     }
 }
@@ -446,15 +477,5 @@ extension ProfileViewController: GroupsSliderDelegate {
 
     func didTapGroupCreation() {
         present(SceneFactory.createGroupCreationViewController(), animated: true)
-    }
-}
-
-extension ProfileViewController: FocusableImageViewDelegate {
-    func focusableImageViewPresentAnimation(views: [FocusableImageView]) {
-        views.forEach { $0.inner.layer.cornerRadius = 0 }
-    }
-
-    func focusableImageViewDismissAnimation(views: [FocusableImageView]) {
-        views.forEach { $0.inner.layer.cornerRadius = 8 }
     }
 }

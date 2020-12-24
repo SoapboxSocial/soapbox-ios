@@ -1,9 +1,8 @@
-import FocusableImageView
 import UIKit
 
 class ProfileHeaderView: UIView {
-    var image: FocusableImageView = {
-        let image = FocusableImageView()
+    var image: UIImageView = {
+        let image = UIImageView()
         image.backgroundColor = .brandColor
         image.layer.cornerRadius = 96 / 2
         image.clipsToBounds = true
