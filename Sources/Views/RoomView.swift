@@ -635,6 +635,10 @@ extension RoomView: UICollectionViewDelegate {
         optionMenu.addAction(profileAction)
 
         if room.role == .admin {
+            optionMenu.addAction(UIAlertAction(title: NSLocalizedString("mute_user", comment: ""), style: .default, handler: { _ in
+                self.room.mute(user: member.id)
+            }))
+
             if member.role == .admin {
                 optionMenu.addAction(
                     UIAlertAction(title: NSLocalizedString("remove_admin", comment: ""), style: .destructive, handler: { _ in
@@ -688,6 +692,14 @@ extension RoomView: UICollectionViewDataSource {
 }
 
 extension RoomView: RoomDelegate {
+    func wasMutedByAdmin() {
+        DispatchQueue.main.async {
+            self.muteButton.isSelected = true
+            self.bottomMuteButton.isSelected = true
+            self.members.reloadItems(at: [IndexPath(item: 0, section: 0)])
+        }
+    }
+
     func userDidReact(user: Int, reaction: Room.Reaction) {
         DispatchQueue.main.async {
             guard let cells = self.members.visibleCells as? [RoomMemberCell] else {
