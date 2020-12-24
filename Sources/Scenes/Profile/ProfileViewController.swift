@@ -253,7 +253,7 @@ class ProfileViewController: ViewController {
             presentImage()
         }))
 
-        alert.addAction(UIAlertAction(title: NSLocalizedString("listen_to_story", comment: ""), style: .destructive, handler: { _ in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("listen_to_story", comment: ""), style: .default, handler: { _ in
             guard let nav = UIApplication.shared.keyWindow?.rootViewController as? NavigationViewController else {
                 return
             }
