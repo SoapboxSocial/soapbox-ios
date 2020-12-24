@@ -172,6 +172,10 @@ class HomeCollectionPresenter {
         dataSource.insert(Section(type: .storiesList, title: "", data: stories), at: 0)
     }
 
+    func set(hasOwnStory: Bool) {
+        self.hasOwnStory = hasOwnStory
+    }
+
     func index(of section: SectionType) -> Int? {
         return dataSource.firstIndex(where: { $0.type == section })
     }

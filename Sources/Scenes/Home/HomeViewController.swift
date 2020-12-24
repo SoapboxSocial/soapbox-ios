@@ -25,6 +25,8 @@ class HomeViewController: ViewController {
     private var storyDrawer: DrawerView!
     private var creationView: CreateStoryView?
 
+    private var ownStories = [APIClient.Story]()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -273,8 +275,12 @@ extension HomeViewController: HomePresenterOutput {
         update(.feed(feed))
     }
 
-    func didFetchOwnStories(_: [APIClient.Story]) {
-        // @TODO
+    func didFetchOwnStories(_ stories: [APIClient.Story]) {
+        let has = stories.count >= 1
+
+        ownStories = stories
+
+        update(.ownStory(has))
     }
 
     func displayError(title: String, description: String?) {
@@ -305,6 +311,7 @@ extension HomeViewController: HomePresenterOutput {
 
 extension HomeViewController {
     enum Update {
+        case ownStory(Bool)
         case rooms([RoomState])
         case feed([APIClient.StoryFeed])
         case groups([APIClient.Group])
@@ -331,6 +338,9 @@ extension HomeViewController {
             collection.reloadSections(IndexSet(integer: presenter.numberOfSections - 1))
         case let .feed(feed):
             presenter.set(stories: feed)
+            collection.reloadSections(IndexSet(integer: 0))
+        case let .ownStory(has):
+            presenter.set(hasOwnStory: has)
             collection.reloadSections(IndexSet(integer: 0))
         case let .groups(groups):
             let previous = presenter.index(of: .groupList)
@@ -380,7 +390,22 @@ extension HomeViewController: UICollectionViewDelegate {
                 return openCreateStory()
             }
 
-            let feed = presenter.item(for: indexPath, ofType: APIClient.StoryFeed.self)
+            var feed: APIClient.StoryFeed
+            if indexPath.item == 1, presenter.hasOwnStory {
+                feed = APIClient.StoryFeed(
+                    user: APIClient.User(
+                        id: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId),
+                        displayName: UserDefaults.standard.string(forKey: UserDefaultsKeys.userDisplay) ?? "",
+                        username: UserDefaults.standard.string(forKey: UserDefaultsKeys.username) ?? "",
+                        email: "",
+                        image: UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)
+                    ),
+                    stories: ownStories
+                )
+            } else {
+                feed = presenter.item(for: indexPath, ofType: APIClient.StoryFeed.self)
+            }
+
             let vc = StoriesViewController(feed: feed)
             vc.modalPresentationStyle = .fullScreen
 
@@ -414,6 +439,8 @@ extension HomeViewController: UICollectionViewDataSource {
                 if presenter.hasOwnStory {
                     cell.profileImage.image = UIImage(systemName: "waveform", withConfiguration: UIImage.SymbolConfiguration(weight: .bold))
                     cell.profileImage.tintColor = .white
+                } else {
+                    cell.profileImage.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!))
                 }
 
                 return cell
