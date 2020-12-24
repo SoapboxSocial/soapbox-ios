@@ -64,7 +64,7 @@ class HomeViewController: ViewController {
             action: #selector(openSearch)
         )
 
-        navigationItem.leftBarButtonItems = [profileButton, searchButton]
+        navigationItem.leftBarButtonItems = [profileButton]
 
         let notificationsButton = UIBarButtonItem(
             image: UIImage(systemName: "bell", withConfiguration: iconConfig),
@@ -72,7 +72,7 @@ class HomeViewController: ViewController {
             target: self,
             action: #selector(openNotifications)
         )
-        navigationItem.rightBarButtonItems = [notificationsButton]
+        navigationItem.rightBarButtonItems = [searchButton, notificationsButton]
 
         NSLayoutConstraint.activate([
             collection.leftAnchor.constraint(equalTo: view.leftAnchor),
