@@ -179,3 +179,5 @@
 
 "join_me_in_room" = "I'm currently chatting on Soapbox, why not join me?";
 "share_room_tooltip" = "Rooms are better with friends, now you can share links to them directly!";
+
+"mute_user" = "Mute";

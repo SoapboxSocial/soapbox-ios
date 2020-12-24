@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Admins are now able to mute users.
  - The search button is back on the right!
  - Removed groups from the home page.
  - Started showing you your own stories on the homescreen.

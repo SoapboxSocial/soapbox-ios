@@ -649,6 +649,10 @@ extension RoomView: UICollectionViewDelegate {
                 )
             }
 
+            optionMenu.addAction(UIAlertAction(title: NSLocalizedString("mute_user", comment: ""), style: .default, handler: { _ in
+                self.room.mute(user: member.id)
+            }))
+
             optionMenu.addAction(
                 UIAlertAction(title: NSLocalizedString("ban_from_room", comment: ""), style: .destructive, handler: { _ in
                     self.room.kick(user: member.id)

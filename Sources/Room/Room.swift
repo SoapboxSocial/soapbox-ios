@@ -275,6 +275,14 @@ class Room: NSObject {
         })
     }
 
+    func mute(user: Int) {
+        stream.sendMessage(SignalRequest.with {
+            $0.muteUser = MuteUser.with {
+                $0.id = Int64(user)
+            }
+        })
+    }
+
     func rename(_ name: String) {
         send(command: SignalRequest.Command.with {
             $0.type = SignalRequest.Command.TypeEnum.renameRoom
