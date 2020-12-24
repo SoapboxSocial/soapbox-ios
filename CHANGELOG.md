@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Added smooth animations to buttons!
  - Allowing you to view peoples profile picture again!
  - Admins are now able to mute users.
  - The search button is back on the right!
