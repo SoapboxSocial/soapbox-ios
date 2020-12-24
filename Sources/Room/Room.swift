@@ -14,6 +14,7 @@ protocol RoomDelegate {
     func didReceiveLink(from: Int, link: URL)
     func roomWasRenamed(_ name: String)
     func userDidRecordScreen(_ user: Int)
+    func wasMutedByAdmin()
 }
 
 enum RoomError: Error {
@@ -393,6 +394,8 @@ class Room: NSObject {
             didReceiveRenamedRoom(event)
         case .recordedScreen:
             didRecordScreen(event)
+        case .mutedByAdmin:
+            wasMutedByAdmin(event)
         case .UNRECOGNIZED:
             return
         }
@@ -470,6 +473,12 @@ extension Room {
 
     private func didReceiveUnmuteSpeaker(_ event: SignalReply.Event) {
         updateMemberMuteState(user: Int(event.from), isMuted: false)
+    }
+
+    private func wasMutedByAdmin(_: SignalReply.Event) {
+        rtc.muteAudio()
+        isMuted = true
+        delegate?.wasMutedByAdmin()
     }
 
     private func didReceiveReacted(_ event: SignalReply.Event) {

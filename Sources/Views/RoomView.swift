@@ -692,6 +692,13 @@ extension RoomView: UICollectionViewDataSource {
 }
 
 extension RoomView: RoomDelegate {
+    func wasMutedByAdmin() {
+        DispatchQueue.main.async {
+            self.muteButton.isSelected = true
+            self.bottomMuteButton.isSelected = true
+        }
+    }
+
     func userDidReact(user: Int, reaction: Room.Reaction) {
         DispatchQueue.main.async {
             guard let cells = self.members.visibleCells as? [RoomMemberCell] else {
