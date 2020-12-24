@@ -1,4 +1,4 @@
-import FocusableImageView
+import GSImageViewerController
 import NotificationBannerSwift
 import UIKit
 
@@ -49,8 +49,6 @@ class GroupViewController: ViewController {
     private var id: Int!
 
     private var group: APIClient.Group!
-
-    private lazy var manager = FocusableImageViewManager()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -155,9 +153,12 @@ extension GroupViewController: GroupPresenterOutput {
         }
 
         if let image = group.image, image != "" {
-            headerView.image.inner.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
-            headerView.image.inner.contentMode = .scaleAspectFill
-            manager.register(parentViewController: self, imageViews: [headerView.image])
+            headerView.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
+            headerView.image.contentMode = .scaleAspectFill
+
+            let tap = UITapGestureRecognizer(target: self, action: #selector(viewImage))
+            headerView.image.isUserInteractionEnabled = true
+            headerView.image.addGestureRecognizer(tap)
         }
     }
 
@@ -231,6 +232,13 @@ extension GroupViewController: GroupPresenterOutput {
     @objc private func editPressed() {
         let view = EditGroupViewController(group: group, parent: self)
         present(view, animated: true)
+    }
+
+    @objc private func viewImage() {
+        let imageInfo = GSImageInfo(image: headerView.image.image!, imageMode: .aspectFit)
+        let transitionInfo = GSTransitionInfo(fromView: headerView.image)
+        let imageViewer = GSImageViewerController(imageInfo: imageInfo, transitionInfo: transitionInfo)
+        present(imageViewer, animated: true)
     }
 
     public func popToRoot() {
