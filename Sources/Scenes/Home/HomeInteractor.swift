@@ -20,6 +20,7 @@ protocol HomeInteractorOutput {
     func didFetchFeed(_ feed: [APIClient.StoryFeed])
     func didFetchGroups(groups: [APIClient.Group])
     func didFetchMoreGroups(groups: [APIClient.Group])
+    func didFetchOwnStories(_ stories: [APIClient.Story])
 }
 
 class HomeInteractor: HomeViewControllerOutput {
@@ -54,6 +55,17 @@ class HomeInteractor: HomeViewControllerOutput {
             }
         }
 
+        let user = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
+
+        api.stories(user: user, callback: { result in
+            switch result {
+            case .failure:
+                self.output.didFetchOwnStories([])
+            case let .success(stories):
+                self.output.didFetchOwnStories(stories)
+            }
+        })
+
         api.feed(callback: { result in
             switch result {
             case .failure:
@@ -69,7 +81,7 @@ class HomeInteractor: HomeViewControllerOutput {
 
         // @TODO
         groupOffset = 0
-        api.groups(id: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId), limit: 10, offset: 0, callback: { result in
+        api.groups(id: user, limit: 10, offset: 0, callback: { result in
             switch result {
             case .failure:
                 self.output.didFetchGroups(groups: [])

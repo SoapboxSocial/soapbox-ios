@@ -23,6 +23,8 @@ class HomeCollectionPresenter {
         return dataSource.count
     }
 
+    private(set) var hasOwnStory = true
+
     init() {
         set(stories: [])
         set(rooms: [])
@@ -54,7 +56,12 @@ class HomeCollectionPresenter {
         case .noRooms:
             return 1
         case .storiesList:
-            return section.data.count + 1
+            var amount = section.data.count + 1
+            if hasOwnStory {
+                amount += 1
+            }
+
+            return amount
         default:
             return section.data.count
         }
@@ -62,7 +69,12 @@ class HomeCollectionPresenter {
 
     func configure(item: StoryCell, for indexPath: IndexPath) {
         let section = dataSource[indexPath.section]
-        guard let story = section.data[indexPath.row - 1] as? APIClient.StoryFeed else {
+        var offset = 1
+        if hasOwnStory {
+            offset = 2
+        }
+
+        guard let story = section.data[indexPath.row - offset] as? APIClient.StoryFeed else {
             print("Error getting active user for indexPath: \(indexPath)")
             return
         }
@@ -158,6 +170,10 @@ class HomeCollectionPresenter {
     func set(stories: [APIClient.StoryFeed]) {
         dataSource.removeAll(where: { $0.type == .storiesList })
         dataSource.insert(Section(type: .storiesList, title: "", data: stories), at: 0)
+    }
+
+    func set(hasOwnStory: Bool) {
+        self.hasOwnStory = hasOwnStory
     }
 
     func index(of section: SectionType) -> Int? {

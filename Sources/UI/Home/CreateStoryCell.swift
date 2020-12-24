@@ -2,9 +2,8 @@ import AlamofireImage
 import UIKit
 
 class CreateStoryCell: UICollectionViewCell {
-    private var profileImage: UIImageView = {
+    var profileImage: UIImageView = {
         let view = UIImageView()
-        view.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!))
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.masksToBounds = true
         view.clipsToBounds = true
