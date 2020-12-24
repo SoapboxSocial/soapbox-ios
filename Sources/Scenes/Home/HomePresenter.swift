@@ -2,8 +2,6 @@ import Foundation
 
 protocol HomePresenterOutput {
     func didFetchRooms(rooms: [RoomState])
-    func didFetchGroups(groups: [APIClient.Group])
-    func didFetchMoreGroups(groups: [APIClient.Group])
     func didFetchFeed(_ feed: [APIClient.StoryFeed])
     func didFetchOwnStories(_ stories: [APIClient.Story])
     func displayError(title: String, description: String?)
@@ -35,14 +33,6 @@ class HomePresenter: HomeInteractorOutput {
 
     func didFetchFeed(_ feed: [APIClient.StoryFeed]) {
         output.didFetchFeed(feed)
-    }
-
-    func didFetchGroups(groups: [APIClient.Group]) {
-        output.didFetchGroups(groups: groups)
-    }
-
-    func didFetchMoreGroups(groups: [APIClient.Group]) {
-        output.didFetchMoreGroups(groups: groups)
     }
 
     func didFetchOwnStories(_ stories: [APIClient.Story]) {

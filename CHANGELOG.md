@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Removed groups from the home page.
  - Started showing you your own stories on the homescreen.
 
 ## [1.8.0] - 2020-12-22

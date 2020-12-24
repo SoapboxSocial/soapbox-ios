@@ -7,7 +7,6 @@ protocol HomeViewControllerOutput {
     func fetchData()
     func didSelectRoom(room: Int)
     func fetchMe()
-    func fetchMoreGroups()
 }
 
 class HomeViewController: ViewController {
@@ -42,7 +41,6 @@ class HomeViewController: ViewController {
         collection.register(cellWithClass: EmptyRoomCollectionViewCell.self)
         collection.register(cellWithClass: RoomCell.self)
         collection.register(cellWithClass: StoryCell.self)
-        collection.register(cellWithClass: GroupCell.self)
         collection.register(cellWithClass: CreateStoryCell.self)
 
         collection.refreshControl = refresh
@@ -127,8 +125,6 @@ class HomeViewController: ViewController {
                 return self.createRoomListSection()
             case .noRooms:
                 return self.createNoRoomsSection()
-            case .groupList:
-                return self.createGroupSection()
             }
         }
 
@@ -148,10 +144,6 @@ class HomeViewController: ViewController {
         var heightAbsolute = view.frame.size.height
         if presenter.has(section: .storiesList) {
             heightAbsolute -= 300
-        }
-
-        if presenter.has(section: .groupList) {
-            heightAbsolute -= 200
         }
 
         if heightAbsolute != view.frame.size.height {
@@ -202,28 +194,6 @@ class HomeViewController: ViewController {
         return layoutSection
     }
 
-    private func createGroupSection() -> NSCollectionLayoutSection {
-        let estimatedWidth = view.frame.size.width * 0.7
-        let itemSize = NSCollectionLayoutSize(widthDimension: .estimated(estimatedWidth), heightDimension: .fractionalHeight(1))
-        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
-
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .estimated(estimatedWidth), heightDimension: .absolute(56))
-        let layoutGroup = NSCollectionLayoutGroup.horizontal(layoutSize: layoutGroupSize, subitems: [layoutItem])
-
-        layoutGroup.interItemSpacing = .fixed(10)
-
-        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
-        layoutSection.interGroupSpacing = 10
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
-        layoutSection.orthogonalScrollingBehavior = .continuous
-
-        if presenter.has(section: .storiesList) {
-            layoutSection.boundarySupplementaryItems = [createSectionHeader()]
-        }
-
-        return layoutSection
-    }
-
     private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
         return NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(80)),
@@ -242,30 +212,6 @@ class HomeViewController: ViewController {
 }
 
 extension HomeViewController: HomePresenterOutput {
-    func didFetchMoreGroups(groups: [APIClient.Group]) {
-        if groups.isEmpty {
-            return
-        }
-
-        guard let index = presenter.index(of: .groupList) else {
-            return
-        }
-
-        let count = presenter.numberOfItems(for: index)
-        presenter.add(groups: groups)
-
-        var paths = [IndexPath]()
-        for i in count ..< (count + groups.count) {
-            paths.append(IndexPath(item: i, section: index))
-        }
-
-        collection.insertItems(at: paths)
-    }
-
-    func didFetchGroups(groups: [APIClient.Group]) {
-        update(.groups(groups))
-    }
-
     func didFetchRooms(rooms: [RoomState]) {
         // sorted is temporary
         update(.rooms(rooms.sorted(by: { $0.id < $1.id })))
@@ -314,7 +260,6 @@ extension HomeViewController {
         case ownStory(Bool)
         case rooms([RoomState])
         case feed([APIClient.StoryFeed])
-        case groups([APIClient.Group])
     }
 
     func update(_ update: Update) {
@@ -342,23 +287,6 @@ extension HomeViewController {
         case let .ownStory(has):
             presenter.set(hasOwnStory: has)
             collection.reloadSections(IndexSet(integer: 0))
-        case let .groups(groups):
-            let previous = presenter.index(of: .groupList)
-            presenter.set(groups: groups)
-
-            if groups.isEmpty {
-                if let index = previous {
-                    collection.deleteSections(IndexSet(integer: index))
-                }
-            } else {
-                if let index = previous {
-                    UIView.performWithoutAnimation {
-                        self.collection.reloadSections(IndexSet(integer: index))
-                    }
-                } else {
-                    collection.insertSections(IndexSet(integer: presenter.index(of: .groupList)!))
-                }
-            }
         }
 
         updateQueue.removeFirst()
@@ -367,16 +295,6 @@ extension HomeViewController {
 }
 
 extension HomeViewController: UICollectionViewDelegate {
-    func collectionView(_: UICollectionView, willDisplay _: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if presenter.sectionType(for: indexPath.section) != .groupList {
-            return
-        }
-
-        if indexPath.item == presenter.numberOfItems(for: indexPath.section) - 2 {
-            output.fetchMoreGroups()
-        }
-    }
-
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch presenter.sectionType(for: indexPath.section) {
         case .storiesList:
@@ -415,9 +333,6 @@ extension HomeViewController: UICollectionViewDelegate {
             output.didSelectRoom(room: Int(room.id))
         case .noRooms:
             return
-        case .groupList:
-            let group = presenter.item(for: IndexPath(item: indexPath.item, section: indexPath.section), ofType: APIClient.Group.self)
-            navigationController?.pushViewController(SceneFactory.createGroupViewController(id: group.id), animated: true)
         }
     }
 }
@@ -459,10 +374,6 @@ extension HomeViewController: UICollectionViewDataSource {
             let cell = collectionView.dequeueReusableCell(withClass: RoomCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
-        case .groupList:
-            let cell = collectionView.dequeueReusableCell(withClass: GroupCell.self, for: indexPath)
-            presenter.configure(item: cell, for: indexPath)
-            return cell
         case .noRooms:
             return collectionView.dequeueReusableCell(withClass: EmptyRoomCollectionViewCell.self, for: indexPath)
         }
@@ -476,12 +387,7 @@ extension HomeViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
 
         cell.label.text = presenter.title(for: indexPath.section)
-
-        if presenter.sectionType(for: indexPath.section) == .groupList {
-            cell.label.font = .rounded(forTextStyle: .title1, weight: .bold)
-        } else {
-            cell.label.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
-        }
+        cell.label.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
 
         return cell
     }

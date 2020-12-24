@@ -9,7 +9,6 @@ class HomeCollectionPresenter {
     enum SectionType: Int, CaseIterable {
         case roomList
         case storiesList
-        case groupList
         case noRooms
     }
 
@@ -86,20 +85,6 @@ class HomeCollectionPresenter {
         }
     }
 
-    func configure(item: GroupCell, for indexPath: IndexPath) {
-        let section = dataSource[indexPath.section]
-        guard let group = section.data[indexPath.row] as? APIClient.Group else {
-            print("Error getting active user for indexPath: \(indexPath)")
-            return
-        }
-
-        item.name.text = group.name
-
-        if let image = group.image, image != "" {
-            item.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
-        }
-    }
-
     func configure(item: RoomCell, for indexPath: IndexPath) {
         let section = dataSource[indexPath.section]
         guard let room = section.data[indexPath.row] as? RoomState else {
@@ -132,29 +117,6 @@ class HomeCollectionPresenter {
         if room.hasGroup {
             item.group = room.group
         }
-    }
-
-    func set(groups: [APIClient.Group]) {
-        dataSource.removeAll(where: { $0.type == .groupList })
-
-        var at = 0
-        if has(section: .storiesList) {
-            at = 1
-        }
-
-        if groups.isEmpty {
-            return
-        }
-
-        dataSource.insert(Section(type: .groupList, title: NSLocalizedString("groups", comment: ""), data: groups), at: at)
-    }
-
-    func add(groups: [APIClient.Group]) {
-        guard let index = dataSource.firstIndex(where: { $0.type == .groupList }) else {
-            return
-        }
-
-        dataSource[index].data.append(contentsOf: groups)
     }
 
     func set(rooms: [RoomState]) {
