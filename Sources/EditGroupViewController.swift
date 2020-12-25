@@ -143,34 +143,29 @@ class EditGroupViewController: UIViewController {
     }
 
     @objc private func deleteGroup() {
-        let alert = UIAlertController(
-            title: NSLocalizedString("are_you_sure", comment: ""),
-            message: nil,
-            preferredStyle: .alert
-        )
-
-        alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .default, handler: nil))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .destructive, handler: { _ in
-            APIClient().deleteGroup(group: self.group.id) { result in
-                DispatchQueue.main.async {
-                    self.activityIndicator.stopAnimating()
-                    self.activityIndicator.isHidden = true
-                }
-
-                switch result {
-                case .failure:
-                    self.displayError()
-                case .success:
+        let alert = UIAlertController.confirmation(
+            onAccepted: {
+                APIClient().deleteGroup(group: self.group.id) { result in
                     DispatchQueue.main.async {
-                        self.dismiss(animated: true, completion: {
-                            DispatchQueue.main.async {
-                                self.parentVC.popToRoot()
-                            }
-                        })
+                        self.activityIndicator.stopAnimating()
+                        self.activityIndicator.isHidden = true
+                    }
+
+                    switch result {
+                    case .failure:
+                        self.displayError()
+                    case .success:
+                        DispatchQueue.main.async {
+                            self.dismiss(animated: true, completion: {
+                                DispatchQueue.main.async {
+                                    self.parentVC.popToRoot()
+                                }
+                            })
+                        }
                     }
                 }
             }
-        }))
+        )
 
         present(alert, animated: true)
     }
