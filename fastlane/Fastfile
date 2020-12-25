@@ -129,8 +129,6 @@ platform :ios do
       output_name: output_name
     )
     
-    changelog = read_changelog
-    upload_to_testflight(distribute_external: true, changelog: changelog, groups: ["Link", "External", "Airport"])
-    stamp_changelog(section_identifier: "#{version} (#{build_number})")
+    upload_to_testflight(distribute_external: true, groups: ["Link", "External", "Airport"])
   end
 end
