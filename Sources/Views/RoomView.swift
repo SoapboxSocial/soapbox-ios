@@ -528,16 +528,12 @@ class RoomView: UIView {
     }
 
     private func showExitAlert() {
-        let alert = UIAlertController(
-            title: NSLocalizedString("are_you_sure", comment: ""),
-            message: NSLocalizedString("exit_will_close_room", comment: ""),
-            preferredStyle: .alert
+        let alert = UIAlertController.confirmation(
+            onAccepted: {
+                self.exitRoom()
+            },
+            message: NSLocalizedString("exit_will_close_room", comment: "")
         )
-
-        alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .default, handler: nil))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .destructive, handler: { _ in
-            self.exitRoom()
-        }))
 
         UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
     }

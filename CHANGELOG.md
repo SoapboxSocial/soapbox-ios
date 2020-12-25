@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - We are now asking for confirmation before doing certain destructive actions.
  - Added smooth animations to buttons!
  - Allowing you to view peoples profile picture again!
  - Admins are now able to mute users.

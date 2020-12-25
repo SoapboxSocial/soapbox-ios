@@ -320,7 +320,16 @@ class ProfileViewController: ViewController {
         headerView.button.isUserInteractionEnabled = false
 
         if user.isFollowing ?? false {
-            output.unfollow()
+            let alert = UIAlertController.confirmation(
+                onAccepted: {
+                    self.output.unfollow()
+                },
+                onDeclined: {
+                    self.headerView.button.isUserInteractionEnabled = true
+                }
+            )
+
+            present(alert, animated: true)
         } else {
             output.follow()
         }
