@@ -18,6 +18,8 @@ jobs:
   Build:
     runs-on: macos-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
       - name: setup-cocoapods
         uses: maxim-lobanov/setup-cocoapods@v1
         with:
