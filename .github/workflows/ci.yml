@@ -26,7 +26,6 @@ jobs:
         uses: maxim-lobanov/setup-cocoapods@v1
         with:
           podfile-path: Podfile.lock
-      - name: Build
       - uses: sersoft-gmbh/xcodebuild-action@v1
         with:
          project: Soapbox.xcodeproj
