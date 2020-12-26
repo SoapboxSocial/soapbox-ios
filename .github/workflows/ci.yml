@@ -25,7 +25,7 @@ jobs:
         with:
           podfile-path: Podfile.lock
       - run: bash <(curl -Ls https://install.tuist.io)
-      - run: tuist generate
+      - run: tuist generate --project-only
       - uses: sersoft-gmbh/xcodebuild-action@v1
         with:
          project: Soapbox.xcodeproj
