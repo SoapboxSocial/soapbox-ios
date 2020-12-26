@@ -5,14 +5,14 @@ class SearchCollectionPresenter {
     private var dataSource = [Section]()
 
     enum SectionType: Int, CaseIterable {
-        case groupList
         case userList
+        case groupList
     }
 
     struct Section {
         let type: SectionType
         let title: String
-        let data: [Any]
+        var data: [Any]
     }
 
     var numberOfSections: Int {
@@ -106,7 +106,7 @@ class SearchCollectionPresenter {
             return
         }
 
-        dataSource.insert(Section(type: .groupList, title: NSLocalizedString("groups", comment: ""), data: groups), at: 0)
+        dataSource.append(Section(type: .groupList, title: NSLocalizedString("groups", comment: ""), data: groups))
     }
 
     func set(users: [APIClient.User]) {
@@ -116,6 +116,26 @@ class SearchCollectionPresenter {
             return
         }
 
-        dataSource.append(Section(type: .userList, title: NSLocalizedString("users", comment: ""), data: users))
+        dataSource.insert(Section(type: .userList, title: NSLocalizedString("users", comment: ""), data: users), at: 0)
+    }
+
+    func append(users: [APIClient.User]) {
+        guard let index = dataSource.firstIndex(where: { $0.type == .userList }) else {
+            return
+        }
+
+        dataSource[index].data.append(contentsOf: users)
+    }
+
+    func append(groups: [APIClient.Group]) {
+        guard let index = dataSource.firstIndex(where: { $0.type == .groupList }) else {
+            return
+        }
+
+        dataSource[index].data.append(contentsOf: groups)
+    }
+
+    func index(of section: SectionType) -> Int? {
+        return dataSource.firstIndex(where: { $0.type == section })
     }
 }

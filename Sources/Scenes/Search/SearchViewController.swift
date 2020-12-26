@@ -4,6 +4,7 @@ import UIKit
 
 protocol SearchViewControllerOutput {
     func search(_ keyword: String)
+    func loadMore(type: APIClient.SearchIndex)
 }
 
 class SearchViewController: ViewController {
@@ -96,7 +97,7 @@ class SearchViewController: ViewController {
         layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
         layoutSection.interGroupSpacing = 0
 
-        layoutSection.boundarySupplementaryItems = [createSectionHeader(), createSectionFooter(height: 105 + 38)]
+        layoutSection.boundarySupplementaryItems = [createSectionHeader(), createSectionFooter()]
 
         return layoutSection
     }
@@ -116,7 +117,7 @@ class SearchViewController: ViewController {
         layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
         layoutSection.interGroupSpacing = 0
 
-        layoutSection.boundarySupplementaryItems = [createSectionHeader(), createSectionFooter()]
+        layoutSection.boundarySupplementaryItems = [createSectionHeader(), createSectionFooter(height: 105 + 38)]
 
         return layoutSection
     }
@@ -203,23 +204,11 @@ extension SearchViewController: UICollectionViewDataSource {
     }
 
     @objc private func showMoreGroups() {
-        var text = "*"
-        if let input = searchBar.text, input != "" {
-            text = input
-        }
-
-        let view = SceneFactory.createSearchResultsViewController(type: .groups, keyword: text)
-        navigationController?.pushViewController(view, animated: true)
+        output.loadMore(type: .groups)
     }
 
     @objc private func showMoreUsers() {
-        var text = "*"
-        if let input = searchBar.text, input != "" {
-            text = input
-        }
-
-        let view = SceneFactory.createSearchResultsViewController(type: .users, keyword: text)
-        navigationController?.pushViewController(view, animated: true)
+        output.loadMore(type: .users)
     }
 }
 
@@ -239,6 +228,38 @@ extension SearchViewController: SearchPresenterOutput {
         DispatchQueue.main.async {
             self.collection.refreshControl?.endRefreshing()
             self.collection.reloadData()
+        }
+    }
+
+    func displayMore(users: [APIClient.User]) {
+        if users.isEmpty {
+            return
+        }
+
+        presenter.append(users: users)
+
+        guard let index = presenter.index(of: .userList) else {
+            return
+        }
+
+        DispatchQueue.main.async {
+            self.collection.reloadSections(IndexSet(integer: index))
+        }
+    }
+
+    func displayMore(groups: [APIClient.Group]) {
+        if groups.isEmpty {
+            return
+        }
+
+        presenter.append(groups: groups)
+
+        guard let index = presenter.index(of: .groupList) else {
+            return
+        }
+
+        DispatchQueue.main.async {
+            self.collection.reloadSections(IndexSet(integer: index))
         }
     }
 
