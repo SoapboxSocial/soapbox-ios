@@ -32,8 +32,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         window?.makeKeyAndVisible()
         
-        Siren.shared.wail()
-
+        updateNotify()
+        
         if !loggedIn {
             return true
         }
@@ -134,6 +134,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         navigation.navigationBar.isHidden = true
 
         return navigation
+    }
+    
+    private func updateNotify() {
+        let siren = Siren.shared
+        siren.rulesManager = RulesManager(
+            majorUpdateRules: .critical,
+            minorUpdateRules: .annoying,
+            patchUpdateRules: .default,
+            revisionUpdateRules: Rules(promptFrequency: .immediately, forAlertType: .option)
+        )
+        
+        siren.wail()
     }
 
     private func isLoggedIn() -> Bool {
