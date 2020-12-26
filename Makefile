@@ -14,7 +14,7 @@ ifeq ($(shell uname),Darwin)
 endif
 
 setup:
-	tuist generate
+	tuist generate -P
 
 install_deps:
 	pod install
