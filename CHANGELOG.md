@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Added some haptic responses to room reaction buttons.
  - Pressing "View More" on search no longer takes you to a new page!
  - We are now asking for confirmation before doing certain destructive actions.
  - Added smooth animations to buttons!
