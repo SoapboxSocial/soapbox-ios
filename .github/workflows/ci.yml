@@ -21,7 +21,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - run: bash <(curl -Ls https://install.tuist.io)
-      - run: tuist generate --project-only
+      - run: tuist generate -P
       - name: setup-cocoapods
         uses: maxim-lobanov/setup-cocoapods@v1
         with:
