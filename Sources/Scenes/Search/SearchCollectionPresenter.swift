@@ -5,8 +5,8 @@ class SearchCollectionPresenter {
     private var dataSource = [Section]()
 
     enum SectionType: Int, CaseIterable {
-        case groupList
         case userList
+        case groupList
     }
 
     struct Section {
@@ -106,7 +106,7 @@ class SearchCollectionPresenter {
             return
         }
 
-        dataSource.insert(Section(type: .groupList, title: NSLocalizedString("groups", comment: ""), data: groups), at: 0)
+        dataSource.append(Section(type: .groupList, title: NSLocalizedString("groups", comment: ""), data: groups))
     }
 
     func set(users: [APIClient.User]) {
@@ -116,6 +116,6 @@ class SearchCollectionPresenter {
             return
         }
 
-        dataSource.append(Section(type: .userList, title: NSLocalizedString("users", comment: ""), data: users))
+        dataSource.insert(Section(type: .userList, title: NSLocalizedString("users", comment: ""), data: users), at: 0)
     }
 }

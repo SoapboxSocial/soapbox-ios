@@ -96,7 +96,7 @@ class SearchViewController: ViewController {
         layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
         layoutSection.interGroupSpacing = 0
 
-        layoutSection.boundarySupplementaryItems = [createSectionHeader(), createSectionFooter(height: 105 + 38)]
+        layoutSection.boundarySupplementaryItems = [createSectionHeader(), createSectionFooter()]
 
         return layoutSection
     }
@@ -116,7 +116,7 @@ class SearchViewController: ViewController {
         layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
         layoutSection.interGroupSpacing = 0
 
-        layoutSection.boundarySupplementaryItems = [createSectionHeader(), createSectionFooter()]
+        layoutSection.boundarySupplementaryItems = [createSectionHeader(), createSectionFooter(height: 105 + 38)]
 
         return layoutSection
     }
