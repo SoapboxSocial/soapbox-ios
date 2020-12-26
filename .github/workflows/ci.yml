@@ -20,12 +20,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - run: bash <(curl -Ls https://install.tuist.io)
+      - run: tuist generate --project-only
       - name: setup-cocoapods
         uses: maxim-lobanov/setup-cocoapods@v1
         with:
           podfile-path: Podfile.lock
-      - run: bash <(curl -Ls https://install.tuist.io)
-      - run: tuist generate --project-only
+      - name: Build
       - uses: sersoft-gmbh/xcodebuild-action@v1
         with:
          project: Soapbox.xcodeproj
