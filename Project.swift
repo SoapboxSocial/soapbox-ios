@@ -32,9 +32,6 @@ let project = Project(
             infoPlist: "Info.plist",
             sources: ["Sources/**"],
             resources: ["Configurations/*", "Entitlements/*", "Assets.xcassets", "Localization/**/*.strings"],
-            dependencies: [
-                .cocoapods(path: "."),
-            ],
             settings: settings
         ),
         Target(
