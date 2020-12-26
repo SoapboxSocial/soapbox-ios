@@ -21,6 +21,7 @@ target 'Soapbox' do
   pod 'CCBottomRefreshControl'
   pod 'BetterSegmentedControl', '~> 2.0'
   pod 'EasyTipView'
+  pod 'Siren'
 
   target 'SoapboxTests' do
     inherit! :search_paths
