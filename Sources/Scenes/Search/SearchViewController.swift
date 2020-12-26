@@ -235,7 +235,7 @@ extension SearchViewController: SearchPresenterOutput {
         if users.isEmpty {
             return
         }
-        
+
         presenter.append(users: users)
 
         guard let index = presenter.index(of: .userList) else {
@@ -251,7 +251,7 @@ extension SearchViewController: SearchPresenterOutput {
         if groups.isEmpty {
             return
         }
-        
+
         presenter.append(groups: groups)
 
         guard let index = presenter.index(of: .groupList) else {
