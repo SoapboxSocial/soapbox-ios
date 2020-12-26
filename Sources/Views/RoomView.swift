@@ -566,7 +566,7 @@ class RoomView: UIView {
         guard let reaction = Room.Reaction(rawValue: label) else {
             return
         }
-        
+
         room.react(with: reaction)
         feedbackGenerator.notificationOccurred(.success)
         feedbackGenerator.prepare()

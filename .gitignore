@@ -10,6 +10,7 @@ build/*
 ## Build generated
 build/
 DerivedData/
+Derived/
 *.xcworkspace
 
 ## Various settings

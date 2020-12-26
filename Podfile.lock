@@ -33,6 +33,7 @@ PODS:
   - NotificationBannerSwift (3.0.6):
     - MarqueeLabel (~> 4.0.5)
     - SnapKit (~> 5.0.1)
+  - Siren (5.7.1)
   - SnapKit (5.0.1)
   - SwiftConfettiView (0.1.0)
   - Swifter (2.5.0)
@@ -91,6 +92,7 @@ DEPENDENCIES:
   - GSImageViewerController
   - KeychainAccess
   - NotificationBannerSwift
+  - Siren
   - SwiftConfettiView
   - "Swifter (from `git@github.com:mattdonnelly/Swifter.git`)"
   - SwiftProtobuf
@@ -119,6 +121,7 @@ SPEC REPOS:
     - Logging
     - MarqueeLabel
     - NotificationBannerSwift
+    - Siren
     - SnapKit
     - SwiftConfettiView
     - SwiftNIO
@@ -172,6 +175,7 @@ SPEC CHECKSUMS:
   Logging: beeb016c9c80cf77042d62e83495816847ef108b
   MarqueeLabel: 00cc0bcd087111dca575878b3531af980559707d
   NotificationBannerSwift: 7021be2338f8f29cf424b0aca43da462bf9e2a1a
+  Siren: 76ac728f4f2f4a3576c322272e94a0e37955664f
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SwiftConfettiView: 1bdbc2e6913b6b1c76d8070802b212508ad5c352
   Swifter: 4c2f8cf320c2f751c10128f841d8e9bd8609d988
@@ -188,6 +192,6 @@ SPEC CHECKSUMS:
   SwiftProtobuf: ed465ed18402f998fd117f631da27e0168e6b59c
   UIWindowTransitions: 2237083382e11f100db7de934041bba0c4669c86
 
-PODFILE CHECKSUM: 66d242171831793db0bce29bf49bfa34a6744e35
+PODFILE CHECKSUM: 721f93126ae4823b6aa72a051e176a8260132829
 
 COCOAPODS: 1.10.0

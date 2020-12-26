@@ -4,6 +4,7 @@ import Swifter
 import UIKit
 import UIWindowTransitions
 import UserNotifications
+import Siren
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -30,6 +31,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }()
 
         window?.makeKeyAndVisible()
+        
+        Siren.shared.wail()
 
         if !loggedIn {
             return true
