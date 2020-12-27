@@ -1,6 +1,6 @@
 import UIKit
 
-class BouncyAnimation: UIPercentDrivenInteractiveTransition, UIViewControllerAnimatedTransitioning {
+class BouncyTransition: NSObject, UIViewControllerAnimatedTransitioning {
     private let operation: UINavigationController.Operation
 
     init(operation: UINavigationController.Operation) {
