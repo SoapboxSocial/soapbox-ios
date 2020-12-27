@@ -30,6 +30,8 @@ class NavigationViewController: UINavigationController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        delegate = self
+
         view.backgroundColor = .background
 
         createRoomButton.frame = CGRect(
@@ -377,5 +379,16 @@ extension NavigationViewController {
     func promptForReview() {
         SKStoreReviewController.requestReview()
         UserDefaults.standard.set(Int(Date().timeIntervalSince1970), forKey: UserDefaultsKeys.lastReviewed)
+    }
+}
+
+extension NavigationViewController: UINavigationControllerDelegate {
+    func navigationController(
+        _: UINavigationController,
+        animationControllerFor operation: UINavigationController.Operation,
+        from _: UIViewController,
+        to _: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
+        return BouncyAnimation(operation: operation)
     }
 }

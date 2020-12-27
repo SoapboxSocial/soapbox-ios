@@ -1,29 +1,69 @@
 import UIKit
 
 class BouncyAnimation: NSObject, UIViewControllerAnimatedTransitioning {
+    private let operation: UINavigationController.Operation
+
+    init(operation: UINavigationController.Operation) {
+        self.operation = operation
+    }
+
     func transitionDuration(using _: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.2
+        return 0.3
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-        let fz = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)!
-        let tz = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)!
+        if operation == .pop {
+            animatePop(using: transitionContext)
+            return
+        }
 
-        let f = transitionContext.finalFrame(for: tz)
+        let from = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)!
+        let to = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)!
 
-        let fOff = f.offsetBy(dx: f.width, dy: 0)
-        tz.view.frame = fOff
+        let final = transitionContext.finalFrame(for: to)
 
-        transitionContext.containerView.insertSubview(tz.view, aboveSubview: fz.view)
+        let start = final.offsetBy(dx: final.width, dy: 0)
+        to.view.frame = start
+
+        transitionContext.containerView.insertSubview(to.view, aboveSubview: from.view)
 
         UIView.animate(
             withDuration: transitionDuration(using: transitionContext),
             delay: 0,
-            usingSpringWithDamping: 0.5,
-            initialSpringVelocity: 3,
-            options: .curveEaseInOut,
+            usingSpringWithDamping: 0.83,
+            initialSpringVelocity: 8,
+            options: .curveEaseOut,
             animations: {
-                tz.view.frame = f
+                to.view.frame = final
+            }, completion: { _ in
+                transitionContext.completeTransition(true)
+            }
+        )
+    }
+
+    func animatePop(using transitionContext: UIViewControllerContextTransitioning) {
+        let from = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)!
+        let to = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)!
+
+        let initial = transitionContext.initialFrame(for: from)
+        let fromFinal = initial.offsetBy(dx: initial.width, dy: 0)
+
+        let start = initial.offsetBy(dx: -initial.width, dy: 0)
+        to.view.frame = start
+
+        let final = transitionContext.finalFrame(for: to)
+
+        transitionContext.containerView.insertSubview(to.view, belowSubview: from.view)
+
+        UIView.animate(
+            withDuration: transitionDuration(using: transitionContext),
+            delay: 0,
+            usingSpringWithDamping: 0.83,
+            initialSpringVelocity: 8,
+            options: .curveEaseOut,
+            animations: {
+                to.view.frame = final
+                from.view.frame = fromFinal
             }, completion: { _ in
                 transitionContext.completeTransition(true)
             }
