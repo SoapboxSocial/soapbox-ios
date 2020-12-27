@@ -8,7 +8,7 @@ class BouncyAnimation: UIPercentDrivenInteractiveTransition, UIViewControllerAni
     }
 
     func transitionDuration(using _: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.3
+        return 0.35
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
@@ -30,8 +30,8 @@ class BouncyAnimation: UIPercentDrivenInteractiveTransition, UIViewControllerAni
         UIView.animate(
             withDuration: transitionDuration(using: transitionContext),
             delay: 0,
-            usingSpringWithDamping: 0.83,
-            initialSpringVelocity: 8,
+            usingSpringWithDamping: 0.8,
+            initialSpringVelocity: 0.5,
             options: .curveEaseOut,
             animations: {
                 to.view.frame = final
@@ -58,8 +58,8 @@ class BouncyAnimation: UIPercentDrivenInteractiveTransition, UIViewControllerAni
         UIView.animate(
             withDuration: transitionDuration(using: transitionContext),
             delay: 0,
-            usingSpringWithDamping: 0.83,
-            initialSpringVelocity: 8,
+            usingSpringWithDamping: 0.8,
+            initialSpringVelocity: 0.5,
             options: .curveEaseOut,
             animations: {
                 to.view.frame = final
