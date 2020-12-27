@@ -26,6 +26,12 @@ class HomeViewController: ViewController {
 
     private var ownStories = [APIClient.Story]()
 
+    private let feedbackGenerator: UIImpactFeedbackGenerator = {
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.prepare()
+        return generator
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -102,6 +108,9 @@ class HomeViewController: ViewController {
     }
 
     @objc private func openSearch() {
+        feedbackGenerator.impactOccurred()
+        feedbackGenerator.prepare()
+
         let search = SceneFactory.createSearchViewController()
         navigationController?.pushViewController(search, animated: true)
     }

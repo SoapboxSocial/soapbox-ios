@@ -17,6 +17,9 @@ class NavigationViewController: UINavigationController {
     private var roomView: RoomView?
     private var creationDrawer: DrawerView?
 
+    private var interactionController: UIPercentDrivenInteractiveTransition?
+    private var edgeSwipeGestureRecognizer: UIScreenEdgePanGestureRecognizer?
+
     override init(rootViewController: UIViewController) {
         createRoomButton = CreateRoomButton()
 
@@ -25,6 +28,16 @@ class NavigationViewController: UINavigationController {
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        delegate = self
+
+        edgeSwipeGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handleSwipe))
+        edgeSwipeGestureRecognizer!.edges = .left
+        view.addGestureRecognizer(edgeSwipeGestureRecognizer!)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -377,5 +390,39 @@ extension NavigationViewController {
     func promptForReview() {
         SKStoreReviewController.requestReview()
         UserDefaults.standard.set(Int(Date().timeIntervalSince1970), forKey: UserDefaultsKeys.lastReviewed)
+    }
+}
+
+extension NavigationViewController: UINavigationControllerDelegate {
+    func navigationController(
+        _: UINavigationController,
+        animationControllerFor operation: UINavigationController.Operation,
+        from _: UIViewController,
+        to _: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
+        return BouncyAnimation(operation: operation)
+    }
+
+    @objc func handleSwipe(_ gestureRecognizer: UIPanGestureRecognizer) {
+        let translation = gestureRecognizer.translation(in: view)
+        let percent = (translation.x / view.bounds.size.width) * 0.5
+
+        if gestureRecognizer.state == .began {
+            interactionController = UIPercentDrivenInteractiveTransition()
+            popViewController(animated: true)
+        } else if gestureRecognizer.state == .changed {
+            interactionController?.update(percent)
+        } else if gestureRecognizer.state == .ended {
+            if percent > 0.2 { // @TODO INVESTIGATE
+                interactionController?.finish()
+            } else {
+                interactionController?.cancel()
+            }
+            interactionController = nil
+        }
+    }
+
+    func navigationController(_: UINavigationController, interactionControllerFor _: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+        return interactionController
     }
 }
