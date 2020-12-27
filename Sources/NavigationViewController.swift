@@ -405,7 +405,7 @@ extension NavigationViewController: UINavigationControllerDelegate {
 
     @objc func handleSwipe(_ gestureRecognizer: UIPanGestureRecognizer) {
         let translation = gestureRecognizer.translation(in: view)
-        let percent = (translation.x / view.bounds.size.width)
+        let percent = (translation.x / view.bounds.size.width) * 0.5
 
         if gestureRecognizer.state == .began {
             interactionController = UIPercentDrivenInteractiveTransition()
@@ -413,7 +413,7 @@ extension NavigationViewController: UINavigationControllerDelegate {
         } else if gestureRecognizer.state == .changed {
             interactionController?.update(percent)
         } else if gestureRecognizer.state == .ended {
-            if percent > 0.1 { // @TODO INVESTIGATE
+            if percent > 0.2 { // @TODO INVESTIGATE
                 interactionController?.finish()
             } else {
                 interactionController?.cancel()
