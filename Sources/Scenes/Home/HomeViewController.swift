@@ -30,6 +30,7 @@ class HomeViewController: ViewController {
         super.viewDidLoad()
 
         view.backgroundColor = .background
+        navigationController?.delegate = self
 
         collection = CollectionView(frame: .zero, collectionViewLayout: makeLayout())
         collection.delegate = self
@@ -474,5 +475,26 @@ extension HomeViewController: CreateStoryViewDelegate, DrawerViewDelegate {
         storyDrawer.setPosition(.closed, animated: true, completion: { _ in
             self.output.fetchData()
         })
+    }
+}
+
+extension HomeViewController: UIViewControllerTransitioningDelegate, UINavigationControllerDelegate {
+    func navigationController(
+        _: UINavigationController,
+        animationControllerFor operation: UINavigationController.Operation,
+        from _: UIViewController,
+        to _: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
+//        guard let first = from as? HomeViewController else {
+//            return nil
+//        }
+//
+//        guard let second = to as? SearchViewController else {
+//            return nil
+//        }
+
+        var simpleOver = SimpleOver()
+        simpleOver.popStyle = (operation == .pop)
+        return simpleOver
     }
 }

@@ -1,10 +1,10 @@
 import KeychainAccess
 import NotificationBannerSwift
+import Siren
 import Swifter
 import UIKit
 import UIWindowTransitions
 import UserNotifications
-import Siren
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -31,9 +31,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }()
 
         window?.makeKeyAndVisible()
-        
+
         updateNotify()
-        
+
         if !loggedIn {
             return true
         }
@@ -135,7 +135,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         return navigation
     }
-    
+
     private func updateNotify() {
         let siren = Siren.shared
         siren.rulesManager = RulesManager(
@@ -144,7 +144,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             patchUpdateRules: .default,
             revisionUpdateRules: Rules(promptFrequency: .immediately, forAlertType: .option)
         )
-        
+
         siren.wail()
     }
 
