@@ -26,6 +26,12 @@ class HomeViewController: ViewController {
 
     private var ownStories = [APIClient.Story]()
 
+    private let feedbackGenerator: UIImpactFeedbackGenerator = {
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.prepare()
+        return generator
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -103,6 +109,9 @@ class HomeViewController: ViewController {
     }
 
     @objc private func openSearch() {
+        feedbackGenerator.impactOccurred()
+        feedbackGenerator.prepare()
+
         let search = SceneFactory.createSearchViewController()
         navigationController?.pushViewController(search, animated: true)
     }
@@ -485,16 +494,6 @@ extension HomeViewController: UIViewControllerTransitioningDelegate, UINavigatio
         from _: UIViewController,
         to _: UIViewController
     ) -> UIViewControllerAnimatedTransitioning? {
-//        guard let first = from as? HomeViewController else {
-//            return nil
-//        }
-//
-//        guard let second = to as? SearchViewController else {
-//            return nil
-//        }
-
-        var simpleOver = SimpleOver()
-        simpleOver.popStyle = (operation == .pop)
-        return simpleOver
+        return BouncyAnimation()
     }
 }
