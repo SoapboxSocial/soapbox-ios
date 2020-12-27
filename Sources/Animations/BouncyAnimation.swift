@@ -1,6 +1,6 @@
 import UIKit
 
-class BouncyAnimation: NSObject, UIViewControllerAnimatedTransitioning {
+class BouncyAnimation: UIPercentDrivenInteractiveTransition, UIViewControllerAnimatedTransitioning {
     private let operation: UINavigationController.Operation
 
     init(operation: UINavigationController.Operation) {
@@ -36,7 +36,7 @@ class BouncyAnimation: NSObject, UIViewControllerAnimatedTransitioning {
             animations: {
                 to.view.frame = final
             }, completion: { _ in
-                transitionContext.completeTransition(true)
+                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             }
         )
     }
@@ -65,7 +65,7 @@ class BouncyAnimation: NSObject, UIViewControllerAnimatedTransitioning {
                 to.view.frame = final
                 from.view.frame = fromFinal
             }, completion: { _ in
-                transitionContext.completeTransition(true)
+                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             }
         )
     }
