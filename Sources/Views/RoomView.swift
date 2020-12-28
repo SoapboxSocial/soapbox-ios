@@ -546,7 +546,6 @@ class RoomView: UIView {
 
     private func exitRoom() {
         room.close()
-        UIApplication.shared.isIdleTimerDisabled = false
         delegate?.roomDidExit()
     }
 
