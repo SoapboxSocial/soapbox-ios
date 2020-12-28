@@ -79,8 +79,15 @@ class HomeInteractor: HomeViewControllerOutput {
         api.me(callback: { result in
             DispatchQueue.main.async {
                 switch result {
-                case .failure:
-                    break // @TODO
+                case let .failure(error):
+                    switch error {
+                    case let .endpoint(value):
+                        if value.code == .unauthorized {
+                            (UIApplication.shared.delegate as! AppDelegate).transitionToLoginView()
+                        }
+                    default:
+                        break
+                    }
                 case let .success(user):
                     UserStore.store(user: user)
                 }
