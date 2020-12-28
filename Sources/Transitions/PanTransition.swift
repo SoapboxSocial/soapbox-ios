@@ -22,7 +22,7 @@ class PanTransition: UIPercentDrivenInteractiveTransition {
         case .ended, .cancelled:
             usingGestures = false
 
-            if percent > 0.2 { // @TODO INVESTIGATE
+            if percent >= 0.1 { // @TODO INVESTIGATE
                 finish()
             } else {
                 cancel()

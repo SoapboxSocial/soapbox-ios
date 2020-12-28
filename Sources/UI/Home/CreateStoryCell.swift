@@ -4,6 +4,7 @@ import UIKit
 class CreateStoryCell: UICollectionViewCell {
     var profileImage: UIImageView = {
         let view = UIImageView()
+        view.layer.cornerRadius = 64 / 2
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.masksToBounds = true
         view.clipsToBounds = true
@@ -79,11 +80,6 @@ class CreateStoryCell: UICollectionViewCell {
             image.widthAnchor.constraint(equalToConstant: 26),
             image.heightAnchor.constraint(equalToConstant: 26),
         ])
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        profileImage.layer.cornerRadius = profileImage.frame.size.width / 2
     }
 
     required init?(coder _: NSCoder) {
