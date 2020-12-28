@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.9.0] - 2020-12-28
+
  - Smoothed out animations between screens.
  - For those of you who are bad at updating the app, don't worry we got your back!
  - Added some haptic responses to room reaction buttons.
