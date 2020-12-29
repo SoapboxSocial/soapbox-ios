@@ -282,6 +282,8 @@ class ProfileViewController: ViewController {
             self.present(vc, animated: true)
         }))
 
+        alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+
         present(alert, animated: true)
     }
 
