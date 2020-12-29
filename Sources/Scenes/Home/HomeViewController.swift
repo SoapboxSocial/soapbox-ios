@@ -148,16 +148,7 @@ class HomeViewController: ViewController {
 
         layoutItem.contentInsets = .zero
 
-        var height = NSCollectionLayoutDimension.fractionalHeight(0.9)
-
-        var heightAbsolute = view.frame.size.height
-        if presenter.has(section: .storiesList) {
-            heightAbsolute -= 300
-        }
-
-        if heightAbsolute != view.frame.size.height {
-            height = .absolute(heightAbsolute)
-        }
+        var height = NSCollectionLayoutDimension.absolute(view.frame.size.height - 300)
 
         let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: height)
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitem: layoutItem, count: 1)
