@@ -1,5 +1,7 @@
 "are_you_sure" = "Are you sure?";
-"exit_will_close_room" = "You are the only person in the room, leaving will close it.";
+"exit_will_close_room" = "It usually takes a couple of minutes for others to join. Following more people can help increase the rooms visibility.";
+
+"leave_room" = "Leave room";
 
 "no" = "No";
 "yes" = "Yes";
