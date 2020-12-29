@@ -31,6 +31,8 @@ class HomeViewController: ViewController {
         generator.prepare()
         return generator
     }()
+    
+//    private var notificationBadge: BadgeHub?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,15 +73,21 @@ class HomeViewController: ViewController {
         )
 
         navigationItem.leftBarButtonItems = [profileButton]
+                
+        let conf = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
+        let image = UIImage(systemName: "bell", withConfiguration: conf)?.withTintColor(.brandColor)
 
-        let notificationsButton = UIBarButtonItem(
-            image: UIImage(systemName: "bell", withConfiguration: iconConfig),
-            style: .plain,
-            target: self,
-            action: #selector(openNotifications)
-        )
+        let notificationsButton = BadgedButtonItem(with: image)
+        
         navigationItem.rightBarButtonItems = [searchButton, notificationsButton]
+        
+//        notificationsButton.setBadge(with: 1)
 
+//        let notificationBadge = BadgeHub(barButtonItem: navigationItem.rightBarButtonItems![1])
+//        debugPrint(notificationBadge)
+//        notificationBadge.pop()
+//        notificationBadge!.pop()
+        
         NSLayoutConstraint.activate([
             collection.leftAnchor.constraint(equalTo: view.leftAnchor),
             collection.rightAnchor.constraint(equalTo: view.rightAnchor),

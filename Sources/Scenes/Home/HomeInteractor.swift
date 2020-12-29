@@ -88,8 +88,8 @@ class HomeInteractor: HomeViewControllerOutput {
                     default:
                         break
                     }
-                case let .success(user):
-                    UserStore.store(user: user)
+                case let .success(me):
+                    UserStore.store(user: me.user)
                 }
             }
         })

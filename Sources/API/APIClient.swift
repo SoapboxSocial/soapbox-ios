@@ -181,6 +181,11 @@ extension APIClient {
         }
     }
 
+    struct Me: Decodable {
+        let user: User
+        let hasNotifications: Bool
+    }
+
     func user(id: Int, callback: @escaping (Result<Profile, Error>) -> Void) {
         get(path: "/v1/users/" + String(id), callback: callback)
     }
@@ -212,8 +217,34 @@ extension APIClient {
         }
     }
 
-    func me(callback: @escaping (Result<User, Error>) -> Void) {
-        get(path: "/v1/me", callback: callback)
+    // @TODO figure out a cleaner way
+    func me(callback: @escaping (Result<Me, Error>) -> Void) {
+        struct Data: Decodable {
+            let id: Int
+            let displayName: String
+            let username: String
+            let email: String?
+            let image: String?
+            let hasNotifications: Bool
+
+            private enum CodingKeys: String, CodingKey {
+                case id, displayName = "display_name", username, email, image, hasNotifications = "has_notifications"
+            }
+        }
+
+        get(path: "/v1/me", callback: { (result: Result<Data, Error>) in
+            switch result {
+            case let .failure(error):
+                callback(.failure(error))
+            case let .success(data):
+                let me = Me(
+                    user: User(id: data.id, displayName: data.displayName, username: data.username, email: data.email, image: data.image),
+                    hasNotifications: data.hasNotifications
+                )
+
+                callback(.success(me))
+            }
+        })
     }
 
     func notifications(callback: @escaping (Result<[Notification], Error>) -> Void) {
