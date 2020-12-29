@@ -31,8 +31,13 @@ class HomeViewController: ViewController {
         generator.prepare()
         return generator
     }()
-    
-//    private var notificationBadge: BadgeHub?
+
+    private var notificationButton: BadgedButtonItem = {
+        let conf = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold)
+        let image = UIImage(systemName: "bell", withConfiguration: conf)?.withTintColor(.brandColor)
+
+        return BadgedButtonItem(with: image)
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,21 +78,15 @@ class HomeViewController: ViewController {
         )
 
         navigationItem.leftBarButtonItems = [profileButton]
-                
-        let conf = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
-        let image = UIImage(systemName: "bell", withConfiguration: conf)?.withTintColor(.brandColor)
 
-        let notificationsButton = BadgedButtonItem(with: image)
-        
-        navigationItem.rightBarButtonItems = [searchButton, notificationsButton]
-        
-//        notificationsButton.setBadge(with: 1)
+        navigationItem.rightBarButtonItems = [searchButton, notificationButton]
 
-//        let notificationBadge = BadgeHub(barButtonItem: navigationItem.rightBarButtonItems![1])
-//        debugPrint(notificationBadge)
-//        notificationBadge.pop()
-//        notificationBadge!.pop()
-        
+        notificationButton.tapAction = {
+            DispatchQueue.main.async {
+                self.openNotifications()
+            }
+        }
+
         NSLayoutConstraint.activate([
             collection.leftAnchor.constraint(equalTo: view.leftAnchor),
             collection.rightAnchor.constraint(equalTo: view.rightAnchor),
@@ -123,7 +122,7 @@ class HomeViewController: ViewController {
         navigationController?.pushViewController(search, animated: true)
     }
 
-    @objc private func openNotifications() {
+    private func openNotifications() {
         let notifications = SceneFactory.createNotificationsViewController()
         navigationController?.pushViewController(notifications, animated: true)
     }
@@ -220,6 +219,14 @@ class HomeViewController: ViewController {
 }
 
 extension HomeViewController: HomePresenterOutput {
+    func has(notifications: Bool) {
+        if notifications {
+            notificationButton.showBadge()
+        } else {
+            notificationButton.hideBadge()
+        }
+    }
+
     func didFetchRooms(rooms: [RoomState]) {
         // sorted is temporary
         update(.rooms(rooms.sorted(by: { $0.id < $1.id })))
