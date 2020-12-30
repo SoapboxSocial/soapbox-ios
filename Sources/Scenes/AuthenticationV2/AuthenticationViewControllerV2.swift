@@ -2,17 +2,21 @@ import NotificationBannerSwift
 import UIKit
 
 class AuthenticationViewControllerV2: UIPageViewController {
-    private var orderedViewControllers: [UIViewController] = [
-        AuthenticationStartViewController(),
-        AuthenticationEmailViewController(),
-        AuthenticationPinViewController(),
-        AuthenticationRegistrationViewController(),
-    ]
+    private var orderedViewControllers = [UIViewController]()
 
     private var state = AuthenticationInteractor.AuthenticationState.getStarted
 
     init() {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal)
+
+        let start = AuthenticationStartViewController()
+        start.delegate = self
+
+        orderedViewControllers.append(start)
+
+        orderedViewControllers.append(AuthenticationEmailViewController())
+        orderedViewControllers.append(AuthenticationPinViewController())
+        orderedViewControllers.append(AuthenticationRegistrationViewController())
     }
 
     required init?(coder _: NSCoder) {
@@ -43,7 +47,9 @@ extension AuthenticationViewControllerV2: AuthenticationPresenterOutput {
     func transitionTo(state: AuthenticationInteractor.AuthenticationState) {
         self.state = state
 
-        setViewControllers([orderedViewControllers[state.rawValue]], direction: .forward, animated: true)
+        let controller = orderedViewControllers[state.rawValue]
+
+        setViewControllers([controller], direction: .forward, animated: true)
 
 //        self.state = state
 //        submitButton.isEnabled = true
@@ -69,4 +75,10 @@ extension AuthenticationViewControllerV2: AuthenticationPresenterOutput {
     func display(profileImage _: UIImage) {}
 
     func displayImagePicker() {}
+}
+
+extension AuthenticationViewControllerV2: AuthenticationStartViewControllerDelegate {
+    func didSubmit() {
+        transitionTo(state: .login)
+    }
 }

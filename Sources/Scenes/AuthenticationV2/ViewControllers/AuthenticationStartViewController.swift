@@ -1,6 +1,12 @@
 import UIKit
 
+protocol AuthenticationStartViewControllerDelegate {
+    func didSubmit()
+}
+
 class AuthenticationStartViewController: UIViewController {
+    var delegate: AuthenticationStartViewControllerDelegate?
+
     private let terms: UITextView = {
         let text = UITextView()
         text.translatesAutoresizingMaskIntoConstraints = false
@@ -22,6 +28,7 @@ class AuthenticationStartViewController: UIViewController {
         button.setTitle(NSLocalizedString("get_started", comment: ""), for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.backgroundColor = .white
+        button.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
         return button
     }()
 
@@ -65,5 +72,9 @@ class AuthenticationStartViewController: UIViewController {
         ])
 
         return attributedString
+    }
+
+    @objc private func didSubmit() {
+        delegate?.didSubmit()
     }
 }

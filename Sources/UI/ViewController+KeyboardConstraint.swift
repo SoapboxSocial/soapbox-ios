@@ -23,12 +23,20 @@ class ViewControllerWithKeyboardConstraint: UIViewController {
         let notification = KeyboardNotification(notification)
         let keyboardFrame = notification.frameEndForView(view: view)
 
-        var newBottomOffset = view.frame.maxY - keyboardFrame.minY
+        let original = view.frame.size.height / 3
+
+        var newBottomOffset = (view.frame.maxY - keyboardFrame.minY) + 20
         if newBottomOffset == 0 {
-            newBottomOffset = view.frame.size.height / 4
+            newBottomOffset = original
         }
 
-        bottomLayoutConstraint.constant = -(newBottomOffset + 20)
+        debugPrint(newBottomOffset)
+        debugPrint(original)
+        if newBottomOffset <= original {
+            return
+        }
+
+        bottomLayoutConstraint.constant = -newBottomOffset
         view.layoutIfNeeded()
     }
 }

@@ -40,9 +40,7 @@ class AuthenticationEmailViewController: ViewControllerWithKeyboardConstraint {
         view.addSubview(textField)
         view.addSubview(submitButton)
 
-        textField.delegate = self
-
-        bottomLayoutConstraint = submitButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(view.frame.size.height / 4))
+        bottomLayoutConstraint = submitButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(view.frame.size.height / 3))
         bottomLayoutConstraint.isActive = true
 
         NSLayoutConstraint.activate([
@@ -62,8 +60,6 @@ class AuthenticationEmailViewController: ViewControllerWithKeyboardConstraint {
             submitButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             submitButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
-
-        textField.becomeFirstResponder()
     }
 
     required init?(coder _: NSCoder) {
@@ -72,17 +68,6 @@ class AuthenticationEmailViewController: ViewControllerWithKeyboardConstraint {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        isDisappearing = true
         view.endEditing(true)
-    }
-}
-
-extension AuthenticationEmailViewController: UITextFieldDelegate {
-    func textFieldShouldEndEditing(_: UITextField) -> Bool {
-        if isDisappearing {
-            return true
-        }
-
-        return false
     }
 }

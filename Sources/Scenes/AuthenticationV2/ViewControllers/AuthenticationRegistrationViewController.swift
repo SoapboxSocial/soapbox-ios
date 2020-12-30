@@ -57,9 +57,7 @@ class AuthenticationRegistrationViewController: ViewControllerWithKeyboardConstr
         view.addSubview(imageButton)
         view.addSubview(label)
 
-        usernameTextField.delegate = self
-
-        bottomLayoutConstraint = submitButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(view.frame.size.height / 4))
+        bottomLayoutConstraint = submitButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(view.frame.size.height / 3))
         bottomLayoutConstraint.isActive = true
 
         NSLayoutConstraint.activate([
@@ -93,21 +91,9 @@ class AuthenticationRegistrationViewController: ViewControllerWithKeyboardConstr
             submitButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             submitButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
-
-        usernameTextField.becomeFirstResponder()
     }
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-//    func beginEditing() {
-//        textField.becomeFirstResponder()
-//    }
-}
-
-extension AuthenticationRegistrationViewController: UITextFieldDelegate {
-    func textFieldShouldEndEditing(_: UITextField) -> Bool {
-        return false
     }
 }
