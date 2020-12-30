@@ -28,50 +28,6 @@ class AuthenticationViewController: UIViewController {
 
     private var state = AuthenticationInteractor.AuthenticationState.login
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        view.backgroundColor = .brandColor
-
-        let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-
-        contentView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height / 2))
-        contentView.center = view.center
-
-        let height = (view.frame.size.height / 2) - 54
-        scrollView = UIScrollView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: contentView.frame.size.height - 54))
-        scrollView.contentSize = CGSize(width: view.frame.size.width * 4, height: scrollView.frame.size.height)
-        scrollView.isScrollEnabled = false
-        contentView.addSubview(scrollView)
-        view.addSubview(contentView)
-
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
-
-        submitButton = Button(size: .large)
-        submitButton.frame = CGRect(x: 20, y: scrollView.frame.height, width: view.frame.size.width - 40, height: 54)
-        submitButton.setTitle(NSLocalizedString("submit", comment: ""), for: .normal)
-        submitButton.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
-        submitButton.backgroundColor = UIColor.white.withAlphaComponent(0.3)
-        contentView.addSubview(submitButton)
-
-        imagePicker = ImagePicker()
-        imagePicker.delegate = self
-
-        let views = [
-            setupNotificationRequestView(height: height),
-            setupSuccessfulView(height: height),
-        ]
-
-        for (i, state) in views.enumerated() {
-            state.frame = CGRect(origin: CGPoint(x: view.frame.size.width * CGFloat(i), y: 0), size: state.frame.size)
-            scrollView.addSubview(state)
-        }
-    }
-
     func inject(pin: String) -> Bool {
         if state != .pin {
             return false
@@ -85,15 +41,15 @@ class AuthenticationViewController: UIViewController {
     @objc private func didSubmit() {
         view.endEditing(true)
         submitButton.isEnabled = false
-        switch state {
-        case .login:
-            return output.login(email: emailTextField.text)
-        case .pin:
-            return output.submitPin(pin: pinTextField.text)
-        case .registration:
-            return output.register(username: usernameTextField.text, displayName: displayNameTextField.text)
-        case .requestNotifications, .success: break
-        }
+//        switch state {
+//        case .login:
+//            return output.login(email: emailTextField.text)
+//        case .pin:
+//            return output.submitPin(pin: pinTextField.text)
+//        case .registration:
+//            return output.register(username: usernameTextField.text, displayName: displayNameTextField.text)
+//        case .requestNotifications, .success: break
+//        }
     }
 
     @objc private func keyboardWillHide() {

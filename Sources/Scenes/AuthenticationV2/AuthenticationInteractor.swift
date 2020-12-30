@@ -19,7 +19,7 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
     private var image: UIImage?
 
     enum AuthenticationState: Int {
-        case login, pin, registration, requestNotifications, success
+        case getStarted, login, pin, registration, requestNotifications, success
     }
 
     enum AuthenticationError {

@@ -1,10 +1,3 @@
-//
-//  AuthenticationStartViewController.swift
-//  Soapbox
-//
-//  Created by Dean Eigenmann on 30.12.20.
-//
-
 import UIKit
 
 class AuthenticationStartViewController: UIViewController {
@@ -60,7 +53,7 @@ class AuthenticationStartViewController: UIViewController {
         let privacyText = NSLocalizedString("privacy", comment: "")
 
         let attributedString = NSMutableAttributedString(string: notice, attributes: [
-            NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel,
+            NSAttributedString.Key.foregroundColor: UIColor.white.withAlphaComponent(0.6),
         ])
 
         attributedString.addAttributes(toText: termsText, [
