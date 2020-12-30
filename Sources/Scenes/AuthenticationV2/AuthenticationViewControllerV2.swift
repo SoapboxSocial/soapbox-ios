@@ -21,9 +21,5 @@ class AuthenticationViewControllerV2: UIPageViewController {
         view.backgroundColor = .brandColor
 
         setViewControllers([orderedViewControllers[0]], direction: .forward, animated: true)
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [self] in
-            setViewControllers([orderedViewControllers[2]], direction: .forward, animated: true)
-        }
     }
 }
