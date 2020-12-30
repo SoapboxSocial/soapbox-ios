@@ -1,12 +1,6 @@
 import UIKit
 
-protocol AuthenticationSubController {
-    func beginEditing()
-}
-
 class AuthenticationViewControllerV2: UIPageViewController {
-    override var disablesAutomaticKeyboardDismissal: Bool { return true }
-
     private var orderedViewControllers: [UIViewController] = [
         AuthenticationEmailViewController(),
         AuthenticationPinViewController(),
