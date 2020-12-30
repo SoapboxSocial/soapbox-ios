@@ -10,6 +10,7 @@ class AuthenticationViewControllerV2: UIPageViewController {
     private var orderedViewControllers: [UIViewController] = [
         AuthenticationEmailViewController(),
         AuthenticationPinViewController(),
+        AuthenticationRegistrationViewController(),
     ]
 
     init() {
@@ -28,7 +29,7 @@ class AuthenticationViewControllerV2: UIPageViewController {
         setViewControllers([orderedViewControllers[0]], direction: .forward, animated: true)
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [self] in
-            setViewControllers([orderedViewControllers[1]], direction: .forward, animated: true)
+            setViewControllers([orderedViewControllers[2]], direction: .forward, animated: true)
         }
     }
 }

@@ -1,10 +1,6 @@
 import UIKit
 
 class AuthenticationPinViewController: ViewControllerWithKeyboardConstraint {
-//    override var disablesAutomaticKeyboardDismissal: Bool {
-//        get { return false }
-//    }
-
     private let textField: TextField = {
         let textField = TextField(frame: .zero, theme: .light)
         textField.placeholder = NSLocalizedString("pin", comment: "")
@@ -31,6 +27,8 @@ class AuthenticationPinViewController: ViewControllerWithKeyboardConstraint {
         label.font = .rounded(forTextStyle: .title1, weight: .bold)
         return label
     }()
+
+    private var isDisappearing = false
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -69,13 +67,19 @@ class AuthenticationPinViewController: ViewControllerWithKeyboardConstraint {
         fatalError("init(coder:) has not been implemented")
     }
 
-//    func beginEditing() {
-//        textField.becomeFirstResponder()
-//    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        isDisappearing = true
+        view.endEditing(true)
+    }
 }
 
 extension AuthenticationPinViewController: UITextFieldDelegate {
     func textFieldShouldEndEditing(_: UITextField) -> Bool {
+        if isDisappearing {
+            return true
+        }
+
         return false
     }
 }

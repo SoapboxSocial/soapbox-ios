@@ -26,8 +26,6 @@ class AuthenticationViewController: UIViewController {
     private var displayNameTextField: UITextField!
     private var usernameTextField: UITextField!
 
-    private var profileImage: EditProfileImageButton!
-
     private var state = AuthenticationInteractor.AuthenticationState.login
 
     override func viewDidLoad() {
@@ -64,7 +62,6 @@ class AuthenticationViewController: UIViewController {
         imagePicker.delegate = self
 
         let views = [
-            setupRegistrationView(height: height),
             setupNotificationRequestView(height: height),
             setupSuccessfulView(height: height),
         ]
@@ -161,8 +158,8 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
         }
     }
 
-    func display(profileImage image: UIImage) {
-        profileImage.image = image
+    func display(profileImage _: UIImage) {
+//        profileImage.image = image
     }
 
     func displayImagePicker() {
@@ -173,37 +170,6 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
 }
 
 extension AuthenticationViewController {
-    private func setupRegistrationView(height: CGFloat) -> UIView {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: height))
-
-        displayNameTextField = TextField(frame: CGRect(x: 20, y: height - (56 + 20), width: view.frame.size.width - 40, height: 56), theme: .light)
-        displayNameTextField.placeholder = NSLocalizedString("display_name", comment: "")
-        displayNameTextField.delegate = self
-        view.addSubview(displayNameTextField)
-
-        usernameTextField = TextField(frame: CGRect(x: 20, y: displayNameTextField.frame.origin.y - (56 + 20), width: view.frame.size.width - 40, height: 56), theme: .light)
-        usernameTextField.placeholder = NSLocalizedString("username", comment: "")
-        usernameTextField.delegate = self
-        usernameTextField.autocorrectionType = .no
-        usernameTextField.autocapitalizationType = .none
-        view.addSubview(usernameTextField)
-
-        let label = UILabel(frame: CGRect(x: 20, y: 0, width: 0, height: 0))
-        label.textAlignment = .center
-        label.text = NSLocalizedString("create_account", comment: "")
-        label.textColor = .white
-        label.font = .rounded(forTextStyle: .title1, weight: .bold)
-        label.sizeToFit()
-        label.frame = CGRect(origin: CGPoint(x: 20, y: usernameTextField.frame.origin.y - (label.frame.size.height + 20)), size: label.frame.size)
-        view.addSubview(label)
-
-        profileImage = EditProfileImageButton(frame: CGRect(x: (view.frame.size.width / 2) - 40, y: label.frame.origin.y - (20 + 80), width: 80, height: 80))
-        view.addSubview(profileImage)
-        profileImage.addTarget(self, action: #selector(showImagePicker))
-
-        return view
-    }
-
     @objc private func showImagePicker() {
         output.showImagePicker()
     }
