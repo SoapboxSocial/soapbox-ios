@@ -38,6 +38,8 @@ class AuthenticationViewControllerV2: UIPageViewController {
         orderedViewControllers.append(registration)
 
         orderedViewControllers.append(AuthenticationRequestNotificationsViewController())
+
+        setViewControllers([orderedViewControllers[0]], direction: .forward, animated: false)
     }
 
     required init?(coder _: NSCoder) {
@@ -48,8 +50,6 @@ class AuthenticationViewControllerV2: UIPageViewController {
         super.viewDidLoad()
 
         view.backgroundColor = .brandColor
-
-        setViewControllers([orderedViewControllers[0]], direction: .forward, animated: true)
     }
 }
 
@@ -75,16 +75,6 @@ extension AuthenticationViewControllerV2: AuthenticationPresenterOutput {
         let controller = orderedViewControllers[state.rawValue]
 
         setViewControllers([controller], direction: .forward, animated: true)
-
-//        self.state = state
-//        submitButton.isEnabled = true
-//        scrollView.setContentOffset(CGPoint(x: view.frame.size.width * CGFloat(state.rawValue), y: 0), animated: true)
-//
-//        if state == .requestNotifications {
-//            UIView.animate(withDuration: 0.3) {
-//                self.submitButton.frame = CGRect(origin: CGPoint(x: self.submitButton.frame.origin.x, y: self.view.frame.size.height), size: self.submitButton.frame.size)
-//            }
-//        }
 //
 //        if state == .success {
 //            let confettiView = SwiftConfettiView(frame: view.bounds)
