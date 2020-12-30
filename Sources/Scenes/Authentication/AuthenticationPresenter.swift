@@ -41,13 +41,14 @@ class AuthenticationPresenter: AuthenticationInteractorOutput {
     func present(state: AuthenticationInteractor.AuthenticationState) {
         output.transitionTo(state: state)
 
+        // @TODO DO THIS
         if state == .success {
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.1) {
                 self.presentLoggedInView()
             }
         }
     }
-
+    
     func presentLoggedInView() {
         let delegate = UIApplication.shared.delegate as! AppDelegate
         delegate.window!.set(
