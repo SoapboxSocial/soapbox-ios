@@ -12,21 +12,6 @@ class AuthenticationEmailViewController: ViewControllerWithKeyboardConstraint {
         return textField
     }()
 
-    private let terms: UITextView = {
-        let text = UITextView()
-        text.translatesAutoresizingMaskIntoConstraints = false
-        text.isScrollEnabled = false
-        text.isEditable = false
-        text.backgroundColor = .clear
-        text.contentInset = .zero
-        text.font = .rounded(forTextStyle: .caption1, weight: .regular)
-        text.linkTextAttributes = [
-            NSAttributedString.Key.foregroundColor: UIColor.white,
-        ]
-
-        return text
-    }()
-
     private let submitButton: Button = {
         let button = Button(size: .large)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -52,9 +37,6 @@ class AuthenticationEmailViewController: ViewControllerWithKeyboardConstraint {
 
         view.addSubview(label)
 
-        terms.attributedText = termsNoticeAttributedString()
-        view.addSubview(terms)
-
         view.addSubview(textField)
         view.addSubview(submitButton)
 
@@ -73,13 +55,7 @@ class AuthenticationEmailViewController: ViewControllerWithKeyboardConstraint {
             textField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             textField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             textField.heightAnchor.constraint(equalToConstant: 56),
-            textField.bottomAnchor.constraint(equalTo: terms.topAnchor, constant: -10),
-        ])
-
-        NSLayoutConstraint.activate([
-            terms.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            terms.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            terms.bottomAnchor.constraint(equalTo: submitButton.topAnchor, constant: -20),
+            textField.bottomAnchor.constraint(equalTo: submitButton.topAnchor, constant: -10),
         ])
 
         NSLayoutConstraint.activate([
@@ -98,28 +74,6 @@ class AuthenticationEmailViewController: ViewControllerWithKeyboardConstraint {
         super.viewDidDisappear(animated)
         isDisappearing = true
         view.endEditing(true)
-    }
-
-    private func termsNoticeAttributedString() -> NSMutableAttributedString {
-        let notice = NSLocalizedString("login_terms_notice", comment: "")
-        let termsText = NSLocalizedString("terms", comment: "")
-        let privacyText = NSLocalizedString("privacy", comment: "")
-
-        let attributedString = NSMutableAttributedString(string: notice, attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
-
-        let fontAttribute = UIFont.rounded(forTextStyle: .caption1, weight: .bold)
-
-        attributedString.addAttributes(toText: termsText, [
-            NSAttributedString.Key.font: fontAttribute,
-            NSAttributedString.Key.link: URL(string: "https://soapbox.social/terms") as Any,
-        ])
-
-        attributedString.addAttributes(toText: privacyText, [
-            NSAttributedString.Key.font: fontAttribute,
-            NSAttributedString.Key.link: URL(string: "https://soapbox.social/privacy") as Any,
-        ])
-
-        return attributedString
     }
 }
 

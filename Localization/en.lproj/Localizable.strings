@@ -151,7 +151,7 @@
 // This can be better
 "nothing_to_share" = "Please copy a link to share it.";
 
-"login_terms_notice" = "By clicking submit you agree to the Terms of Service, Privacy Policy and that you are above the age of 16";
+"login_terms_notice" = "By clicking Get started and using Soapbox you agree to the Terms of Service, Privacy Policy and that you are above the age of 16.";
 "terms" = "Terms of Service";
 "privacy" = "Privacy Policy";
 
@@ -186,3 +186,5 @@
 
 "view_image" = "View image";
 "listen_to_story" = "Listen to story";
+
+"get_started" = "Get started";

@@ -2,6 +2,7 @@ import UIKit
 
 class AuthenticationViewControllerV2: UIPageViewController {
     private var orderedViewControllers: [UIViewController] = [
+        AuthenticationStartViewController(),
         AuthenticationEmailViewController(),
         AuthenticationPinViewController(),
         AuthenticationRegistrationViewController(),
