@@ -64,8 +64,6 @@ class AuthenticationViewController: UIViewController {
         imagePicker.delegate = self
 
         let views = [
-            setupLoginView(height: height),
-            setupPinView(height: height),
             setupRegistrationView(height: height),
             setupNotificationRequestView(height: height),
             setupSuccessfulView(height: height),
@@ -175,69 +173,6 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
 }
 
 extension AuthenticationViewController {
-    private func setupLoginView(height: CGFloat) -> UIView {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
-
-        let terms = UITextView(frame: CGRect(x: 20, y: 0, width: view.frame.size.width - 40, height: 30))
-        terms.isScrollEnabled = false
-        terms.isEditable = false
-        terms.backgroundColor = .clear
-        terms.contentInset = .zero
-        terms.font = .rounded(forTextStyle: .caption1, weight: .regular)
-        terms.linkTextAttributes = [
-            NSAttributedString.Key.foregroundColor: UIColor.white,
-        ]
-
-        terms.attributedText = termsNoticeAttributedString()
-
-        let newSize = terms.sizeThatFits(CGSize(width: terms.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
-        terms.frame.size = CGSize(width: terms.frame.size.width, height: newSize.height)
-
-        terms.sizeToFit()
-        terms.frame.origin = CGPoint(x: 20, y: height - (terms.frame.size.height + 20))
-
-        view.addSubview(terms)
-
-        emailTextField = TextField(frame: CGRect(x: 20, y: terms.frame.origin.y - (56 + 10), width: view.frame.size.width - 40, height: 56), theme: .light)
-        emailTextField.keyboardType = .emailAddress
-        emailTextField.textContentType = .emailAddress
-        emailTextField.placeholder = "Email"
-        emailTextField.delegate = self
-        emailTextField.autocorrectionType = .no
-        emailTextField.autocapitalizationType = .none
-        view.addSubview(emailTextField)
-
-        let label = UILabel(frame: CGRect(x: 20, y: 0, width: 0, height: 0))
-        label.textColor = .white
-        label.text = NSLocalizedString("email_login", comment: "")
-        label.font = .rounded(forTextStyle: .title1, weight: .bold)
-        label.sizeToFit()
-        label.frame = CGRect(origin: CGPoint(x: 20, y: emailTextField.frame.origin.y - (label.frame.size.height + 20)), size: label.frame.size)
-        view.addSubview(label)
-
-        return view
-    }
-
-    private func setupPinView(height: CGFloat) -> UIView {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: height))
-
-        pinTextField = TextField(frame: CGRect(x: 20, y: height - (56 + 20), width: view.frame.size.width - 40, height: 56), theme: .light)
-        pinTextField.keyboardType = .numberPad
-        pinTextField.placeholder = NSLocalizedString("pin", comment: "")
-        pinTextField.textContentType = .oneTimeCode
-        view.addSubview(pinTextField)
-
-        let label = UILabel(frame: CGRect(x: 20, y: 0, width: 0, height: 0))
-        label.text = NSLocalizedString("enter_your_pin_received_by_mail", comment: "")
-        label.textColor = .white
-        label.font = .rounded(forTextStyle: .title1, weight: .bold)
-        label.sizeToFit()
-        label.frame = CGRect(origin: CGPoint(x: 20, y: pinTextField.frame.origin.y - (label.frame.size.height + 20)), size: label.frame.size)
-        view.addSubview(label)
-
-        return view
-    }
-
     private func setupRegistrationView(height: CGFloat) -> UIView {
         let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: height))
 
@@ -288,28 +223,6 @@ extension AuthenticationViewController {
         view.addSubview(label)
 
         return view
-    }
-
-    private func termsNoticeAttributedString() -> NSMutableAttributedString {
-        let notice = NSLocalizedString("login_terms_notice", comment: "")
-        let termsText = NSLocalizedString("terms", comment: "")
-        let privacyText = NSLocalizedString("privacy", comment: "")
-
-        let attributedString = NSMutableAttributedString(string: notice, attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
-
-        let fontAttribute = UIFont.rounded(forTextStyle: .caption1, weight: .bold)
-
-        attributedString.addAttributes(toText: termsText, [
-            NSAttributedString.Key.font: fontAttribute,
-            NSAttributedString.Key.link: URL(string: "https://soapbox.social/terms"),
-        ])
-
-        attributedString.addAttributes(toText: privacyText, [
-            NSAttributedString.Key.font: fontAttribute,
-            NSAttributedString.Key.link: URL(string: "https://soapbox.social/privacy"),
-        ])
-
-        return attributedString
     }
 }
 

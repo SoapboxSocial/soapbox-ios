@@ -1,7 +1,7 @@
 import UIKit
 
-class AuthenticationEmailViewController: UIViewController {
-    private let emailTextField: TextField = {
+class AuthenticationEmailViewController: ViewControllerWithKeyboardConstraint {
+    private let textField: TextField = {
         let textField = TextField(frame: .zero, theme: .light)
         textField.placeholder = "Email"
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -45,33 +45,35 @@ class AuthenticationEmailViewController: UIViewController {
         return label
     }()
 
-    private var bottomLayoutConstraint: NSLayoutConstraint!
+    private var isDisappearing = false
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    init() {
+        super.init(nibName: nil, bundle: nil)
 
         view.addSubview(label)
 
         terms.attributedText = termsNoticeAttributedString()
         view.addSubview(terms)
 
-        view.addSubview(emailTextField)
+        view.addSubview(textField)
         view.addSubview(submitButton)
 
-        bottomLayoutConstraint = submitButton.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        textField.delegate = self
+
+        bottomLayoutConstraint = submitButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(view.frame.size.height / 4))
         bottomLayoutConstraint.isActive = true
 
         NSLayoutConstraint.activate([
             label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            label.bottomAnchor.constraint(equalTo: emailTextField.topAnchor, constant: -20),
+            label.bottomAnchor.constraint(equalTo: textField.topAnchor, constant: -20),
         ])
 
         NSLayoutConstraint.activate([
-            emailTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            emailTextField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            emailTextField.heightAnchor.constraint(equalToConstant: 56),
-            emailTextField.bottomAnchor.constraint(equalTo: terms.topAnchor, constant: -10),
+            textField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            textField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            textField.heightAnchor.constraint(equalToConstant: 56),
+            textField.bottomAnchor.constraint(equalTo: terms.topAnchor, constant: -10),
         ])
 
         NSLayoutConstraint.activate([
@@ -85,32 +87,17 @@ class AuthenticationEmailViewController: UIViewController {
             submitButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
 
-        emailTextField.becomeFirstResponder()
+        textField.becomeFirstResponder()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillChangeFrameNotification),
-                                               name: UIResponder.keyboardWillChangeFrameNotification,
-                                               object: nil)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        NotificationCenter.default.removeObserver(self)
-    }
-
-    @objc private func keyboardWillChangeFrameNotification(notification: NSNotification) {
-        let n = KeyboardNotification(notification)
-        let keyboardFrame = n.frameEndForView(view: view)
-
-        let viewFrame = view.frame
-        let newBottomOffset = viewFrame.maxY - keyboardFrame.minY
-
-        bottomLayoutConstraint.constant = -(newBottomOffset + 20)
-        view.layoutIfNeeded()
+        isDisappearing = true
+        view.endEditing(true)
     }
 
     private func termsNoticeAttributedString() -> NSMutableAttributedString {
@@ -133,5 +120,15 @@ class AuthenticationEmailViewController: UIViewController {
         ])
 
         return attributedString
+    }
+}
+
+extension AuthenticationEmailViewController: UITextFieldDelegate {
+    func textFieldShouldEndEditing(_: UITextField) -> Bool {
+        if isDisappearing {
+            return true
+        }
+
+        return false
     }
 }

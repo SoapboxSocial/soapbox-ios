@@ -1,10 +1,19 @@
 import UIKit
 
+protocol AuthenticationSubController {
+    func beginEditing()
+}
+
 class AuthenticationViewControllerV2: UIPageViewController {
+    override var disablesAutomaticKeyboardDismissal: Bool { return true }
+
+    private var orderedViewControllers: [UIViewController] = [
+        AuthenticationEmailViewController(),
+        AuthenticationPinViewController(),
+    ]
+
     init() {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal)
-
-        setViewControllers([AuthenticationEmailViewController()], direction: .forward, animated: false)
     }
 
     required init?(coder _: NSCoder) {
@@ -15,5 +24,11 @@ class AuthenticationViewControllerV2: UIPageViewController {
         super.viewDidLoad()
 
         view.backgroundColor = .brandColor
+
+        setViewControllers([orderedViewControllers[0]], direction: .forward, animated: true)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [self] in
+            setViewControllers([orderedViewControllers[1]], direction: .forward, animated: true)
+        }
     }
 }
