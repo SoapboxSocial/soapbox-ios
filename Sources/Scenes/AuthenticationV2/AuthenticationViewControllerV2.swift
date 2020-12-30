@@ -1,7 +1,19 @@
 import NotificationBannerSwift
 import UIKit
 
+protocol AuthenticationViewControllerWithInput {
+    func enableSubmit()
+}
+
+protocol AuthenticationViewControllerOutput {
+    func login(email: String?)
+    func submitPin(pin: String?)
+    func register(username: String?, displayName: String?, image: UIImage?)
+}
+
 class AuthenticationViewControllerV2: UIPageViewController {
+    var output: AuthenticationViewControllerOutput!
+
     private var orderedViewControllers = [UIViewController]()
 
     private var state = AuthenticationInteractor.AuthenticationState.getStarted
@@ -11,11 +23,16 @@ class AuthenticationViewControllerV2: UIPageViewController {
 
         let start = AuthenticationStartViewController()
         start.delegate = self
-
         orderedViewControllers.append(start)
 
-        orderedViewControllers.append(AuthenticationEmailViewController())
-        orderedViewControllers.append(AuthenticationPinViewController())
+        let email = AuthenticationEmailViewController()
+        email.delegate = self
+        orderedViewControllers.append(email)
+
+        let pin = AuthenticationPinViewController()
+        pin.delegate = self
+        orderedViewControllers.append(pin)
+
         orderedViewControllers.append(AuthenticationRegistrationViewController())
     }
 
@@ -34,6 +51,10 @@ class AuthenticationViewControllerV2: UIPageViewController {
 
 extension AuthenticationViewControllerV2: AuthenticationPresenterOutput {
     func displayError(_ style: ErrorStyle, title: String, description: String?) {
+        if let controller = orderedViewControllers[state.rawValue] as? AuthenticationViewControllerWithInput {
+            controller.enableSubmit()
+        }
+
         switch style {
         case .normal:
             let banner = NotificationBanner(title: title, subtitle: description, style: .danger)
@@ -71,14 +92,22 @@ extension AuthenticationViewControllerV2: AuthenticationPresenterOutput {
 //            }
 //        }
     }
-
-    func display(profileImage _: UIImage) {}
-
-    func displayImagePicker() {}
 }
 
 extension AuthenticationViewControllerV2: AuthenticationStartViewControllerDelegate {
     func didSubmit() {
         transitionTo(state: .login)
+    }
+}
+
+extension AuthenticationViewControllerV2: AuthenticationEmailViewControllerDelegate {
+    func didSubmit(email: String?) {
+        output.login(email: email)
+    }
+}
+
+extension AuthenticationViewControllerV2: AuthenticationPinViewControllerDelegate {
+    func didSubmit(pin: String?) {
+        output.submitPin(pin: pin)
     }
 }

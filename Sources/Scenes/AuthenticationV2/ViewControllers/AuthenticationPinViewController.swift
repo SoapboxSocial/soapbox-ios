@@ -1,6 +1,12 @@
 import UIKit
 
+protocol AuthenticationPinViewControllerDelegate {
+    func didSubmit(pin: String?)
+}
+
 class AuthenticationPinViewController: ViewControllerWithKeyboardConstraint {
+    var delegate: AuthenticationPinViewControllerDelegate?
+
     private let textField: TextField = {
         let textField = TextField(frame: .zero, theme: .light)
         textField.placeholder = NSLocalizedString("pin", comment: "")
@@ -14,7 +20,7 @@ class AuthenticationPinViewController: ViewControllerWithKeyboardConstraint {
         let button = Button(size: .large)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(NSLocalizedString("next", comment: ""), for: .normal)
-//        button.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
         button.backgroundColor = UIColor.white.withAlphaComponent(0.3)
         return button
     }()
@@ -66,5 +72,16 @@ class AuthenticationPinViewController: ViewControllerWithKeyboardConstraint {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         view.endEditing(true)
+    }
+
+    @objc private func didSubmit() {
+        submitButton.isEnabled = false
+        delegate?.didSubmit(pin: textField.text)
+    }
+}
+
+extension AuthenticationPinViewController: AuthenticationViewControllerWithInput {
+    func enableSubmit() {
+        submitButton.isEnabled = true
     }
 }

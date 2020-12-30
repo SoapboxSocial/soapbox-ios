@@ -5,7 +5,6 @@ class AuthenticationRegistrationViewController: ViewControllerWithKeyboardConstr
         let textField = TextField(frame: .zero, theme: .light)
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.placeholder = NSLocalizedString("username", comment: "")
-//        textField.delegate = self
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .none
         return textField
@@ -15,7 +14,6 @@ class AuthenticationRegistrationViewController: ViewControllerWithKeyboardConstr
         let textField = TextField(frame: .zero, theme: .light)
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.placeholder = NSLocalizedString("display_name", comment: "")
-//        textField.delegate = self
         textField.autocorrectionType = .no
         textField.autocapitalizationType = .none
         return textField
@@ -32,12 +30,13 @@ class AuthenticationRegistrationViewController: ViewControllerWithKeyboardConstr
 
     private let imageButton: EditImageButton = {
         let button = EditImageButton()
-//        imageView.addTarget(self, action: #selector(selectImage))
-//        imageView.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + user.image))
+        button.addTarget(self, action: #selector(selectImage))
         return button
     }()
 
     private var imagePicker = ImagePicker()
+
+    private var image: UIImage?
 
     private let label: UILabel = {
         let label = UILabel()
@@ -56,6 +55,8 @@ class AuthenticationRegistrationViewController: ViewControllerWithKeyboardConstr
         view.addSubview(submitButton)
         view.addSubview(imageButton)
         view.addSubview(label)
+
+        imagePicker.delegate = self
 
         bottomLayoutConstraint = submitButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(view.frame.size.height / 3))
         bottomLayoutConstraint.isActive = true
@@ -93,7 +94,25 @@ class AuthenticationRegistrationViewController: ViewControllerWithKeyboardConstr
         ])
     }
 
+    @objc private func selectImage() {
+        imagePicker.present(self)
+    }
+
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension AuthenticationRegistrationViewController: ImagePickerDelegate {
+    func didSelect(image: UIImage?) {
+        guard image != nil else { return }
+        imageButton.image = image
+        self.image = image
+    }
+}
+
+extension AuthenticationRegistrationViewController: AuthenticationViewControllerWithInput {
+    func enableSubmit() {
+        submitButton.isEnabled = true
     }
 }

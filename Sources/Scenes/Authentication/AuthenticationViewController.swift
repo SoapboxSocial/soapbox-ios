@@ -2,18 +2,8 @@ import NotificationBannerSwift
 import SwiftConfettiView
 import UIKit
 
-protocol AuthenticationViewControllerOutput {
-    func login(email: String?)
-    func submitPin(pin: String?)
-    func register(username: String?, displayName: String?)
-    func showImagePicker()
-    func didSelect(image: UIImage)
-}
-
 class AuthenticationViewController: UIViewController {
     var output: AuthenticationViewControllerOutput!
-
-    private var imagePicker: ImagePicker!
 
     private var contentView: UIView!
     private var scrollView: UIScrollView!
@@ -117,19 +107,9 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
     func display(profileImage _: UIImage) {
 //        profileImage.image = image
     }
-
-    func displayImagePicker() {
-        DispatchQueue.main.async {
-            self.imagePicker.present(self)
-        }
-    }
 }
 
 extension AuthenticationViewController {
-    @objc private func showImagePicker() {
-        output.showImagePicker()
-    }
-
     private func setupNotificationRequestView(height: CGFloat) -> UIView {
         return UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: height))
     }
@@ -157,13 +137,5 @@ extension AuthenticationViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
-    }
-}
-
-extension AuthenticationViewController: ImagePickerDelegate {
-    func didSelect(image: UIImage?) {
-        if image != nil {
-            output.didSelect(image: image!)
-        }
     }
 }

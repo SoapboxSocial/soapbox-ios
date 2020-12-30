@@ -1,6 +1,12 @@
 import UIKit
 
+protocol AuthenticationEmailViewControllerDelegate {
+    func didSubmit(email: String?)
+}
+
 class AuthenticationEmailViewController: ViewControllerWithKeyboardConstraint {
+    var delegate: AuthenticationEmailViewControllerDelegate?
+
     private let textField: TextField = {
         let textField = TextField(frame: .zero, theme: .light)
         textField.placeholder = "Email"
@@ -16,7 +22,7 @@ class AuthenticationEmailViewController: ViewControllerWithKeyboardConstraint {
         let button = Button(size: .large)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(NSLocalizedString("next", comment: ""), for: .normal)
-//        button.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
         button.backgroundColor = UIColor.white.withAlphaComponent(0.3)
         return button
     }()
@@ -69,5 +75,16 @@ class AuthenticationEmailViewController: ViewControllerWithKeyboardConstraint {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         view.endEditing(true)
+    }
+
+    @objc private func didSubmit() {
+        submitButton.isEnabled = false
+        delegate?.didSubmit(email: textField.text)
+    }
+}
+
+extension AuthenticationEmailViewController: AuthenticationViewControllerWithInput {
+    func enableSubmit() {
+        submitButton.isEnabled = true
     }
 }
