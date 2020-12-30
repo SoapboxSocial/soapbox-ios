@@ -27,18 +27,45 @@ class AuthenticationEmailViewController: UIViewController {
         return text
     }()
 
+    private let submitButton: Button = {
+        let button = Button(size: .large)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle(NSLocalizedString("next", comment: ""), for: .normal)
+//        button.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
+        button.backgroundColor = UIColor.white.withAlphaComponent(0.3)
+        return button
+    }()
+
+    private let label: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = .white
+        label.text = NSLocalizedString("email_login", comment: "")
+        label.font = .rounded(forTextStyle: .title1, weight: .bold)
+        return label
+    }()
+
     private var bottomLayoutConstraint: NSLayoutConstraint!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        view.addSubview(label)
+
         terms.attributedText = termsNoticeAttributedString()
         view.addSubview(terms)
 
         view.addSubview(emailTextField)
+        view.addSubview(submitButton)
 
-        bottomLayoutConstraint = terms.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        bottomLayoutConstraint = submitButton.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         bottomLayoutConstraint.isActive = true
+
+        NSLayoutConstraint.activate([
+            label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            label.bottomAnchor.constraint(equalTo: emailTextField.topAnchor, constant: -20),
+        ])
 
         NSLayoutConstraint.activate([
             emailTextField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
@@ -50,6 +77,12 @@ class AuthenticationEmailViewController: UIViewController {
         NSLayoutConstraint.activate([
             terms.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             terms.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            terms.bottomAnchor.constraint(equalTo: submitButton.topAnchor, constant: -20),
+        ])
+
+        NSLayoutConstraint.activate([
+            submitButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            submitButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
 
         emailTextField.becomeFirstResponder()
