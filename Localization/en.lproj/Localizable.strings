@@ -188,3 +188,5 @@
 "listen_to_story" = "Listen to story";
 
 "get_started" = "Get started";
+
+"enable_notifications" = "Enable notifications to be notified when the people you follow start a room.";

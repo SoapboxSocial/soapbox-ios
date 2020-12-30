@@ -1,6 +1,12 @@
 import UIKit
 
+protocol AuthenticationRegistrationViewControllerDelegate {
+    func didSubmit(username: String?, displayName: String?, image: UIImage?)
+}
+
 class AuthenticationRegistrationViewController: ViewControllerWithKeyboardConstraint {
+    var delegate: AuthenticationRegistrationViewControllerDelegate?
+
     private let usernameTextField: TextField = {
         let textField = TextField(frame: .zero, theme: .light)
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -23,7 +29,7 @@ class AuthenticationRegistrationViewController: ViewControllerWithKeyboardConstr
         let button = Button(size: .large)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(NSLocalizedString("submit", comment: ""), for: .normal)
-//        button.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
         button.backgroundColor = UIColor.white.withAlphaComponent(0.3)
         return button
     }()
@@ -92,6 +98,10 @@ class AuthenticationRegistrationViewController: ViewControllerWithKeyboardConstr
             submitButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             submitButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
+    }
+
+    @objc private func didSubmit() {
+        delegate?.didSubmit(username: usernameTextField.text, displayName: displayNameTextField.text, image: image)
     }
 
     @objc private func selectImage() {

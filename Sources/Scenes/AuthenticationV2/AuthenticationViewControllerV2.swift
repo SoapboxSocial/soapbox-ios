@@ -33,7 +33,11 @@ class AuthenticationViewControllerV2: UIPageViewController {
         pin.delegate = self
         orderedViewControllers.append(pin)
 
-        orderedViewControllers.append(AuthenticationRegistrationViewController())
+        let registration = AuthenticationRegistrationViewController()
+        registration.delegate = self
+        orderedViewControllers.append(registration)
+
+        orderedViewControllers.append(AuthenticationRequestNotificationsViewController())
     }
 
     required init?(coder _: NSCoder) {
@@ -102,6 +106,7 @@ extension AuthenticationViewControllerV2: AuthenticationStartViewControllerDeleg
 
 extension AuthenticationViewControllerV2: AuthenticationEmailViewControllerDelegate {
     func didSubmit(email: String?) {
+        debugPrint("fuck")
         output.login(email: email)
     }
 }
@@ -109,5 +114,11 @@ extension AuthenticationViewControllerV2: AuthenticationEmailViewControllerDeleg
 extension AuthenticationViewControllerV2: AuthenticationPinViewControllerDelegate {
     func didSubmit(pin: String?) {
         output.submitPin(pin: pin)
+    }
+}
+
+extension AuthenticationViewControllerV2: AuthenticationRegistrationViewControllerDelegate {
+    func didSubmit(username: String?, displayName: String?, image: UIImage?) {
+        output.register(username: username, displayName: displayName, image: image)
     }
 }
