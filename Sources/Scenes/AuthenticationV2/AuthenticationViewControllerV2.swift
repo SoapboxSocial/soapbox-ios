@@ -106,7 +106,6 @@ extension AuthenticationViewControllerV2: AuthenticationStartViewControllerDeleg
 
 extension AuthenticationViewControllerV2: AuthenticationEmailViewControllerDelegate {
     func didSubmit(email: String?) {
-        debugPrint("fuck")
         output.login(email: email)
     }
 }

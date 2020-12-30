@@ -30,8 +30,6 @@ class ViewControllerWithKeyboardConstraint: UIViewController {
             newBottomOffset = original
         }
 
-        debugPrint(newBottomOffset)
-        debugPrint(original)
         if newBottomOffset <= original {
             return
         }
