@@ -73,9 +73,7 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
     func transitionTo(state: AuthenticationInteractor.AuthenticationState) {
         self.state = state
 
-        let controller = orderedViewControllers[state.rawValue]
-
-        setViewControllers([controller], direction: .forward, animated: true)
+        setViewControllers([orderedViewControllers[state.rawValue]], direction: .forward, animated: true)
     }
 }
 
