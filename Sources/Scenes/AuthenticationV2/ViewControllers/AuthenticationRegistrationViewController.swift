@@ -34,11 +34,7 @@ class AuthenticationRegistrationViewController: ViewControllerWithKeyboardConstr
         return button
     }()
 
-    private let imageButton: EditImageButton = {
-        let button = EditImageButton()
-        button.addTarget(self, action: #selector(selectImage))
-        return button
-    }()
+    private var imageButton: EditImageButton!
 
     private var imagePicker = ImagePicker()
 
@@ -55,6 +51,9 @@ class AuthenticationRegistrationViewController: ViewControllerWithKeyboardConstr
 
     init() {
         super.init(nibName: nil, bundle: nil)
+
+        imageButton = EditImageButton()
+        imageButton.addTarget(self, action: #selector(selectImage))
 
         view.addSubview(usernameTextField)
         view.addSubview(displayNameTextField)

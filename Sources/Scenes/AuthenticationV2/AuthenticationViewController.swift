@@ -11,7 +11,7 @@ protocol AuthenticationViewControllerOutput {
     func register(username: String?, displayName: String?, image: UIImage?)
 }
 
-class AuthenticationViewControllerV2: UIPageViewController {
+class AuthenticationViewController: UIPageViewController {
     var output: AuthenticationViewControllerOutput!
 
     private var orderedViewControllers = [UIViewController]()
@@ -38,6 +38,7 @@ class AuthenticationViewControllerV2: UIPageViewController {
         orderedViewControllers.append(registration)
 
         orderedViewControllers.append(AuthenticationRequestNotificationsViewController())
+        orderedViewControllers.append(AuthenticationSuccessViewController())
 
         setViewControllers([orderedViewControllers[0]], direction: .forward, animated: false)
     }
@@ -53,7 +54,7 @@ class AuthenticationViewControllerV2: UIPageViewController {
     }
 }
 
-extension AuthenticationViewControllerV2: AuthenticationPresenterOutput {
+extension AuthenticationViewController: AuthenticationPresenterOutput {
     func displayError(_ style: ErrorStyle, title: String, description: String?) {
         if let controller = orderedViewControllers[state.rawValue] as? AuthenticationViewControllerWithInput {
             controller.enableSubmit()
@@ -75,38 +76,28 @@ extension AuthenticationViewControllerV2: AuthenticationPresenterOutput {
         let controller = orderedViewControllers[state.rawValue]
 
         setViewControllers([controller], direction: .forward, animated: true)
-//
-//        if state == .success {
-//            let confettiView = SwiftConfettiView(frame: view.bounds)
-//            view.addSubview(confettiView)
-//            confettiView.startConfetti()
-//
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                confettiView.stopConfetti()
-//            }
-//        }
     }
 }
 
-extension AuthenticationViewControllerV2: AuthenticationStartViewControllerDelegate {
+extension AuthenticationViewController: AuthenticationStartViewControllerDelegate {
     func didSubmit() {
         transitionTo(state: .login)
     }
 }
 
-extension AuthenticationViewControllerV2: AuthenticationEmailViewControllerDelegate {
+extension AuthenticationViewController: AuthenticationEmailViewControllerDelegate {
     func didSubmit(email: String?) {
         output.login(email: email)
     }
 }
 
-extension AuthenticationViewControllerV2: AuthenticationPinViewControllerDelegate {
+extension AuthenticationViewController: AuthenticationPinViewControllerDelegate {
     func didSubmit(pin: String?) {
         output.submitPin(pin: pin)
     }
 }
 
-extension AuthenticationViewControllerV2: AuthenticationRegistrationViewControllerDelegate {
+extension AuthenticationViewController: AuthenticationRegistrationViewControllerDelegate {
     func didSubmit(username: String?, displayName: String?, image: UIImage?) {
         output.register(username: username, displayName: displayName, image: image)
     }

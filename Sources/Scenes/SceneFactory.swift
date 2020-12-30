@@ -62,8 +62,8 @@ class SceneFactory {
         return viewController
     }
 
-    static func createAuthenticationViewController() -> AuthenticationViewControllerV2 {
-        let viewController = AuthenticationViewControllerV2()
+    static func createAuthenticationViewController() -> AuthenticationViewController {
+        let viewController = AuthenticationViewController()
         let presenter = AuthenticationPresenter(output: viewController)
 
         let interactor = AuthenticationInteractor(output: presenter, api: APIClient())
