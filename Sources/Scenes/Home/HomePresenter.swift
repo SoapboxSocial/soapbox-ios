@@ -6,6 +6,7 @@ protocol HomePresenterOutput {
     func didFetchOwnStories(_ stories: [APIClient.Story])
     func displayError(title: String, description: String?)
     func displayCurrentRoom(_ id: Int)
+    func has(notifications: Bool)
     func removeCurrentRoom()
 }
 
@@ -37,5 +38,9 @@ class HomePresenter: HomeInteractorOutput {
 
     func didFetchOwnStories(_ stories: [APIClient.Story]) {
         output.didFetchOwnStories(stories)
+    }
+
+    func has(notifications: Bool) {
+        output.has(notifications: notifications)
     }
 }
