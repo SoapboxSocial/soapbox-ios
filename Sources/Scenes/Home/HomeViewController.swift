@@ -32,6 +32,13 @@ class HomeViewController: ViewController {
         return generator
     }()
 
+    private var notificationButton: BadgedButtonItem = {
+        let conf = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold)
+        let image = UIImage(systemName: "bell", withConfiguration: conf)?.withTintColor(.brandColor)
+
+        return BadgedButtonItem(with: image)
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -72,13 +79,13 @@ class HomeViewController: ViewController {
 
         navigationItem.leftBarButtonItems = [profileButton]
 
-        let notificationsButton = UIBarButtonItem(
-            image: UIImage(systemName: "bell", withConfiguration: iconConfig),
-            style: .plain,
-            target: self,
-            action: #selector(openNotifications)
-        )
-        navigationItem.rightBarButtonItems = [searchButton, notificationsButton]
+        navigationItem.rightBarButtonItems = [searchButton, notificationButton]
+
+        notificationButton.tapAction = {
+            DispatchQueue.main.async {
+                self.openNotifications()
+            }
+        }
 
         NSLayoutConstraint.activate([
             collection.leftAnchor.constraint(equalTo: view.leftAnchor),
@@ -115,7 +122,7 @@ class HomeViewController: ViewController {
         navigationController?.pushViewController(search, animated: true)
     }
 
-    @objc private func openNotifications() {
+    private func openNotifications() {
         let notifications = SceneFactory.createNotificationsViewController()
         navigationController?.pushViewController(notifications, animated: true)
     }
@@ -212,6 +219,14 @@ class HomeViewController: ViewController {
 }
 
 extension HomeViewController: HomePresenterOutput {
+    func has(notifications: Bool) {
+        if notifications {
+            notificationButton.showBadge()
+        } else {
+            notificationButton.hideBadge()
+        }
+    }
+
     func didFetchRooms(rooms: [RoomState]) {
         // sorted is temporary
         update(.rooms(rooms.sorted(by: { $0.id < $1.id })))

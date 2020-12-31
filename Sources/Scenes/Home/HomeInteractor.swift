@@ -19,6 +19,7 @@ protocol HomeInteractorOutput {
     func didLeaveRoom()
     func didFetchFeed(_ feed: [APIClient.StoryFeed])
     func didFetchOwnStories(_ stories: [APIClient.Story])
+    func has(notifications: Bool)
 }
 
 class HomeInteractor: HomeViewControllerOutput {
@@ -88,8 +89,9 @@ class HomeInteractor: HomeViewControllerOutput {
                     default:
                         break
                     }
-                case let .success(user):
-                    UserStore.store(user: user)
+                case let .success(me):
+                    self.output.has(notifications: me.hasNotifications)
+                    UserStore.store(user: me.user)
                 }
             }
         })
