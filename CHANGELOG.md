@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - For our new users we completely reworked the on-boarding experience.
+
 ## [1.9.0] - 2020-12-28
 
  - Smoothed out animations between screens.

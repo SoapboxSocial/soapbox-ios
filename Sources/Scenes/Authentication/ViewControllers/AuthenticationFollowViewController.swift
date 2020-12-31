@@ -5,6 +5,8 @@ protocol AuthenticationFollowViewControllerDelegate {
 }
 
 class AuthenticationFollowViewController: UIViewController {
+    var delegate: AuthenticationFollowViewControllerDelegate?
+
     private let label: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -19,7 +21,7 @@ class AuthenticationFollowViewController: UIViewController {
         let button = Button(size: .large)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
-//        button.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
         button.backgroundColor = UIColor.white.withAlphaComponent(0.3)
         return button
     }()
@@ -84,6 +86,10 @@ class AuthenticationFollowViewController: UIViewController {
                 }
             }
         })
+    }
+
+    @objc private func didSubmit() {
+        delegate?.didSubmit(users: selected)
     }
 }
 
