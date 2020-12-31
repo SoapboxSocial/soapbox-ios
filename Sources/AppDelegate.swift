@@ -23,11 +23,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let loggedIn = isLoggedIn()
 
         window!.rootViewController = { () -> UIViewController in
-//            if loggedIn {
-//                return createLoggedIn()
-//            } else {
-            createLoginView()
-//            }
+            if loggedIn {
+                return createLoggedIn()
+            } else {
+                return createLoginView()
+            }
         }()
 
         window?.makeKeyAndVisible()
