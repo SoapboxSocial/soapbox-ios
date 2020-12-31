@@ -21,24 +21,26 @@ class AuthenticationViewController: UIPageViewController {
     init() {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal)
 
-        let start = AuthenticationStartViewController()
-        start.delegate = self
-        orderedViewControllers.append(start)
-
-        let email = AuthenticationEmailViewController()
-        email.delegate = self
-        orderedViewControllers.append(email)
-
-        let pin = AuthenticationPinViewController()
-        pin.delegate = self
-        orderedViewControllers.append(pin)
-
-        let registration = AuthenticationRegistrationViewController()
-        registration.delegate = self
-        orderedViewControllers.append(registration)
-
-        orderedViewControllers.append(AuthenticationRequestNotificationsViewController())
-        orderedViewControllers.append(AuthenticationSuccessViewController())
+//        let start = AuthenticationStartViewController()
+//        start.delegate = self
+//        orderedViewControllers.append(start)
+//
+//        let email = AuthenticationEmailViewController()
+//        email.delegate = self
+//        orderedViewControllers.append(email)
+//
+//        let pin = AuthenticationPinViewController()
+//        pin.delegate = self
+//        orderedViewControllers.append(pin)
+//
+//        let registration = AuthenticationRegistrationViewController()
+//        registration.delegate = self
+//        orderedViewControllers.append(registration)
+//        orderedViewControllers.append(AuthenticationRequestNotificationsViewController())
+        
+        orderedViewControllers.append(AuthenticationFollowViewController())
+        
+//        orderedViewControllers.append(AuthenticationSuccessViewController())
 
         setViewControllers([orderedViewControllers[0]], direction: .forward, animated: false)
     }
