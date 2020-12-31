@@ -538,7 +538,8 @@ class RoomView: UIView {
             onAccepted: {
                 self.exitRoom()
             },
-            message: NSLocalizedString("exit_will_close_room", comment: "")
+            message: NSLocalizedString("exit_will_close_room", comment: ""),
+            confirm: NSLocalizedString("leave_room", comment: "")
         )
 
         UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
