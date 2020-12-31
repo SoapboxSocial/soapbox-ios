@@ -39,6 +39,10 @@ class AuthenticationStartViewController: UIViewController {
         logo.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(logo)
 
+        let logoPlaceholder = UIView()
+        logoPlaceholder.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(logoPlaceholder)
+
         let greenDude = UIImageView(image: UIImage(named: "greendude"))
         greenDude.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(greenDude)
@@ -73,8 +77,15 @@ class AuthenticationStartViewController: UIViewController {
         ])
 
         NSLayoutConstraint.activate([
-            logo.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            logo.bottomAnchor.constraint(equalTo: greenDude.topAnchor, constant: -20),
+            logoPlaceholder.leftAnchor.constraint(equalTo: view.leftAnchor),
+            logoPlaceholder.rightAnchor.constraint(equalTo: view.rightAnchor),
+            logoPlaceholder.topAnchor.constraint(equalTo: pinkDude.bottomAnchor),
+            logoPlaceholder.bottomAnchor.constraint(equalTo: blueDude.topAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            logo.centerXAnchor.constraint(equalTo: logoPlaceholder.centerXAnchor),
+            logo.centerYAnchor.constraint(equalTo: logoPlaceholder.centerYAnchor),
         ])
 
         NSLayoutConstraint.activate([
