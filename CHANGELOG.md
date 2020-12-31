@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - For our new users we completely reworked the on-boarding experience.
+ - We've made it a bit clearer in the app when you have unread notifications.
 
 ## [1.9.0] - 2020-12-28
 
