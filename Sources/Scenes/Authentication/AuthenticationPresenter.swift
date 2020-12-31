@@ -48,7 +48,7 @@ class AuthenticationPresenter: AuthenticationInteractorOutput {
             }
         }
     }
-    
+
     func presentLoggedInView() {
         let delegate = UIApplication.shared.delegate as! AppDelegate
         delegate.window!.set(

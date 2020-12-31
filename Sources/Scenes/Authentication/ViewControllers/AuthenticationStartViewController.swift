@@ -35,11 +35,47 @@ class AuthenticationStartViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        let logo = UIImageView(image: UIImage(named: "soapbar"))
+        logo.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(logo)
+
+        let greenDude = UIImageView(image: UIImage(named: "greendude"))
+        greenDude.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(greenDude)
+
+        let blueDude = UIImageView(image: UIImage(named: "bluedude"))
+        blueDude.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(blueDude)
+
+        let pinkDude = UIImageView(image: UIImage(named: "pinkdude"))
+        pinkDude.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(pinkDude)
+
         view.addSubview(submitButton)
 
         terms.attributedText = termsNoticeAttributedString()
         terms.textAlignment = .center
         view.addSubview(terms)
+
+        NSLayoutConstraint.activate([
+            greenDude.leftAnchor.constraint(equalTo: view.leftAnchor),
+            greenDude.bottomAnchor.constraint(equalTo: submitButton.topAnchor, constant: -20),
+        ])
+
+        NSLayoutConstraint.activate([
+            blueDude.rightAnchor.constraint(equalTo: view.rightAnchor),
+            blueDude.bottomAnchor.constraint(equalTo: greenDude.centerYAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            pinkDude.leftAnchor.constraint(equalTo: view.leftAnchor),
+            pinkDude.topAnchor.constraint(equalTo: view.topAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            logo.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            logo.bottomAnchor.constraint(equalTo: greenDude.topAnchor, constant: -20),
+        ])
 
         NSLayoutConstraint.activate([
             submitButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
