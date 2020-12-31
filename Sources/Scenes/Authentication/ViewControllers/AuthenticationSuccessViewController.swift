@@ -10,6 +10,8 @@ class AuthenticationSuccessViewController: UIViewController {
         return label
     }()
 
+    private var confettiView: SwiftConfettiView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -20,12 +22,16 @@ class AuthenticationSuccessViewController: UIViewController {
             label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
 
-        let confettiView = SwiftConfettiView(frame: view.bounds)
+        confettiView = SwiftConfettiView(frame: view.bounds)
         view.addSubview(confettiView)
         confettiView.startConfetti()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            confettiView.stopConfetti()
+            self.confettiView.stopConfetti()
         }
     }
 }
