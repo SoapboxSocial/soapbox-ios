@@ -6,6 +6,8 @@ class AuthenticationRequestNotificationsViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .rounded(forTextStyle: .title1, weight: .bold)
         label.text = NSLocalizedString("enable_notifications", comment: "")
+        label.textColor = .white
+        label.numberOfLines = 0
         return label
     }()
 
