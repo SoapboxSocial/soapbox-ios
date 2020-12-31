@@ -14,6 +14,10 @@ protocol AuthenticationViewControllerOutput {
 class AuthenticationViewController: UIPageViewController {
     var output: AuthenticationViewControllerOutput!
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+
     private var orderedViewControllers = [UIViewController]()
 
     private var state = AuthenticationInteractor.AuthenticationState.getStarted
