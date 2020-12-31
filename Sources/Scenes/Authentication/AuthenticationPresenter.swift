@@ -8,8 +8,6 @@ enum ErrorStyle {
 protocol AuthenticationPresenterOutput {
     func displayError(_ style: ErrorStyle, title: String, description: String?)
     func transitionTo(state: AuthenticationInteractor.AuthenticationState)
-    func display(profileImage: UIImage)
-    func displayImagePicker()
 }
 
 class AuthenticationPresenter: AuthenticationInteractorOutput {
@@ -40,10 +38,6 @@ class AuthenticationPresenter: AuthenticationInteractorOutput {
         }
     }
 
-    func present(profileImage image: UIImage) {
-        output.display(profileImage: image)
-    }
-
     func present(state: AuthenticationInteractor.AuthenticationState) {
         output.transitionTo(state: state)
 
@@ -52,10 +46,6 @@ class AuthenticationPresenter: AuthenticationInteractorOutput {
                 self.presentLoggedInView()
             }
         }
-    }
-
-    func presentImagePicker() {
-        output.displayImagePicker()
     }
 
     func presentLoggedInView() {

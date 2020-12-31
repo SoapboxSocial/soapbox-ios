@@ -1,80 +1,56 @@
 import NotificationBannerSwift
-import SwiftConfettiView
 import UIKit
+
+protocol AuthenticationViewControllerWithInput {
+    func enableSubmit()
+}
 
 protocol AuthenticationViewControllerOutput {
     func login(email: String?)
     func submitPin(pin: String?)
-    func register(username: String?, displayName: String?)
-    func showImagePicker()
-    func didSelect(image: UIImage)
+    func register(username: String?, displayName: String?, image: UIImage?)
 }
 
-class AuthenticationViewController: UIViewController {
+class AuthenticationViewController: UIPageViewController {
     var output: AuthenticationViewControllerOutput!
 
-    private var imagePicker: ImagePicker!
+    private var orderedViewControllers = [UIViewController]()
 
-    private var contentView: UIView!
-    private var scrollView: UIScrollView!
-    private var submitButton: Button!
+    private var state = AuthenticationInteractor.AuthenticationState.getStarted
 
-    private var emailTextField: TextField!
+    init() {
+        super.init(transitionStyle: .scroll, navigationOrientation: .horizontal)
 
-    private var pinTextField: UITextField!
+        let start = AuthenticationStartViewController()
+        start.delegate = self
+        orderedViewControllers.append(start)
 
-    private var displayNameTextField: UITextField!
-    private var usernameTextField: UITextField!
+        let email = AuthenticationEmailViewController()
+        email.delegate = self
+        orderedViewControllers.append(email)
 
-    private var profileImage: EditProfileImageButton!
+        let pin = AuthenticationPinViewController()
+        pin.delegate = self
+        orderedViewControllers.append(pin)
 
-    private var state = AuthenticationInteractor.AuthenticationState.login
+        let registration = AuthenticationRegistrationViewController()
+        registration.delegate = self
+        orderedViewControllers.append(registration)
+
+        orderedViewControllers.append(AuthenticationRequestNotificationsViewController())
+        orderedViewControllers.append(AuthenticationSuccessViewController())
+
+        setViewControllers([orderedViewControllers[0]], direction: .forward, animated: false)
+    }
+
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .brandColor
-
-        let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-
-        contentView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.height / 2))
-        contentView.center = view.center
-
-        let height = (view.frame.size.height / 2) - 54
-        scrollView = UIScrollView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: contentView.frame.size.height - 54))
-        scrollView.contentSize = CGSize(width: view.frame.size.width * 4, height: scrollView.frame.size.height)
-        scrollView.isScrollEnabled = false
-        contentView.addSubview(scrollView)
-        view.addSubview(contentView)
-
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
-
-        submitButton = Button(size: .large)
-        submitButton.frame = CGRect(x: 20, y: scrollView.frame.height, width: view.frame.size.width - 40, height: 54)
-        submitButton.setTitle(NSLocalizedString("submit", comment: ""), for: .normal)
-        submitButton.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
-        submitButton.backgroundColor = UIColor.white.withAlphaComponent(0.3)
-        contentView.addSubview(submitButton)
-
-        imagePicker = ImagePicker()
-        imagePicker.delegate = self
-
-        let views = [
-            setupLoginView(height: height),
-            setupPinView(height: height),
-            setupRegistrationView(height: height),
-            setupNotificationRequestView(height: height),
-            setupSuccessfulView(height: height),
-        ]
-
-        for (i, state) in views.enumerated() {
-            state.frame = CGRect(origin: CGPoint(x: view.frame.size.width * CGFloat(i), y: 0), size: state.frame.size)
-            scrollView.addSubview(state)
-        }
     }
 
     func inject(pin: String) -> Bool {
@@ -82,76 +58,16 @@ class AuthenticationViewController: UIViewController {
             return false
         }
 
-        pinTextField.text = pin
-        didSubmit()
+        didSubmit(pin: pin)
         return true
-    }
-
-    @objc private func didSubmit() {
-        view.endEditing(true)
-        submitButton.isEnabled = false
-        switch state {
-        case .login:
-            return output.login(email: emailTextField.text)
-        case .pin:
-            return output.submitPin(pin: pinTextField.text)
-        case .registration:
-            return output.register(username: usernameTextField.text, displayName: displayNameTextField.text)
-        case .requestNotifications, .success: break
-        }
-    }
-
-    @objc private func keyboardWillHide() {
-        UIView.animate(withDuration: 0.3) {
-            self.contentView.center = self.view.center
-        }
-    }
-
-    @objc private func keyboardWillShow(notification: Notification) {
-        guard let userInfo = notification.userInfo else { return }
-        guard let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-
-        let newOrigin = view.frame.height - (keyboardFrame.size.height + contentView.frame.size.height)
-
-        if newOrigin >= contentView.frame.origin.y {
-            return
-        }
-
-        UIView.animate(withDuration: 0.3) {
-            self.contentView.frame.origin.y = newOrigin
-        }
-    }
-
-    @objc private func dismissKeyboard() {
-        view.endEditing(true)
     }
 }
 
 extension AuthenticationViewController: AuthenticationPresenterOutput {
-    func transitionTo(state: AuthenticationInteractor.AuthenticationState) {
-        self.state = state
-        submitButton.isEnabled = true
-        scrollView.setContentOffset(CGPoint(x: view.frame.size.width * CGFloat(state.rawValue), y: 0), animated: true)
-
-        if state == .requestNotifications {
-            UIView.animate(withDuration: 0.3) {
-                self.submitButton.frame = CGRect(origin: CGPoint(x: self.submitButton.frame.origin.x, y: self.view.frame.size.height), size: self.submitButton.frame.size)
-            }
-        }
-
-        if state == .success {
-            let confettiView = SwiftConfettiView(frame: view.bounds)
-            view.addSubview(confettiView)
-            confettiView.startConfetti()
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                confettiView.stopConfetti()
-            }
-        }
-    }
-
     func displayError(_ style: ErrorStyle, title: String, description: String?) {
-        submitButton.isEnabled = true
+        if let controller = orderedViewControllers[state.rawValue] as? AuthenticationViewControllerWithInput {
+            controller.enableSubmit()
+        }
 
         switch style {
         case .normal:
@@ -163,172 +79,33 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
         }
     }
 
-    func display(profileImage image: UIImage) {
-        profileImage.image = image
-    }
+    func transitionTo(state: AuthenticationInteractor.AuthenticationState) {
+        self.state = state
 
-    func displayImagePicker() {
-        DispatchQueue.main.async {
-            self.imagePicker.present(self)
-        }
+        setViewControllers([orderedViewControllers[state.rawValue]], direction: .forward, animated: true)
     }
 }
 
-extension AuthenticationViewController {
-    private func setupLoginView(height: CGFloat) -> UIView {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
-
-        let terms = UITextView(frame: CGRect(x: 20, y: 0, width: view.frame.size.width - 40, height: 30))
-        terms.isScrollEnabled = false
-        terms.isEditable = false
-        terms.backgroundColor = .clear
-        terms.contentInset = .zero
-        terms.font = .rounded(forTextStyle: .caption1, weight: .regular)
-        terms.linkTextAttributes = [
-            NSAttributedString.Key.foregroundColor: UIColor.white,
-        ]
-
-        terms.attributedText = termsNoticeAttributedString()
-
-        let newSize = terms.sizeThatFits(CGSize(width: terms.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
-        terms.frame.size = CGSize(width: terms.frame.size.width, height: newSize.height)
-
-        terms.sizeToFit()
-        terms.frame.origin = CGPoint(x: 20, y: height - (terms.frame.size.height + 20))
-
-        view.addSubview(terms)
-
-        emailTextField = TextField(frame: CGRect(x: 20, y: terms.frame.origin.y - (56 + 10), width: view.frame.size.width - 40, height: 56), theme: .light)
-        emailTextField.keyboardType = .emailAddress
-        emailTextField.textContentType = .emailAddress
-        emailTextField.placeholder = "Email"
-        emailTextField.delegate = self
-        emailTextField.autocorrectionType = .no
-        emailTextField.autocapitalizationType = .none
-        view.addSubview(emailTextField)
-
-        let label = UILabel(frame: CGRect(x: 20, y: 0, width: 0, height: 0))
-        label.textColor = .white
-        label.text = NSLocalizedString("email_login", comment: "")
-        label.font = .rounded(forTextStyle: .title1, weight: .bold)
-        label.sizeToFit()
-        label.frame = CGRect(origin: CGPoint(x: 20, y: emailTextField.frame.origin.y - (label.frame.size.height + 20)), size: label.frame.size)
-        view.addSubview(label)
-
-        return view
-    }
-
-    private func setupPinView(height: CGFloat) -> UIView {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: height))
-
-        pinTextField = TextField(frame: CGRect(x: 20, y: height - (56 + 20), width: view.frame.size.width - 40, height: 56), theme: .light)
-        pinTextField.keyboardType = .numberPad
-        pinTextField.placeholder = NSLocalizedString("pin", comment: "")
-        pinTextField.textContentType = .oneTimeCode
-        view.addSubview(pinTextField)
-
-        let label = UILabel(frame: CGRect(x: 20, y: 0, width: 0, height: 0))
-        label.text = NSLocalizedString("enter_your_pin_received_by_mail", comment: "")
-        label.textColor = .white
-        label.font = .rounded(forTextStyle: .title1, weight: .bold)
-        label.sizeToFit()
-        label.frame = CGRect(origin: CGPoint(x: 20, y: pinTextField.frame.origin.y - (label.frame.size.height + 20)), size: label.frame.size)
-        view.addSubview(label)
-
-        return view
-    }
-
-    private func setupRegistrationView(height: CGFloat) -> UIView {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: height))
-
-        displayNameTextField = TextField(frame: CGRect(x: 20, y: height - (56 + 20), width: view.frame.size.width - 40, height: 56), theme: .light)
-        displayNameTextField.placeholder = NSLocalizedString("display_name", comment: "")
-        displayNameTextField.delegate = self
-        view.addSubview(displayNameTextField)
-
-        usernameTextField = TextField(frame: CGRect(x: 20, y: displayNameTextField.frame.origin.y - (56 + 20), width: view.frame.size.width - 40, height: 56), theme: .light)
-        usernameTextField.placeholder = NSLocalizedString("username", comment: "")
-        usernameTextField.delegate = self
-        usernameTextField.autocorrectionType = .no
-        usernameTextField.autocapitalizationType = .none
-        view.addSubview(usernameTextField)
-
-        let label = UILabel(frame: CGRect(x: 20, y: 0, width: 0, height: 0))
-        label.textAlignment = .center
-        label.text = NSLocalizedString("create_account", comment: "")
-        label.textColor = .white
-        label.font = .rounded(forTextStyle: .title1, weight: .bold)
-        label.sizeToFit()
-        label.frame = CGRect(origin: CGPoint(x: 20, y: usernameTextField.frame.origin.y - (label.frame.size.height + 20)), size: label.frame.size)
-        view.addSubview(label)
-
-        profileImage = EditProfileImageButton(frame: CGRect(x: (view.frame.size.width / 2) - 40, y: label.frame.origin.y - (20 + 80), width: 80, height: 80))
-        view.addSubview(profileImage)
-        profileImage.addTarget(self, action: #selector(showImagePicker))
-
-        return view
-    }
-
-    @objc private func showImagePicker() {
-        output.showImagePicker()
-    }
-
-    private func setupNotificationRequestView(height: CGFloat) -> UIView {
-        return UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: height))
-    }
-
-    private func setupSuccessfulView(height: CGFloat) -> UIView {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: height))
-
-        let label = UILabel(frame: CGRect(x: 0, y: (height / 2) + 30, width: view.frame.size.width, height: 20))
-        label.textAlignment = .center
-        label.text = NSLocalizedString("welcome", comment: "")
-        label.textColor = .white
-        label.font = label.font.withSize(20)
-        view.addSubview(label)
-
-        return view
-    }
-
-    private func termsNoticeAttributedString() -> NSMutableAttributedString {
-        let notice = NSLocalizedString("login_terms_notice", comment: "")
-        let termsText = NSLocalizedString("terms", comment: "")
-        let privacyText = NSLocalizedString("privacy", comment: "")
-
-        let attributedString = NSMutableAttributedString(string: notice, attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
-
-        let fontAttribute = UIFont.rounded(forTextStyle: .caption1, weight: .bold)
-
-        attributedString.addAttributes(toText: termsText, [
-            NSAttributedString.Key.font: fontAttribute,
-            NSAttributedString.Key.link: URL(string: "https://soapbox.social/terms"),
-        ])
-
-        attributedString.addAttributes(toText: privacyText, [
-            NSAttributedString.Key.font: fontAttribute,
-            NSAttributedString.Key.link: URL(string: "https://soapbox.social/privacy"),
-        ])
-
-        return attributedString
+extension AuthenticationViewController: AuthenticationStartViewControllerDelegate {
+    func didSubmit() {
+        transitionTo(state: .login)
     }
 }
 
-extension AuthenticationViewController: UITextFieldDelegate {
-    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
-
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
+extension AuthenticationViewController: AuthenticationEmailViewControllerDelegate {
+    func didSubmit(email: String?) {
+        output.login(email: email)
     }
 }
 
-extension AuthenticationViewController: ImagePickerDelegate {
-    func didSelect(image: UIImage?) {
-        if image != nil {
-            output.didSelect(image: image!)
-        }
+extension AuthenticationViewController: AuthenticationPinViewControllerDelegate {
+    func didSubmit(pin: String?) {
+        output.submitPin(pin: pin)
+    }
+}
+
+extension AuthenticationViewController: AuthenticationRegistrationViewControllerDelegate {
+    func didSubmit(username: String?, displayName: String?, image: UIImage?) {
+        output.register(username: username, displayName: displayName, image: image)
     }
 }

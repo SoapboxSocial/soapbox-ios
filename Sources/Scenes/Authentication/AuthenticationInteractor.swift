@@ -6,8 +6,6 @@ protocol AuthenticationInteractorOutput {
     func present(error: AuthenticationInteractor.AuthenticationError)
     func present(state: AuthenticationInteractor.AuthenticationState)
     func presentLoggedInView()
-    func present(profileImage: UIImage)
-    func presentImagePicker()
 }
 
 class AuthenticationInteractor: AuthenticationViewControllerOutput {
@@ -19,7 +17,7 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
     private var image: UIImage?
 
     enum AuthenticationState: Int {
-        case login, pin, registration, requestNotifications, success
+        case getStarted, login, pin, registration, requestNotifications, success
     }
 
     enum AuthenticationError {
@@ -91,7 +89,7 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
         }
     }
 
-    func register(username: String?, displayName: String?) {
+    func register(username: String?, displayName: String?, image: UIImage?) {
         guard let usernameInput = username, isValidUsername(usernameInput) else {
             return output.present(error: .invalidUsername)
         }
@@ -123,15 +121,6 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
                 }
             }
         }
-    }
-
-    func showImagePicker() {
-        output.presentImagePicker()
-    }
-
-    @objc func didSelect(image: UIImage) {
-        self.image = image
-        output.present(profileImage: image)
     }
 
     private func isValidUsername(_ username: String) -> Bool {
