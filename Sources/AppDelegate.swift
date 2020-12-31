@@ -88,8 +88,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return false
         }
 
-//        return auth.inject(pin: pin)
-        return true
+        return auth.inject(pin: pin)
     }
 
     private func handleRoomURL(components: NSURLComponents) -> Bool {

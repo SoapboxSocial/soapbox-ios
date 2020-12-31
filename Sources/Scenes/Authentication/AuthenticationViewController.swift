@@ -52,6 +52,15 @@ class AuthenticationViewController: UIPageViewController {
 
         view.backgroundColor = .brandColor
     }
+
+    func inject(pin: String) -> Bool {
+        if state != .pin {
+            return false
+        }
+
+        didSubmit(pin: pin)
+        return true
+    }
 }
 
 extension AuthenticationViewController: AuthenticationPresenterOutput {
