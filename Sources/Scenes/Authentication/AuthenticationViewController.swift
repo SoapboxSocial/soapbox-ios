@@ -37,9 +37,9 @@ class AuthenticationViewController: UIPageViewController {
 //        registration.delegate = self
 //        orderedViewControllers.append(registration)
 //        orderedViewControllers.append(AuthenticationRequestNotificationsViewController())
-        
+
         orderedViewControllers.append(AuthenticationFollowViewController())
-        
+
 //        orderedViewControllers.append(AuthenticationSuccessViewController())
 
         setViewControllers([orderedViewControllers[0]], direction: .forward, animated: false)

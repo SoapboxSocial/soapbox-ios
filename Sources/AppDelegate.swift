@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //            if loggedIn {
 //                return createLoggedIn()
 //            } else {
-                return createLoginView()
+            createLoginView()
 //            }
         }()
 
