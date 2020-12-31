@@ -29,23 +29,6 @@ class AuthenticationFollowViewController: UIViewController {
     
     private var list: UICollectionView!
     
-    init() {
-        APIClient().search("*", types: [.users], limit: 32, offset: 0, callback: { result in
-            switch result {
-            case .failure:
-                break
-            case .success(let response):
-                if let users = response.users {
-                    self.users = users
-                }
-            }
-        })
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -69,8 +52,8 @@ class AuthenticationFollowViewController: UIViewController {
         layout.sectionInset.bottom = view.safeAreaInsets.bottom
         
         list = UICollectionView(frame: .zero, collectionViewLayout: layout)
-//        list.dataSource = self
-//        list!.delegate = self
+        list.dataSource = self
+        list.delegate = self
         list.allowsMultipleSelection = true
         list.translatesAutoresizingMaskIntoConstraints = false
         list.register(cellWithClass: SelectableImageTextCell.self)
@@ -84,6 +67,48 @@ class AuthenticationFollowViewController: UIViewController {
             list.bottomAnchor.constraint(equalTo: inviteButton.topAnchor),
         ])
         
-        list.reloadData()
+        APIClient().search("*", types: [.users], limit: 48, offset: 0, callback: { [self] result in
+            switch result {
+            case .failure:
+                break
+            case .success(let response):
+                if let users = response.users {
+                    self.users = users
+                    self.list.reloadData()
+                }
+            }
+        })
+    }
+}
+
+extension AuthenticationFollowViewController: UICollectionViewDelegate {
+    
+}
+
+extension AuthenticationFollowViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return users.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = list.dequeueReusableCell(withClass: SelectableImageTextCell.self, for: indexPath)
+
+        let user = users[indexPath.item]
+
+        cell.image.backgroundColor = .lightBrandColor
+        if let image = user.image, image != "" {
+            cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
+        }
+
+        cell.title.text = user.displayName.firstName()
+        cell.title.textColor = .white
+
+//        if selected.contains(user.id) {
+//            cell.selectedView.isHidden = false
+//        } else {
+            cell.selectedView.isHidden = true
+//        }
+
+        return cell
     }
 }
