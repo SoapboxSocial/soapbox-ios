@@ -7,6 +7,12 @@ protocol RoomCreationDelegate {
 
 class RoomCreationView: UIView, UITextFieldDelegate {
     var delegate: RoomCreationDelegate?
+    
+    private enum State {
+        case start, invite
+    }
+    
+    private var state = State.start
 
     private let visibilityControl: SegmentedControl = {
         let control = SegmentedControl(frame: CGRect.zero, titles: [
@@ -236,6 +242,11 @@ class RoomCreationView: UIView, UITextFieldDelegate {
     @objc private func createPressed() {
         let isPrivate = visibilityControl.index == 1
 
+        if isPrivate, state == .start {
+            // @todo
+            return
+        }
+        
         var group: Int?
         if !isPrivate {
             group = groupsSlider.selectedGroup
