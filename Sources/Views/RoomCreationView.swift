@@ -72,6 +72,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         return button
     }()
 
+    // @TODO MAYBE CHANGE LABEL FOR PRIVATE GROUP?
     private let visibilityTooltip: UILabel = {
         let label = UILabel()
         label.font = .rounded(forTextStyle: .title3, weight: .bold)
