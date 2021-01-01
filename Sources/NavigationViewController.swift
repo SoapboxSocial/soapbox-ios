@@ -312,7 +312,7 @@ extension NavigationViewController: RoomCreationDelegate {
         }
     }
 
-    func createRoom(name: String?, isPrivate: Bool, group: Int?) {
+    func createRoom(name: String?, isPrivate: Bool, group: Int?, users _: [Int]?) {
         DispatchQueue.main.async {
             self.createRoomButton.isHidden = true
             self.activityIndicator.startAnimating()

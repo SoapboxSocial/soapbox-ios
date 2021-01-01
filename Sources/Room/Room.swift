@@ -138,7 +138,7 @@ class Room: NSObject {
         }
     }
 
-    func create(name: String?, isPrivate: Bool, group: Int? = nil, completion: @escaping (Result<Void, RoomError>) -> Void) {
+    func create(name: String?, isPrivate: Bool, group: Int? = nil, users: [Int]? = nil, completion: @escaping (Result<Void, RoomError>) -> Void) {
         self.name = name
         self.completion = completion
 
@@ -155,6 +155,10 @@ class Room: NSObject {
 
         if let id = group {
             request.group = Int64(id)
+        }
+
+        if let ids = users {
+            request.users = ids.map(Int64.init)
         }
 
         _ = stream.sendMessage(SignalRequest.with {
