@@ -2,7 +2,7 @@ import UIKit
 
 protocol RoomCreationDelegate {
     func didCancelRoomCreation()
-    func didEnterWithName(_ name: String?, isPrivate: Bool, group: Int?)
+    func didEnterWithName(_ name: String?, isPrivate: Bool, group: Int?, users: [Int]?)
 }
 
 class RoomCreationView: UIView, UITextFieldDelegate {
@@ -33,6 +33,35 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         return slider
     }()
 
+    private let cancelButton: UIButton = {
+        let button = UIButton()
+        button.titleLabel?.font = .rounded(forTextStyle: .body, weight: .medium)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.addTarget(self, action: #selector(cancelPressed), for: .touchUpInside)
+        return button
+    }()
+
+    private let title: UILabel = {
+        let label = UILabel()
+        label.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
+        label.text = NSLocalizedString("create_a_room", comment: "")
+        label.textColor = .white
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private let button: Button = {
+        let button = Button(size: .large)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle(NSLocalizedString("start_room", comment: ""), for: .normal)
+        button.backgroundColor = .white
+        button.setTitleColor(.black, for: .normal)
+        button.addTarget(self, action: #selector(createPressed), for: .touchUpInside)
+        return button
+    }()
+
     init() {
         super.init(frame: CGRect.zero)
 
@@ -40,22 +69,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
 
         backgroundColor = .brandColor
 
-        let recognizer = UITapGestureRecognizer(target: self, action: #selector(cancelPressed))
-
-        let cancel = UILabel()
-        cancel.font = .rounded(forTextStyle: .body, weight: .medium)
-        cancel.text = NSLocalizedString("cancel", comment: "")
-        cancel.textColor = .white
-        cancel.addGestureRecognizer(recognizer)
-        cancel.isUserInteractionEnabled = true
-        cancel.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(cancel)
-
-        let title = UILabel()
-        title.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
-        title.text = NSLocalizedString("create_a_room", comment: "")
-        title.textColor = .white
-        title.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(cancelButton)
         addSubview(title)
 
         textField.delegate = self
@@ -109,12 +123,6 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         mutedText.translatesAutoresizingMaskIntoConstraints = false
         stack.addArrangedSubview(mutedText)
 
-        let button = Button(size: .large)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle(NSLocalizedString("start_room", comment: ""), for: .normal)
-        button.backgroundColor = .white
-        button.setTitleColor(.black, for: .normal)
-        button.addTarget(self, action: #selector(createPressed), for: .touchUpInside)
         stack.addArrangedSubview(button)
 
         NSLayoutConstraint.activate([
@@ -123,12 +131,12 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         ])
 
         NSLayoutConstraint.activate([
-            cancel.topAnchor.constraint(equalTo: topAnchor, constant: 20),
-            cancel.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            cancelButton.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            cancelButton.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
         ])
 
         NSLayoutConstraint.activate([
-            title.topAnchor.constraint(equalTo: cancel.bottomAnchor, constant: 20),
+            title.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 20),
             title.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
         ])
 
@@ -210,7 +218,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
             group = groupsSlider.selectedGroup
         }
 
-        delegate?.didEnterWithName(textField.text, isPrivate: isPrivate, group: group)
+        delegate?.didEnterWithName(textField.text, isPrivate: isPrivate, group: group, users: [])
     }
 
     @objc private func cancelPressed() {
