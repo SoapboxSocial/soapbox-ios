@@ -30,7 +30,11 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         return field
     }()
 
-    private var groupView: UIView!
+    private let groupView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
 
     private let groupsSlider: GroupsSlider = {
         let slider = GroupsSlider(textColor: .white, imageBackground: .lightBrandColor, markSelection: true)
@@ -140,9 +144,6 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         mutedText.textAlignment = .center
         mutedText.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(mutedText)
-
-        groupView = UIView()
-        groupView.translatesAutoresizingMaskIntoConstraints = false
 
         let groupLabel = UILabel()
         groupLabel.text = NSLocalizedString("choose_a_group", comment: "")
@@ -266,7 +267,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
             button.setTitle(NSLocalizedString("start_room", comment: ""), for: .normal)
 
             // @TODO WTF?
-            if groupsSlider.groupsCount > 1 {
+            if groupsSlider.groupsCount >= 1 {
                 groupView.isHidden = false
             }
         case 1:
