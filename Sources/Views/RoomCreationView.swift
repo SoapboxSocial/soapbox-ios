@@ -62,6 +62,15 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         return button
     }()
 
+    private let visibilityTooltip: UILabel = {
+        let label = UILabel()
+        label.font = .rounded(forTextStyle: .title3, weight: .bold)
+        label.text = NSLocalizedString("anyone_can_join", comment: "")
+        label.textColor = .white
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
     init() {
         super.init(frame: CGRect.zero)
 
@@ -71,64 +80,6 @@ class RoomCreationView: UIView, UITextFieldDelegate {
 
         addSubview(cancelButton)
         addSubview(title)
-
-        textField.delegate = self
-        addSubview(textField)
-
-        visibilityControl.addTarget(self, action: #selector(segmentedControlUpdated), for: .valueChanged)
-        addSubview(visibilityControl)
-
-        let stack = UIStackView()
-        stack.spacing = 20
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.distribution = .fill
-        stack.alignment = .fill
-        stack.axis = .vertical
-        addSubview(stack)
-
-        groupView = UIView()
-        groupView.translatesAutoresizingMaskIntoConstraints = false
-
-        let label = UILabel()
-        label.text = NSLocalizedString("choose_a_group", comment: "")
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .rounded(forTextStyle: .title1, weight: .bold)
-        label.textColor = .white
-        groupView.addSubview(label)
-
-        groupView.addSubview(groupsSlider)
-
-        NSLayoutConstraint.activate([
-            label.topAnchor.constraint(equalTo: groupView.topAnchor),
-            label.leftAnchor.constraint(equalTo: groupView.leftAnchor, constant: 20),
-            label.rightAnchor.constraint(equalTo: groupView.rightAnchor, constant: -20),
-        ])
-
-        NSLayoutConstraint.activate([
-            groupsSlider.heightAnchor.constraint(equalToConstant: 82),
-            groupsSlider.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 20),
-            groupsSlider.leftAnchor.constraint(equalTo: groupView.leftAnchor),
-            groupsSlider.rightAnchor.constraint(equalTo: groupView.rightAnchor),
-            groupsSlider.bottomAnchor.constraint(equalTo: groupView.bottomAnchor),
-        ])
-
-        stack.addArrangedSubview(groupView)
-        groupView.isHidden = true
-
-        let mutedText = UILabel()
-        mutedText.text = NSLocalizedString("you_will_be_muted_by_default", comment: "")
-        mutedText.font = .rounded(forTextStyle: .body, weight: .semibold)
-        mutedText.textColor = .white
-        mutedText.textAlignment = .center
-        mutedText.translatesAutoresizingMaskIntoConstraints = false
-        stack.addArrangedSubview(mutedText)
-
-        stack.addArrangedSubview(button)
-
-        NSLayoutConstraint.activate([
-            groupView.leftAnchor.constraint(equalTo: leftAnchor),
-            groupView.rightAnchor.constraint(equalTo: rightAnchor),
-        ])
 
         NSLayoutConstraint.activate([
             cancelButton.topAnchor.constraint(equalTo: topAnchor, constant: 20),
@@ -140,42 +91,114 @@ class RoomCreationView: UIView, UITextFieldDelegate {
             title.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
         ])
 
-        NSLayoutConstraint.activate([
-            textField.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 30),
-            textField.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            textField.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
-            textField.heightAnchor.constraint(equalToConstant: 56),
-        ])
-
-        NSLayoutConstraint.activate([
-            visibilityControl.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            visibilityControl.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
-            visibilityControl.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 20),
-            visibilityControl.heightAnchor.constraint(equalToConstant: 56),
-        ])
-
-        NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: visibilityControl.bottomAnchor, constant: 20),
-            stack.leftAnchor.constraint(equalTo: leftAnchor),
-            stack.rightAnchor.constraint(equalTo: rightAnchor),
-        ])
+        addSubview(button)
 
         NSLayoutConstraint.activate([
             button.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
             button.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
             button.heightAnchor.constraint(equalToConstant: 56),
+            button.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -10),
         ])
+
+        let creationView = createRoomView()
+        addSubview(creationView)
 
         NSLayoutConstraint.activate([
-            mutedText.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            mutedText.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            creationView.leftAnchor.constraint(equalTo: leftAnchor),
+            creationView.rightAnchor.constraint(equalTo: rightAnchor),
+            creationView.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 30),
+            creationView.bottomAnchor.constraint(equalTo: button.topAnchor),
         ])
-
-        loadGroups()
     }
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    private func createRoomView() -> UIView {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+
+        textField.delegate = self
+        view.addSubview(textField)
+
+        visibilityControl.addTarget(self, action: #selector(segmentedControlUpdated), for: .valueChanged)
+        view.addSubview(visibilityControl)
+
+        view.addSubview(visibilityTooltip)
+
+        let mutedText = UILabel()
+        mutedText.text = NSLocalizedString("you_will_be_muted_by_default", comment: "")
+        mutedText.font = .rounded(forTextStyle: .body, weight: .semibold)
+        mutedText.textColor = .white
+        mutedText.textAlignment = .center
+        mutedText.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(mutedText)
+
+        groupView = UIView()
+        groupView.translatesAutoresizingMaskIntoConstraints = false
+
+        let groupLabel = UILabel()
+        groupLabel.text = NSLocalizedString("choose_a_group", comment: "")
+        groupLabel.translatesAutoresizingMaskIntoConstraints = false
+        groupLabel.font = .rounded(forTextStyle: .title1, weight: .bold)
+        groupLabel.textColor = .white
+        groupView.addSubview(groupLabel)
+
+        groupView.addSubview(groupsSlider)
+
+        NSLayoutConstraint.activate([
+            groupLabel.topAnchor.constraint(equalTo: groupView.topAnchor),
+            groupLabel.leftAnchor.constraint(equalTo: groupView.leftAnchor, constant: 20),
+            groupLabel.rightAnchor.constraint(equalTo: groupView.rightAnchor, constant: -20),
+        ])
+
+        NSLayoutConstraint.activate([
+            groupsSlider.heightAnchor.constraint(equalToConstant: 82),
+            groupsSlider.topAnchor.constraint(equalTo: groupLabel.bottomAnchor, constant: 20),
+            groupsSlider.leftAnchor.constraint(equalTo: groupView.leftAnchor),
+            groupsSlider.rightAnchor.constraint(equalTo: groupView.rightAnchor),
+            groupsSlider.bottomAnchor.constraint(equalTo: groupView.bottomAnchor),
+        ])
+
+        groupView.isHidden = true
+        view.addSubview(groupView)
+
+        NSLayoutConstraint.activate([
+            groupView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            groupView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            groupView.topAnchor.constraint(equalTo: visibilityTooltip.bottomAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            textField.topAnchor.constraint(equalTo: view.topAnchor),
+            textField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            textField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            textField.heightAnchor.constraint(equalToConstant: 56),
+        ])
+
+        NSLayoutConstraint.activate([
+            visibilityControl.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            visibilityControl.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            visibilityControl.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 20),
+            visibilityControl.heightAnchor.constraint(equalToConstant: 56),
+        ])
+
+        NSLayoutConstraint.activate([
+            visibilityTooltip.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            visibilityTooltip.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            visibilityTooltip.topAnchor.constraint(equalTo: visibilityControl.bottomAnchor, constant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            mutedText.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            mutedText.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            mutedText.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
+        ])
+
+        loadGroups()
+
+        return view
     }
 
     func loadGroups() {
@@ -228,10 +251,16 @@ class RoomCreationView: UIView, UITextFieldDelegate {
     @objc private func segmentedControlUpdated() {
         switch visibilityControl.index {
         case 0:
+            visibilityTooltip.text = NSLocalizedString("anyone_can_join", comment: "")
+            button.setTitle(NSLocalizedString("start_room", comment: ""), for: .normal)
+
+            // @TODO WTF?
             if groupsSlider.groupsCount > 1 {
                 groupView.isHidden = false
             }
         case 1:
+            visibilityTooltip.text = NSLocalizedString("only_invited_can_join", comment: "")
+            button.setTitle(NSLocalizedString("choose_people", comment: ""), for: .normal)
             groupView.isHidden = true
         default:
             break
