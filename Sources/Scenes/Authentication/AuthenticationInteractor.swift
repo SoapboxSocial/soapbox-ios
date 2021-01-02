@@ -17,7 +17,7 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
     private var image: UIImage?
 
     enum AuthenticationState: Int {
-        case getStarted, login, pin, registration, requestNotifications, success
+        case getStarted, login, pin, registration, requestNotifications, follow, success
     }
 
     enum AuthenticationError {
@@ -123,6 +123,22 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
         }
     }
 
+    func follow(users: [Int]) {
+        if users.count == 0 {
+            return output.present(state: .success)
+        }
+
+        api.multifollow(users: users, callback: { result in
+            switch result {
+            case .failure:
+                self.output.present(error: .general)
+                self.output.present(state: .success)
+            case .success:
+                self.output.present(state: .success)
+            }
+        })
+    }
+
     private func isValidUsername(_ username: String) -> Bool {
         if username.count >= 100 || username.count < 3 {
             return false
@@ -157,10 +173,10 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
 
 extension AuthenticationInteractor: NotificationManagerDelegate {
     func deviceTokenFailedToSet() {
-        output.present(state: .success)
+        output.present(state: .follow)
     }
 
     func deviceTokenWasSet() {
-        output.present(state: .success)
+        output.present(state: .follow)
     }
 }

@@ -9,6 +9,7 @@ protocol AuthenticationViewControllerOutput {
     func login(email: String?)
     func submitPin(pin: String?)
     func register(username: String?, displayName: String?, image: UIImage?)
+    func follow(users: [Int])
 }
 
 class AuthenticationViewController: UIPageViewController {
@@ -38,6 +39,11 @@ class AuthenticationViewController: UIPageViewController {
         orderedViewControllers.append(registration)
 
         orderedViewControllers.append(AuthenticationRequestNotificationsViewController())
+
+        let follow = AuthenticationFollowViewController()
+        follow.delegate = self
+        orderedViewControllers.append(follow)
+
         orderedViewControllers.append(AuthenticationSuccessViewController())
 
         setViewControllers([orderedViewControllers[0]], direction: .forward, animated: false)
@@ -107,5 +113,11 @@ extension AuthenticationViewController: AuthenticationPinViewControllerDelegate 
 extension AuthenticationViewController: AuthenticationRegistrationViewControllerDelegate {
     func didSubmit(username: String?, displayName: String?, image: UIImage?) {
         output.register(username: username, displayName: displayName, image: image)
+    }
+}
+
+extension AuthenticationViewController: AuthenticationFollowViewControllerDelegate {
+    func didSubmit(users: [Int]) {
+        output.follow(users: users)
     }
 }

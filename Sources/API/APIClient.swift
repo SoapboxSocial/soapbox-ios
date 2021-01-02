@@ -283,6 +283,14 @@ extension APIClient {
         followRequest("/v1/users/unfollow", id: id, callback: callback)
     }
 
+    func multifollow(users: [Int], callback: @escaping (Result<Void, Error>) -> Void) {
+        post(
+            path: "/v1/users/multi-follow",
+            parameters: ["ids": users.map(String.init).joined(separator: ",")],
+            callback: callback
+        )
+    }
+
     private func userListRequest(_ path: String, parameters: Parameters? = nil, callback: @escaping (Result<[User], Error>) -> Void) {
         get(path: path, parameters: parameters, callback: callback)
     }

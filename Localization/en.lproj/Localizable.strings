@@ -191,6 +191,7 @@
 "get_started" = "Get started";
 
 "enable_notifications" = "Enable notifications to be notified when the people you follow start a room.";
+"follow_users_to_start_talking" = "Follow some users to start talking.";
 
 "only_invited_can_join" = "Only invited users can join the room";
 "anyone_can_join" = "Anyone can join the room";
