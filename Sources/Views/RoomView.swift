@@ -659,7 +659,18 @@ extension RoomView: UICollectionViewDelegate {
 
             optionMenu.addAction(
                 UIAlertAction(title: NSLocalizedString("ban_from_room", comment: ""), style: .destructive, handler: { _ in
-                    self.room.kick(user: member.id)
+                    let message = NSLocalizedString("user_will_no_longer_be_able_to_join_room", comment: "")
+
+                    let alert = UIAlertController.confirmation(
+                        onAccepted: {
+                            self.room.kick(user: member.id)
+                        },
+                        message: String(format: message, member.displayName.firstName())
+                    )
+
+                    DispatchQueue.main.async {
+                        UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
+                    }
                 })
             )
         }
