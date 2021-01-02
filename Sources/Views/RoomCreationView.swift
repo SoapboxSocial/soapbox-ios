@@ -8,7 +8,7 @@ protocol RoomCreationDelegate {
 class RoomCreationView: UIView, UITextFieldDelegate {
     var delegate: RoomCreationDelegate?
 
-    private enum State {
+    private enum State: Int {
         case start, invite
     }
 
@@ -87,6 +87,14 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         return view
     }()
 
+    private let scrollView: UIScrollView = {
+        let view = UIScrollView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
+    private let api = APIClient()
+
     init() {
         super.init(frame: CGRect.zero)
 
@@ -116,14 +124,33 @@ class RoomCreationView: UIView, UITextFieldDelegate {
             button.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -10),
         ])
 
+        addSubview(scrollView)
+
         let creationView = createRoomView()
-        addSubview(creationView)
+        scrollView.addSubview(creationView)
+
+        userList.delegate = self
+        scrollView.addSubview(userList)
 
         NSLayoutConstraint.activate([
-            creationView.leftAnchor.constraint(equalTo: leftAnchor),
-            creationView.rightAnchor.constraint(equalTo: rightAnchor),
-            creationView.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 30),
+            scrollView.leftAnchor.constraint(equalTo: leftAnchor),
+            scrollView.rightAnchor.constraint(equalTo: rightAnchor),
+            scrollView.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 30),
+            scrollView.bottomAnchor.constraint(equalTo: button.topAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            creationView.leftAnchor.constraint(equalTo: scrollView.leftAnchor),
+            creationView.widthAnchor.constraint(equalTo: widthAnchor),
+            creationView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             creationView.bottomAnchor.constraint(equalTo: button.topAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            userList.leftAnchor.constraint(equalTo: creationView.rightAnchor),
+            userList.widthAnchor.constraint(equalTo: widthAnchor),
+            userList.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            userList.bottomAnchor.constraint(equalTo: button.topAnchor),
         ])
     }
 
@@ -210,13 +237,14 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         ])
 
         loadGroups()
+        loadFriends()
 
         return view
     }
 
     func loadGroups() {
         // @TODO Paginate
-        APIClient().groups(id: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId), limit: 100, offset: 0, callback: { result in
+        api.groups(id: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId), limit: 100, offset: 0, callback: { result in
             switch result {
             case .failure:
                 self.groupView.isHidden = true
@@ -230,6 +258,19 @@ class RoomCreationView: UIView, UITextFieldDelegate {
                 self.groupView.isHidden = false
             }
         })
+    }
+
+    func loadFriends() {
+        api.friends { result in
+            switch result {
+            case .failure:
+                break
+            case let .success(users):
+                DispatchQueue.main.async {
+                    self.userList.set(users: users)
+                }
+            }
+        }
     }
 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
@@ -250,7 +291,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         let isPrivate = visibilityControl.index == 1
 
         if isPrivate, state == .start {
-            // @todo
+            transitionTo(state: .invite)
             return
         }
 
@@ -259,10 +300,20 @@ class RoomCreationView: UIView, UITextFieldDelegate {
             group = groupsSlider.selectedGroup
         }
 
-        delegate?.didEnterWithName(textField.text, isPrivate: isPrivate, group: group, users: [])
+        var users = [Int]()
+        if isPrivate {
+            users = userList.selected
+        }
+
+        delegate?.didEnterWithName(textField.text, isPrivate: isPrivate, group: group, users: users)
     }
 
     @objc private func cancelPressed() {
+        if state == .invite {
+            transitionTo(state: .start)
+            return
+        }
+
         delegate?.didCancelRoomCreation()
     }
 
@@ -282,6 +333,40 @@ class RoomCreationView: UIView, UITextFieldDelegate {
             groupView.isHidden = true
         default:
             break
+        }
+    }
+
+    private func transitionTo(state: State) {
+        self.state = state
+        scrollView.setContentOffset(CGPoint(x: frame.size.width * CGFloat(state.rawValue), y: 0), animated: true)
+
+        // @TODO CANCEL LABEL
+
+        switch state {
+        case .invite:
+            button.isEnabled = false
+            button.setTitle(NSLocalizedString("start_room", comment: ""), for: .normal)
+            title.text = NSLocalizedString("invite_your_friends", comment: "")
+            cancelButton.setTitle(NSLocalizedString("back", comment: ""), for: .normal)
+        case .start:
+            button.isEnabled = true
+            title.text = NSLocalizedString("create_a_room", comment: "")
+            button.setTitle(NSLocalizedString("choose_people", comment: ""), for: .normal)
+            cancelButton.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
+        }
+    }
+}
+
+extension RoomCreationView: UsersListWithSearchDelegate {
+    func usersList(_ list: UsersListWithSearch, didDeselect _: Int) {
+        if list.selected.count == 0 {
+            button.isEnabled = false
+        }
+    }
+
+    func usersList(_ list: UsersListWithSearch, didSelect _: Int) {
+        if list.selected.count > 0 {
+            button.isEnabled = true
         }
     }
 }
