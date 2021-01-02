@@ -116,8 +116,8 @@ extension UsersListWithSearch: UICollectionViewDelegate {
 
         cell.selectedView.isHidden = false
 
-        delegate?.usersList(self, didSelect: user.id)
         selected.append(user.id)
+        delegate?.usersList(self, didSelect: user.id)
     }
 
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {

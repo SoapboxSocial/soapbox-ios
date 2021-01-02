@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - We've made it a bit clearer in the app when you have unread notifications.
+ - The room creation flow has been improved for making private rooms.
 
 ## [1.9.0] - 2020-12-28
 

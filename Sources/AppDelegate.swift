@@ -180,9 +180,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         switch shortcutItem.type {
         case "NEW_ROOM":
-            nav.createRoom(name: nil, isPrivate: false, group: nil)
+            nav.createRoom(name: nil, isPrivate: false, group: nil, users: [])
         case "NEW_PRIVATE_ROOM":
-            nav.createRoom(name: nil, isPrivate: true, group: nil)
+            nav.createRoom(name: nil, isPrivate: true, group: nil, users: []) // @TODO THIS IS A TAD BIT DUMB
         default:
             break
         }

@@ -1,6 +1,12 @@
 import UIKit
 
 class Button: ButtonWithSpringAnimation {
+    open override var isEnabled: Bool {
+        didSet {
+            alpha = isEnabled ? 1.0 : 0.25
+        }
+    }
+
     enum Size {
         case xsmall, small, regular, large
     }
