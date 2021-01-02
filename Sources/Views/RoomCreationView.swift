@@ -7,11 +7,11 @@ protocol RoomCreationDelegate {
 
 class RoomCreationView: UIView, UITextFieldDelegate {
     var delegate: RoomCreationDelegate?
-    
+
     private enum State {
         case start, invite
     }
-    
+
     private var state = State.start
 
     private let visibilityControl: SegmentedControl = {
@@ -80,6 +80,11 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
+    }()
+
+    private let userList: UsersListWithSearch = {
+        let view = UsersListWithSearch(width: UIScreen.main.bounds.size.width, allowsDeselection: true)
+        return view
     }()
 
     init() {
@@ -248,7 +253,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
             // @todo
             return
         }
-        
+
         var group: Int?
         if !isPrivate {
             group = groupsSlider.selectedGroup
