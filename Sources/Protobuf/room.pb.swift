@@ -565,6 +565,8 @@ struct CreateRequest {
 
   var group: Int64 = 0
 
+  var users: [Int64] = []
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
@@ -1297,6 +1299,7 @@ extension CreateRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     1: .same(proto: "name"),
     2: .same(proto: "visibility"),
     3: .same(proto: "group"),
+    4: .same(proto: "users"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1305,6 +1308,7 @@ extension CreateRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
       case 1: try decoder.decodeSingularStringField(value: &self.name)
       case 2: try decoder.decodeSingularEnumField(value: &self.visibility)
       case 3: try decoder.decodeSingularInt64Field(value: &self.group)
+      case 4: try decoder.decodeRepeatedInt64Field(value: &self.users)
       default: break
       }
     }
@@ -1320,6 +1324,9 @@ extension CreateRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     if self.group != 0 {
       try visitor.visitSingularInt64Field(value: self.group, fieldNumber: 3)
     }
+    if !self.users.isEmpty {
+      try visitor.visitPackedInt64Field(value: self.users, fieldNumber: 4)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -1327,6 +1334,7 @@ extension CreateRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     if lhs.name != rhs.name {return false}
     if lhs.visibility != rhs.visibility {return false}
     if lhs.group != rhs.group {return false}
+    if lhs.users != rhs.users {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
