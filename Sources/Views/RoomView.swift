@@ -699,7 +699,7 @@ extension RoomView: UICollectionViewDataSource {
                 role: room.role
             )
         } else {
-            cell.setup(member: room.members[indexPath.item - 1])
+            cell.setup(member: room.members[indexPath.item - 1]) // @TODO apparently this can crash?
         }
 
         return cell
