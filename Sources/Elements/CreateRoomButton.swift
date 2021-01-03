@@ -30,6 +30,7 @@ class CreateRoomButton: ButtonWithSpringAnimation {
         )
 
         tintColor = .white
+        adjustsImageWhenHighlighted = false
         imageEdgeInsets = UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 0)
 
         addTarget(self, action: #selector(didPress), for: [.touchUpInside])
