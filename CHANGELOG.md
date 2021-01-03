@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.10.0] - 2021-01-03
+
  - For our new users we completely reworked the on-boarding experience.
  - We've made it a bit clearer in the app when you have unread notifications.
  - The room creation flow has been improved for making private rooms.
