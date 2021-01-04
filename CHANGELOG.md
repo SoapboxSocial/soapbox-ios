@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fix showing the wrong profile image in search.
+
 ## [1.10.0] - 2021-01-03
 
  - For our new users we completely reworked the on-boarding experience.
