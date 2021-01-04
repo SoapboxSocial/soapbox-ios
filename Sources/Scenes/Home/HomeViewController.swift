@@ -154,7 +154,7 @@ class HomeViewController: ViewController {
 
         layoutItem.contentInsets = .zero
 
-        var height = NSCollectionLayoutDimension.absolute(view.frame.size.height - 300)
+        let height = NSCollectionLayoutDimension.absolute(view.frame.size.height - 300)
 
         let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: height)
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitem: layoutItem, count: 1)
