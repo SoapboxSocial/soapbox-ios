@@ -1,14 +1,12 @@
 import UIKit
 
 public struct KeyboardNotification {
-    let notification: NSNotification
-    let userInfo: NSDictionary
+    private let userInfo: NSDictionary
 
     /// Initializer
     ///
     /// :param: notification Keyboard-related notification
     public init(_ notification: NSNotification) {
-        self.notification = notification
         if let userInfo = notification.userInfo {
             self.userInfo = userInfo as NSDictionary
         } else {
