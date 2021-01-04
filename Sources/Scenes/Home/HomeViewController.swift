@@ -11,7 +11,6 @@ protocol HomeViewControllerOutput {
 
 class HomeViewController: ViewController {
     private let refresh = UIRefreshControl()
-    private let downloader = ImageDownloader()
 
     private var collection: CollectionView!
     private var rooms = [RoomState]()

@@ -34,8 +34,6 @@ class AuthenticationPinViewController: ViewControllerWithKeyboardConstraint {
         return label
     }()
 
-    private var isDisappearing = false
-
     init() {
         super.init(nibName: nil, bundle: nil)
 

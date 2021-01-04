@@ -13,7 +13,6 @@ public class BadgedButtonItem: UIBarButtonItem {
     public var tapAction: (() -> Void)?
 
     private let button = UIButton()
-    private var isAnimated: Bool? = false
 
     override init() {
         super.init()

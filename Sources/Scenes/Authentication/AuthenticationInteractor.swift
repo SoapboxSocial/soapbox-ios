@@ -14,8 +14,6 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
 
     private var token: String?
 
-    private var image: UIImage?
-
     enum AuthenticationState: Int {
         case getStarted, login, pin, registration, requestNotifications, follow, success
     }
