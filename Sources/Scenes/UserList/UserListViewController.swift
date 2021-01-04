@@ -3,7 +3,7 @@ import NotificationBannerSwift
 import UIKit
 
 protocol UserListViewControllerOutput {
-    func loadFollowers()
+    func loadUsers()
 }
 
 class UserListViewController: ViewController {
@@ -27,7 +27,7 @@ class UserListViewController: ViewController {
 
         collection.register(cellWithClass: UserCell.self)
 
-        output.loadFollowers()
+        output.loadUsers()
 
         view.addSubview(collection)
 
@@ -44,7 +44,7 @@ class UserListViewController: ViewController {
     }
 
     @objc private func loadMore() {
-        output.loadFollowers()
+        output.loadUsers()
     }
 }
 

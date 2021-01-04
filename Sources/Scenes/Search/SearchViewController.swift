@@ -70,9 +70,13 @@ class SearchViewController: ViewController {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             switch self.presenter.sectionType(for: sectionIndex) {
             case .groupList:
-                return self.groupSection()
+                let section = NSCollectionLayoutSection.fullWidthSection()
+                section.boundarySupplementaryItems = [self.createSectionHeader(), self.createSectionFooter(height: 105 + 38)]
+                return section
             case .userList:
-                return self.userSection()
+                let section = NSCollectionLayoutSection.fullWidthSection()
+                section.boundarySupplementaryItems = [self.createSectionHeader(), self.createSectionFooter()]
+                return section
             }
         }
 
@@ -80,46 +84,6 @@ class SearchViewController: ViewController {
         layout.configuration.interSectionSpacing = 20
 
         return layout
-    }
-
-    private func userSection() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalWidth(1))
-        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
-
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(88))
-
-        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitem: layoutItem, count: 1)
-
-        layoutGroup.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-        layoutGroup.interItemSpacing = .fixed(0)
-
-        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
-        layoutSection.interGroupSpacing = 0
-
-        layoutSection.boundarySupplementaryItems = [createSectionHeader(), createSectionFooter()]
-
-        return layoutSection
-    }
-
-    private func groupSection() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalWidth(1))
-        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
-
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(88))
-
-        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitem: layoutItem, count: 1)
-
-        layoutGroup.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-        layoutGroup.interItemSpacing = .fixed(0)
-
-        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
-        layoutSection.interGroupSpacing = 0
-
-        layoutSection.boundarySupplementaryItems = [createSectionHeader(), createSectionFooter(height: 105 + 38)]
-
-        return layoutSection
     }
 
     private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {

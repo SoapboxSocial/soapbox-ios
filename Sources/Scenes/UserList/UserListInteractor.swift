@@ -19,7 +19,7 @@ class UserListInteractor: UserListViewControllerOutput {
         self.userListFunc = userListFunc
     }
 
-    func loadFollowers() {
+    func loadUsers() {
         userListFunc(user, limit, offset) { result in
             switch result {
             case .failure:

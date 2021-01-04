@@ -12,7 +12,6 @@ extension UICollectionViewFlowLayout {
         return layout
     }
 
-    // @TODO FIND A BETTER NAME
     static func basicUserBubbleLayout(itemsPerRow: Int, width: CGFloat) -> UICollectionViewFlowLayout {
         let spacing = CGFloat(20)
         let size = (width - (spacing * (CGFloat(itemsPerRow) + 1))) / CGFloat(itemsPerRow)
