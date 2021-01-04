@@ -195,6 +195,6 @@
 
 "only_invited_can_join" = "Only invited users can join the room";
 "anyone_can_join" = "Anyone can join the room";
-"choose_people" = "Choose People";
+"choose_people" = "Choose people";
 
 "user_will_no_longer_be_able_to_join_room" = "%@ will no longer be able to join this room.";
