@@ -401,6 +401,8 @@ class RoomView: UIView {
         UIView.animate(
             withDuration: 0.1,
             delay: 0,
+            usingSpringWithDamping: 0.6,
+            initialSpringVelocity: 0.5,
             options: .curveEaseOut,
             animations: { [self] in
                 muteButton.isHidden = false
