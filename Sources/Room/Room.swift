@@ -388,23 +388,23 @@ extension Room {
             break // @TODO SHOW POPUP SAYING YOU'VE BEEN INVITED TO BECOME ADMIN
         case let .joined(evt):
             on(joined: evt)
-        case let .left:
+        case .left:
             on(left: from)
         case let .linkShared(evt):
             on(linkShare: evt, from: from)
-        case let .muted:
+        case .muted:
             on(muted: from)
-        case let .mutedByAdmin(evt):
-            break
+        case .mutedByAdmin:
+            onMutedByAdmin()
         case let .reacted(evt):
-            break
-        case let .recordedScreen(evt):
-            break
+            on(reacted: evt, from: from)
+        case .recordedScreen:
+            on(recordedScreen: from)
         case let .removedAdmin(evt):
             break
         case let .renamedRoom(evt):
             on(roomRenamed: evt)
-        case let .unmuted:
+        case .unmuted:
             on(unmuted: from)
         case .none:
             break
@@ -448,6 +448,28 @@ extension Room {
     private func on(unmuted id: Int) {
         updateMemberMuteState(user: id, isMuted: false)
     }
+
+    private func on(reacted: Event.Reacted, from: Int) {
+        guard let value = String(bytes: reacted.emoji, encoding: .utf8) else {
+            return
+        }
+
+        guard let reaction = Reaction(rawValue: value) else {
+            return
+        }
+
+        delegate?.userDidReact(user: from, reaction: reaction)
+    }
+
+    private func on(recordedScreen id: Int) {
+        delegate?.userDidRecordScreen(id)
+    }
+
+    private func onMutedByAdmin() {
+        rtc.muteAudio()
+        isMuted = true
+        delegate?.wasMutedByAdmin()
+    }
 }
 
 extension Room {
@@ -456,28 +478,6 @@ extension Room {
 //        updateMemberRole(user: event.data.toInt, role: .speaker)
 //    }
 //
-//    private func wasMutedByAdmin(_: SignalReply.Event) {
-//        rtc.muteAudio()
-//        isMuted = true
-//        delegate?.wasMutedByAdmin()
-//    }
-//
-//    private func didReceiveReacted(_ event: SignalReply.Event) {
-//        guard let value = String(bytes: event.data, encoding: .utf8) else {
-//            return
-//        }
-//
-//        guard let reaction = Reaction(rawValue: value) else {
-//            return
-//        }
-//
-//        delegate?.userDidReact(user: Int(event.from), reaction: reaction)
-//    }
-//
-//
-//    private func didRecordScreen(_ event: SignalReply.Event) {
-//        delegate?.userDidRecordScreen(Int(event.from))
-//    }
 
     private func updateMemberMuteState(user: Int, isMuted: Bool) {
         DispatchQueue.main.async {
