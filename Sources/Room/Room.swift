@@ -393,7 +393,7 @@ extension Room {
         case let .linkShared(evt):
             on(linkShare: evt, from: from)
         case let .muted(evt):
-            break
+            on(muted: from)
         case let .mutedByAdmin(evt):
             break
         case let .reacted(evt):
@@ -405,7 +405,7 @@ extension Room {
         case let .renamedRoom(evt):
             on(roomRenamed: evt)
         case let .unmuted(evt):
-            break
+            on(unmuted: from)
         case .none:
             break
         }
@@ -423,7 +423,7 @@ extension Room {
         members.append(joined.user)
         delegate?.userDidJoinRoom(user: Int(joined.user.id))
     }
-    
+
     private func on(left id: Int) {
         members.removeAll(where: { $0.id == Int64(id) })
         delegate?.userDidLeaveRoom(user: id)
@@ -436,9 +436,17 @@ extension Room {
 
         delegate?.didReceiveLink(from: from, link: url)
     }
-        
+
     private func on(roomRenamed: Event.RenamedRoom) {
         delegate?.roomWasRenamed(roomRenamed.name)
+    }
+
+    private func on(muted id: Int) {
+        updateMemberMuteState(user: id, isMuted: true)
+    }
+
+    private func on(unmuted id: Int) {
+        updateMemberMuteState(user: id, isMuted: false)
     }
 }
 
@@ -446,14 +454,6 @@ extension Room {
 //
 //    private func didReceiveRemovedAdmin(_ event: SignalReply.Event) {
 //        updateMemberRole(user: event.data.toInt, role: .speaker)
-//    }
-//
-//    private func didReceiveMuteSpeaker(_ event: SignalReply.Event) {
-//        updateMemberMuteState(user: Int(event.from), isMuted: true)
-//    }
-//
-//    private func didReceiveUnmuteSpeaker(_ event: SignalReply.Event) {
-//        updateMemberMuteState(user: Int(event.from), isMuted: false)
 //    }
 //
 //    private func wasMutedByAdmin(_: SignalReply.Event) {
