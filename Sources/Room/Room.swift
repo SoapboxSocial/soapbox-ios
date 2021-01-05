@@ -26,12 +26,6 @@ enum RoomError: Error {
 // @TODO THIS ENTIRE THING SHOULD BE REFACTORED SO WE HANDLE WEBRTC AND GRPC NICER, EG ERRORS.
 
 class Room: NSObject {
-    enum MemberRole: String, Decodable {
-        case admin
-        case audience
-        case speaker
-    }
-
     enum Reaction: String, CaseIterable {
         case thumbsUp = "👍"
         case heart = "❤️"
@@ -44,7 +38,7 @@ class Room: NSObject {
     var id: String?
     var isClosed = false
 
-    private(set) var role = MemberRole.speaker
+    private(set) var role = RoomState.RoomMember.Role.regular
 
     private(set) var isMuted = true
     private(set) var visibility = Visibility.public
@@ -197,7 +191,7 @@ class Room: NSObject {
             $0.id = admin
         }))
 
-        updateMemberRole(user: admin, role: .speaker)
+        updateMemberRole(user: admin, role: .regular)
     }
 
     func invite(user: Int) {
@@ -364,7 +358,7 @@ extension Room {
     }
 
     private func on(removedAdmin: Event.RemovedAdmin) {
-        updateMemberRole(user: Int64(removedAdmin.id), role: .speaker)
+        updateMemberRole(user: Int64(removedAdmin.id), role: .regular)
     }
 
     private func on(joined: Event.Joined) {
@@ -437,7 +431,7 @@ extension Room {
         delegate?.didChangeMemberMuteState(user: user, isMuted: isMuted)
     }
 
-    private func updateMemberRole(user: Int64, role: MemberRole) {
+    private func updateMemberRole(user: Int64, role: RoomState.RoomMember.Role) {
         DispatchQueue.main.async {
             let index = self.members.firstIndex(where: { $0.id == user })
             if index != nil {

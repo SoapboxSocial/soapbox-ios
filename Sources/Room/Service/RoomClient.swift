@@ -6,7 +6,7 @@ final class RoomClient {
     // @TODO THIS CONTAINS WEBRTC AND SIGNALING LOGIC.
 
     func close() {}
-    
+
     func send(command: Command.OneOf_Payload) {
         let cmd = Command.with {
             $0.payload = command
