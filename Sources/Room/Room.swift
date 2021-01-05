@@ -32,9 +32,6 @@ class Room: NSObject {
         case speaker
     }
 
-    private let decoder = JSONDecoder()
-    private let encoder = JSONEncoder()
-
     enum Reaction: String, CaseIterable {
         case thumbsUp = "👍"
         case heart = "❤️"
@@ -65,6 +62,8 @@ class Room: NSObject {
     }
 
     let started: Date
+
+    init() {}
 
 //    init(rtc: WebRTCClient, grpc: RoomServiceClient) {
 //        self.rtc = rtc
@@ -465,7 +464,7 @@ extension Room {
     }
 }
 
-//extension Room: WebRTCClientDelegate {
+// extension Room: WebRTCClientDelegate {
 //    func webRTCClient(_: WebRTCClient, didChangeAudioLevel delta: Float, track ssrc: UInt32) {
 //        DispatchQueue.main.async {
 //            guard let user = self.members.first(where: { $0.ssrc == ssrc }) else {
@@ -512,9 +511,9 @@ extension Room {
 //            delegate?.roomWasClosedByRemote()
 //        }
 //    }
-//}
+// }
 //
-//extension Room {
+// extension Room {
 //    func startPreventing() {
 //        NotificationCenter.default.addObserver(self, selector: #selector(warnOnRecord), name: UIScreen.capturedDidChangeNotification, object: nil)
 //
@@ -534,4 +533,4 @@ extension Room {
 //
 //        send(command: .recordScreen(Command.RecordScreen()))
 //    }
-//}
+// }
