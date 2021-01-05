@@ -356,6 +356,14 @@ struct Event {
     set {payload = .joined(newValue)}
   }
 
+  var left: Event.Left {
+    get {
+      if case .left(let v)? = payload {return v}
+      return Event.Left()
+    }
+    set {payload = .left(newValue)}
+  }
+
   var muted: Event.Muted {
     get {
       if case .muted(let v)? = payload {return v}
@@ -440,6 +448,7 @@ struct Event {
 
   enum OneOf_Payload: Equatable {
     case joined(Event.Joined)
+    case left(Event.Left)
     case muted(Event.Muted)
     case unmuted(Event.Unmuted)
     case reacted(Event.Reacted)
@@ -455,6 +464,7 @@ struct Event {
     static func ==(lhs: Event.OneOf_Payload, rhs: Event.OneOf_Payload) -> Bool {
       switch (lhs, rhs) {
       case (.joined(let l), .joined(let r)): return l == r
+      case (.left(let l), .left(let r)): return l == r
       case (.muted(let l), .muted(let r)): return l == r
       case (.unmuted(let l), .unmuted(let r)): return l == r
       case (.reacted(let l), .reacted(let r)): return l == r
@@ -490,6 +500,16 @@ struct Event {
     init() {}
 
     fileprivate var _user: RoomState.RoomMember? = nil
+  }
+
+  struct Left {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
   }
 
   struct Muted {
@@ -1154,16 +1174,17 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "from"),
     2: .same(proto: "joined"),
-    3: .same(proto: "muted"),
-    4: .same(proto: "unmuted"),
-    5: .same(proto: "reacted"),
-    6: .same(proto: "linkShared"),
-    7: .same(proto: "invitedAdmin"),
-    8: .same(proto: "addedAdmin"),
-    9: .same(proto: "removedAdmin"),
-    10: .same(proto: "renamedRoom"),
-    11: .same(proto: "recordedScreen"),
-    12: .same(proto: "mutedByAdmin"),
+    3: .same(proto: "left"),
+    4: .same(proto: "muted"),
+    5: .same(proto: "unmuted"),
+    6: .same(proto: "reacted"),
+    7: .same(proto: "linkShared"),
+    8: .same(proto: "invitedAdmin"),
+    9: .same(proto: "addedAdmin"),
+    10: .same(proto: "removedAdmin"),
+    11: .same(proto: "renamedRoom"),
+    12: .same(proto: "recordedScreen"),
+    13: .same(proto: "mutedByAdmin"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1179,6 +1200,14 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .joined(v)}
       case 3:
+        var v: Event.Left?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .left(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .left(v)}
+      case 4:
         var v: Event.Muted?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1186,7 +1215,7 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .muted(v)}
-      case 4:
+      case 5:
         var v: Event.Unmuted?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1194,7 +1223,7 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .unmuted(v)}
-      case 5:
+      case 6:
         var v: Event.Reacted?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1202,7 +1231,7 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .reacted(v)}
-      case 6:
+      case 7:
         var v: Event.LinkShared?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1210,7 +1239,7 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .linkShared(v)}
-      case 7:
+      case 8:
         var v: Event.InvitedAdmin?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1218,7 +1247,7 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .invitedAdmin(v)}
-      case 8:
+      case 9:
         var v: Event.AddedAdmin?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1226,7 +1255,7 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .addedAdmin(v)}
-      case 9:
+      case 10:
         var v: Event.RemovedAdmin?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1234,7 +1263,7 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .removedAdmin(v)}
-      case 10:
+      case 11:
         var v: Event.RenamedRoom?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1242,7 +1271,7 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .renamedRoom(v)}
-      case 11:
+      case 12:
         var v: Event.RecordedScreen?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1250,7 +1279,7 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .recordedScreen(v)}
-      case 12:
+      case 13:
         var v: Event.MutedByAdmin?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1270,26 +1299,28 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
     switch self.payload {
     case .joined(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    case .muted(let v)?:
+    case .left(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-    case .unmuted(let v)?:
+    case .muted(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
-    case .reacted(let v)?:
+    case .unmuted(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
-    case .linkShared(let v)?:
+    case .reacted(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
-    case .invitedAdmin(let v)?:
+    case .linkShared(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
-    case .addedAdmin(let v)?:
+    case .invitedAdmin(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
-    case .removedAdmin(let v)?:
+    case .addedAdmin(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
-    case .renamedRoom(let v)?:
+    case .removedAdmin(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
-    case .recordedScreen(let v)?:
+    case .renamedRoom(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
-    case .mutedByAdmin(let v)?:
+    case .recordedScreen(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 12)
+    case .mutedByAdmin(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 13)
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -1327,6 +1358,25 @@ extension Event.Joined: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
 
   static func ==(lhs: Event.Joined, rhs: Event.Joined) -> Bool {
     if lhs._user != rhs._user {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Event.Left: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Event.protoMessageName + ".Left"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Event.Left, rhs: Event.Left) -> Bool {
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

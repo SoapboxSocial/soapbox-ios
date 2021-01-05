@@ -323,19 +323,7 @@ class Room: NSObject {
 
         self.role = role
 
-        for member in join.room.members {
-            members.append(
-                Member(
-                    id: Int(member.id),
-                    displayName: member.displayName,
-                    image: member.image,
-                    role: MemberRole(rawValue: member.role) ?? .speaker,
-                    isMuted: member.muted,
-                    ssrc: member.ssrc
-                )
-            )
-        }
-
+        members = join.room.members
         name = join.room.name
 
         receivedOffer(join.answer.sdp)
@@ -400,6 +388,8 @@ extension Room {
             break // @TODO SHOW POPUP SAYING YOU'VE BEEN INVITED TO BECOME ADMIN
         case let .joined(evt):
             on(joined: evt)
+        case let .left(evt):
+            on(left: from)
         case let .linkShared(evt):
             on(linkShare: evt, from: from)
         case let .muted(evt):
@@ -413,7 +403,7 @@ extension Room {
         case let .removedAdmin(evt):
             break
         case let .renamedRoom(evt):
-            break
+            on(roomRenamed: evt)
         case let .unmuted(evt):
             break
         case .none:
@@ -433,6 +423,11 @@ extension Room {
         members.append(joined.user)
         delegate?.userDidJoinRoom(user: Int(joined.user.id))
     }
+    
+    private func on(left id: Int) {
+        members.removeAll(where: { $0.id == Int64(id) })
+        delegate?.userDidLeaveRoom(user: id)
+    }
 
     private func on(linkShare: Event.LinkShared, from: Int) {
         guard let url = URL(string: linkShare.link) else {
@@ -441,33 +436,13 @@ extension Room {
 
         delegate?.didReceiveLink(from: from, link: url)
     }
+        
+    private func on(roomRenamed: Event.RenamedRoom) {
+        delegate?.roomWasRenamed(roomRenamed.name)
+    }
 }
 
 extension Room {
-//    private func didReceiveJoin(_ event: SignalReply.Event) {
-//        do {
-//            let member = try decoder.decode(Member.self, from: event.data)
-//            if !members.contains(where: { $0.id == member.id }) {
-//                members.append(member)
-//                delegate?.userDidJoinRoom(user: Int(event.from))
-//            }
-//        } catch {
-//            debugPrint("failed to decode \(error.localizedDescription)")
-//        }
-//    }
-//
-//    private func didReceiveLeft(_ event: SignalReply.Event) {
-//        members.removeAll(where: { $0.id == Int(event.from) })
-//        delegate?.userDidLeaveRoom(user: Int(event.from))
-//    }
-//
-//    private func didReceiveAddedSpeaker(_ event: SignalReply.Event) {
-//        updateMemberRole(user: event.data.toInt, role: .speaker)
-//    }
-//
-//    private func didReceiveRemovedSpeaker(_ event: SignalReply.Event) {
-//        updateMemberRole(user: event.data.toInt, role: .audience)
-//    }
 //
 //    private func didReceiveRemovedAdmin(_ event: SignalReply.Event) {
 //        updateMemberRole(user: event.data.toInt, role: .speaker)
@@ -499,13 +474,6 @@ extension Room {
 //        delegate?.userDidReact(user: Int(event.from), reaction: reaction)
 //    }
 //
-//    private func didReceiveRenamedRoom(_ event: SignalReply.Event) {
-//        guard let value = String(bytes: event.data, encoding: .utf8) else {
-//            return
-//        }
-//
-//        delegate?.roomWasRenamed(value)
-//    }
 //
 //    private func didRecordScreen(_ event: SignalReply.Event) {
 //        delegate?.userDidRecordScreen(Int(event.from))
@@ -515,7 +483,7 @@ extension Room {
         DispatchQueue.main.async {
             let index = self.members.firstIndex(where: { $0.id == user })
             if index != nil {
-                self.members[index!].isMuted = isMuted
+                self.members[index!].muted = isMuted
                 return
             }
         }
