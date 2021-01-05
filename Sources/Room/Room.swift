@@ -6,7 +6,7 @@ import WebRTC
 protocol RoomDelegate {
     func userDidJoinRoom(user: Int)
     func userDidLeaveRoom(user: Int)
-    func didChangeUserRole(user: Int, role: Room.MemberRole)
+    func didChangeUserRole(user: Int, role: RoomState.RoomMember.Role)
     func userDidReact(user: Int, reaction: Room.Reaction)
     func didChangeMemberMuteState(user: Int, isMuted: Bool)
     func roomWasClosedByRemote()
