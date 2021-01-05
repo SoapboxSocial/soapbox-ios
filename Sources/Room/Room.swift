@@ -185,101 +185,64 @@ class Room: NSObject {
         rtc.muteAudio()
         isMuted = true
 
-        send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.muteSpeaker
-        })
+        send(command: .mute(Command.Mute()))
     }
 
     func unmute() {
         rtc.unmuteAudio()
         isMuted = false
 
-        send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.unmuteSpeaker
-        })
-    }
-
-    func remove(speaker: Int) {
-        send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.removeSpeaker
-            $0.data = Data(withUnsafeBytes(of: speaker.littleEndian, Array.init))
-        })
-
-        updateMemberRole(user: speaker, role: .audience)
-    }
-
-    func add(speaker: Int) {
-        send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.addSpeaker
-            $0.data = Data(withUnsafeBytes(of: speaker.littleEndian, Array.init))
-        })
-
-        updateMemberRole(user: speaker, role: .speaker)
+        send(command: .unmute(Command.Unmute()))
     }
 
     func add(admin: Int) {
-        send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.addAdmin
-            $0.data = Data(withUnsafeBytes(of: admin.littleEndian, Array.init))
-        })
-
-        updateMemberRole(user: admin, role: .admin)
+        send(command: .inviteAdmin(Command.InviteAdmin.with {
+            $0.id = Int64(admin)
+        }))
     }
 
     func remove(admin: Int) {
-        send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.removeAdmin
-            $0.data = Data(withUnsafeBytes(of: admin.littleEndian, Array.init))
-        })
+        send(command: .removeAdmin(Command.RemoveAdmin.with {
+            $0.id = Int64(admin)
+        }))
 
         updateMemberRole(user: admin, role: .speaker)
     }
 
     func invite(user: Int) {
-        stream.sendMessage(SignalRequest.with {
-            $0.invite = Invite.with {
-                $0.id = Int64(user)
-            }
-        })
+        send(command: .inviteUser(Command.InviteUser.with {
+            $0.id = Int64(user)
+        }))
     }
 
     func react(with reaction: Reaction) {
-        send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.reaction
-            $0.data = Data(reaction.rawValue.utf8)
-        })
-
-        delegate?.userDidReact(user: 0, reaction: reaction)
+        send(command: .reaction(Command.Reaction.with {
+            $0.emoji = Data(reaction.rawValue.utf8)
+        }))
     }
 
     func share(link: URL) {
-        send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.linkShare
-            $0.data = Data(link.absoluteString.utf8)
-        })
+        send(command: .linkShare(Command.LinkShare.with {
+            $0.link = link.absoluteString
+        }))
     }
 
     func kick(user: Int) {
-        stream.sendMessage(SignalRequest.with {
-            $0.kick = Kick.with {
-                $0.id = Int64(user)
-            }
-        })
+        send(command: .kickUser(Command.KickUser.with {
+            $0.id = Int64(user)
+        }))
     }
 
     func mute(user: Int) {
-        stream.sendMessage(SignalRequest.with {
-            $0.muteUser = MuteUser.with {
-                $0.id = Int64(user)
-            }
-        })
+        send(command: .muteUser(Command.MuteUser.with {
+            $0.id = Int64(user)
+        }))
     }
 
     func rename(_ name: String) {
-        send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.renameRoom
-            $0.data = Data(name.utf8)
-        })
+        send(command: .renameRoom(Command.RenameRoom.with {
+            $0.name = name
+        }))
 
         delegate?.roomWasRenamed(name)
     }
@@ -372,10 +335,12 @@ class Room: NSObject {
         }
     }
 
-    private func send(command: SignalRequest.Command) {
-        stream.sendMessage(SignalRequest.with {
-            $0.command = command
-        })
+    private func send(command: Command.OneOf_Payload) {
+        let cmd = Command.with {
+            $0.payload = command
+        }
+
+        debugPrint(cmd)
     }
 }
 
@@ -570,9 +535,7 @@ extension Room {
         if !UIScreen.main.isCaptured {
             return
         }
-
-        _ = stream.sendMessage(SignalRequest.with {
-            $0.screenRecorded = ScreenRecorded()
-        })
+        
+        send(command: .recordScreen(Command.RecordScreen()))
     }
 }
