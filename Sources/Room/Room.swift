@@ -388,11 +388,11 @@ extension Room {
             break // @TODO SHOW POPUP SAYING YOU'VE BEEN INVITED TO BECOME ADMIN
         case let .joined(evt):
             on(joined: evt)
-        case let .left(evt):
+        case let .left:
             on(left: from)
         case let .linkShared(evt):
             on(linkShare: evt, from: from)
-        case let .muted(evt):
+        case let .muted:
             on(muted: from)
         case let .mutedByAdmin(evt):
             break
@@ -404,7 +404,7 @@ extension Room {
             break
         case let .renamedRoom(evt):
             on(roomRenamed: evt)
-        case let .unmuted(evt):
+        case let .unmuted:
             on(unmuted: from)
         case .none:
             break
