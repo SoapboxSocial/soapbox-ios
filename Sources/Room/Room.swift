@@ -32,19 +32,6 @@ class Room: NSObject {
         case speaker
     }
 
-    struct Member: Decodable {
-        let id: Int
-        let displayName: String
-        let image: String
-        var role: MemberRole
-        var isMuted: Bool
-        var ssrc: UInt32
-
-        private enum CodingKeys: String, CodingKey {
-            case id, role, displayName = "display_name", image, isMuted = "is_muted", ssrc
-        }
-    }
-
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
 
@@ -65,7 +52,7 @@ class Room: NSObject {
     private(set) var isMuted = true
     private(set) var visibility = Visibility.public
 
-    private(set) var members = [Member]()
+    private(set) var members = [RoomState.RoomMember]()
 
     private let rtc: WebRTCClient
     private let grpc: RoomServiceClient
@@ -372,39 +359,6 @@ class Room: NSObject {
         }
     }
 
-    private func on(event: SignalReply.Event) {
-        switch event.type {
-        case .joined:
-            didReceiveJoin(event)
-        case .left:
-            didReceiveLeft(event)
-        case .addedSpeaker:
-            didReceiveAddedSpeaker(event)
-        case .removedSpeaker:
-            didReceiveRemovedSpeaker(event)
-        case .mutedSpeaker:
-            didReceiveMuteSpeaker(event)
-        case .unmutedSpeaker:
-            didReceiveUnmuteSpeaker(event)
-        case .reacted:
-            didReceiveReacted(event)
-        case .linkShared:
-            didReceiveLinkShare(event)
-        case .addedAdmin:
-            didReceiveAddedAdmin(event)
-        case .removedAdmin:
-            didReceiveRemovedAdmin(event)
-        case .renamedRoom:
-            didReceiveRenamedRoom(event)
-        case .recordedScreen:
-            didRecordScreen(event)
-        case .mutedByAdmin:
-            wasMutedByAdmin(event)
-        case .UNRECOGNIZED:
-            return
-        }
-    }
-
     private func receivedOffer(_ data: Data) {
         guard let sdp = String(data: data, encoding: .utf8) else {
             // @todo
@@ -438,88 +392,124 @@ class Room: NSObject {
 }
 
 extension Room {
-    private func didReceiveJoin(_ event: SignalReply.Event) {
-        do {
-            let member = try decoder.decode(Member.self, from: event.data)
-            if !members.contains(where: { $0.id == member.id }) {
-                members.append(member)
-                delegate?.userDidJoinRoom(user: Int(event.from))
-            }
-        } catch {
-            debugPrint("failed to decode \(error.localizedDescription)")
+    private func on(_ event: Event, from: Int) {
+        switch event.payload {
+        case .addedAdmin:
+            on(addedAdmin: Int(event.from))
+        case let .invitedAdmin(evt):
+            break // @TODO SHOW POPUP SAYING YOU'VE BEEN INVITED TO BECOME ADMIN
+        case let .joined(evt):
+            on(joined: evt)
+        case let .linkShared(evt):
+            on(linkShare: evt, from: from)
+        case let .muted(evt):
+            break
+        case let .mutedByAdmin(evt):
+            break
+        case let .reacted(evt):
+            break
+        case let .recordedScreen(evt):
+            break
+        case let .removedAdmin(evt):
+            break
+        case let .renamedRoom(evt):
+            break
+        case let .unmuted(evt):
+            break
+        case .none:
+            break
         }
     }
 
-    private func didReceiveLeft(_ event: SignalReply.Event) {
-        members.removeAll(where: { $0.id == Int(event.from) })
-        delegate?.userDidLeaveRoom(user: Int(event.from))
+    private func on(addedAdmin id: Int) {
+        updateMemberRole(user: id, role: .admin)
     }
 
-    private func didReceiveAddedSpeaker(_ event: SignalReply.Event) {
-        updateMemberRole(user: event.data.toInt, role: .speaker)
-    }
-
-    private func didReceiveRemovedSpeaker(_ event: SignalReply.Event) {
-        updateMemberRole(user: event.data.toInt, role: .audience)
-    }
-
-    private func didReceiveAddedAdmin(_ event: SignalReply.Event) {
-        updateMemberRole(user: event.data.toInt, role: .admin)
-    }
-
-    private func didReceiveRemovedAdmin(_ event: SignalReply.Event) {
-        updateMemberRole(user: event.data.toInt, role: .speaker)
-    }
-
-    private func didReceiveMuteSpeaker(_ event: SignalReply.Event) {
-        updateMemberMuteState(user: Int(event.from), isMuted: true)
-    }
-
-    private func didReceiveUnmuteSpeaker(_ event: SignalReply.Event) {
-        updateMemberMuteState(user: Int(event.from), isMuted: false)
-    }
-
-    private func wasMutedByAdmin(_: SignalReply.Event) {
-        rtc.muteAudio()
-        isMuted = true
-        delegate?.wasMutedByAdmin()
-    }
-
-    private func didReceiveReacted(_ event: SignalReply.Event) {
-        guard let value = String(bytes: event.data, encoding: .utf8) else {
+    private func on(joined: Event.Joined) {
+        if !members.contains(where: { $0.id == joined.user.id }) {
             return
         }
 
-        guard let reaction = Reaction(rawValue: value) else {
+        members.append(joined.user)
+        delegate?.userDidJoinRoom(user: Int(joined.user.id))
+    }
+
+    private func on(linkShare: Event.LinkShared, from: Int) {
+        guard let url = URL(string: linkShare.link) else {
             return
         }
 
-        delegate?.userDidReact(user: Int(event.from), reaction: reaction)
+        delegate?.didReceiveLink(from: from, link: url)
     }
+}
 
-    private func didReceiveLinkShare(_ event: SignalReply.Event) {
-        guard let value = String(bytes: event.data, encoding: .utf8) else {
-            return
-        }
-
-        guard let url = URL(string: value) else {
-            return
-        }
-
-        delegate?.didReceiveLink(from: Int(event.from), link: url)
-    }
-
-    private func didReceiveRenamedRoom(_ event: SignalReply.Event) {
-        guard let value = String(bytes: event.data, encoding: .utf8) else {
-            return
-        }
-
-        delegate?.roomWasRenamed(value)
-    }
-
-    private func didRecordScreen(_ event: SignalReply.Event) {
-        delegate?.userDidRecordScreen(Int(event.from))
-    }
+extension Room {
+//    private func didReceiveJoin(_ event: SignalReply.Event) {
+//        do {
+//            let member = try decoder.decode(Member.self, from: event.data)
+//            if !members.contains(where: { $0.id == member.id }) {
+//                members.append(member)
+//                delegate?.userDidJoinRoom(user: Int(event.from))
+//            }
+//        } catch {
+//            debugPrint("failed to decode \(error.localizedDescription)")
+//        }
+//    }
+//
+//    private func didReceiveLeft(_ event: SignalReply.Event) {
+//        members.removeAll(where: { $0.id == Int(event.from) })
+//        delegate?.userDidLeaveRoom(user: Int(event.from))
+//    }
+//
+//    private func didReceiveAddedSpeaker(_ event: SignalReply.Event) {
+//        updateMemberRole(user: event.data.toInt, role: .speaker)
+//    }
+//
+//    private func didReceiveRemovedSpeaker(_ event: SignalReply.Event) {
+//        updateMemberRole(user: event.data.toInt, role: .audience)
+//    }
+//
+//    private func didReceiveRemovedAdmin(_ event: SignalReply.Event) {
+//        updateMemberRole(user: event.data.toInt, role: .speaker)
+//    }
+//
+//    private func didReceiveMuteSpeaker(_ event: SignalReply.Event) {
+//        updateMemberMuteState(user: Int(event.from), isMuted: true)
+//    }
+//
+//    private func didReceiveUnmuteSpeaker(_ event: SignalReply.Event) {
+//        updateMemberMuteState(user: Int(event.from), isMuted: false)
+//    }
+//
+//    private func wasMutedByAdmin(_: SignalReply.Event) {
+//        rtc.muteAudio()
+//        isMuted = true
+//        delegate?.wasMutedByAdmin()
+//    }
+//
+//    private func didReceiveReacted(_ event: SignalReply.Event) {
+//        guard let value = String(bytes: event.data, encoding: .utf8) else {
+//            return
+//        }
+//
+//        guard let reaction = Reaction(rawValue: value) else {
+//            return
+//        }
+//
+//        delegate?.userDidReact(user: Int(event.from), reaction: reaction)
+//    }
+//
+//    private func didReceiveRenamedRoom(_ event: SignalReply.Event) {
+//        guard let value = String(bytes: event.data, encoding: .utf8) else {
+//            return
+//        }
+//
+//        delegate?.roomWasRenamed(value)
+//    }
+//
+//    private func didRecordScreen(_ event: SignalReply.Event) {
+//        delegate?.userDidRecordScreen(Int(event.from))
+//    }
 
     private func updateMemberMuteState(user: Int, isMuted: Bool) {
         DispatchQueue.main.async {
@@ -555,7 +545,7 @@ extension Room: WebRTCClientDelegate {
                 return
             }
 
-            self.delegate?.didChangeSpeakVolume(user: user.id, volume: delta)
+            self.delegate?.didChangeSpeakVolume(user: Int(user.id), volume: delta)
         }
     }
 
