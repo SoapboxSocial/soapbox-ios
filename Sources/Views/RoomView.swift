@@ -635,7 +635,7 @@ extension RoomView: UICollectionViewDelegate {
 
         let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
             DispatchQueue.main.async {
-                self.delegate?.didSelectViewProfile(id: member.id)
+                self.delegate?.didSelectViewProfile(id: Int(member.id))
             }
         })
         optionMenu.addAction(profileAction)

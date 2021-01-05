@@ -661,13 +661,41 @@ struct RoomState {
 
     var image: String = String()
 
-    var role: String = String()
+    var role: RoomState.RoomMember.Role = .regular
 
     var muted: Bool = false
 
     var ssrc: UInt32 = 0
 
     var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    enum Role: SwiftProtobuf.Enum {
+      typealias RawValue = Int
+      case regular // = 0
+      case admin // = 1
+      case UNRECOGNIZED(Int)
+
+      init() {
+        self = .regular
+      }
+
+      init?(rawValue: Int) {
+        switch rawValue {
+        case 0: self = .regular
+        case 1: self = .admin
+        default: self = .UNRECOGNIZED(rawValue)
+        }
+      }
+
+      var rawValue: Int {
+        switch self {
+        case .regular: return 0
+        case .admin: return 1
+        case .UNRECOGNIZED(let i): return i
+        }
+      }
+
+    }
 
     init() {}
   }
@@ -692,6 +720,18 @@ struct RoomState {
 
   fileprivate var _group: RoomState.Group? = nil
 }
+
+#if swift(>=4.2)
+
+extension RoomState.RoomMember.Role: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  static var allCases: [RoomState.RoomMember.Role] = [
+    .regular,
+    .admin,
+  ]
+}
+
+#endif  // swift(>=4.2)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
@@ -1688,7 +1728,7 @@ extension RoomState.RoomMember: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
       case 1: try decoder.decodeSingularInt64Field(value: &self.id)
       case 2: try decoder.decodeSingularStringField(value: &self.displayName)
       case 3: try decoder.decodeSingularStringField(value: &self.image)
-      case 4: try decoder.decodeSingularStringField(value: &self.role)
+      case 4: try decoder.decodeSingularEnumField(value: &self.role)
       case 5: try decoder.decodeSingularBoolField(value: &self.muted)
       case 6: try decoder.decodeSingularUInt32Field(value: &self.ssrc)
       default: break
@@ -1706,8 +1746,8 @@ extension RoomState.RoomMember: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     if !self.image.isEmpty {
       try visitor.visitSingularStringField(value: self.image, fieldNumber: 3)
     }
-    if !self.role.isEmpty {
-      try visitor.visitSingularStringField(value: self.role, fieldNumber: 4)
+    if self.role != .regular {
+      try visitor.visitSingularEnumField(value: self.role, fieldNumber: 4)
     }
     if self.muted != false {
       try visitor.visitSingularBoolField(value: self.muted, fieldNumber: 5)
@@ -1728,6 +1768,13 @@ extension RoomState.RoomMember: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
+}
+
+extension RoomState.RoomMember.Role: SwiftProtobuf._ProtoNameProviding {
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "REGULAR"),
+    1: .same(proto: "ADMIN"),
+  ]
 }
 
 extension RoomState.Group: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
