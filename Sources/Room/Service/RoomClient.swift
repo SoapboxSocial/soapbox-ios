@@ -1,4 +1,4 @@
-import Foundation
+import WebRTC
 
 final class RoomClient {
     private struct Candidate: Codable {
@@ -6,7 +6,7 @@ final class RoomClient {
         let sdpMLineIndex: Int32
         let usernameFragment: String?
     }
-    
+
     private var streams = [Trickle.Target: RTCTransport]()
     // @TODO THIS CONTAINS WEBRTC AND SIGNALING LOGIC.
 }
@@ -16,16 +16,11 @@ extension RoomClient: SignalingClientDelegate {
         guard let target = streams[trickle.target] else {
             return
         }
-        
-        do {
-            let payload = try decoder.decode(Candidate.self, from: Data(trickle.init_p.utf8))
-            let candidate = RTCIceCandidate(sdp: payload.candidate, sdpMLineIndex: payload.sdpMLineIndex, sdpMid: nil)
-            rtc.set(remoteCandidate: candidate)
-        } catch {
-            debugPrint("failed to decode \(error.localizedDescription)")
-            return
-        }
-        
-        target.set(remoteCandidate: trickle.init_p)
+
+        target.set(remoteCandidate: RTCIceCandidate(
+            sdp: trickle.iceCandidate.candidate,
+            sdpMLineIndex: Int32(trickle.iceCandidate.sdpMlineIndex),
+            sdpMid: nil
+        ))
     }
 }
