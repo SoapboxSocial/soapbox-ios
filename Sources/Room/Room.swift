@@ -401,7 +401,7 @@ extension Room {
         case .recordedScreen:
             on(recordedScreen: from)
         case let .removedAdmin(evt):
-            break
+            on(removedAdmin: evt)
         case let .renamedRoom(evt):
             on(roomRenamed: evt)
         case .unmuted:
@@ -413,6 +413,10 @@ extension Room {
 
     private func on(addedAdmin id: Int) {
         updateMemberRole(user: id, role: .admin)
+    }
+
+    private func on(removedAdmin: Event.RemovedAdmin) {
+        updateMemberRole(user: Int(removedAdmin.id), role: .speaker)
     }
 
     private func on(joined: Event.Joined) {
@@ -473,12 +477,6 @@ extension Room {
 }
 
 extension Room {
-//
-//    private func didReceiveRemovedAdmin(_ event: SignalReply.Event) {
-//        updateMemberRole(user: event.data.toInt, role: .speaker)
-//    }
-//
-
     private func updateMemberMuteState(user: Int, isMuted: Bool) {
         DispatchQueue.main.async {
             let index = self.members.firstIndex(where: { $0.id == user })
