@@ -246,7 +246,7 @@ class Room: NSObject {
 
         delegate?.roomWasRenamed(name)
     }
-    
+
     private func send(command: Command.OneOf_Payload) {
         let cmd = Command.with {
             $0.payload = command
@@ -535,7 +535,7 @@ extension Room {
         if !UIScreen.main.isCaptured {
             return
         }
-        
+
         send(command: .recordScreen(Command.RecordScreen()))
     }
 }
