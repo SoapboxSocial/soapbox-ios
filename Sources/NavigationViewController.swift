@@ -210,7 +210,7 @@ extension NavigationViewController: RoomViewDelegate {
 }
 
 extension NavigationViewController: RoomController {
-    func didSelect(room id: Int) {
+    func didSelect(room id: String) {
         if activityIndicator.isAnimating {
             return
         }

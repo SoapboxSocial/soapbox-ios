@@ -92,11 +92,11 @@ class RoomMemberCell: UICollectionViewCell {
         }
     }
 
-    func setup(member: Room.Member) {
+    func setup(member: RoomState.RoomMember) {
         setup(
             name: member.displayName,
             image: member.image,
-            muted: member.isMuted,
+            muted: member.muted,
             role: member.role
         )
 

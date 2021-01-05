@@ -630,7 +630,7 @@ extension RoomView: UICollectionViewDelegate {
         showMemberAction(for: room.members[indexPath.item - 1])
     }
 
-    private func showMemberAction(for member: Room.Member) {
+    private func showMemberAction(for member: RoomState.RoomMember) {
         let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
         let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in

@@ -44,7 +44,7 @@ class Room: NSObject {
 
     private(set) var name: String!
 
-    var id: Int?
+    var id: String?
     var isClosed = false
 
     private(set) var role = MemberRole.speaker
@@ -53,10 +53,6 @@ class Room: NSObject {
     private(set) var visibility = Visibility.public
 
     private(set) var members = [RoomState.RoomMember]()
-
-    private let rtc: WebRTCClient
-    private let grpc: RoomServiceClient
-    private var stream: BidirectionalStreamingCall<SignalRequest, SignalReply>!
 
     private var completion: ((Result<Void, RoomError>) -> Void)!
 
@@ -70,17 +66,17 @@ class Room: NSObject {
 
     let started: Date
 
-    init(rtc: WebRTCClient, grpc: RoomServiceClient) {
-        self.rtc = rtc
-        self.grpc = grpc
-
-        started = Date(timeIntervalSince1970: Date().timeIntervalSince1970)
-
-        super.init()
-
-        stream = grpc.signal(handler: handle)
-        rtc.delegate = self
-    }
+//    init(rtc: WebRTCClient, grpc: RoomServiceClient) {
+//        self.rtc = rtc
+//        self.grpc = grpc
+//
+//        started = Date(timeIntervalSince1970: Date().timeIntervalSince1970)
+//
+//        super.init()
+//
+//        stream = grpc.signal(handler: handle)
+//        rtc.delegate = self
+//    }
 
     func join(id: String, completion: @escaping (Result<Void, RoomError>) -> Void) {
         self.completion = completion
@@ -174,8 +170,8 @@ class Room: NSObject {
 
     func close() {
         isClosed = true
-        rtc.delegate = nil
-        rtc.close()
+//        rtc.delegate = nil
+//        rtc.close()
 
         _ = stream.sendEnd()
         _ = grpc.channel.close()
@@ -195,15 +191,15 @@ class Room: NSObject {
         send(command: .unmute(Command.Unmute()))
     }
 
-    func add(admin: Int) {
+    func add(admin: Int64) {
         send(command: .inviteAdmin(Command.InviteAdmin.with {
-            $0.id = Int64(admin)
+            $0.id = admin
         }))
     }
 
-    func remove(admin: Int) {
+    func remove(admin: Int64) {
         send(command: .removeAdmin(Command.RemoveAdmin.with {
-            $0.id = Int64(admin)
+            $0.id = admin
         }))
 
         updateMemberRole(user: admin, role: .speaker)
@@ -227,15 +223,15 @@ class Room: NSObject {
         }))
     }
 
-    func kick(user: Int) {
+    func kick(user: Int64) {
         send(command: .kickUser(Command.KickUser.with {
             $0.id = Int64(user)
         }))
     }
 
-    func mute(user: Int) {
+    func mute(user: Int64) {
         send(command: .muteUser(Command.MuteUser.with {
-            $0.id = Int64(user)
+            $0.id = user
         }))
     }
 
@@ -454,7 +450,7 @@ extension Room {
         delegate?.didChangeMemberMuteState(user: user, isMuted: isMuted)
     }
 
-    private func updateMemberRole(user: Int, role: MemberRole) {
+    private func updateMemberRole(user: Int64, role: MemberRole) {
         DispatchQueue.main.async {
             let index = self.members.firstIndex(where: { $0.id == user })
             if index != nil {
@@ -469,73 +465,73 @@ extension Room {
     }
 }
 
-extension Room: WebRTCClientDelegate {
-    func webRTCClient(_: WebRTCClient, didChangeAudioLevel delta: Float, track ssrc: UInt32) {
-        DispatchQueue.main.async {
-            guard let user = self.members.first(where: { $0.ssrc == ssrc }) else {
-                return
-            }
-
-            self.delegate?.didChangeSpeakVolume(user: Int(user.id), volume: delta)
-        }
-    }
-
-    func webRTCClient(_: WebRTCClient, didDiscoverLocalCandidate local: RTCIceCandidate) {
-        let candidate = Candidate(candidate: local.sdp, sdpMLineIndex: local.sdpMLineIndex, usernameFragment: "")
-
-        var data: Data
-
-        do {
-            data = try encoder.encode(candidate)
-        } catch {
-            debugPrint("failed to encode \(error.localizedDescription)")
-            return
-        }
-
-        guard let trickle = String(data: data, encoding: .utf8) else {
-            return
-        }
-
-        stream.sendMessage(SignalRequest.with {
-            $0.trickle = Trickle.with {
-                $0.init_p = trickle
-            }
-        })
-    }
-
-    func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
-        if state == .connected && completion != nil {
-            completion(.success(()))
-            completion = nil
-
-            startPreventing()
-            return
-        }
-
-        if state == .failed || state == .closed {
-            delegate?.roomWasClosedByRemote()
-        }
-    }
-}
-
-extension Room {
-    func startPreventing() {
-        NotificationCenter.default.addObserver(self, selector: #selector(warnOnRecord), name: UIScreen.capturedDidChangeNotification, object: nil)
-
-        if UIScreen.main.isCaptured {
-            warnOnRecord()
-        }
-    }
-
-    @objc private func warnOnRecord() {
-        if rtc.state != .connected, rtc.state != .connecting {
-            return
-        }
-
-        if !UIScreen.main.isCaptured {
-            return
-        }
-
-        send(command: .recordScreen(Command.RecordScreen()))
-    }
-}
+//extension Room: WebRTCClientDelegate {
+//    func webRTCClient(_: WebRTCClient, didChangeAudioLevel delta: Float, track ssrc: UInt32) {
+//        DispatchQueue.main.async {
+//            guard let user = self.members.first(where: { $0.ssrc == ssrc }) else {
+//                return
+//            }
+//
+//            self.delegate?.didChangeSpeakVolume(user: Int(user.id), volume: delta)
+//        }
+//    }
+//
+//    func webRTCClient(_: WebRTCClient, didDiscoverLocalCandidate local: RTCIceCandidate) {
+//        let candidate = Candidate(candidate: local.sdp, sdpMLineIndex: local.sdpMLineIndex, usernameFragment: "")
+//
+//        var data: Data
+//
+//        do {
+//            data = try encoder.encode(candidate)
+//        } catch {
+//            debugPrint("failed to encode \(error.localizedDescription)")
+//            return
+//        }
+//
+//        guard let trickle = String(data: data, encoding: .utf8) else {
+//            return
+//        }
+//
+//        stream.sendMessage(SignalRequest.with {
+//            $0.trickle = Trickle.with {
+//                $0.init_p = trickle
+//            }
+//        })
+//    }
+//
+//    func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
+//        if state == .connected && completion != nil {
+//            completion(.success(()))
+//            completion = nil
+//
+//            startPreventing()
+//            return
+//        }
+//
+//        if state == .failed || state == .closed {
+//            delegate?.roomWasClosedByRemote()
+//        }
+//    }
+//}
+//
+//extension Room {
+//    func startPreventing() {
+//        NotificationCenter.default.addObserver(self, selector: #selector(warnOnRecord), name: UIScreen.capturedDidChangeNotification, object: nil)
+//
+//        if UIScreen.main.isCaptured {
+//            warnOnRecord()
+//        }
+//    }
+//
+//    @objc private func warnOnRecord() {
+//        if rtc.state != .connected, rtc.state != .connecting {
+//            return
+//        }
+//
+//        if !UIScreen.main.isCaptured {
+//            return
+//        }
+//
+//        send(command: .recordScreen(Command.RecordScreen()))
+//    }
+//}

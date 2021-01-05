@@ -8,7 +8,12 @@ final class RoomClient {
     }
 
     private var streams = [Trickle.Target: RTCTransport]()
+    private var signalClient: SignalingClient
     // @TODO THIS CONTAINS WEBRTC AND SIGNALING LOGIC.
+    
+    func close() {
+        
+    }
 }
 
 extension RoomClient: SignalingClientDelegate {
