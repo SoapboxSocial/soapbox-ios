@@ -1,17 +1,19 @@
 import WebRTC
 
 final class RoomClient {
-    private struct Candidate: Codable {
-        let candidate: String
-        let sdpMLineIndex: Int32
-        let usernameFragment: String?
-    }
-
     private var streams = [Trickle.Target: RTCTransport]()
-    private var signalClient: SignalingClient
+    private var signalClient: SignalingClient! // @TODO
     // @TODO THIS CONTAINS WEBRTC AND SIGNALING LOGIC.
 
     func close() {}
+    
+    func send(command: Command.OneOf_Payload) {
+        let cmd = Command.with {
+            $0.payload = command
+        }
+
+        debugPrint(cmd)
+    }
 }
 
 extension RoomClient: SignalingClientDelegate {

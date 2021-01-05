@@ -55,11 +55,7 @@ class Room: NSObject {
 
     var delegate: RoomDelegate?
 
-    private struct Candidate: Codable {
-        let candidate: String
-        let sdpMLineIndex: Int32
-        let usernameFragment: String?
-    }
+    private let client: RoomClient
 
     let started: Date
 
@@ -171,33 +167,33 @@ class Room: NSObject {
         isClosed = true
 //        rtc.delegate = nil
 //        rtc.close()
-
-        _ = stream.sendEnd()
-        _ = grpc.channel.close()
+//
+//        _ = stream.sendEnd()
+//        _ = grpc.channel.close()
     }
 
     func mute() {
         rtc.muteAudio()
         isMuted = true
 
-        send(command: .mute(Command.Mute()))
+        client.send(command: .mute(Command.Mute()))
     }
 
     func unmute() {
         rtc.unmuteAudio()
         isMuted = false
 
-        send(command: .unmute(Command.Unmute()))
+        client.send(command: .unmute(Command.Unmute()))
     }
 
     func add(admin: Int64) {
-        send(command: .inviteAdmin(Command.InviteAdmin.with {
+        client.send(command: .inviteAdmin(Command.InviteAdmin.with {
             $0.id = admin
         }))
     }
 
     func remove(admin: Int64) {
-        send(command: .removeAdmin(Command.RemoveAdmin.with {
+        client.send(command: .removeAdmin(Command.RemoveAdmin.with {
             $0.id = admin
         }))
 
@@ -205,49 +201,41 @@ class Room: NSObject {
     }
 
     func invite(user: Int) {
-        send(command: .inviteUser(Command.InviteUser.with {
+        client.send(command: .inviteUser(Command.InviteUser.with {
             $0.id = Int64(user)
         }))
     }
 
     func react(with reaction: Reaction) {
-        send(command: .reaction(Command.Reaction.with {
+        client.send(command: .reaction(Command.Reaction.with {
             $0.emoji = Data(reaction.rawValue.utf8)
         }))
     }
 
     func share(link: URL) {
-        send(command: .linkShare(Command.LinkShare.with {
+        client.send(command: .linkShare(Command.LinkShare.with {
             $0.link = link.absoluteString
         }))
     }
 
     func kick(user: Int64) {
-        send(command: .kickUser(Command.KickUser.with {
+        client.send(command: .kickUser(Command.KickUser.with {
             $0.id = Int64(user)
         }))
     }
 
     func mute(user: Int64) {
-        send(command: .muteUser(Command.MuteUser.with {
+        client.send(command: .muteUser(Command.MuteUser.with {
             $0.id = user
         }))
     }
 
     func rename(_ name: String) {
-        send(command: .renameRoom(Command.RenameRoom.with {
+        client.send(command: .renameRoom(Command.RenameRoom.with {
             $0.name = name
         }))
 
         delegate?.roomWasRenamed(name)
-    }
-
-    private func send(command: Command.OneOf_Payload) {
-        let cmd = Command.with {
-            $0.payload = command
-        }
-
-        debugPrint(cmd)
     }
 
     deinit {
@@ -372,11 +360,11 @@ extension Room {
     }
 
     private func on(addedAdmin id: Int) {
-        updateMemberRole(user: id, role: .admin)
+        updateMemberRole(user: Int64(id), role: .admin)
     }
 
     private func on(removedAdmin: Event.RemovedAdmin) {
-        updateMemberRole(user: Int(removedAdmin.id), role: .speaker)
+        updateMemberRole(user: Int64(removedAdmin.id), role: .speaker)
     }
 
     private func on(joined: Event.Joined) {
@@ -460,7 +448,7 @@ extension Room {
             self.role = role
         }
 
-        delegate?.didChangeUserRole(user: user, role: role)
+        delegate?.didChangeUserRole(user: Int(user), role: role)
     }
 }
 
