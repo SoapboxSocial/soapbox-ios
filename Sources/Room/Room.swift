@@ -82,13 +82,13 @@ class Room: NSObject {
         rtc.delegate = self
     }
 
-    func join(id: Int, completion: @escaping (Result<Void, RoomError>) -> Void) {
+    func join(id: String, completion: @escaping (Result<Void, RoomError>) -> Void) {
         self.completion = completion
         self.id = id
 
         _ = stream.sendMessage(SignalRequest.with {
             $0.join = JoinRequest.with {
-                $0.room = Int64(id)
+                $0.room = id
             }
         })
 
