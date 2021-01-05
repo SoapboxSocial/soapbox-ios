@@ -9,7 +9,7 @@ protocol SignalingClientDelegate: AnyObject {
 final class SignalingClient {
     private let grpc: SFUClient
     private var stream: BidirectionalStreamingCall<SignalRequest, SignalReply>!
-
+    
     weak var delegate: SignalingClientDelegate?
 
     init(grpc: SFUClient) {

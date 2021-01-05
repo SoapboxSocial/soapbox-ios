@@ -289,6 +289,24 @@ struct SessionDescription {
   init() {}
 }
 
+struct ICECandidate {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var candidate: String = String()
+
+  var sdpMid: String = String()
+
+  var sdpMlineIndex: Int64 = 0
+
+  var usernameFragment: String = String()
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  init() {}
+}
+
 struct Trickle {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -296,7 +314,14 @@ struct Trickle {
 
   var target: Trickle.Target = .publisher
 
-  var init_p: String = String()
+  var iceCandidate: ICECandidate {
+    get {return _iceCandidate ?? ICECandidate()}
+    set {_iceCandidate = newValue}
+  }
+  /// Returns true if `iceCandidate` has been explicitly set.
+  var hasIceCandidate: Bool {return self._iceCandidate != nil}
+  /// Clears the value of `iceCandidate`. Subsequent reads from it will return its default value.
+  mutating func clearIceCandidate() {self._iceCandidate = nil}
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -329,6 +354,8 @@ struct Trickle {
   }
 
   init() {}
+
+  fileprivate var _iceCandidate: ICECandidate? = nil
 }
 
 #if swift(>=4.2)
@@ -702,18 +729,65 @@ extension SessionDescription: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
   }
 }
 
+extension ICECandidate: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "ICECandidate"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "candidate"),
+    2: .same(proto: "sdpMid"),
+    3: .same(proto: "sdpMLineIndex"),
+    4: .same(proto: "usernameFragment"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularStringField(value: &self.candidate)
+      case 2: try decoder.decodeSingularStringField(value: &self.sdpMid)
+      case 3: try decoder.decodeSingularInt64Field(value: &self.sdpMlineIndex)
+      case 4: try decoder.decodeSingularStringField(value: &self.usernameFragment)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.candidate.isEmpty {
+      try visitor.visitSingularStringField(value: self.candidate, fieldNumber: 1)
+    }
+    if !self.sdpMid.isEmpty {
+      try visitor.visitSingularStringField(value: self.sdpMid, fieldNumber: 2)
+    }
+    if self.sdpMlineIndex != 0 {
+      try visitor.visitSingularInt64Field(value: self.sdpMlineIndex, fieldNumber: 3)
+    }
+    if !self.usernameFragment.isEmpty {
+      try visitor.visitSingularStringField(value: self.usernameFragment, fieldNumber: 4)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: ICECandidate, rhs: ICECandidate) -> Bool {
+    if lhs.candidate != rhs.candidate {return false}
+    if lhs.sdpMid != rhs.sdpMid {return false}
+    if lhs.sdpMlineIndex != rhs.sdpMlineIndex {return false}
+    if lhs.usernameFragment != rhs.usernameFragment {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
 extension Trickle: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "Trickle"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "target"),
-    2: .same(proto: "init"),
+    2: .same(proto: "iceCandidate"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularEnumField(value: &self.target)
-      case 2: try decoder.decodeSingularStringField(value: &self.init_p)
+      case 2: try decoder.decodeSingularMessageField(value: &self._iceCandidate)
       default: break
       }
     }
@@ -723,15 +797,15 @@ extension Trickle: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
     if self.target != .publisher {
       try visitor.visitSingularEnumField(value: self.target, fieldNumber: 1)
     }
-    if !self.init_p.isEmpty {
-      try visitor.visitSingularStringField(value: self.init_p, fieldNumber: 2)
+    if let v = self._iceCandidate {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: Trickle, rhs: Trickle) -> Bool {
     if lhs.target != rhs.target {return false}
-    if lhs.init_p != rhs.init_p {return false}
+    if lhs._iceCandidate != rhs._iceCandidate {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
