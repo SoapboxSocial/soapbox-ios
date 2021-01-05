@@ -60,176 +60,278 @@ extension Visibility: CaseIterable {
 
 #endif  // swift(>=4.2)
 
-struct SignalRequest {
+struct Command {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var payload: SignalRequest.OneOf_Payload? = nil
+  var payload: Command.OneOf_Payload? = nil
 
-  var join: JoinRequest {
+  var mute: Command.Mute {
     get {
-      if case .join(let v)? = payload {return v}
-      return JoinRequest()
+      if case .mute(let v)? = payload {return v}
+      return Command.Mute()
     }
-    set {payload = .join(newValue)}
+    set {payload = .mute(newValue)}
   }
 
-  var create: CreateRequest {
+  var unmute: Command.Unmute {
     get {
-      if case .create(let v)? = payload {return v}
-      return CreateRequest()
+      if case .unmute(let v)? = payload {return v}
+      return Command.Unmute()
     }
-    set {payload = .create(newValue)}
+    set {payload = .unmute(newValue)}
   }
 
-  var negotiate: SessionDescription {
+  var reaction: Command.Reaction {
     get {
-      if case .negotiate(let v)? = payload {return v}
-      return SessionDescription()
+      if case .reaction(let v)? = payload {return v}
+      return Command.Reaction()
     }
-    set {payload = .negotiate(newValue)}
+    set {payload = .reaction(newValue)}
   }
 
-  var trickle: Trickle {
+  var linkShare: Command.LinkShare {
     get {
-      if case .trickle(let v)? = payload {return v}
-      return Trickle()
+      if case .linkShare(let v)? = payload {return v}
+      return Command.LinkShare()
     }
-    set {payload = .trickle(newValue)}
+    set {payload = .linkShare(newValue)}
   }
 
-  var command: SignalRequest.Command {
+  var inviteAdmin: Command.InviteAdmin {
     get {
-      if case .command(let v)? = payload {return v}
-      return SignalRequest.Command()
+      if case .inviteAdmin(let v)? = payload {return v}
+      return Command.InviteAdmin()
     }
-    set {payload = .command(newValue)}
+    set {payload = .inviteAdmin(newValue)}
   }
 
-  var invite: Invite {
+  var acceptAdmin: Command.AcceptAdmin {
     get {
-      if case .invite(let v)? = payload {return v}
-      return Invite()
+      if case .acceptAdmin(let v)? = payload {return v}
+      return Command.AcceptAdmin()
     }
-    set {payload = .invite(newValue)}
+    set {payload = .acceptAdmin(newValue)}
   }
 
-  var kick: Kick {
+  var removeAdmin: Command.RemoveAdmin {
     get {
-      if case .kick(let v)? = payload {return v}
-      return Kick()
+      if case .removeAdmin(let v)? = payload {return v}
+      return Command.RemoveAdmin()
     }
-    set {payload = .kick(newValue)}
+    set {payload = .removeAdmin(newValue)}
   }
 
-  var screenRecorded: ScreenRecorded {
+  var renameRoom: Command.RenameRoom {
     get {
-      if case .screenRecorded(let v)? = payload {return v}
-      return ScreenRecorded()
+      if case .renameRoom(let v)? = payload {return v}
+      return Command.RenameRoom()
     }
-    set {payload = .screenRecorded(newValue)}
+    set {payload = .renameRoom(newValue)}
   }
 
-  var muteUser: MuteUser {
+  var inviteUser: Command.InviteUser {
+    get {
+      if case .inviteUser(let v)? = payload {return v}
+      return Command.InviteUser()
+    }
+    set {payload = .inviteUser(newValue)}
+  }
+
+  var kickUser: Command.KickUser {
+    get {
+      if case .kickUser(let v)? = payload {return v}
+      return Command.KickUser()
+    }
+    set {payload = .kickUser(newValue)}
+  }
+
+  var muteUser: Command.MuteUser {
     get {
       if case .muteUser(let v)? = payload {return v}
-      return MuteUser()
+      return Command.MuteUser()
     }
     set {payload = .muteUser(newValue)}
   }
 
+  var recordScreen: Command.RecordScreen {
+    get {
+      if case .recordScreen(let v)? = payload {return v}
+      return Command.RecordScreen()
+    }
+    set {payload = .recordScreen(newValue)}
+  }
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum OneOf_Payload: Equatable {
-    case join(JoinRequest)
-    case create(CreateRequest)
-    case negotiate(SessionDescription)
-    case trickle(Trickle)
-    case command(SignalRequest.Command)
-    case invite(Invite)
-    case kick(Kick)
-    case screenRecorded(ScreenRecorded)
-    case muteUser(MuteUser)
+    case mute(Command.Mute)
+    case unmute(Command.Unmute)
+    case reaction(Command.Reaction)
+    case linkShare(Command.LinkShare)
+    case inviteAdmin(Command.InviteAdmin)
+    case acceptAdmin(Command.AcceptAdmin)
+    case removeAdmin(Command.RemoveAdmin)
+    case renameRoom(Command.RenameRoom)
+    case inviteUser(Command.InviteUser)
+    case kickUser(Command.KickUser)
+    case muteUser(Command.MuteUser)
+    case recordScreen(Command.RecordScreen)
 
   #if !swift(>=4.1)
-    static func ==(lhs: SignalRequest.OneOf_Payload, rhs: SignalRequest.OneOf_Payload) -> Bool {
+    static func ==(lhs: Command.OneOf_Payload, rhs: Command.OneOf_Payload) -> Bool {
       switch (lhs, rhs) {
-      case (.join(let l), .join(let r)): return l == r
-      case (.create(let l), .create(let r)): return l == r
-      case (.negotiate(let l), .negotiate(let r)): return l == r
-      case (.trickle(let l), .trickle(let r)): return l == r
-      case (.command(let l), .command(let r)): return l == r
-      case (.invite(let l), .invite(let r)): return l == r
-      case (.kick(let l), .kick(let r)): return l == r
-      case (.screenRecorded(let l), .screenRecorded(let r)): return l == r
+      case (.mute(let l), .mute(let r)): return l == r
+      case (.unmute(let l), .unmute(let r)): return l == r
+      case (.reaction(let l), .reaction(let r)): return l == r
+      case (.linkShare(let l), .linkShare(let r)): return l == r
+      case (.inviteAdmin(let l), .inviteAdmin(let r)): return l == r
+      case (.acceptAdmin(let l), .acceptAdmin(let r)): return l == r
+      case (.removeAdmin(let l), .removeAdmin(let r)): return l == r
+      case (.renameRoom(let l), .renameRoom(let r)): return l == r
+      case (.inviteUser(let l), .inviteUser(let r)): return l == r
+      case (.kickUser(let l), .kickUser(let r)): return l == r
       case (.muteUser(let l), .muteUser(let r)): return l == r
+      case (.recordScreen(let l), .recordScreen(let r)): return l == r
       default: return false
       }
     }
   #endif
   }
 
-  /// @TODO think about turning these into separated things
-  struct Command {
+  struct Mute {
     // SwiftProtobuf.Message conformance is added in an extension below. See the
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
 
-    var type: SignalRequest.Command.TypeEnum = .addSpeaker
+    var unknownFields = SwiftProtobuf.UnknownStorage()
 
-    var data: Data = SwiftProtobuf.Internal.emptyData
+    init() {}
+  }
+
+  struct Unmute {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
 
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
-    enum TypeEnum: SwiftProtobuf.Enum {
-      typealias RawValue = Int
-      case addSpeaker // = 0
-      case removeSpeaker // = 1
-      case muteSpeaker // = 2
-      case unmuteSpeaker // = 3
-      case reaction // = 4
-      case linkShare // = 5
-      case addAdmin // = 6
-      case removeAdmin // = 7
-      case renameRoom // = 8
-      case UNRECOGNIZED(Int)
+    init() {}
+  }
 
-      init() {
-        self = .addSpeaker
-      }
+  struct Reaction {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
 
-      init?(rawValue: Int) {
-        switch rawValue {
-        case 0: self = .addSpeaker
-        case 1: self = .removeSpeaker
-        case 2: self = .muteSpeaker
-        case 3: self = .unmuteSpeaker
-        case 4: self = .reaction
-        case 5: self = .linkShare
-        case 6: self = .addAdmin
-        case 7: self = .removeAdmin
-        case 8: self = .renameRoom
-        default: self = .UNRECOGNIZED(rawValue)
-        }
-      }
+    var emoji: Data = SwiftProtobuf.Internal.emptyData
 
-      var rawValue: Int {
-        switch self {
-        case .addSpeaker: return 0
-        case .removeSpeaker: return 1
-        case .muteSpeaker: return 2
-        case .unmuteSpeaker: return 3
-        case .reaction: return 4
-        case .linkShare: return 5
-        case .addAdmin: return 6
-        case .removeAdmin: return 7
-        case .renameRoom: return 8
-        case .UNRECOGNIZED(let i): return i
-        }
-      }
+    var unknownFields = SwiftProtobuf.UnknownStorage()
 
-    }
+    init() {}
+  }
+
+  struct LinkShare {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var link: String = String()
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct InviteAdmin {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var id: Int64 = 0
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct AcceptAdmin {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct RemoveAdmin {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var id: Int64 = 0
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct RenameRoom {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var name: String = String()
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct InviteUser {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var id: Int64 = 0
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct KickUser {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var id: Int64 = 0
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct MuteUser {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var id: Int64 = 0
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct RecordScreen {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
 
     init() {}
   }
@@ -237,249 +339,286 @@ struct SignalRequest {
   init() {}
 }
 
-#if swift(>=4.2)
-
-extension SignalRequest.Command.TypeEnum: CaseIterable {
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
-  static var allCases: [SignalRequest.Command.TypeEnum] = [
-    .addSpeaker,
-    .removeSpeaker,
-    .muteSpeaker,
-    .unmuteSpeaker,
-    .reaction,
-    .linkShare,
-    .addAdmin,
-    .removeAdmin,
-    .renameRoom,
-  ]
-}
-
-#endif  // swift(>=4.2)
-
-struct SignalReply {
+struct Event {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var payload: SignalReply.OneOf_Payload? = nil
+  var from: Int64 = 0
 
-  var join: JoinReply {
+  var payload: Event.OneOf_Payload? = nil
+
+  var joined: Event.Joined {
     get {
-      if case .join(let v)? = payload {return v}
-      return JoinReply()
+      if case .joined(let v)? = payload {return v}
+      return Event.Joined()
     }
-    set {payload = .join(newValue)}
+    set {payload = .joined(newValue)}
   }
 
-  var create: CreateReply {
+  var left: Event.Left {
     get {
-      if case .create(let v)? = payload {return v}
-      return CreateReply()
+      if case .left(let v)? = payload {return v}
+      return Event.Left()
     }
-    set {payload = .create(newValue)}
+    set {payload = .left(newValue)}
   }
 
-  var negotiate: SessionDescription {
+  var muted: Event.Muted {
     get {
-      if case .negotiate(let v)? = payload {return v}
-      return SessionDescription()
+      if case .muted(let v)? = payload {return v}
+      return Event.Muted()
     }
-    set {payload = .negotiate(newValue)}
+    set {payload = .muted(newValue)}
   }
 
-  var trickle: Trickle {
+  var unmuted: Event.Unmuted {
     get {
-      if case .trickle(let v)? = payload {return v}
-      return Trickle()
+      if case .unmuted(let v)? = payload {return v}
+      return Event.Unmuted()
     }
-    set {payload = .trickle(newValue)}
+    set {payload = .unmuted(newValue)}
   }
 
-  var event: SignalReply.Event {
+  var reacted: Event.Reacted {
     get {
-      if case .event(let v)? = payload {return v}
-      return SignalReply.Event()
+      if case .reacted(let v)? = payload {return v}
+      return Event.Reacted()
     }
-    set {payload = .event(newValue)}
+    set {payload = .reacted(newValue)}
+  }
+
+  var linkShared: Event.LinkShared {
+    get {
+      if case .linkShared(let v)? = payload {return v}
+      return Event.LinkShared()
+    }
+    set {payload = .linkShared(newValue)}
+  }
+
+  var invitedAdmin: Event.InvitedAdmin {
+    get {
+      if case .invitedAdmin(let v)? = payload {return v}
+      return Event.InvitedAdmin()
+    }
+    set {payload = .invitedAdmin(newValue)}
+  }
+
+  var addedAdmin: Event.AddedAdmin {
+    get {
+      if case .addedAdmin(let v)? = payload {return v}
+      return Event.AddedAdmin()
+    }
+    set {payload = .addedAdmin(newValue)}
+  }
+
+  var removedAdmin: Event.RemovedAdmin {
+    get {
+      if case .removedAdmin(let v)? = payload {return v}
+      return Event.RemovedAdmin()
+    }
+    set {payload = .removedAdmin(newValue)}
+  }
+
+  var renamedRoom: Event.RenamedRoom {
+    get {
+      if case .renamedRoom(let v)? = payload {return v}
+      return Event.RenamedRoom()
+    }
+    set {payload = .renamedRoom(newValue)}
+  }
+
+  var recordedScreen: Event.RecordedScreen {
+    get {
+      if case .recordedScreen(let v)? = payload {return v}
+      return Event.RecordedScreen()
+    }
+    set {payload = .recordedScreen(newValue)}
+  }
+
+  var mutedByAdmin: Event.MutedByAdmin {
+    get {
+      if case .mutedByAdmin(let v)? = payload {return v}
+      return Event.MutedByAdmin()
+    }
+    set {payload = .mutedByAdmin(newValue)}
   }
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum OneOf_Payload: Equatable {
-    case join(JoinReply)
-    case create(CreateReply)
-    case negotiate(SessionDescription)
-    case trickle(Trickle)
-    case event(SignalReply.Event)
+    case joined(Event.Joined)
+    case left(Event.Left)
+    case muted(Event.Muted)
+    case unmuted(Event.Unmuted)
+    case reacted(Event.Reacted)
+    case linkShared(Event.LinkShared)
+    case invitedAdmin(Event.InvitedAdmin)
+    case addedAdmin(Event.AddedAdmin)
+    case removedAdmin(Event.RemovedAdmin)
+    case renamedRoom(Event.RenamedRoom)
+    case recordedScreen(Event.RecordedScreen)
+    case mutedByAdmin(Event.MutedByAdmin)
 
   #if !swift(>=4.1)
-    static func ==(lhs: SignalReply.OneOf_Payload, rhs: SignalReply.OneOf_Payload) -> Bool {
+    static func ==(lhs: Event.OneOf_Payload, rhs: Event.OneOf_Payload) -> Bool {
       switch (lhs, rhs) {
-      case (.join(let l), .join(let r)): return l == r
-      case (.create(let l), .create(let r)): return l == r
-      case (.negotiate(let l), .negotiate(let r)): return l == r
-      case (.trickle(let l), .trickle(let r)): return l == r
-      case (.event(let l), .event(let r)): return l == r
+      case (.joined(let l), .joined(let r)): return l == r
+      case (.left(let l), .left(let r)): return l == r
+      case (.muted(let l), .muted(let r)): return l == r
+      case (.unmuted(let l), .unmuted(let r)): return l == r
+      case (.reacted(let l), .reacted(let r)): return l == r
+      case (.linkShared(let l), .linkShared(let r)): return l == r
+      case (.invitedAdmin(let l), .invitedAdmin(let r)): return l == r
+      case (.addedAdmin(let l), .addedAdmin(let r)): return l == r
+      case (.removedAdmin(let l), .removedAdmin(let r)): return l == r
+      case (.renamedRoom(let l), .renamedRoom(let r)): return l == r
+      case (.recordedScreen(let l), .recordedScreen(let r)): return l == r
+      case (.mutedByAdmin(let l), .mutedByAdmin(let r)): return l == r
       default: return false
       }
     }
   #endif
   }
 
-  struct Event {
+  struct Joined {
     // SwiftProtobuf.Message conformance is added in an extension below. See the
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
 
-    var type: SignalReply.Event.TypeEnum = .joined
-
-    var from: Int64 = 0
-
-    var data: Data = SwiftProtobuf.Internal.emptyData
+    var user: RoomState.RoomMember {
+      get {return _user ?? RoomState.RoomMember()}
+      set {_user = newValue}
+    }
+    /// Returns true if `user` has been explicitly set.
+    var hasUser: Bool {return self._user != nil}
+    /// Clears the value of `user`. Subsequent reads from it will return its default value.
+    mutating func clearUser() {self._user = nil}
 
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
-    enum TypeEnum: SwiftProtobuf.Enum {
-      typealias RawValue = Int
-      case joined // = 0
-      case left // = 1
-      case addedSpeaker // = 2
-      case removedSpeaker // = 3
-      case mutedSpeaker // = 5
-      case unmutedSpeaker // = 6
-      case reacted // = 7
-      case linkShared // = 8
-      case addedAdmin // = 9
-      case removedAdmin // = 10
-      case renamedRoom // = 11
-      case recordedScreen // = 12
-      case mutedByAdmin // = 13
-      case UNRECOGNIZED(Int)
+    init() {}
 
-      init() {
-        self = .joined
-      }
+    fileprivate var _user: RoomState.RoomMember? = nil
+  }
 
-      init?(rawValue: Int) {
-        switch rawValue {
-        case 0: self = .joined
-        case 1: self = .left
-        case 2: self = .addedSpeaker
-        case 3: self = .removedSpeaker
-        case 5: self = .mutedSpeaker
-        case 6: self = .unmutedSpeaker
-        case 7: self = .reacted
-        case 8: self = .linkShared
-        case 9: self = .addedAdmin
-        case 10: self = .removedAdmin
-        case 11: self = .renamedRoom
-        case 12: self = .recordedScreen
-        case 13: self = .mutedByAdmin
-        default: self = .UNRECOGNIZED(rawValue)
-        }
-      }
+  struct Left {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
 
-      var rawValue: Int {
-        switch self {
-        case .joined: return 0
-        case .left: return 1
-        case .addedSpeaker: return 2
-        case .removedSpeaker: return 3
-        case .mutedSpeaker: return 5
-        case .unmutedSpeaker: return 6
-        case .reacted: return 7
-        case .linkShared: return 8
-        case .addedAdmin: return 9
-        case .removedAdmin: return 10
-        case .renamedRoom: return 11
-        case .recordedScreen: return 12
-        case .mutedByAdmin: return 13
-        case .UNRECOGNIZED(let i): return i
-        }
-      }
-
-    }
+    var unknownFields = SwiftProtobuf.UnknownStorage()
 
     init() {}
   }
 
-  init() {}
-}
+  struct Muted {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
 
-#if swift(>=4.2)
+    var unknownFields = SwiftProtobuf.UnknownStorage()
 
-extension SignalReply.Event.TypeEnum: CaseIterable {
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
-  static var allCases: [SignalReply.Event.TypeEnum] = [
-    .joined,
-    .left,
-    .addedSpeaker,
-    .removedSpeaker,
-    .mutedSpeaker,
-    .unmutedSpeaker,
-    .reacted,
-    .linkShared,
-    .addedAdmin,
-    .removedAdmin,
-    .renamedRoom,
-    .recordedScreen,
-    .mutedByAdmin,
-  ]
-}
-
-#endif  // swift(>=4.2)
-
-struct JoinRequest {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  var room: Int64 = 0
-
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
-}
-
-struct JoinReply {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  var answer: SessionDescription {
-    get {return _answer ?? SessionDescription()}
-    set {_answer = newValue}
+    init() {}
   }
-  /// Returns true if `answer` has been explicitly set.
-  var hasAnswer: Bool {return self._answer != nil}
-  /// Clears the value of `answer`. Subsequent reads from it will return its default value.
-  mutating func clearAnswer() {self._answer = nil}
 
-  var room: RoomState {
-    get {return _room ?? RoomState()}
-    set {_room = newValue}
+  struct Unmuted {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
   }
-  /// Returns true if `room` has been explicitly set.
-  var hasRoom: Bool {return self._room != nil}
-  /// Clears the value of `room`. Subsequent reads from it will return its default value.
-  mutating func clearRoom() {self._room = nil}
 
-  var unknownFields = SwiftProtobuf.UnknownStorage()
+  struct Reacted {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
 
-  init() {}
+    var emoji: Data = SwiftProtobuf.Internal.emptyData
 
-  fileprivate var _answer: SessionDescription? = nil
-  fileprivate var _room: RoomState? = nil
-}
+    var unknownFields = SwiftProtobuf.UnknownStorage()
 
-struct RoomList {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
+    init() {}
+  }
 
-  var rooms: [RoomState] = []
+  struct LinkShared {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
 
-  var unknownFields = SwiftProtobuf.UnknownStorage()
+    var link: String = String()
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct InvitedAdmin {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct AddedAdmin {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct RemovedAdmin {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var id: Int64 = 0
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct RenamedRoom {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var name: String = String()
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct RecordedScreen {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct MutedByAdmin {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
 
   init() {}
 }
@@ -554,168 +693,6 @@ struct RoomState {
   fileprivate var _group: RoomState.Group? = nil
 }
 
-struct CreateRequest {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  var name: String = String()
-
-  var visibility: Visibility = .public
-
-  var group: Int64 = 0
-
-  var users: [Int64] = []
-
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
-}
-
-struct CreateReply {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  var id: Int64 = 0
-
-  var answer: SessionDescription {
-    get {return _answer ?? SessionDescription()}
-    set {_answer = newValue}
-  }
-  /// Returns true if `answer` has been explicitly set.
-  var hasAnswer: Bool {return self._answer != nil}
-  /// Clears the value of `answer`. Subsequent reads from it will return its default value.
-  mutating func clearAnswer() {self._answer = nil}
-
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
-
-  fileprivate var _answer: SessionDescription? = nil
-}
-
-struct Trickle {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  var init_p: String = String()
-
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
-}
-
-struct SessionDescription {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  /// "answer" | "offer" | "pranswer" | "rollback"
-  var type: String = String()
-
-  var sdp: Data = SwiftProtobuf.Internal.emptyData
-
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
-}
-
-struct Invite {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  var id: Int64 = 0
-
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
-}
-
-struct Kick {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  var id: Int64 = 0
-
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
-}
-
-struct AddAdmin {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  var id: Int64 = 0
-
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
-}
-
-struct RemoveAdmin {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  var id: Int64 = 0
-
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
-}
-
-struct AddedAdmin {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  var id: Int64 = 0
-
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
-}
-
-struct RemovedAdmin {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  var id: Int64 = 0
-
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
-}
-
-struct MuteUser {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  var id: Int64 = 0
-
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
-}
-
-struct ScreenRecorded {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  init() {}
-}
-
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension Visibility: SwiftProtobuf._ProtoNameProviding {
@@ -725,95 +702,122 @@ extension Visibility: SwiftProtobuf._ProtoNameProviding {
   ]
 }
 
-extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "SignalRequest"
+extension Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "Command"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "join"),
-    2: .same(proto: "create"),
-    3: .same(proto: "negotiate"),
-    4: .same(proto: "trickle"),
-    5: .same(proto: "command"),
-    6: .same(proto: "invite"),
-    7: .same(proto: "kick"),
-    8: .same(proto: "screenRecorded"),
-    9: .same(proto: "muteUser"),
+    1: .same(proto: "mute"),
+    2: .same(proto: "unmute"),
+    3: .same(proto: "reaction"),
+    4: .same(proto: "linkShare"),
+    5: .same(proto: "inviteAdmin"),
+    6: .same(proto: "acceptAdmin"),
+    7: .same(proto: "removeAdmin"),
+    8: .same(proto: "renameRoom"),
+    9: .same(proto: "inviteUser"),
+    10: .same(proto: "kickUser"),
+    11: .same(proto: "muteUser"),
+    12: .same(proto: "recordScreen"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1:
-        var v: JoinRequest?
+        var v: Command.Mute?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
-          if case .join(let m) = current {v = m}
+          if case .mute(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .join(v)}
+        if let v = v {self.payload = .mute(v)}
       case 2:
-        var v: CreateRequest?
+        var v: Command.Unmute?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
-          if case .create(let m) = current {v = m}
+          if case .unmute(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .create(v)}
+        if let v = v {self.payload = .unmute(v)}
       case 3:
-        var v: SessionDescription?
+        var v: Command.Reaction?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
-          if case .negotiate(let m) = current {v = m}
+          if case .reaction(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .negotiate(v)}
+        if let v = v {self.payload = .reaction(v)}
       case 4:
-        var v: Trickle?
+        var v: Command.LinkShare?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
-          if case .trickle(let m) = current {v = m}
+          if case .linkShare(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .trickle(v)}
+        if let v = v {self.payload = .linkShare(v)}
       case 5:
-        var v: SignalRequest.Command?
+        var v: Command.InviteAdmin?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
-          if case .command(let m) = current {v = m}
+          if case .inviteAdmin(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .command(v)}
+        if let v = v {self.payload = .inviteAdmin(v)}
       case 6:
-        var v: Invite?
+        var v: Command.AcceptAdmin?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
-          if case .invite(let m) = current {v = m}
+          if case .acceptAdmin(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .invite(v)}
+        if let v = v {self.payload = .acceptAdmin(v)}
       case 7:
-        var v: Kick?
+        var v: Command.RemoveAdmin?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
-          if case .kick(let m) = current {v = m}
+          if case .removeAdmin(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .kick(v)}
+        if let v = v {self.payload = .removeAdmin(v)}
       case 8:
-        var v: ScreenRecorded?
+        var v: Command.RenameRoom?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
-          if case .screenRecorded(let m) = current {v = m}
+          if case .renameRoom(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .screenRecorded(v)}
+        if let v = v {self.payload = .renameRoom(v)}
       case 9:
-        var v: MuteUser?
+        var v: Command.InviteUser?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .inviteUser(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .inviteUser(v)}
+      case 10:
+        var v: Command.KickUser?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .kickUser(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .kickUser(v)}
+      case 11:
+        var v: Command.MuteUser?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
           if case .muteUser(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .muteUser(v)}
+      case 12:
+        var v: Command.RecordScreen?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .recordScreen(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .recordScreen(v)}
       default: break
       }
     }
@@ -821,314 +825,788 @@ extension SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     switch self.payload {
-    case .join(let v)?:
+    case .mute(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    case .create(let v)?:
+    case .unmute(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    case .negotiate(let v)?:
+    case .reaction(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-    case .trickle(let v)?:
+    case .linkShare(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
-    case .command(let v)?:
+    case .inviteAdmin(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
-    case .invite(let v)?:
+    case .acceptAdmin(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
-    case .kick(let v)?:
+    case .removeAdmin(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
-    case .screenRecorded(let v)?:
+    case .renameRoom(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
-    case .muteUser(let v)?:
+    case .inviteUser(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
+    case .kickUser(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
+    case .muteUser(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
+    case .recordScreen(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 12)
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: SignalRequest, rhs: SignalRequest) -> Bool {
+  static func ==(lhs: Command, rhs: Command) -> Bool {
     if lhs.payload != rhs.payload {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension SignalRequest.Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = SignalRequest.protoMessageName + ".Command"
+extension Command.Mute: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Command.protoMessageName + ".Mute"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Command.Mute, rhs: Command.Mute) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Command.Unmute: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Command.protoMessageName + ".Unmute"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Command.Unmute, rhs: Command.Unmute) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Command.Reaction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Command.protoMessageName + ".Reaction"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "type"),
-    2: .same(proto: "data"),
+    1: .same(proto: "emoji"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
-      case 1: try decoder.decodeSingularEnumField(value: &self.type)
-      case 2: try decoder.decodeSingularBytesField(value: &self.data)
+      case 1: try decoder.decodeSingularBytesField(value: &self.emoji)
       default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.type != .addSpeaker {
-      try visitor.visitSingularEnumField(value: self.type, fieldNumber: 1)
-    }
-    if !self.data.isEmpty {
-      try visitor.visitSingularBytesField(value: self.data, fieldNumber: 2)
+    if !self.emoji.isEmpty {
+      try visitor.visitSingularBytesField(value: self.emoji, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: SignalRequest.Command, rhs: SignalRequest.Command) -> Bool {
-    if lhs.type != rhs.type {return false}
-    if lhs.data != rhs.data {return false}
+  static func ==(lhs: Command.Reaction, rhs: Command.Reaction) -> Bool {
+    if lhs.emoji != rhs.emoji {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension SignalRequest.Command.TypeEnum: SwiftProtobuf._ProtoNameProviding {
+extension Command.LinkShare: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Command.protoMessageName + ".LinkShare"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "ADD_SPEAKER"),
-    1: .same(proto: "REMOVE_SPEAKER"),
-    2: .same(proto: "MUTE_SPEAKER"),
-    3: .same(proto: "UNMUTE_SPEAKER"),
-    4: .same(proto: "REACTION"),
-    5: .same(proto: "LINK_SHARE"),
-    6: .same(proto: "ADD_ADMIN"),
-    7: .same(proto: "REMOVE_ADMIN"),
-    8: .same(proto: "RENAME_ROOM"),
-  ]
-}
-
-extension SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "SignalReply"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "join"),
-    2: .same(proto: "create"),
-    3: .same(proto: "negotiate"),
-    4: .same(proto: "trickle"),
-    5: .same(proto: "event"),
+    1: .same(proto: "link"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
-      case 1:
-        var v: JoinReply?
-        if let current = self.payload {
-          try decoder.handleConflictingOneOf()
-          if case .join(let m) = current {v = m}
-        }
-        try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .join(v)}
+      case 1: try decoder.decodeSingularStringField(value: &self.link)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.link.isEmpty {
+      try visitor.visitSingularStringField(value: self.link, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Command.LinkShare, rhs: Command.LinkShare) -> Bool {
+    if lhs.link != rhs.link {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Command.InviteAdmin: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Command.protoMessageName + ".InviteAdmin"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.id != 0 {
+      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Command.InviteAdmin, rhs: Command.InviteAdmin) -> Bool {
+    if lhs.id != rhs.id {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Command.AcceptAdmin: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Command.protoMessageName + ".AcceptAdmin"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Command.AcceptAdmin, rhs: Command.AcceptAdmin) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Command.RemoveAdmin: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Command.protoMessageName + ".RemoveAdmin"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.id != 0 {
+      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Command.RemoveAdmin, rhs: Command.RemoveAdmin) -> Bool {
+    if lhs.id != rhs.id {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Command.RenameRoom: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Command.protoMessageName + ".RenameRoom"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "name"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularStringField(value: &self.name)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.name.isEmpty {
+      try visitor.visitSingularStringField(value: self.name, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Command.RenameRoom, rhs: Command.RenameRoom) -> Bool {
+    if lhs.name != rhs.name {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Command.InviteUser: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Command.protoMessageName + ".InviteUser"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.id != 0 {
+      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Command.InviteUser, rhs: Command.InviteUser) -> Bool {
+    if lhs.id != rhs.id {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Command.KickUser: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Command.protoMessageName + ".KickUser"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.id != 0 {
+      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Command.KickUser, rhs: Command.KickUser) -> Bool {
+    if lhs.id != rhs.id {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Command.MuteUser: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Command.protoMessageName + ".MuteUser"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.id != 0 {
+      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Command.MuteUser, rhs: Command.MuteUser) -> Bool {
+    if lhs.id != rhs.id {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Command.RecordScreen: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Command.protoMessageName + ".RecordScreen"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Command.RecordScreen, rhs: Command.RecordScreen) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = "Event"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "from"),
+    2: .same(proto: "joined"),
+    3: .same(proto: "left"),
+    4: .same(proto: "muted"),
+    5: .same(proto: "unmuted"),
+    6: .same(proto: "reacted"),
+    7: .same(proto: "linkShared"),
+    8: .same(proto: "invitedAdmin"),
+    9: .same(proto: "addedAdmin"),
+    10: .same(proto: "removedAdmin"),
+    11: .same(proto: "renamedRoom"),
+    12: .same(proto: "recordedScreen"),
+    13: .same(proto: "mutedByAdmin"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularInt64Field(value: &self.from)
       case 2:
-        var v: CreateReply?
+        var v: Event.Joined?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
-          if case .create(let m) = current {v = m}
+          if case .joined(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .create(v)}
+        if let v = v {self.payload = .joined(v)}
       case 3:
-        var v: SessionDescription?
+        var v: Event.Left?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
-          if case .negotiate(let m) = current {v = m}
+          if case .left(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .negotiate(v)}
+        if let v = v {self.payload = .left(v)}
       case 4:
-        var v: Trickle?
+        var v: Event.Muted?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
-          if case .trickle(let m) = current {v = m}
+          if case .muted(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .trickle(v)}
+        if let v = v {self.payload = .muted(v)}
       case 5:
-        var v: SignalReply.Event?
+        var v: Event.Unmuted?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
-          if case .event(let m) = current {v = m}
+          if case .unmuted(let m) = current {v = m}
         }
         try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .event(v)}
+        if let v = v {self.payload = .unmuted(v)}
+      case 6:
+        var v: Event.Reacted?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .reacted(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .reacted(v)}
+      case 7:
+        var v: Event.LinkShared?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .linkShared(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .linkShared(v)}
+      case 8:
+        var v: Event.InvitedAdmin?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .invitedAdmin(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .invitedAdmin(v)}
+      case 9:
+        var v: Event.AddedAdmin?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .addedAdmin(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .addedAdmin(v)}
+      case 10:
+        var v: Event.RemovedAdmin?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .removedAdmin(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .removedAdmin(v)}
+      case 11:
+        var v: Event.RenamedRoom?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .renamedRoom(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .renamedRoom(v)}
+      case 12:
+        var v: Event.RecordedScreen?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .recordedScreen(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .recordedScreen(v)}
+      case 13:
+        var v: Event.MutedByAdmin?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .mutedByAdmin(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .mutedByAdmin(v)}
       default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.from != 0 {
+      try visitor.visitSingularInt64Field(value: self.from, fieldNumber: 1)
+    }
     switch self.payload {
-    case .join(let v)?:
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    case .create(let v)?:
+    case .joined(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    case .negotiate(let v)?:
+    case .left(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-    case .trickle(let v)?:
+    case .muted(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
-    case .event(let v)?:
+    case .unmuted(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+    case .reacted(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
+    case .linkShared(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+    case .invitedAdmin(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
+    case .addedAdmin(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
+    case .removedAdmin(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
+    case .renamedRoom(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
+    case .recordedScreen(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 12)
+    case .mutedByAdmin(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 13)
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: SignalReply, rhs: SignalReply) -> Bool {
+  static func ==(lhs: Event, rhs: Event) -> Bool {
+    if lhs.from != rhs.from {return false}
     if lhs.payload != rhs.payload {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension SignalReply.Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = SignalReply.protoMessageName + ".Event"
+extension Event.Joined: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Event.protoMessageName + ".Joined"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "type"),
-    2: .same(proto: "from"),
-    3: .same(proto: "data"),
+    1: .same(proto: "user"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
-      case 1: try decoder.decodeSingularEnumField(value: &self.type)
-      case 2: try decoder.decodeSingularInt64Field(value: &self.from)
-      case 3: try decoder.decodeSingularBytesField(value: &self.data)
+      case 1: try decoder.decodeSingularMessageField(value: &self._user)
       default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.type != .joined {
-      try visitor.visitSingularEnumField(value: self.type, fieldNumber: 1)
-    }
-    if self.from != 0 {
-      try visitor.visitSingularInt64Field(value: self.from, fieldNumber: 2)
-    }
-    if !self.data.isEmpty {
-      try visitor.visitSingularBytesField(value: self.data, fieldNumber: 3)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: SignalReply.Event, rhs: SignalReply.Event) -> Bool {
-    if lhs.type != rhs.type {return false}
-    if lhs.from != rhs.from {return false}
-    if lhs.data != rhs.data {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension SignalReply.Event.TypeEnum: SwiftProtobuf._ProtoNameProviding {
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "JOINED"),
-    1: .same(proto: "LEFT"),
-    2: .same(proto: "ADDED_SPEAKER"),
-    3: .same(proto: "REMOVED_SPEAKER"),
-    5: .same(proto: "MUTED_SPEAKER"),
-    6: .same(proto: "UNMUTED_SPEAKER"),
-    7: .same(proto: "REACTED"),
-    8: .same(proto: "LINK_SHARED"),
-    9: .same(proto: "ADDED_ADMIN"),
-    10: .same(proto: "REMOVED_ADMIN"),
-    11: .same(proto: "RENAMED_ROOM"),
-    12: .same(proto: "RECORDED_SCREEN"),
-    13: .same(proto: "MUTED_BY_ADMIN"),
-  ]
-}
-
-extension JoinRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "JoinRequest"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "room"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.room)
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.room != 0 {
-      try visitor.visitSingularInt64Field(value: self.room, fieldNumber: 1)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: JoinRequest, rhs: JoinRequest) -> Bool {
-    if lhs.room != rhs.room {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension JoinReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "JoinReply"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "answer"),
-    2: .same(proto: "room"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularMessageField(value: &self._answer)
-      case 2: try decoder.decodeSingularMessageField(value: &self._room)
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if let v = self._answer {
+    if let v = self._user {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
     }
-    if let v = self._room {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: JoinReply, rhs: JoinReply) -> Bool {
-    if lhs._answer != rhs._answer {return false}
-    if lhs._room != rhs._room {return false}
+  static func ==(lhs: Event.Joined, rhs: Event.Joined) -> Bool {
+    if lhs._user != rhs._user {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension RoomList: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "RoomList"
+extension Event.Left: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Event.protoMessageName + ".Left"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Event.Left, rhs: Event.Left) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Event.Muted: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Event.protoMessageName + ".Muted"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Event.Muted, rhs: Event.Muted) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Event.Unmuted: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Event.protoMessageName + ".Unmuted"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Event.Unmuted, rhs: Event.Unmuted) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Event.Reacted: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Event.protoMessageName + ".Reacted"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "rooms"),
+    1: .same(proto: "emoji"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
-      case 1: try decoder.decodeRepeatedMessageField(value: &self.rooms)
+      case 1: try decoder.decodeSingularBytesField(value: &self.emoji)
       default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.rooms.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.rooms, fieldNumber: 1)
+    if !self.emoji.isEmpty {
+      try visitor.visitSingularBytesField(value: self.emoji, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  static func ==(lhs: RoomList, rhs: RoomList) -> Bool {
-    if lhs.rooms != rhs.rooms {return false}
+  static func ==(lhs: Event.Reacted, rhs: Event.Reacted) -> Bool {
+    if lhs.emoji != rhs.emoji {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Event.LinkShared: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Event.protoMessageName + ".LinkShared"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "link"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularStringField(value: &self.link)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.link.isEmpty {
+      try visitor.visitSingularStringField(value: self.link, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Event.LinkShared, rhs: Event.LinkShared) -> Bool {
+    if lhs.link != rhs.link {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Event.InvitedAdmin: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Event.protoMessageName + ".InvitedAdmin"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Event.InvitedAdmin, rhs: Event.InvitedAdmin) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Event.AddedAdmin: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Event.protoMessageName + ".AddedAdmin"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Event.AddedAdmin, rhs: Event.AddedAdmin) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Event.RemovedAdmin: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Event.protoMessageName + ".RemovedAdmin"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.id != 0 {
+      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Event.RemovedAdmin, rhs: Event.RemovedAdmin) -> Bool {
+    if lhs.id != rhs.id {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Event.RenamedRoom: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Event.protoMessageName + ".RenamedRoom"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "name"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularStringField(value: &self.name)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.name.isEmpty {
+      try visitor.visitSingularStringField(value: self.name, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Event.RenamedRoom, rhs: Event.RenamedRoom) -> Bool {
+    if lhs.name != rhs.name {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Event.RecordedScreen: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Event.protoMessageName + ".RecordedScreen"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Event.RecordedScreen, rhs: Event.RecordedScreen) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Event.MutedByAdmin: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Event.protoMessageName + ".MutedByAdmin"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Event.MutedByAdmin, rhs: Event.MutedByAdmin) -> Bool {
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1288,374 +1766,6 @@ extension RoomState.Group: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     if lhs.id != rhs.id {return false}
     if lhs.name != rhs.name {return false}
     if lhs.image != rhs.image {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension CreateRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "CreateRequest"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "name"),
-    2: .same(proto: "visibility"),
-    3: .same(proto: "group"),
-    4: .same(proto: "users"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.name)
-      case 2: try decoder.decodeSingularEnumField(value: &self.visibility)
-      case 3: try decoder.decodeSingularInt64Field(value: &self.group)
-      case 4: try decoder.decodeRepeatedInt64Field(value: &self.users)
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.name.isEmpty {
-      try visitor.visitSingularStringField(value: self.name, fieldNumber: 1)
-    }
-    if self.visibility != .public {
-      try visitor.visitSingularEnumField(value: self.visibility, fieldNumber: 2)
-    }
-    if self.group != 0 {
-      try visitor.visitSingularInt64Field(value: self.group, fieldNumber: 3)
-    }
-    if !self.users.isEmpty {
-      try visitor.visitPackedInt64Field(value: self.users, fieldNumber: 4)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: CreateRequest, rhs: CreateRequest) -> Bool {
-    if lhs.name != rhs.name {return false}
-    if lhs.visibility != rhs.visibility {return false}
-    if lhs.group != rhs.group {return false}
-    if lhs.users != rhs.users {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension CreateReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "CreateReply"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "id"),
-    2: .same(proto: "answer"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
-      case 2: try decoder.decodeSingularMessageField(value: &self._answer)
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.id != 0 {
-      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
-    }
-    if let v = self._answer {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: CreateReply, rhs: CreateReply) -> Bool {
-    if lhs.id != rhs.id {return false}
-    if lhs._answer != rhs._answer {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension Trickle: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "Trickle"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "init"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.init_p)
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.init_p.isEmpty {
-      try visitor.visitSingularStringField(value: self.init_p, fieldNumber: 1)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: Trickle, rhs: Trickle) -> Bool {
-    if lhs.init_p != rhs.init_p {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension SessionDescription: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "SessionDescription"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "type"),
-    2: .same(proto: "sdp"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.type)
-      case 2: try decoder.decodeSingularBytesField(value: &self.sdp)
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.type.isEmpty {
-      try visitor.visitSingularStringField(value: self.type, fieldNumber: 1)
-    }
-    if !self.sdp.isEmpty {
-      try visitor.visitSingularBytesField(value: self.sdp, fieldNumber: 2)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: SessionDescription, rhs: SessionDescription) -> Bool {
-    if lhs.type != rhs.type {return false}
-    if lhs.sdp != rhs.sdp {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension Invite: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "Invite"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "id"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.id != 0 {
-      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: Invite, rhs: Invite) -> Bool {
-    if lhs.id != rhs.id {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension Kick: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "Kick"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "id"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.id != 0 {
-      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: Kick, rhs: Kick) -> Bool {
-    if lhs.id != rhs.id {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension AddAdmin: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "AddAdmin"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "id"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.id != 0 {
-      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: AddAdmin, rhs: AddAdmin) -> Bool {
-    if lhs.id != rhs.id {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension RemoveAdmin: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "RemoveAdmin"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "id"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.id != 0 {
-      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: RemoveAdmin, rhs: RemoveAdmin) -> Bool {
-    if lhs.id != rhs.id {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension AddedAdmin: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "AddedAdmin"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "id"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.id != 0 {
-      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: AddedAdmin, rhs: AddedAdmin) -> Bool {
-    if lhs.id != rhs.id {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension RemovedAdmin: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "RemovedAdmin"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "id"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.id != 0 {
-      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: RemovedAdmin, rhs: RemovedAdmin) -> Bool {
-    if lhs.id != rhs.id {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension MuteUser: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "MuteUser"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "id"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.id != 0 {
-      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: MuteUser, rhs: MuteUser) -> Bool {
-    if lhs.id != rhs.id {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension ScreenRecorded: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = "ScreenRecorded"
-  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let _ = try decoder.nextFieldNumber() {
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: ScreenRecorded, rhs: ScreenRecorded) -> Bool {
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
