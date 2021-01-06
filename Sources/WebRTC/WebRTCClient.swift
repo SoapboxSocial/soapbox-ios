@@ -56,6 +56,10 @@ final class WebRTCClient: NSObject {
 
     // MARK: Signaling
 
+    func close() {
+        peerConnection.close()
+    }
+
     func offer(completion: @escaping (_ sdp: RTCSessionDescription) -> Void) {
         let constrains = RTCMediaConstraints(mandatoryConstraints: mediaConstrains,
                                              optionalConstraints: nil)

@@ -1,3 +1,4 @@
+import Foundation
 import WebRTC
 
 final class RoomClient {
@@ -5,7 +6,11 @@ final class RoomClient {
     private var signalClient: SignalingClient! // @TODO
     // @TODO THIS CONTAINS WEBRTC AND SIGNALING LOGIC.
 
-    func close() {}
+    func close() {
+        for (_, stream) in streams {
+            stream.close()
+        }
+    }
 
     func send(command: Command.OneOf_Payload) {
         let cmd = Command.with {
