@@ -36,33 +36,43 @@ extension RoomClient: SignalingClientDelegate {
 
     func signalClient(_: SignalingClient, didReceiveDescription description: SessionDescription) {
         if description.type == "offer" {
-            negotiate(description: RTCSessionDescription(type: sdpType(description.type), sdp: description.sdp))
+            negotiate(description: description)
         }
     }
 
+    // @TODO THESE 2 SHOULD BE THE SAME
+
     func signalClient(_: SignalingClient, didReceiveJoinReply join: JoinReply) {
-        set(
-            remoteDescription: RTCSessionDescription(type: sdpType(join.description_p.type), sdp: join.description_p.sdp),
-            for: .publisher
-        )
+        set(remoteDescription: join.description_p, for: .publisher, completion: { _ in
+            // @TODO
+        })
     }
 
     func signalClient(_: SignalingClient, didReceiveCreateReply create: CreateReply) {
-        set(
-            remoteDescription: RTCSessionDescription(type: sdpType(create.description_p.type), sdp: create.description_p.sdp),
-            for: .publisher
-        )
-    }
-
-    private func negotiate(description: RTCSessionDescription) {
-        // @TODO https://github.com/pion/ion-sdk-js/blob/master/src/client.ts#L173
-        set(remoteDescription: description, for: .subscriber) // @TODO
-    }
-
-    private func set(remoteDescription: RTCSessionDescription, for target: Trickle.Target) {
-        streams[target]?.set(remoteSdp: remoteDescription, completion: { _ in
+        set(remoteDescription: create.description_p, for: .publisher, completion: { _ in
             // @TODO
         })
+    }
+
+    // @TODO
+
+    private func negotiate(description: SessionDescription) {
+        // @TODO https://github.com/pion/ion-sdk-js/blob/master/src/client.ts#L173
+        set(remoteDescription: description, for: .subscriber) { _ in
+            // @TODO
+        }
+    }
+
+    private func set(remoteDescription: SessionDescription, for target: Trickle.Target, completion: @escaping (Error?) -> Void) {
+        guard let rtc = streams[target] else {
+            return // @TODO callback
+        }
+
+        guard let type = sdpType(remoteDescription.type) else {
+            return // @TODO CALLBACK
+        }
+
+        rtc.set(remoteSdp: RTCSessionDescription(type: type, sdp: remoteDescription.sdp), completion: completion)
     }
 
     private func sdpType(_ input: String) -> RTCSdpType? {

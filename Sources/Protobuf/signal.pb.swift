@@ -282,7 +282,7 @@ struct SessionDescription {
   /// "answer" | "offer" | "pranswer" | "rollback"
   var type: String = String()
 
-  var sdp: Data = SwiftProtobuf.Internal.emptyData
+  var sdp: String = String()
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -705,7 +705,7 @@ extension SessionDescription: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularStringField(value: &self.type)
-      case 2: try decoder.decodeSingularBytesField(value: &self.sdp)
+      case 2: try decoder.decodeSingularStringField(value: &self.sdp)
       default: break
       }
     }
@@ -716,7 +716,7 @@ extension SessionDescription: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
       try visitor.visitSingularStringField(value: self.type, fieldNumber: 1)
     }
     if !self.sdp.isEmpty {
-      try visitor.visitSingularBytesField(value: self.sdp, fieldNumber: 2)
+      try visitor.visitSingularStringField(value: self.sdp, fieldNumber: 2)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
