@@ -628,7 +628,7 @@ struct RoomState {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var id: Int64 = 0
+  var id: String = String()
 
   var name: String = String()
 
@@ -1666,7 +1666,7 @@ extension RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      case 1: try decoder.decodeSingularStringField(value: &self.id)
       case 2: try decoder.decodeSingularStringField(value: &self.name)
       case 3: try decoder.decodeRepeatedMessageField(value: &self.members)
       case 4: try decoder.decodeSingularStringField(value: &self.role)
@@ -1678,8 +1678,8 @@ extension RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.id != 0 {
-      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
+    if !self.id.isEmpty {
+      try visitor.visitSingularStringField(value: self.id, fieldNumber: 1)
     }
     if !self.name.isEmpty {
       try visitor.visitSingularStringField(value: self.name, fieldNumber: 2)

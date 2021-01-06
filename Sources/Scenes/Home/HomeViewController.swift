@@ -252,7 +252,7 @@ extension HomeViewController: HomePresenterOutput {
         banner.show(cornerRadius: 10, shadowBlurRadius: 15)
     }
 
-    func displayCurrentRoom(_ id: Int) {
+    func displayCurrentRoom(_ id: String) {
         presenter.currentRoom = id
 
         DispatchQueue.main.async {

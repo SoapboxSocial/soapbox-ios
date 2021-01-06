@@ -2,7 +2,7 @@ import AlamofireImage
 import UIKit
 
 class HomeCollectionPresenter {
-    var currentRoom: Int?
+    var currentRoom: String?
 
     private var dataSource = [Section]()
 

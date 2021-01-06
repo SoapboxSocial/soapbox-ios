@@ -7,7 +7,7 @@ protocol RoomController {
 }
 
 protocol RoomControllerDelegate {
-    func didJoin(room: Int)
+    func didJoin(room: String)
     func didLeaveRoom()
     func reloadRooms()
 }
@@ -15,7 +15,7 @@ protocol RoomControllerDelegate {
 protocol HomeInteractorOutput {
     func didFailToFetchRooms()
     func didFetchRooms(rooms: RoomList)
-    func didJoin(room: Int)
+    func didJoin(room: String)
     func didLeaveRoom()
     func didFetchFeed(_ feed: [APIClient.StoryFeed])
     func didFetchOwnStories(_ stories: [APIClient.Story])
@@ -103,7 +103,7 @@ class HomeInteractor: HomeViewControllerOutput {
 }
 
 extension HomeInteractor: RoomControllerDelegate {
-    func didJoin(room: Int) {
+    func didJoin(room: String) {
         output.didJoin(room: room)
     }
 
