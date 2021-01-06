@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.10.2] - 2021-01-06
+
+ - Minor fixes.
+
 ## [1.10.1] - 2021-01-04
 
  - Fix showing the wrong profile image in search.
