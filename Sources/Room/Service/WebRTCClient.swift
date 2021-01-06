@@ -191,8 +191,6 @@ extension WebRTCClient {
     }
 }
 
-// MARK: - Audio control
-
 extension WebRTCClient {
     func muteAudio() {
         setAudioEnabled(false)
