@@ -477,10 +477,6 @@ class RoomView: UIView {
     }
 
     @objc private func pasteLink() {
-        if room.role == .audience {
-            return
-        }
-
         var url: URL?
         if let pasted = UIPasteboard.general.url {
             url = pasted
@@ -760,7 +756,7 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func didChangeUserRole(user: Int, role: Room.MemberRole) {
+    func didChangeUserRole(user: Int, role: RoomState.RoomMember.Role) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
