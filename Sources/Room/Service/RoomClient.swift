@@ -1,7 +1,7 @@
 import WebRTC
 
 final class RoomClient {
-    private var streams = [Trickle.Target: RTCTransport]()
+    private var streams = [Trickle.Target: WebRTCClient]() // @TODO MAY NOT NEED TRANSPORT
     private var signalClient: SignalingClient! // @TODO
     // @TODO THIS CONTAINS WEBRTC AND SIGNALING LOGIC.
 
