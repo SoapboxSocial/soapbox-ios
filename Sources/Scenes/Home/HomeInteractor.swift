@@ -3,7 +3,7 @@ import KeychainAccess
 import SwiftProtobuf
 
 protocol RoomController {
-    func didSelect(room id: Int)
+    func didSelect(room id: String)
 }
 
 protocol RoomControllerDelegate {
@@ -97,7 +97,7 @@ class HomeInteractor: HomeViewControllerOutput {
         })
     }
 
-    func didSelectRoom(room: Int) {
+    func didSelectRoom(room: String) {
         controller.didSelect(room: room)
     }
 }

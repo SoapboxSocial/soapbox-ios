@@ -5,7 +5,7 @@ import UIKit
 
 protocol HomeViewControllerOutput {
     func fetchData()
-    func didSelectRoom(room: Int)
+    func didSelectRoom(room: String)
     func fetchMe()
 }
 
@@ -344,7 +344,7 @@ extension HomeViewController: UICollectionViewDelegate {
             present(vc, animated: true)
         case .roomList:
             let room = presenter.item(for: indexPath, ofType: RoomState.self)
-            output.didSelectRoom(room: Int(room.id))
+            output.didSelectRoom(room: room.id)
         case .noRooms:
             return
         }

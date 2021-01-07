@@ -92,11 +92,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func handleRoomURL(components: NSURLComponents) -> Bool {
-        guard let param = components.queryItems?.first(where: { $0.name == "id" }), let str = param.value else {
-            return false
-        }
-
-        guard let room = Int(str) else {
+        guard let param = components.queryItems?.first(where: { $0.name == "id" }), let room = param.value else {
             return false
         }
 
@@ -252,7 +248,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
             switch category {
             case "NEW_ROOM", "ROOM_JOINED", "ROOM_INVITE":
-                guard let id = args["id"] as? Int else {
+                guard let id = args["id"] as? String else {
                     return
                 }
 
