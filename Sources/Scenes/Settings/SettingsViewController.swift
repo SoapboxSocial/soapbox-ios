@@ -3,6 +3,7 @@ import UIKit
 class SettingsViewController: UIViewController {
     private let tableView: UITableView = {
         let view = UITableView(frame: .zero, style: .insetGrouped)
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 
@@ -18,7 +19,11 @@ class SettingsViewController: UIViewController {
         close.addTarget(self, action: #selector(didTapClose), for: .touchUpInside)
         view.addSubview(close)
 
+        tableView.delegate = self
+        tableView.dataSource = self
         view.addSubview(tableView)
+
+        tableView.reloadData()
 
         NSLayoutConstraint.activate([
             close.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
@@ -43,11 +48,15 @@ class SettingsViewController: UIViewController {
 extension SettingsViewController: UITableViewDelegate {}
 
 extension SettingsViewController: UITableViewDataSource {
+    func numberOfSections(in _: UITableView) -> Int {
+        return 1
+    }
+
     func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        return 0
+        return 2
     }
 
     func tableView(_: UITableView, cellForRowAt _: IndexPath) -> UITableViewCell {
-        fatalError()
+        return SettingsLinkTableViewCell()
     }
 }
