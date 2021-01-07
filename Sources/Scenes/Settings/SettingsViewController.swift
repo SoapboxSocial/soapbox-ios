@@ -1,14 +1,23 @@
 import UIKit
 
 class SettingsViewController: UIViewController {
+    private let presenter = SettingsPresenter()
+
     private let tableView: UITableView = {
         let view = UITableView(frame: .zero, style: .insetGrouped)
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.register(cellWithClass: SettingsLinkTableViewCell.self)
         return view
     }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        presenter.set(links: [
+            SettingsPresenter.Link(name: NSLocalizedString("contact_us", comment: ""), link: URL(string: "mailto:support@soapbox.social")!),
+            SettingsPresenter.Link(name: NSLocalizedString("terms", comment: ""), link: URL(string: "https://soapbox.social/terms")!),
+            SettingsPresenter.Link(name: NSLocalizedString("privacy", comment: ""), link: URL(string: "https://soapbox.social/privacy")!),
+        ])
 
         view.backgroundColor = .background
 
@@ -45,18 +54,26 @@ class SettingsViewController: UIViewController {
     }
 }
 
-extension SettingsViewController: UITableViewDelegate {}
+extension SettingsViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let link = presenter.item(for: indexPath, ofType: SettingsPresenter.Link.self)
+        UIApplication.shared.open(link.link)
+    }
+}
 
 extension SettingsViewController: UITableViewDataSource {
     func numberOfSections(in _: UITableView) -> Int {
-        return 1
+        return presenter.numberOfSections
     }
 
-    func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
-        return 2
+    func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return presenter.numberOfItems(for: section)
     }
 
-    func tableView(_: UITableView, cellForRowAt _: IndexPath) -> UITableViewCell {
-        return SettingsLinkTableViewCell()
+    func tableView(_: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withClass: SettingsLinkTableViewCell.self, for: indexPath)
+        presenter.configure(item: cell, for: indexPath)
+        return cell
     }
 }

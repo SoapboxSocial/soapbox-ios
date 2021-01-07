@@ -1,16 +1,16 @@
 import UIKit
 
 class SettingsLinkTableViewCell: UITableViewCell {
-    init() {
-        super.init(style: .default, reuseIdentifier: "poop")
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         backgroundColor = .foreground
 
         accessoryView = UIImageView(image: UIImage(systemName: "arrow.up.right"))
-        accessoryView?.tintColor = .label
+        accessoryView?.tintColor = .secondaryLabel
         addSubview(accessoryView!)
 
-        textLabel?.text = "test"
+        textLabel?.font = .rounded(forTextStyle: .body, weight: .regular)
     }
 
     required init?(coder _: NSCoder) {
