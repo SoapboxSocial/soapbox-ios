@@ -336,6 +336,10 @@ class ProfileViewController: ViewController {
             output.follow()
         }
     }
+
+    @objc private func openSettings() {
+        present(SceneFactory.createSettingsViewController(), animated: true)
+    }
 }
 
 extension ProfileViewController: ProfilePresenterOutput {
@@ -366,6 +370,15 @@ extension ProfileViewController: ProfilePresenterOutput {
 
     func display(personal profile: APIClient.Profile) {
         setBasicInfo(profile)
+
+        let item = UIBarButtonItem(
+            image: UIImage(systemName: "gear"),
+            style: .plain,
+            target: self,
+            action: #selector(openSettings)
+        )
+
+        navigationItem.rightBarButtonItem = item
 
         headerView.button.setTitle(NSLocalizedString("edit", comment: ""), for: .normal)
         headerView.button.addTarget(self, action: #selector(editPressed), for: .touchUpInside)
