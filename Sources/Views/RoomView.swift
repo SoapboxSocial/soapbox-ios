@@ -11,6 +11,8 @@ protocol RoomViewDelegate {
 class RoomView: UIView {
     var delegate: RoomViewDelegate?
 
+    private var links = [(Int, URL)]()
+
     private static let iconConfig = UIImage.SymbolConfiguration(weight: .semibold)
 
     private let muteButton: EmojiButton = {
@@ -116,6 +118,7 @@ class RoomView: UIView {
     private let content: UIStackView = {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.spacing = 20
         stack.distribution = .fill
         stack.alignment = .fill
         stack.axis = .vertical
@@ -767,7 +770,16 @@ extension RoomView: RoomDelegate {
     }
 
     func didReceiveLink(from: Int, link: URL) {
-        // @TODO CREATE A LINK QUEUE?
+        links.append((from, link))
+        if links.count == 1 {
+            displayNextLink()
+        }
+    }
+
+    private func displayNextLink() {
+        guard let (from, link) = links.first else {
+            return
+        }
 
         guard let user = room.members.first(where: { $0.id == from }) else {
             return
@@ -776,10 +788,11 @@ extension RoomView: RoomDelegate {
         DispatchQueue.main.async {
             let linkView = LinkSharingView(link: link, name: user.displayName)
             self.content.insertArrangedSubview(linkView, at: 0)
-
-            Timer.scheduledTimer(withTimeInterval: 30, repeats: false, block: { _ in
+            linkView.startTimer {
                 linkView.removeFromSuperview()
-            })
+                self.links.removeFirst()
+                self.displayNextLink()
+            }
         }
     }
 

@@ -1,3 +1,4 @@
+import KDCircularProgress
 import LinkPresentation
 import UIKit
 
@@ -19,6 +20,19 @@ class LinkSharingView: UIView {
     }()
 
     private let link: URL
+
+    private let progress: KDCircularProgress = {
+        let progress = KDCircularProgress()
+        progress.translatesAutoresizingMaskIntoConstraints = false
+        progress.startAngle = -90
+        progress.clockwise = true
+        progress.gradientRotateSpeed = 2
+        progress.roundedCorners = true
+        progress.glowMode = .noGlow
+        progress.trackColor = .clear
+        progress.set(colors: .brandColor)
+        return progress
+    }()
 
     private let provider = LPMetadataProvider()
 
@@ -58,6 +72,15 @@ class LinkSharingView: UIView {
         nameLabel.text = String(format: text, name.firstName())
         addSubview(nameLabel)
 
+        addSubview(progress)
+
+        NSLayoutConstraint.activate([
+            progress.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            progress.widthAnchor.constraint(equalToConstant: 20),
+            progress.heightAnchor.constraint(equalToConstant: 20),
+            progress.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
+        ])
+
         NSLayoutConstraint.activate([
             nameLabel.topAnchor.constraint(equalTo: linkView.bottomAnchor, constant: 5),
             nameLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
@@ -66,6 +89,16 @@ class LinkSharingView: UIView {
         NSLayoutConstraint.activate([
             bottomAnchor.constraint(equalTo: nameLabel.bottomAnchor),
         ])
+    }
+
+    func startTimer(completion: @escaping () -> Void) {
+        progress.animate(fromAngle: 0, toAngle: 360, duration: 30) { _ in
+            UIView.animate(withDuration: 0.1, animations: {
+                self.isHidden = true
+            }) { _ in
+                completion()
+            }
+        }
     }
 
     required init?(coder _: NSCoder) {
