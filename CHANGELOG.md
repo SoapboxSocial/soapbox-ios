@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.11.0] - 2021-01-10
+
  - People were confused by our link sharing, we've finally improved the way they look when shared.
  - Fixed large gap in the room between the title and the users.
 
