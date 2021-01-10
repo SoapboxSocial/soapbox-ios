@@ -267,6 +267,8 @@ struct CreateReply {
   /// Clears the value of `description_p`. Subsequent reads from it will return its default value.
   mutating func clearDescription_p() {self._description_p = nil}
 
+  var id: String = String()
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
@@ -669,12 +671,14 @@ extension CreateReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
   static let protoMessageName: String = "CreateReply"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "description"),
+    2: .same(proto: "id"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularMessageField(value: &self._description_p)
+      case 2: try decoder.decodeSingularStringField(value: &self.id)
       default: break
       }
     }
@@ -684,11 +688,15 @@ extension CreateReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     if let v = self._description_p {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
     }
+    if !self.id.isEmpty {
+      try visitor.visitSingularStringField(value: self.id, fieldNumber: 2)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: CreateReply, rhs: CreateReply) -> Bool {
     if lhs._description_p != rhs._description_p {return false}
+    if lhs.id != rhs.id {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
