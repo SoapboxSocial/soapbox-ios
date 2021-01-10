@@ -94,6 +94,10 @@ final class WebRTCClient: NSObject {
         peerConnection.add(remoteCandidate)
     }
 
+    func set(localDescription description: RTCSessionDescription, completion: @escaping (Error?) -> Void) {
+        peerConnection.setLocalDescription(description, completionHandler: completion)
+    }
+
     private func configureAudioSession() {
         rtcAudioSession.lockForConfiguration()
         do {

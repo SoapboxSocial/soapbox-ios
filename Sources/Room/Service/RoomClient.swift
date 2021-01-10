@@ -66,14 +66,29 @@ extension RoomClient: SignalingClientDelegate {
     // @TODO
 
     private func negotiate(description: SessionDescription) {
-        // @TODO https://github.com/pion/ion-sdk-js/blob/master/src/client.ts#L173
         set(remoteDescription: description, for: .subscriber) { err in
             if err != nil {
                 debugPrint("remoteDescription err: \(err)")
                 return
             }
 
-            // @TODO
+            guard let stream = self.streams[.publisher] else {
+                return
+            }
+
+            // @TODO:
+            // https://github.com/pion/ion-sdk-js/blob/master/src/client.ts#L180-L181
+
+            stream.answer(completion: { answer in
+                stream.set(localDescription: answer, completion: { err in
+                    if err != nil {
+                        debugPrint("localDescription err: \(err)")
+                        return
+                    }
+
+                    self.signalClient.answer(description: answer)
+                })
+            })
         }
     }
 
