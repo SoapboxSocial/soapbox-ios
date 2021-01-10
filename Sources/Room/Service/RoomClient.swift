@@ -3,8 +3,13 @@ import WebRTC
 
 final class RoomClient {
     private var streams = [Trickle.Target: WebRTCClient]() // @TODO MAY NOT NEED TRANSPORT
-    private var signalClient: SignalingClient! // @TODO
+    private let signalClient: SignalingClient
     // @TODO THIS CONTAINS WEBRTC AND SIGNALING LOGIC.
+
+    init(signal: SignalingClient) {
+        signalClient = signal
+        signal.delegate = self
+    }
 
     func close() {
         for (_, stream) in streams {
@@ -17,7 +22,11 @@ final class RoomClient {
             $0.payload = command
         }
 
-        debugPrint(cmd)
+        guard let data = try? cmd.serializedData() else {
+            return
+        }
+
+        streams[.publisher]?.sendData(data)
     }
 }
 
