@@ -279,7 +279,7 @@ class RoomView: UIView {
         }
 
         NSLayoutConstraint.activate([
-            content.topAnchor.constraint(equalTo: exitButton.bottomAnchor, constant: 40),
+            content.topAnchor.constraint(equalTo: exitButton.bottomAnchor, constant: 20),
             content.leftAnchor.constraint(equalTo: foreground.leftAnchor),
             content.rightAnchor.constraint(equalTo: foreground.rightAnchor),
             foreground.bottomAnchor.constraint(equalTo: content.bottomAnchor),
