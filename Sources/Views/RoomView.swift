@@ -44,7 +44,7 @@ class RoomView: UIView {
     }()
 
     private let inviteUsersButton: EmojiButton = {
-        let button = EmojiButton()
+        let button = EmojiButton(frame: .zero)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "person.badge.plus", withConfiguration: iconConfig), for: .normal)
         button.tintColor = .brandColor
