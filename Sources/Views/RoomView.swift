@@ -44,7 +44,7 @@ class RoomView: UIView {
     }()
 
     private let inviteUsersButton: EmojiButton = {
-        let button = EmojiButton(frame: .zero)
+        let button = EmojiButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "person.badge.plus", withConfiguration: iconConfig), for: .normal)
         button.tintColor = .brandColor
@@ -338,42 +338,13 @@ class RoomView: UIView {
             buttonBar.bottomAnchor.constraint(equalTo: bottomMuteButton.bottomAnchor, constant: 10),
         ])
 
-        let emojis = UIView()
-        emojis.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(emojis)
-
         let userId = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
-
-        var left = emojis.leftAnchor
-        var leftOffset = CGFloat(0)
-
-        for reaction in Room.Reaction.allCases {
-            // poop emoji, only for Dean & Palley
-            if reaction == .poop, userId != 1, userId != 170 {
-                continue
-            }
-
-            let button = EmojiButton()
-            button.translatesAutoresizingMaskIntoConstraints = false
-            button.setTitle(reaction.rawValue, for: .normal)
-            button.addTarget(self, action: #selector(reactionTapped), for: .touchUpInside)
-            button.backgroundColor = .clear
-            emojis.addSubview(button)
-
-            NSLayoutConstraint.activate([
-                button.heightAnchor.constraint(equalToConstant: 32),
-                button.widthAnchor.constraint(equalToConstant: 32),
-                button.leftAnchor.constraint(equalTo: left, constant: leftOffset),
-            ])
-
-            left = button.rightAnchor
-            leftOffset = 20
-        }
+        let emojis = EmojiBar(emojis: Room.Reaction.allCases.filter { !($0 == .poop && userId != 1 && userId != 170) })
+        emojis.delegate = self
+        addSubview(emojis)
 
         NSLayoutConstraint.activate([
             emojis.topAnchor.constraint(equalTo: bottomMuteButton.bottomAnchor, constant: 20),
-            emojis.rightAnchor.constraint(equalTo: left),
-            emojis.heightAnchor.constraint(equalToConstant: 32),
             emojis.centerXAnchor.constraint(equalTo: centerXAnchor),
         ])
 
@@ -560,24 +531,6 @@ class RoomView: UIView {
         if parent.position == .collapsed {
             parent.setPosition(.open, animated: true)
         }
-    }
-
-    @objc private func reactionTapped(_ sender: UIButton) {
-        guard let button = sender as? EmojiButton else {
-            return
-        }
-
-        guard let label = button.title(for: .normal) else {
-            return
-        }
-
-        guard let reaction = Room.Reaction(rawValue: label) else {
-            return
-        }
-
-        room.react(with: reaction)
-        reactFeedback.impactOccurred()
-        reactFeedback.prepare()
     }
 
     @objc private func editRoomNameButtonTapped() {
@@ -833,6 +786,14 @@ extension RoomView: RoomDelegate {
 
             banner.show()
         }
+    }
+}
+
+extension RoomView: EmojiBarDelegate {
+    func did(react reaction: Room.Reaction) {
+        room.react(with: reaction)
+        reactFeedback.impactOccurred()
+        reactFeedback.prepare()
     }
 }
 
