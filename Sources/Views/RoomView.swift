@@ -113,6 +113,16 @@ class RoomView: UIView {
         return collection
     }()
 
+    private let content: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.distribution = .fill
+        stack.alignment = .fill
+        stack.axis = .vertical
+        stack.isUserInteractionEnabled = true
+        return stack
+    }()
+
     private let lock: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -171,7 +181,10 @@ class RoomView: UIView {
         addSubview(buttonBar)
 
         addSubview(foreground)
-        foreground.addSubview(members)
+
+        foreground.addSubview(content)
+
+        content.addArrangedSubview(members)
 
         let handle = UIView()
         handle.translatesAutoresizingMaskIntoConstraints = false
@@ -257,23 +270,28 @@ class RoomView: UIView {
         ])
 
         if UIScreen.main.bounds.height <= 736 {
-            members.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height - (68 + 20 + 32 + 40 + 57 + 76)).isActive = true
+            content.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height - (68 + 20 + 32 + 40 + 57 + 76)).isActive = true
         } else {
-            members.heightAnchor.constraint(equalToConstant: UICollectionViewFlowLayout.heightForBubbleLayout(rows: 4, width: UIScreen.main.bounds.width)).isActive = true
+            content.heightAnchor.constraint(equalToConstant: UICollectionViewFlowLayout.heightForBubbleLayout(rows: 4, width: UIScreen.main.bounds.width)).isActive = true
         }
 
         NSLayoutConstraint.activate([
-            members.topAnchor.constraint(equalTo: exitButton.bottomAnchor, constant: 40),
+            content.topAnchor.constraint(equalTo: exitButton.bottomAnchor, constant: 40),
+            content.leftAnchor.constraint(equalTo: foreground.leftAnchor),
+            content.rightAnchor.constraint(equalTo: foreground.rightAnchor),
+            foreground.bottomAnchor.constraint(equalTo: content.bottomAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
             members.leftAnchor.constraint(equalTo: foreground.leftAnchor),
             members.rightAnchor.constraint(equalTo: foreground.rightAnchor),
-            foreground.bottomAnchor.constraint(equalTo: members.bottomAnchor),
         ])
 
         NSLayoutConstraint.activate([
             topBar.topAnchor.constraint(equalTo: topAnchor),
             topBar.leftAnchor.constraint(equalTo: leftAnchor),
             topBar.rightAnchor.constraint(equalTo: rightAnchor),
-            topBar.bottomAnchor.constraint(equalTo: members.topAnchor),
+            topBar.bottomAnchor.constraint(equalTo: content.topAnchor),
         ])
 
         let buttonStack = UIStackView()
@@ -423,7 +441,7 @@ class RoomView: UIView {
     }
 
     func hideViews() -> [UIView] {
-        return [members]
+        return [content]
     }
 
     static func height() -> CGFloat {
@@ -749,25 +767,19 @@ extension RoomView: RoomDelegate {
     }
 
     func didReceiveLink(from: Int, link: URL) {
+        // @TODO CREATE A LINK QUEUE?
+
         guard let user = room.members.first(where: { $0.id == from }) else {
             return
         }
 
-        let message = NSLocalizedString("shared_link", comment: "")
-        let description = NSLocalizedString("click_to_open", comment: "")
-
         DispatchQueue.main.async {
-            let banner = GrowingNotificationBanner(
-                title: String(format: message, user.displayName.firstName()),
-                subtitle: String(format: description, link.absoluteString),
-                style: .info
-            )
+            let linkView = LinkSharingView(link: link, name: user.displayName)
+            self.content.insertArrangedSubview(linkView, at: 0)
 
-            banner.onTap = {
-                UIApplication.shared.open(link)
-            }
-
-            banner.show()
+            Timer.scheduledTimer(withTimeInterval: 30, repeats: false, block: { _ in
+                linkView.removeFromSuperview()
+            })
         }
     }
 
