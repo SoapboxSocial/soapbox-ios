@@ -71,43 +71,43 @@ class Room: NSObject {
         self.completion = completion
         self.id = id
 
-        _ = stream.sendMessage(SignalRequest.with {
-            $0.join = JoinRequest.with {
-                $0.room = id
-            }
-        })
-
-        stream.status.whenComplete { result in
-            switch result {
-            case .failure:
-                completion(.failure(.general))
-            case let .success(status):
-                switch status.code {
-                case .ok: break
-                default:
-                    guard let completion = self.completion else {
-                        if !self.isClosed {
-                            self.delegate?.roomWasClosedByRemote()
-                        }
-
-                        return
-                    }
-
-                    if let message = status.message {
-                        switch message {
-                        case "join error room closed":
-                            return completion(.failure(.closed))
-                        case "join error room full":
-                            return completion(.failure(.fullRoom))
-                        default:
-                            break
-                        }
-                    }
-
-                    return completion(.failure(.general))
-                }
-            }
-        }
+//        _ = stream.sendMessage(SignalRequest.with {
+//            $0.join = JoinRequest.with {
+//                $0.room = id
+//            }
+//        })
+//
+//        stream.status.whenComplete { result in
+//            switch result {
+//            case .failure:
+//                completion(.failure(.general))
+//            case let .success(status):
+//                switch status.code {
+//                case .ok: break
+//                default:
+//                    guard let completion = self.completion else {
+//                        if !self.isClosed {
+//                            self.delegate?.roomWasClosedByRemote()
+//                        }
+//
+//                        return
+//                    }
+//
+//                    if let message = status.message {
+//                        switch message {
+//                        case "join error room closed":
+//                            return completion(.failure(.closed))
+//                        case "join error room full":
+//                            return completion(.failure(.fullRoom))
+//                        default:
+//                            break
+//                        }
+//                    }
+//
+//                    return completion(.failure(.general))
+//                }
+//            }
+//        }
     }
 
     func create(name: String?, isPrivate: Bool, group: Int? = nil, users: [Int]? = nil, completion: @escaping (Result<Void, RoomError>) -> Void) {
@@ -133,28 +133,28 @@ class Room: NSObject {
             request.users = ids.map(Int64.init)
         }
 
-        _ = stream.sendMessage(SignalRequest.with {
-            $0.create = request
-        })
-
-        stream.status.whenComplete { result in
-            switch result {
-            case let .failure(error):
-                completion(.failure(.general))
-            case let .success(status):
-                switch status.code {
-                case .ok: break
-                default:
-                    if let completion = self.completion {
-                        return completion(.failure(.general))
-                    }
-
-                    if !self.isClosed {
-                        self.delegate?.roomWasClosedByRemote()
-                    }
-                }
-            }
-        }
+//        _ = stream.sendMessage(SignalRequest.with {
+//            $0.create = request
+//        })
+//
+//        stream.status.whenComplete { result in
+//            switch result {
+//            case let .failure(error):
+//                completion(.failure(.general))
+//            case let .success(status):
+//                switch status.code {
+//                case .ok: break
+//                default:
+//                    if let completion = self.completion {
+//                        return completion(.failure(.general))
+//                    }
+//
+//                    if !self.isClosed {
+//                        self.delegate?.roomWasClosedByRemote()
+//                    }
+//                }
+//            }
+//        }
     }
 
     func close() {
@@ -167,17 +167,17 @@ class Room: NSObject {
     }
 
     func mute() {
-        rtc.muteAudio()
-        isMuted = true
-
-        client.send(command: .mute(Command.Mute()))
+//        rtc.muteAudio()
+//        isMuted = true
+//
+//        client.send(command: .mute(Command.Mute()))
     }
 
     func unmute() {
-        rtc.unmuteAudio()
-        isMuted = false
-
-        client.send(command: .unmute(Command.Unmute()))
+//        rtc.unmuteAudio()
+//        isMuted = false
+//
+//        client.send(command: .unmute(Command.Unmute()))
     }
 
     func add(admin: Int64) {
@@ -328,9 +328,9 @@ extension Room {
     }
 
     private func onMutedByAdmin() {
-        rtc.muteAudio()
-        isMuted = true
-        delegate?.wasMutedByAdmin()
+//        rtc.muteAudio()
+//        isMuted = true
+//        delegate?.wasMutedByAdmin()
     }
 }
 
