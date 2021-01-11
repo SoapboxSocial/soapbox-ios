@@ -3,6 +3,8 @@ import LinkPresentation
 import UIKit
 
 class LinkSharingView: UIView {
+    private let max_length = Double(15)
+
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -92,13 +94,22 @@ class LinkSharingView: UIView {
     }
 
     func startTimer(completion: @escaping () -> Void) {
-        progress.animate(fromAngle: 0, toAngle: 360, duration: 15) { _ in
-            UIView.animate(withDuration: 0.1, animations: {
-                self.isHidden = true
-            }) { _ in
-                completion()
+        var elapsed = 0.0
+        let interval = 0.1
+
+        Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { timer in
+            elapsed = elapsed + interval
+            self.progress.progress = elapsed / self.max_length
+
+            if elapsed >= self.max_length {
+                timer.invalidate()
+                return UIView.animate(withDuration: 0.1, animations: {
+                    self.isHidden = true
+                }) { _ in
+                    completion()
+                }
             }
-        }
+        })
     }
 
     required init?(coder _: NSCoder) {
