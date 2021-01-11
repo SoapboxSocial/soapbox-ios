@@ -92,7 +92,7 @@ class LinkSharingView: UIView {
     }
 
     func startTimer(completion: @escaping () -> Void) {
-        progress.animate(fromAngle: 0, toAngle: 360, duration: 30) { _ in
+        progress.animate(fromAngle: 0, toAngle: 360, duration: 15) { _ in
             UIView.animate(withDuration: 0.1, animations: {
                 self.isHidden = true
             }) { _ in
