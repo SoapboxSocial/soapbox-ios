@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - When sharing the link you now also see it.
+
 ## [1.11.0] - 2021-01-10
 
  - People were confused by our link sharing, we've finally improved the way they look when shared.

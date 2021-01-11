@@ -781,12 +781,17 @@ extension RoomView: RoomDelegate {
             return
         }
 
-        guard let user = room.members.first(where: { $0.id == from }) else {
-            return
+        var name = "you"
+        if from != 0 {
+            guard let user = room.members.first(where: { $0.id == from }) else {
+                return
+            }
+
+            name = user.displayName
         }
 
         DispatchQueue.main.async {
-            let linkView = LinkSharingView(link: link, name: user.displayName)
+            let linkView = LinkSharingView(link: link, name: name)
             self.content.insertArrangedSubview(linkView, at: 0)
             linkView.startTimer {
                 linkView.removeFromSuperview()
