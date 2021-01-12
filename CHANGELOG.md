@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - There was an issue when the link was too big.
+
 ## [1.11.1] - 2021-01-11
 
  - When sharing the link you now also see it.

@@ -788,7 +788,13 @@ extension RoomView: RoomDelegate {
 
         DispatchQueue.main.async {
             let linkView = LinkSharingView(link: link, name: name)
+
             self.content.insertArrangedSubview(linkView, at: 0)
+
+            NSLayoutConstraint.activate([
+                linkView.heightAnchor.constraint(lessThanOrEqualTo: self.content.heightAnchor, multiplier: 0.66),
+            ])
+
             linkView.startTimer {
                 linkView.removeFromSuperview()
                 self.links.removeFirst()
