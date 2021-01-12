@@ -290,7 +290,6 @@ extension HomeViewController {
             return
         }
 
-        // @TODO FIX THIS SHIT
         switch data {
         case let .rooms(rooms):
             presenter.set(rooms: rooms)
