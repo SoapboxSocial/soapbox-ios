@@ -29,15 +29,46 @@ final class SignalingClient {
                 }
             }
         })
+
+        stream.status.whenComplete { result in
+            debugPrint("first \(result)")
+            switch result {
+            case let .failure(error):
+                debugPrint(error)
+            case let .success(status):
+                debugPrint(status)
+            }
+        }
     }
 
     func join(id _: String, offer _: RTCSessionDescription) {}
 
-    func trickle() {}
+    func trickle(target: Trickle.Target, candidate: RTCIceCandidate) {
+        return
+        _ = stream.sendMessage(SignalRequest.with {
+            $0.trickle = Trickle.with {
+                $0.target = target
+                $0.iceCandidate = ICECandidate.with {
+                    $0.candidate = candidate.sdp
+//                    $0.sdpMid = candidate.sdpMid
+                    $0.sdpMlineIndex = Int64(candidate.sdpMLineIndex)
+                }
+            }
+        })
+    }
 
-    func answer(description _: RTCSessionDescription) {}
+    func answer(description: RTCSessionDescription) {
+        return
+        _ = stream.sendMessage(SignalRequest.with {
+            $0.description_p = SessionDescription.with {
+                $0.sdp = description.description
+                $0.type = "answer"
+            }
+        })
+    }
 
     private func handle(_ reply: SignalReply) {
+        debugPrint("reply")
         switch reply.payload {
         case let .join(reply):
             delegate?.signalClient(self, didReceiveJoinReply: reply)

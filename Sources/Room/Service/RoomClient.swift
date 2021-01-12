@@ -45,8 +45,12 @@ final class RoomClient {
     }
 
     private func initialOffer(callback: @escaping (_ sdp: RTCSessionDescription) -> Void) {
-        streams[.publisher] = WebRTCClient(iceServers: iceServers)
-        streams[.subscriber] = WebRTCClient(iceServers: iceServers)
+        streams[.publisher] = WebRTCClient(role: .publisher, iceServers: iceServers)
+        streams[.subscriber] = WebRTCClient(role: .subscriber, iceServers: iceServers)
+
+        streams.forEach { _, stream in
+            stream.delegate = self
+        }
 
         streams[.publisher]?.offer(completion: { sdp in
             callback(sdp)
@@ -83,6 +87,7 @@ extension RoomClient: SignalingClientDelegate {
     }
 
     func signalClient(_: SignalingClient, didReceiveCreateReply create: CreateReply) {
+        debugPrint("wtf")
         set(remoteDescription: create.description_p, for: .publisher, completion: { _ in
             debugPrint("gotta do 2")
             // @TODO
@@ -98,7 +103,7 @@ extension RoomClient: SignalingClientDelegate {
                 return
             }
 
-            guard let stream = self.streams[.publisher] else {
+            guard let stream = self.streams[.subscriber] else {
                 return
             }
 
@@ -135,4 +140,17 @@ extension RoomClient: SignalingClientDelegate {
             return nil
         }
     }
+}
+
+extension RoomClient: WebRTCClientDelegate {
+    func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate) {
+        debugPrint("ok")
+        signalClient.trickle(target: client.role, candidate: candidate)
+    }
+
+    func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
+        debugPrint(state)
+    }
+
+    func webRTCClient(_: WebRTCClient, didReceiveData _: Data) {}
 }
