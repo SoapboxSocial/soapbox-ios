@@ -81,15 +81,12 @@ extension RoomClient: SignalingClientDelegate {
 
     func signalClient(_: SignalingClient, didReceiveJoinReply join: JoinReply) {
         set(remoteDescription: join.description_p, for: .publisher, completion: { _ in
-            debugPrint("gotta do")
             // @TODO
         })
     }
 
     func signalClient(_: SignalingClient, didReceiveCreateReply create: CreateReply) {
-        debugPrint("wtf")
         set(remoteDescription: create.description_p, for: .publisher, completion: { _ in
-            debugPrint("gotta do 2")
             // @TODO
         })
     }
