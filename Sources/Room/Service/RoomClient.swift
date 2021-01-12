@@ -27,8 +27,11 @@ final class RoomClient {
     }
 
     func close() {
+        signalClient.close()
+
         for (_, stream) in streams {
             stream.close()
+            stream.delegate = nil
         }
     }
 

@@ -67,6 +67,11 @@ final class SignalingClient {
             })
     }
 
+    func close() {
+        _ = stream.sendEnd()
+        _ = grpc.channel.close()
+    }
+
     private func handle(_ reply: SignalReply) {
         switch reply.payload {
         case let .join(reply):

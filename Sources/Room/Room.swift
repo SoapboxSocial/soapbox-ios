@@ -95,11 +95,7 @@ class Room: NSObject {
 
     func close() {
         isClosed = true
-//        rtc.delegate = nil
-//        rtc.close()
-//
-//        _ = stream.sendEnd()
-//        _ = grpc.channel.close()
+        client.close()
     }
 
     func mute() {

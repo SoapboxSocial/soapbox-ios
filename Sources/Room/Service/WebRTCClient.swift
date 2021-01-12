@@ -59,7 +59,7 @@ final class WebRTCClient: NSObject {
 
         peerConnection.delegate = self
     }
-    
+
     func close() {
         peerConnection.close()
     }
