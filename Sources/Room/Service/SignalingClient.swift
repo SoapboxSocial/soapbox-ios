@@ -20,9 +20,18 @@ final class SignalingClient {
         stream = grpc.signal(handler: handle)
     }
 
-    func create() {}
+    func create(offer: RTCSessionDescription) {
+        _ = stream.sendMessage(SignalRequest.with {
+            $0.create = CreateRequest.with {
+                $0.description_p = SessionDescription.with {
+                    $0.sdp = offer.sdp
+                    $0.type = "offer"
+                }
+            }
+        })
+    }
 
-    func join(id _: String) {}
+    func join(id _: String, offer _: RTCSessionDescription) {}
 
     func trickle() {}
 

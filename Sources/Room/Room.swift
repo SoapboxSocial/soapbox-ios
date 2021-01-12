@@ -53,61 +53,18 @@ class Room: NSObject {
 
     let started: Date
 
-    init() {}
-
-//    init(rtc: WebRTCClient, grpc: RoomServiceClient) {
-//        self.rtc = rtc
-//        self.grpc = grpc
-//
-//        started = Date(timeIntervalSince1970: Date().timeIntervalSince1970)
-//
-//        super.init()
-//
-//        stream = grpc.signal(handler: handle)
-//        rtc.delegate = self
-//    }
+    init(client: RoomClient) {
+        self.client = client
+        started = Date(timeIntervalSince1970: Date().timeIntervalSince1970)
+        super.init()
+    }
 
     func join(id: String, completion: @escaping (Result<Void, RoomError>) -> Void) {
         self.completion = completion
         self.id = id
 
-//        _ = stream.sendMessage(SignalRequest.with {
-//            $0.join = JoinRequest.with {
-//                $0.room = id
-//            }
-//        })
-//
-//        stream.status.whenComplete { result in
-//            switch result {
-//            case .failure:
-//                completion(.failure(.general))
-//            case let .success(status):
-//                switch status.code {
-//                case .ok: break
-//                default:
-//                    guard let completion = self.completion else {
-//                        if !self.isClosed {
-//                            self.delegate?.roomWasClosedByRemote()
-//                        }
-//
-//                        return
-//                    }
-//
-//                    if let message = status.message {
-//                        switch message {
-//                        case "join error room closed":
-//                            return completion(.failure(.closed))
-//                        case "join error room full":
-//                            return completion(.failure(.fullRoom))
-//                        default:
-//                            break
-//                        }
-//                    }
-//
-//                    return completion(.failure(.general))
-//                }
-//            }
-//        }
+        // @TODO WE NEED COMPLETION OF SOME SORTS
+        client.join(id: id)
     }
 
     func create(name: String?, isPrivate: Bool, group: Int? = nil, users: [Int]? = nil, completion: @escaping (Result<Void, RoomError>) -> Void) {
@@ -133,28 +90,7 @@ class Room: NSObject {
             request.users = ids.map(Int64.init)
         }
 
-//        _ = stream.sendMessage(SignalRequest.with {
-//            $0.create = request
-//        })
-//
-//        stream.status.whenComplete { result in
-//            switch result {
-//            case let .failure(error):
-//                completion(.failure(.general))
-//            case let .success(status):
-//                switch status.code {
-//                case .ok: break
-//                default:
-//                    if let completion = self.completion {
-//                        return completion(.failure(.general))
-//                    }
-//
-//                    if !self.isClosed {
-//                        self.delegate?.roomWasClosedByRemote()
-//                    }
-//                }
-//            }
-//        }
+        client.create()
     }
 
     func close() {

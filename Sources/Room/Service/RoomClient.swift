@@ -6,9 +6,24 @@ final class RoomClient {
     private let signalClient: SignalingClient
     // @TODO THIS CONTAINS WEBRTC AND SIGNALING LOGIC.
 
-    init(signal: SignalingClient) {
+    private let iceServers: [RTCIceServer]
+
+    init(signal: SignalingClient, iceServers: [RTCIceServer]) {
+        self.iceServers = iceServers
         signalClient = signal
         signal.delegate = self
+    }
+
+    func join(id: String) {
+        initialOffer { offer in
+            self.signalClient.join(id: id, offer: offer)
+        }
+    }
+
+    func create() {
+        initialOffer { offer in
+            self.signalClient.create(offer: offer)
+        }
     }
 
     func close() {
@@ -27,6 +42,15 @@ final class RoomClient {
         }
 
         streams[.publisher]?.sendData(data)
+    }
+
+    private func initialOffer(callback: @escaping (_ sdp: RTCSessionDescription) -> Void) {
+        streams[.publisher] = WebRTCClient(iceServers: iceServers)
+        streams[.subscriber] = WebRTCClient(iceServers: iceServers)
+
+        streams[.publisher]?.offer(completion: { sdp in
+            callback(sdp)
+        })
     }
 }
 
@@ -53,12 +77,14 @@ extension RoomClient: SignalingClientDelegate {
 
     func signalClient(_: SignalingClient, didReceiveJoinReply join: JoinReply) {
         set(remoteDescription: join.description_p, for: .publisher, completion: { _ in
+            debugPrint("gotta do")
             // @TODO
         })
     }
 
     func signalClient(_: SignalingClient, didReceiveCreateReply create: CreateReply) {
         set(remoteDescription: create.description_p, for: .publisher, completion: { _ in
+            debugPrint("gotta do 2")
             // @TODO
         })
     }
@@ -80,14 +106,7 @@ extension RoomClient: SignalingClientDelegate {
             // https://github.com/pion/ion-sdk-js/blob/master/src/client.ts#L180-L181
 
             stream.answer(completion: { answer in
-                stream.set(localDescription: answer, completion: { err in
-                    if err != nil {
-                        debugPrint("localDescription err: \(err)")
-                        return
-                    }
-
-                    self.signalClient.answer(description: answer)
-                })
+                self.signalClient.answer(description: answer)
             })
         }
     }

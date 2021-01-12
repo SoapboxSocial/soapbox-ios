@@ -13,21 +13,18 @@ class RoomFactory {
     ])
 
     static func create(callback: @escaping (Room) -> Void) {
-        webrtc(callback: { client in
-            callback(Room(
-                rtc: client,
-                grpc: ServiceFactory.createRoomService()
-            ))
+        webrtc(callback: { servers in
+            callback(Room(client: RoomClient(signal: SignalingClient(grpc: ServiceFactory.createSFUClient()), iceServers: servers)))
         })
     }
 
-    private static func webrtc(callback: @escaping (WebRTCClient) -> Void) {
+    private static func webrtc(callback: @escaping ([RTCIceServer]) -> Void) {
         Twilio.nts(callback: { result in
             switch result {
             case .failure:
-                callback(WebRTCClient(iceServers: [RoomFactory.defaults]))
+                callback([RoomFactory.defaults])
             case let .success(servers):
-                callback(WebRTCClient(iceServers: servers))
+                callback(servers)
             }
         })
     }

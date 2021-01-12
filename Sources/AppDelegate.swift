@@ -117,7 +117,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         presenter.output = viewController
 
         let nav = NavigationViewController(rootViewController: viewController)
-        let interactor = HomeInteractor(output: presenter, service: ServiceFactory.createRoomService(), controller: nav, api: APIClient())
+        let interactor = HomeInteractor(output: presenter, controller: nav, api: APIClient())
         viewController.output = interactor
 
         nav.roomControllerDelegate = interactor

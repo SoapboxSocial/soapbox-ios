@@ -20,9 +20,9 @@ class HomePresenter: HomeInteractorOutput {
         )
     }
 
-    func didFetchRooms(rooms: RoomList) {
-        output.didFetchRooms(rooms: rooms.rooms)
-    }
+//    func didFetchRooms(rooms: RoomList) {
+//        output.didFetchRooms(rooms: rooms.rooms)
+//    }
 
     func didJoin(room: String) {
         output.displayCurrentRoom(room)

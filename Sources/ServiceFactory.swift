@@ -12,7 +12,7 @@ class ServiceFactory {
         return keychain[string: "token"]
     }
 
-    static func createRoomService() -> RoomServiceClient {
+    static func createSFUClient() -> SFUClient {
         let group = PlatformSupport.makeEventLoopGroup(loopCount: 1)
 
         let channel = ClientConnection
@@ -23,6 +23,20 @@ class ServiceFactory {
             "Authorization": token!,
         ])
 
-        return RoomServiceClient(channel: channel, defaultCallOptions: callOptions)
+        return SFUClient(channel: channel, defaultCallOptions: callOptions)
     }
+
+//    static func createRoomService() -> RoomServiceClient {
+//        let group = PlatformSupport.makeEventLoopGroup(loopCount: 1)
+//
+//        let channel = ClientConnection
+//            .insecure(group: group)
+//            .connect(host: Configuration.roomServiceURL, port: Configuration.roomServicePort)
+//
+//        let callOptions = CallOptions(customMetadata: [
+//            "Authorization": token!,
+//        ])
+//
+//        return RoomServiceClient(channel: channel, defaultCallOptions: callOptions)
+//    }
 }
