@@ -144,13 +144,10 @@ extension RoomClient: SignalingClientDelegate {
 
 extension RoomClient: WebRTCClientDelegate {
     func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate) {
-        debugPrint("ok")
         signalClient.trickle(target: client.role, candidate: candidate)
     }
 
-    func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
-        debugPrint(state)
-    }
+    func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) { }
 
     func webRTCClient(_: WebRTCClient, didReceiveData _: Data) {}
 }
