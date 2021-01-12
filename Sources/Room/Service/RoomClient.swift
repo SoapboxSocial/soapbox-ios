@@ -59,42 +59,6 @@ final class RoomClient {
             callback(sdp)
         })
     }
-}
-
-extension RoomClient: SignalingClientDelegate {
-    func signalClient(_: SignalingClient, didReceiveTrickle trickle: Trickle) {
-        guard let target = streams[trickle.target] else {
-            return
-        }
-
-        target.set(remoteCandidate: RTCIceCandidate(
-            sdp: trickle.iceCandidate.candidate,
-            sdpMLineIndex: Int32(trickle.iceCandidate.sdpMlineIndex),
-            sdpMid: nil
-        ))
-    }
-
-    func signalClient(_: SignalingClient, didReceiveDescription description: SessionDescription) {
-        if description.type == "offer" {
-            negotiate(description: description)
-        }
-    }
-
-    // @TODO THESE 2 SHOULD BE THE SAME
-
-    func signalClient(_: SignalingClient, didReceiveJoinReply join: JoinReply) {
-        set(remoteDescription: join.description_p, for: .publisher, completion: { _ in
-            // @TODO
-        })
-    }
-
-    func signalClient(_: SignalingClient, didReceiveCreateReply create: CreateReply) {
-        set(remoteDescription: create.description_p, for: .publisher, completion: { _ in
-            // @TODO
-        })
-    }
-
-    // @TODO
 
     private func negotiate(description: SessionDescription) {
         set(remoteDescription: description, for: .subscriber) { err in
@@ -142,12 +106,48 @@ extension RoomClient: SignalingClientDelegate {
     }
 }
 
+extension RoomClient: SignalingClientDelegate {
+    func signalClient(_: SignalingClient, didReceiveTrickle trickle: Trickle) {
+        guard let target = streams[trickle.target] else {
+            return
+        }
+
+        target.set(remoteCandidate: RTCIceCandidate(
+            sdp: trickle.iceCandidate.candidate,
+            sdpMLineIndex: Int32(trickle.iceCandidate.sdpMlineIndex),
+            sdpMid: nil
+        ))
+    }
+
+    func signalClient(_: SignalingClient, didReceiveDescription description: SessionDescription) {
+        if description.type == "offer" {
+            negotiate(description: description)
+        }
+    }
+
+    // @TODO THESE 2 SHOULD BE THE SAME
+
+    func signalClient(_: SignalingClient, didReceiveJoinReply join: JoinReply) {
+        set(remoteDescription: join.description_p, for: .publisher, completion: { _ in
+            // @TODO
+        })
+    }
+
+    func signalClient(_: SignalingClient, didReceiveCreateReply create: CreateReply) {
+        set(remoteDescription: create.description_p, for: .publisher, completion: { _ in
+            // @TODO
+        })
+    }
+
+    func signalClient(_: SignalingClient, failedWithError _: SignalingClient.Error) {}
+}
+
 extension RoomClient: WebRTCClientDelegate {
     func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate) {
         signalClient.trickle(target: client.role, candidate: candidate)
     }
 
-    func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) { }
+    func webRTCClient(_: WebRTCClient, didChangeConnectionState _: RTCIceConnectionState) {}
 
     func webRTCClient(_: WebRTCClient, didReceiveData _: Data) {}
 }

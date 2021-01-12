@@ -7,6 +7,7 @@ protocol SignalingClientDelegate: AnyObject {
     func signalClient(_ signalClient: SignalingClient, didReceiveDescription description: SessionDescription)
     func signalClient(_ signalClient: SignalingClient, didReceiveJoinReply join: JoinReply)
     func signalClient(_ signalClient: SignalingClient, didReceiveCreateReply create: CreateReply)
+    func signalClient(_ signalClient: SignalingClient, failedWithError error: SignalingClient.Error)
 }
 
 final class SignalingClient {
@@ -14,6 +15,10 @@ final class SignalingClient {
     private var stream: BidirectionalStreamingCall<SignalRequest, SignalReply>!
 
     weak var delegate: SignalingClientDelegate?
+
+    enum Error: Swift.Error {
+        case general
+    }
 
     init(grpc: SFUClient) {
         self.grpc = grpc
