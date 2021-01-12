@@ -44,6 +44,12 @@ class LinkSharingView: UIView {
 
         translatesAutoresizingMaskIntoConstraints = false
 
+        let text = NSLocalizedString("shared_by_user", comment: "")
+        nameLabel.text = String(format: text, name.firstName())
+        addSubview(nameLabel)
+
+        addSubview(progress)
+
         let data = LPLinkMetadata()
         data.url = link
         data.originalURL = link
@@ -70,17 +76,11 @@ class LinkSharingView: UIView {
             }
         })
 
-        let text = NSLocalizedString("shared_by_user", comment: "")
-        nameLabel.text = String(format: text, name.firstName())
-        addSubview(nameLabel)
-
-        addSubview(progress)
-
         NSLayoutConstraint.activate([
             progress.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
             progress.widthAnchor.constraint(equalToConstant: 20),
             progress.heightAnchor.constraint(equalToConstant: 20),
-            progress.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
+            progress.topAnchor.constraint(equalTo: linkView.bottomAnchor, constant: 5),
         ])
 
         NSLayoutConstraint.activate([
@@ -89,7 +89,7 @@ class LinkSharingView: UIView {
         ])
 
         NSLayoutConstraint.activate([
-            bottomAnchor.constraint(equalTo: nameLabel.bottomAnchor),
+            bottomAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: -5),
         ])
     }
 
