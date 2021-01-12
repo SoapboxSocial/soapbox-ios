@@ -11,6 +11,8 @@ protocol RoomViewDelegate {
 class RoomView: UIView {
     var delegate: RoomViewDelegate?
 
+    private var links = [(Int, URL)]()
+
     private static let iconConfig = UIImage.SymbolConfiguration(weight: .semibold)
 
     private let muteButton: EmojiButton = {
@@ -113,6 +115,17 @@ class RoomView: UIView {
         return collection
     }()
 
+    private let content: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.spacing = 20
+        stack.distribution = .fill
+        stack.alignment = .fill
+        stack.axis = .vertical
+        stack.isUserInteractionEnabled = true
+        return stack
+    }()
+
     private let lock: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -171,7 +184,10 @@ class RoomView: UIView {
         addSubview(buttonBar)
 
         addSubview(foreground)
-        foreground.addSubview(members)
+
+        foreground.addSubview(content)
+
+        content.addArrangedSubview(members)
 
         let handle = UIView()
         handle.translatesAutoresizingMaskIntoConstraints = false
@@ -257,23 +273,28 @@ class RoomView: UIView {
         ])
 
         if UIScreen.main.bounds.height <= 736 {
-            members.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height - (68 + 20 + 32 + 40 + 57 + 76)).isActive = true
+            content.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height - (68 + 20 + 32 + 40 + 57 + 76)).isActive = true
         } else {
-            members.heightAnchor.constraint(equalToConstant: UICollectionViewFlowLayout.heightForBubbleLayout(rows: 4, width: UIScreen.main.bounds.width)).isActive = true
+            content.heightAnchor.constraint(equalToConstant: UICollectionViewFlowLayout.heightForBubbleLayout(rows: 4, width: UIScreen.main.bounds.width)).isActive = true
         }
 
         NSLayoutConstraint.activate([
-            members.topAnchor.constraint(equalTo: exitButton.bottomAnchor, constant: 40),
+            content.topAnchor.constraint(equalTo: exitButton.bottomAnchor, constant: 20),
+            content.leftAnchor.constraint(equalTo: foreground.leftAnchor),
+            content.rightAnchor.constraint(equalTo: foreground.rightAnchor),
+            foreground.bottomAnchor.constraint(equalTo: content.bottomAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
             members.leftAnchor.constraint(equalTo: foreground.leftAnchor),
             members.rightAnchor.constraint(equalTo: foreground.rightAnchor),
-            foreground.bottomAnchor.constraint(equalTo: members.bottomAnchor),
         ])
 
         NSLayoutConstraint.activate([
             topBar.topAnchor.constraint(equalTo: topAnchor),
             topBar.leftAnchor.constraint(equalTo: leftAnchor),
             topBar.rightAnchor.constraint(equalTo: rightAnchor),
-            topBar.bottomAnchor.constraint(equalTo: members.topAnchor),
+            topBar.bottomAnchor.constraint(equalTo: content.topAnchor),
         ])
 
         let buttonStack = UIStackView()
@@ -338,42 +359,13 @@ class RoomView: UIView {
             buttonBar.bottomAnchor.constraint(equalTo: bottomMuteButton.bottomAnchor, constant: 10),
         ])
 
-        let emojis = UIView()
-        emojis.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(emojis)
-
         let userId = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
-
-        var left = emojis.leftAnchor
-        var leftOffset = CGFloat(0)
-
-        for reaction in Room.Reaction.allCases {
-            // poop emoji, only for Dean & Palley
-            if reaction == .poop, userId != 1, userId != 170 {
-                continue
-            }
-
-            let button = EmojiButton()
-            button.translatesAutoresizingMaskIntoConstraints = false
-            button.setTitle(reaction.rawValue, for: .normal)
-            button.addTarget(self, action: #selector(reactionTapped), for: .touchUpInside)
-            button.backgroundColor = .clear
-            emojis.addSubview(button)
-
-            NSLayoutConstraint.activate([
-                button.heightAnchor.constraint(equalToConstant: 32),
-                button.widthAnchor.constraint(equalToConstant: 32),
-                button.leftAnchor.constraint(equalTo: left, constant: leftOffset),
-            ])
-
-            left = button.rightAnchor
-            leftOffset = 20
-        }
+        let emojis = EmojiBar(emojis: Room.Reaction.allCases.filter { !($0 == .poop && userId != 1 && userId != 170) })
+        emojis.delegate = self
+        addSubview(emojis)
 
         NSLayoutConstraint.activate([
             emojis.topAnchor.constraint(equalTo: bottomMuteButton.bottomAnchor, constant: 20),
-            emojis.rightAnchor.constraint(equalTo: left),
-            emojis.heightAnchor.constraint(equalToConstant: 32),
             emojis.centerXAnchor.constraint(equalTo: centerXAnchor),
         ])
 
@@ -452,7 +444,7 @@ class RoomView: UIView {
     }
 
     func hideViews() -> [UIView] {
-        return [members]
+        return [content]
     }
 
     static func height() -> CGFloat {
@@ -556,24 +548,6 @@ class RoomView: UIView {
         if parent.position == .collapsed {
             parent.setPosition(.open, animated: true)
         }
-    }
-
-    @objc private func reactionTapped(_ sender: UIButton) {
-        guard let button = sender as? EmojiButton else {
-            return
-        }
-
-        guard let label = button.title(for: .normal) else {
-            return
-        }
-
-        guard let reaction = Room.Reaction(rawValue: label) else {
-            return
-        }
-
-        room.react(with: reaction)
-        reactFeedback.impactOccurred()
-        reactFeedback.prepare()
     }
 
     @objc private func editRoomNameButtonTapped() {
@@ -792,25 +766,34 @@ extension RoomView: RoomDelegate {
     }
 
     func didReceiveLink(from: Int, link: URL) {
-        guard let user = room.members.first(where: { $0.id == from }) else {
+        links.append((from, link))
+        if links.count == 1 {
+            displayNextLink()
+        }
+    }
+
+    private func displayNextLink() {
+        guard let (from, link) = links.first else {
             return
         }
 
-        let message = NSLocalizedString("shared_link", comment: "")
-        let description = NSLocalizedString("click_to_open", comment: "")
-
-        DispatchQueue.main.async {
-            let banner = GrowingNotificationBanner(
-                title: String(format: message, user.displayName.firstName()),
-                subtitle: String(format: description, link.absoluteString),
-                style: .info
-            )
-
-            banner.onTap = {
-                UIApplication.shared.open(link)
+        var name = "you"
+        if from != 0 {
+            guard let user = room.members.first(where: { $0.id == from }) else {
+                return
             }
 
-            banner.show()
+            name = user.displayName
+        }
+
+        DispatchQueue.main.async {
+            let linkView = LinkSharingView(link: link, name: name)
+            self.content.insertArrangedSubview(linkView, at: 0)
+            linkView.startTimer {
+                linkView.removeFromSuperview()
+                self.links.removeFirst()
+                self.displayNextLink()
+            }
         }
     }
 
@@ -829,6 +812,14 @@ extension RoomView: RoomDelegate {
 
             banner.show()
         }
+    }
+}
+
+extension RoomView: EmojiBarDelegate {
+    func did(react reaction: Room.Reaction) {
+        room.react(with: reaction)
+        reactFeedback.impactOccurred()
+        reactFeedback.prepare()
     }
 }
 

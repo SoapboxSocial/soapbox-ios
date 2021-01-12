@@ -22,6 +22,7 @@ target 'Soapbox' do
   pod 'BetterSegmentedControl', '~> 2.0'
   pod 'EasyTipView'
   pod 'Siren'
+  pod 'KDCircularProgress'
 
   target 'SoapboxTests' do
     inherit! :search_paths

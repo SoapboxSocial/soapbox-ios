@@ -91,8 +91,6 @@
 "bio" = "Bio";
 
 "would_you_like_to_share_link" = "Would you like to share a link?";
-"shared_link" = "%@ shared a link!";
-"click_to_open" = "Click to open %@";
 
 "connect_twitter" = "Connect to Twitter";
 "disconnect_twitter" = "Disconnect Twitter";
@@ -198,3 +196,5 @@
 "choose_people" = "Choose people";
 
 "user_will_no_longer_be_able_to_join_room" = "%@ will no longer be able to join this room.";
+
+"shared_by_user" = "Shared by %@";

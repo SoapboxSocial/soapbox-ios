@@ -210,6 +210,8 @@ class Room: NSObject {
         client.send(command: .linkShare(Command.LinkShare.with {
             $0.link = link.absoluteString
         }))
+
+        delegate?.didReceiveLink(from: 0, link: link)
     }
 
     func kick(user: Int64) {
