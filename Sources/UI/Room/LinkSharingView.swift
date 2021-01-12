@@ -33,6 +33,9 @@ class LinkSharingView: UIView {
         progress.glowMode = .noGlow
         progress.trackColor = .clear
         progress.set(colors: .brandColor)
+        progress.progress = 1.0
+        progress.trackThickness = 0.6
+        progress.progressThickness = 0.6
         return progress
     }()
 
@@ -43,6 +46,12 @@ class LinkSharingView: UIView {
         super.init(frame: .zero)
 
         translatesAutoresizingMaskIntoConstraints = false
+
+        let text = NSLocalizedString("shared_by_user", comment: "")
+        nameLabel.text = String(format: text, name.firstName())
+        addSubview(nameLabel)
+
+        addSubview(progress)
 
         let data = LPLinkMetadata()
         data.url = link
@@ -70,21 +79,15 @@ class LinkSharingView: UIView {
             }
         })
 
-        let text = NSLocalizedString("shared_by_user", comment: "")
-        nameLabel.text = String(format: text, name.firstName())
-        addSubview(nameLabel)
-
-        addSubview(progress)
-
         NSLayoutConstraint.activate([
             progress.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            progress.widthAnchor.constraint(equalToConstant: 20),
-            progress.heightAnchor.constraint(equalToConstant: 20),
-            progress.centerYAnchor.constraint(equalTo: nameLabel.centerYAnchor),
+            progress.widthAnchor.constraint(equalTo: nameLabel.heightAnchor),
+            progress.heightAnchor.constraint(equalTo: nameLabel.heightAnchor),
+            progress.topAnchor.constraint(equalTo: linkView.bottomAnchor, constant: 5),
         ])
 
         NSLayoutConstraint.activate([
-            nameLabel.topAnchor.constraint(equalTo: linkView.bottomAnchor, constant: 5),
+            nameLabel.centerYAnchor.constraint(equalTo: progress.centerYAnchor),
             nameLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
         ])
 
@@ -94,14 +97,12 @@ class LinkSharingView: UIView {
     }
 
     func startTimer(completion: @escaping () -> Void) {
-        var elapsed = 0.0
         let interval = 0.1
 
         Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { timer in
-            elapsed = elapsed + interval
-            self.progress.progress = elapsed / self.max_length
+            self.progress.progress -= interval / self.max_length
 
-            if elapsed >= self.max_length {
+            if self.progress.progress <= 0 {
                 timer.invalidate()
                 return UIView.animate(withDuration: 0.1, animations: {
                     self.isHidden = true
