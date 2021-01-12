@@ -137,7 +137,7 @@ final class WebRTCClient: NSObject {
 
     private func createDataChannel() -> RTCDataChannel? {
         let config = RTCDataChannelConfiguration()
-        guard let dataChannel = self.peerConnection.dataChannel(forLabel: "WebRTCData", configuration: config) else {
+        guard let dataChannel = self.peerConnection.dataChannel(forLabel: "ion-sfu", configuration: config) else {
             debugPrint("Warning: Couldn't create data channel.")
             return nil
         }
