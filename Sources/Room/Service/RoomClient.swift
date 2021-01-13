@@ -3,16 +3,25 @@ import WebRTC
 
 // @TODO, THIS SHOULDN'T HAVE ROOM RELATED LOGIC IN IT, SO WE NEED A DELEGATE TO SIGNAL THINGS LIKE CONNECTED ETC
 
+protocol RoomClientDelegate: AnyObject {
+    func roomClientDidConnect(_ room: RoomClient)
+    func roomClientDidDisconnect(_ room: RoomClient)
+    func roomClient(_ room: RoomClient, didReceiveMessage message: Event)
+    func roomClient(_ room: RoomClient, failedToConnect error: RoomClient.Error)
+}
+
 final class RoomClient {
     private var streams = [Trickle.Target: WebRTCClient]() // @TODO MAY NOT NEED TRANSPORT
     private let signalClient: SignalingClient
     // @TODO THIS CONTAINS WEBRTC AND SIGNALING LOGIC.
 
     private let iceServers: [RTCIceServer]
-    
-    typealias ConnectionCompletion = ((Result<Void, RoomError>) -> Void)
-    
-    private var completion: ConnectionCompletion?
+
+    weak var delegate: RoomClientDelegate?
+
+    enum Error: Swift.Error {
+        case rtcFailure
+    }
 
     init(signal: SignalingClient, iceServers: [RTCIceServer]) {
         self.iceServers = iceServers
@@ -20,17 +29,13 @@ final class RoomClient {
         signal.delegate = self
     }
 
-    func join(id: String, completion: @escaping ConnectionCompletion) {
-        self.completion = completion
-
+    func join(id: String) {
         initialOffer { offer in
             self.signalClient.join(id: id, offer: offer)
         }
     }
 
-    func create(completion: @escaping ConnectionCompletion) {
-        self.completion = completion
-        
+    func create() {
         initialOffer { offer in
             self.signalClient.create(offer: offer)
         }
@@ -90,7 +95,7 @@ final class RoomClient {
         }
     }
 
-    private func set(remoteDescription: SessionDescription, for target: Trickle.Target, completion: @escaping (Error?) -> Void) {
+    private func set(remoteDescription: SessionDescription, for target: Trickle.Target, completion: @escaping (Swift.Error?) -> Void) {
         guard let rtc = streams[target] else {
             return // @TODO callback
         }
@@ -158,9 +163,17 @@ extension RoomClient: WebRTCClientDelegate {
     }
 
     func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
-        if state == .connected, let completion = self.completion {
-            completion(.success(()))
-            self.completion = nil
+        switch state {
+        case .connected:
+            delegate?.roomClientDidConnect(self)
+        case .disconnected:
+            // @TODO FULLY DISCONNECT
+            return
+        case .failed:
+            delegate?.roomClient(self, failedToConnect: .rtcFailure)
+        // @TODO FULLY DISCONNECT
+        default:
+            return // @TODO
         }
     }
 

@@ -25,7 +25,11 @@ enum RoomError: Error {
 
 // @TODO THIS ENTIRE THING SHOULD BE REFACTORED SO WE HANDLE WEBRTC AND GRPC NICER, EG ERRORS.
 
-class Room: NSObject {
+class Room {
+    typealias ConnectionCompletion = ((Result<Void, RoomError>) -> Void)
+
+    private var completion: ConnectionCompletion?
+
     enum Reaction: String, CaseIterable {
         case thumbsUp = "👍"
         case heart = "❤️"
@@ -54,17 +58,19 @@ class Room: NSObject {
     init(client: RoomClient) {
         self.client = client
         started = Date(timeIntervalSince1970: Date().timeIntervalSince1970)
-        super.init()
+        client.delegate = self
     }
 
-    func join(id: String, completion: @escaping (Result<Void, RoomError>) -> Void) {
+    func join(id: String, completion: @escaping ConnectionCompletion) {
         self.id = id
+        self.completion = completion
 
         // @TODO WE NEED COMPLETION OF SOME SORTS
-        client.join(id: id, completion: completion)
+        client.join(id: id)
     }
 
-    func create(name: String?, isPrivate: Bool, group: Int? = nil, users: [Int]? = nil, completion: @escaping (Result<Void, RoomError>) -> Void) {
+    func create(name: String?, isPrivate: Bool, group: Int? = nil, users: [Int]? = nil, completion: @escaping ConnectionCompletion) {
+        self.completion = completion
         self.name = name
 
         role = .admin
@@ -86,7 +92,7 @@ class Room: NSObject {
             request.users = ids.map(Int64.init)
         }
 
-        client.create(completion: completion)
+        client.create()
     }
 
     func close() {
@@ -168,10 +174,12 @@ class Room: NSObject {
 }
 
 extension Room {
-    private func on(_ event: Event, from: Int) {
+    private func on(_ event: Event) {
+        let from = Int(event.from)
+
         switch event.payload {
         case .addedAdmin:
-            on(addedAdmin: Int(event.from))
+            on(addedAdmin: from)
         case let .invitedAdmin(evt):
             break // @TODO SHOW POPUP SAYING YOU'VE BEEN INVITED TO BECOME ADMIN
         case let .joined(evt):
@@ -289,6 +297,28 @@ extension Room {
         }
 
         delegate?.didChangeUserRole(user: Int(user), role: role)
+    }
+}
+
+extension Room: RoomClientDelegate {
+    func roomClientDidConnect(_: RoomClient) {
+        if let completion = self.completion {
+            return completion(.success(()))
+        }
+    }
+
+    func roomClient(_: RoomClient, failedToConnect _: RoomClient.Error) {
+        if let completion = self.completion {
+            return completion(.failure(.general))
+        }
+    }
+
+    func roomClientDidDisconnect(_: RoomClient) {
+        // @TODO
+    }
+
+    func roomClient(_: RoomClient, didReceiveMessage message: Event) {
+        on(message)
     }
 }
 
