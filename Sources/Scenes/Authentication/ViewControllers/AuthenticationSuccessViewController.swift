@@ -6,6 +6,7 @@ class AuthenticationSuccessViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .rounded(forTextStyle: .title1, weight: .bold)
+        label.textColor = .white
         label.text = NSLocalizedString("welcome", comment: "")
         return label
     }()

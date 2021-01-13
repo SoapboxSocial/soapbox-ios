@@ -270,6 +270,8 @@ class Room: NSObject {
             $0.type = SignalRequest.Command.TypeEnum.linkShare
             $0.data = Data(link.absoluteString.utf8)
         })
+
+        delegate?.didReceiveLink(from: 0, link: link)
     }
 
     func kick(user: Int) {

@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+## [1.11.2] - 2021-01-12
+
+ - There was an issue when the link was too big.
+
+## [1.11.1] - 2021-01-11
+
+ - When sharing the link you now also see it.
+
+## [1.11.0] - 2021-01-10
+
+ - People were confused by our link sharing, we've finally improved the way they look when shared.
+ - Fixed large gap in the room between the title and the users.
+
 ## [1.10.2] - 2021-01-06
 
  - Minor fixes.

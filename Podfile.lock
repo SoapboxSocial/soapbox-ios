@@ -15,7 +15,7 @@ PODS:
   - CNIOSHA1 (2.25.1)
   - CNIOWindows (2.25.1)
   - DrawerView (1.3.1)
-  - EasyTipView (2.0.4)
+  - EasyTipView (2.1.0)
   - GoogleWebRTC (1.1.31999)
   - gRPC-Swift (1.0.0-alpha.22):
     - CGRPCZlib (= 1.0.0-alpha.22)
@@ -27,6 +27,7 @@ PODS:
     - SwiftNIOTransportServices (< 2, >= 1.9.1)
     - SwiftProtobuf (< 2, >= 1.14.0)
   - GSImageViewerController (1.6.3)
+  - KDCircularProgress (1.5.4)
   - KeychainAccess (4.2.1)
   - Logging (1.4.0)
   - MarqueeLabel (4.0.5)
@@ -90,6 +91,7 @@ DEPENDENCIES:
   - GoogleWebRTC
   - gRPC-Swift (~> 1.0.0-alpha.20)
   - GSImageViewerController
+  - KDCircularProgress
   - KeychainAccess
   - NotificationBannerSwift
   - Siren
@@ -117,6 +119,7 @@ SPEC REPOS:
     - GoogleWebRTC
     - gRPC-Swift
     - GSImageViewerController
+    - KDCircularProgress
     - KeychainAccess
     - Logging
     - MarqueeLabel
@@ -167,10 +170,11 @@ SPEC CHECKSUMS:
   CNIOSHA1: 43c4a0cfdea5e8be20927d9d2237ebe4233071f8
   CNIOWindows: 89048520e4a1484bcd5e20c252edf4089913aa7d
   DrawerView: 0c7e6c40e5076b2fb64c394fa5fc8166ff917eff
-  EasyTipView: 4f8beae0a82db2ca4a9b5fd658785fc5f61d296b
+  EasyTipView: a92b6edc377b81c5ac18e9fd35d5ee78e9409488
   GoogleWebRTC: b39a78c4f5cc6b0323415b9233db03a2faa7b0f0
   gRPC-Swift: 15ab59465752e71c4adc3455c700da998dc2fd92
   GSImageViewerController: 20a257d7e3dd9ee171c2dfea659992eba2761839
+  KDCircularProgress: 98200c6b8e85d22bc04eb644721d3b1e12b0686b
   KeychainAccess: 9b07f665298d13c3a85881bd3171f6f49b8151c1
   Logging: beeb016c9c80cf77042d62e83495816847ef108b
   MarqueeLabel: 00cc0bcd087111dca575878b3531af980559707d
@@ -192,6 +196,6 @@ SPEC CHECKSUMS:
   SwiftProtobuf: ed465ed18402f998fd117f631da27e0168e6b59c
   UIWindowTransitions: 2237083382e11f100db7de934041bba0c4669c86
 
-PODFILE CHECKSUM: 721f93126ae4823b6aa72a051e176a8260132829
+PODFILE CHECKSUM: 6e4874a29229df5342caf5b53ae74ee0b393fb0d
 
 COCOAPODS: 1.10.0

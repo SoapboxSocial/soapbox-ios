@@ -112,8 +112,6 @@ class ProfileViewController: ViewController {
 
         scrollView.addSubview(content)
 
-        // @TODO REGISTER IMAGE TAP HANDLER
-
         headerView.button.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
         headerView.button.setTitle(NSLocalizedString("unfollow", comment: ""), for: .selected)
         headerView.button.isHidden = false
