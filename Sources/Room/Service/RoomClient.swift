@@ -1,12 +1,18 @@
 import Foundation
 import WebRTC
 
+// @TODO, THIS SHOULDN'T HAVE ROOM RELATED LOGIC IN IT, SO WE NEED A DELEGATE TO SIGNAL THINGS LIKE CONNECTED ETC
+
 final class RoomClient {
     private var streams = [Trickle.Target: WebRTCClient]() // @TODO MAY NOT NEED TRANSPORT
     private let signalClient: SignalingClient
     // @TODO THIS CONTAINS WEBRTC AND SIGNALING LOGIC.
 
     private let iceServers: [RTCIceServer]
+    
+    typealias ConnectionCompletion = ((Result<Void, RoomError>) -> Void)
+    
+    private var completion: ConnectionCompletion?
 
     init(signal: SignalingClient, iceServers: [RTCIceServer]) {
         self.iceServers = iceServers
@@ -14,13 +20,17 @@ final class RoomClient {
         signal.delegate = self
     }
 
-    func join(id: String) {
+    func join(id: String, completion: @escaping ConnectionCompletion) {
+        self.completion = completion
+
         initialOffer { offer in
             self.signalClient.join(id: id, offer: offer)
         }
     }
 
-    func create() {
+    func create(completion: @escaping ConnectionCompletion) {
+        self.completion = completion
+        
         initialOffer { offer in
             self.signalClient.create(offer: offer)
         }
@@ -147,7 +157,12 @@ extension RoomClient: WebRTCClientDelegate {
         signalClient.trickle(target: client.role, candidate: candidate)
     }
 
-    func webRTCClient(_: WebRTCClient, didChangeConnectionState _: RTCIceConnectionState) {}
+    func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
+        if state == .connected, let completion = self.completion {
+            completion(.success(()))
+            self.completion = nil
+        }
+    }
 
     func webRTCClient(_: WebRTCClient, didReceiveData _: Data) {}
 }

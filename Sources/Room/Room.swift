@@ -45,8 +45,6 @@ class Room: NSObject {
 
     private(set) var members = [RoomState.RoomMember]()
 
-    private var completion: ((Result<Void, RoomError>) -> Void)!
-
     var delegate: RoomDelegate?
 
     private let client: RoomClient
@@ -60,16 +58,14 @@ class Room: NSObject {
     }
 
     func join(id: String, completion: @escaping (Result<Void, RoomError>) -> Void) {
-        self.completion = completion
         self.id = id
 
         // @TODO WE NEED COMPLETION OF SOME SORTS
-        client.join(id: id)
+        client.join(id: id, completion: completion)
     }
 
     func create(name: String?, isPrivate: Bool, group: Int? = nil, users: [Int]? = nil, completion: @escaping (Result<Void, RoomError>) -> Void) {
         self.name = name
-        self.completion = completion
 
         role = .admin
 
@@ -90,7 +86,7 @@ class Room: NSObject {
             request.users = ids.map(Int64.init)
         }
 
-        client.create()
+        client.create(completion: completion)
     }
 
     func close() {
