@@ -41,12 +41,16 @@ class HomeCollectionPresenter {
         let section = dataSource[index.section]
 
         // @TODO NOT SURE IF PRETTY
-        var row = index.row
+        var item = index.item
         if T.self == APIClient.StoryFeed.self {
-            row -= 1
+            item -= 1
+
+            if hasOwnStory {
+                item -= 1
+            }
         }
 
-        return section.data[row] as! T
+        return section.data[item] as! T
     }
 
     func numberOfItems(for sectionIndex: Int) -> Int {

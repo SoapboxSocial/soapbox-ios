@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fixes a crash when clicking to listen on a story.
+
 ## [1.11.2] - 2021-01-12
 
  - There was an issue when the link was too big.
