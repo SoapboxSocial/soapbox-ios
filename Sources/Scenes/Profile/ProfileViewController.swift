@@ -360,6 +360,15 @@ extension ProfileViewController: ProfilePresenterOutput {
         }
 
         headerView.button.addTarget(self, action: #selector(followPressed), for: .touchUpInside)
+
+        let item = UIBarButtonItem(
+            image: UIImage(systemName: "ellipsis"),
+            style: .plain,
+            target: self,
+            action: nil
+        )
+
+        navigationItem.rightBarButtonItem = item
     }
 
     func display(personal profile: APIClient.Profile) {
