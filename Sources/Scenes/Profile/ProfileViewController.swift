@@ -334,6 +334,21 @@ class ProfileViewController: ViewController {
             output.follow()
         }
     }
+
+    @objc private func menuButtonPressed() {
+        let alert = UIAlertController(
+            title: nil,
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+
+        // @TODO
+        alert.addAction(UIAlertAction(title: "report", style: .destructive, handler: { _ in
+
+        }))
+
+        present(alert, animated: true)
+    }
 }
 
 extension ProfileViewController: ProfilePresenterOutput {
@@ -365,7 +380,7 @@ extension ProfileViewController: ProfilePresenterOutput {
             image: UIImage(systemName: "ellipsis"),
             style: .plain,
             target: self,
-            action: nil
+            action: #selector(menuButtonPressed)
         )
 
         navigationItem.rightBarButtonItem = item
