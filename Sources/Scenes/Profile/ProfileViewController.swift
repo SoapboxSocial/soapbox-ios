@@ -347,6 +347,8 @@ class ProfileViewController: ViewController {
 
         }))
 
+        alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+
         present(alert, animated: true)
     }
 }
