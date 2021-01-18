@@ -9,6 +9,8 @@ protocol ProfileInteractorOutput {
     func displayError()
     func display(moreGroups groups: [APIClient.Group])
     func display(stories: [APIClient.Story])
+    func displayBlocked()
+    func displayUnblocked()
 }
 
 class ProfileInteractor {
@@ -90,6 +92,28 @@ extension ProfileInteractor: ProfileViewControllerOutput {
                 self.output.displayError()
             case .success:
                 self.output.displayUnfollowed()
+            }
+        })
+    }
+
+    func block() {
+        api.block(user: user, callback: { result in
+            switch result {
+            case .failure:
+                self.output.displayError()
+            case .success:
+                self.output.displayBlocked()
+            }
+        })
+    }
+
+    func unblock() {
+        api.unblock(user: user, callback: { result in
+            switch result {
+            case .failure:
+                self.output.displayError()
+            case .success:
+                self.output.displayUnblocked()
             }
         })
     }
