@@ -8,6 +8,8 @@ protocol ProfileViewControllerOutput {
     func follow()
     func unfollow()
     func loadMoreGroups()
+    func block()
+    func unblock()
 }
 
 class ProfileViewController: ViewController {
@@ -319,6 +321,20 @@ class ProfileViewController: ViewController {
     @objc private func followPressed() {
         headerView.button.isUserInteractionEnabled = false
 
+        if user.isBlocked ?? false {
+            let alert = UIAlertController.confirmation(
+                onAccepted: {
+                    self.output.unblock()
+                },
+                onDeclined: {
+                    self.headerView.button.isUserInteractionEnabled = true
+                }
+            )
+
+            present(alert, animated: true)
+            return
+        }
+
         if user.isFollowing ?? false {
             let alert = UIAlertController.confirmation(
                 onAccepted: {
@@ -353,10 +369,24 @@ class ProfileViewController: ViewController {
             }
         }))
 
-        alert.addAction(UIAlertAction(title: NSLocalizedString("block", comment: ""), style: .destructive, handler: { _ in
+        var blockedLabel = NSLocalizedString("block", comment: "")
+        var blockedDescription = NSLocalizedString("block_description", comment: "")
+        if user.isBlocked ?? false {
+            blockedLabel = NSLocalizedString("unblock", comment: "")
+            blockedDescription = ""
+        }
+
+        alert.addAction(UIAlertAction(title: blockedLabel, style: .destructive, handler: { _ in
             let confirmation = UIAlertController.confirmation(
-                onAccepted: {},
-                message: NSLocalizedString("block_description", comment: "")
+                onAccepted: {
+                    if self.user.isBlocked ?? false {
+                        self.output.unblock()
+                        return
+                    }
+
+                    self.output.block()
+                },
+                message: blockedDescription
             )
 
             DispatchQueue.main.async {
@@ -391,6 +421,12 @@ extension ProfileViewController: ProfilePresenterOutput {
         followsYouBadge.isHidden = true
         if let followed = profile.followedBy {
             followsYouBadge.isHidden = !followed
+        }
+
+        if profile.isBlocked ?? false {
+            headerView.button.isSelected = false
+            headerView.button.backgroundColor = .systemRed
+            headerView.button.setTitle(NSLocalizedString("blocked", comment: ""), for: .normal)
         }
 
         headerView.button.addTarget(self, action: #selector(followPressed), for: .touchUpInside)
@@ -485,6 +521,32 @@ extension ProfileViewController: ProfilePresenterOutput {
         user.isFollowing = false
         user.followers -= 1
         updateFollowerLabels()
+    }
+
+    func didBlock() {
+        headerView.button.isUserInteractionEnabled = true
+        user.isBlocked = true
+        user.isFollowing = false
+
+        if user.followers > 0 {
+            user.followers -= 1
+        }
+
+        updateFollowerLabels()
+
+        headerView.button.isSelected = false
+        headerView.button.backgroundColor = .systemRed
+        headerView.button.setTitle(NSLocalizedString("blocked", comment: ""), for: .normal)
+    }
+
+    func didUnblock() {
+        headerView.button.isUserInteractionEnabled = true
+        user.isBlocked = false
+        user.isFollowing = false
+
+        headerView.button.backgroundColor = .brandColor
+        headerView.button.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
+        headerView.button.isSelected = false
     }
 
     private func updateFollowerLabels() {
