@@ -534,6 +534,8 @@ extension ProfileViewController: ProfilePresenterOutput {
 
         updateFollowerLabels()
 
+        followsYouBadge.isHidden = true
+
         headerView.button.isSelected = false
         headerView.button.backgroundColor = .systemRed
         headerView.button.setTitle(NSLocalizedString("blocked", comment: ""), for: .normal)
