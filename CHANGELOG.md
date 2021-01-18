@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - Fixes a crash when clicking to listen on a story.
+ - We now allow you to report users.
 
 ## [1.11.2] - 2021-01-12
 
