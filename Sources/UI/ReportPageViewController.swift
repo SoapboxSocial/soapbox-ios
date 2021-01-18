@@ -1,8 +1,8 @@
 import UIKit
 import WebKit
 
-class WebPageViewController: UIViewController {
-    private let url: URL
+class ReportPageViewController: UIViewController {
+    private var url = URL(string: "https://soapbox.social/report/incident")!
 
     private let toolbar: UIToolbar = {
         let toolbar = UIToolbar()
@@ -15,13 +15,17 @@ class WebPageViewController: UIViewController {
     private var webView: WKWebView = {
         var webView = WKWebView(frame: .zero)
         webView.translatesAutoresizingMaskIntoConstraints = false
-//        tempWebView.uiDelegate = self
-//        tempWebView.navigationDelegate = self
         return webView
     }()
 
-    init(url: URL) {
-        self.url = url
+    private let userId: Int
+    private let reportedUserId: Int?
+    private let reportedGroupId: Int?
+
+    init(userId: Int, reportedUserId: Int? = nil, reportedGroupId: Int? = nil) {
+        self.userId = userId
+        self.reportedUserId = reportedUserId
+        self.reportedGroupId = reportedGroupId
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -45,6 +49,16 @@ class WebPageViewController: UIViewController {
 
         view.backgroundColor = .background
 
+        url.appendQueryParameters(["userId": String(userId)])
+
+        if let reportedUser = reportedUserId {
+            url.appendQueryParameters(["reportedUserId": String(reportedUser)])
+        }
+
+        if let reportedGroup = reportedGroupId {
+            url.appendQueryParameters(["reportedGroupId": String(reportedGroup)])
+        }
+
         webView.load(URLRequest(url: url))
         webView.navigationDelegate = self
 
@@ -63,8 +77,10 @@ class WebPageViewController: UIViewController {
     }
 }
 
-extension WebPageViewController: WKNavigationDelegate {
-    func webView(_: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        debugPrint(navigation)
+extension ReportPageViewController: WKNavigationDelegate {
+    func webView(_ webView: WKWebView, didFinish _: WKNavigation!) {
+        if webView.url!.absoluteString.range(of: "/report/received") != nil {
+            dismiss(animated: true)
+        }
     }
 }
