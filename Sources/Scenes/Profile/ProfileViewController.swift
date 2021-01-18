@@ -353,6 +353,17 @@ class ProfileViewController: ViewController {
             }
         }))
 
+        alert.addAction(UIAlertAction(title: NSLocalizedString("block", comment: ""), style: .destructive, handler: { _ in
+            let confirmation = UIAlertController.confirmation(
+                onAccepted: {},
+                message: NSLocalizedString("block_description", comment: "")
+            )
+
+            DispatchQueue.main.async {
+                self.present(confirmation, animated: true)
+            }
+        }))
+
         alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
 
         present(alert, animated: true)

@@ -201,3 +201,6 @@
 
 "report_incident" = "Report an incident";
 "done" = "Done";
+
+"block_description" = "Blocking a user means they will no longer see or be able to join the rooms you are in.";
+"block" = "Block";
