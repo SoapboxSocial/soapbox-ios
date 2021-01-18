@@ -343,8 +343,11 @@ class ProfileViewController: ViewController {
         )
 
         // @TODO
-        alert.addAction(UIAlertAction(title: "report", style: .destructive, handler: { _ in
-
+        alert.addAction(UIAlertAction(title: NSLocalizedString("report_incident", comment: ""), style: .destructive, handler: { _ in
+            let view = WebPageViewController(url: URL(string: "https://soapbox.social/report/incident")!)
+            DispatchQueue.main.async {
+                self.present(view, animated: true)
+            }
         }))
 
         alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
