@@ -334,6 +334,29 @@ class ProfileViewController: ViewController {
             output.follow()
         }
     }
+
+    @objc private func menuButtonPressed() {
+        let alert = UIAlertController(
+            title: nil,
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("report_incident", comment: ""), style: .destructive, handler: { _ in
+            let view = ReportPageViewController(
+                userId: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId),
+                reportedUserId: self.user.id
+            )
+
+            DispatchQueue.main.async {
+                self.present(view, animated: true)
+            }
+        }))
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+
+        present(alert, animated: true)
+    }
 }
 
 extension ProfileViewController: ProfilePresenterOutput {
@@ -360,6 +383,15 @@ extension ProfileViewController: ProfilePresenterOutput {
         }
 
         headerView.button.addTarget(self, action: #selector(followPressed), for: .touchUpInside)
+
+        let item = UIBarButtonItem(
+            image: UIImage(systemName: "ellipsis"),
+            style: .plain,
+            target: self,
+            action: #selector(menuButtonPressed)
+        )
+
+        navigationItem.rightBarButtonItem = item
     }
 
     func display(personal profile: APIClient.Profile) {
