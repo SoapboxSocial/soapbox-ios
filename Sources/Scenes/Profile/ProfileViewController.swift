@@ -342,9 +342,9 @@ class ProfileViewController: ViewController {
             preferredStyle: .actionSheet
         )
 
-        // @TODO
+        let userId = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
         alert.addAction(UIAlertAction(title: NSLocalizedString("report_incident", comment: ""), style: .destructive, handler: { _ in
-            let view = WebPageViewController(url: URL(string: "https://soapbox.social/report/incident")!)
+            let view = WebPageViewController(url: URL(string: "https://soapbox.social/report/incident?userId=\(userId)&reportedUserId=\(self.user.id)")!)
             DispatchQueue.main.async {
                 self.present(view, animated: true)
             }
