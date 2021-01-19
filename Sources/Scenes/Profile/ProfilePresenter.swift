@@ -6,6 +6,8 @@ protocol ProfilePresenterOutput {
     func display(personal profile: APIClient.Profile)
     func didUnfollow()
     func didFollow()
+    func didBlock()
+    func didUnblock()
     func displayError(title: String, description: String?)
     func display(moreGroups groups: [APIClient.Group])
     func display(stories: [APIClient.Story])
@@ -51,5 +53,13 @@ class ProfilePresenter: ProfileInteractorOutput {
 
     func display(stories: [APIClient.Story]) {
         output.display(stories: stories)
+    }
+
+    func displayBlocked() {
+        output.didBlock()
+    }
+
+    func displayUnblocked() {
+        output.didUnblock()
     }
 }

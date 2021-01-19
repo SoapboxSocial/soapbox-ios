@@ -198,3 +198,11 @@
 "user_will_no_longer_be_able_to_join_room" = "%@ will no longer be able to join this room.";
 
 "shared_by_user" = "Shared by %@";
+
+"report_incident" = "Report an incident";
+"done" = "Done";
+
+"block_description" = "Blocking someone means they will no longer see or join the rooms you are in.";
+"block" = "Block";
+"unblock" = "Unblock";
+"blocked" = "Blocked";

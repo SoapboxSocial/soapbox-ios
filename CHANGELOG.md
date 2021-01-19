@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [1.12.0] - 2021-01-18
+
+ - Fixes a crash when clicking to listen on a story.
+ - Added the ability to report groups and users.
+ - We now allow you to block users, if you block someone they will no longer be able to see the rooms you're in.
+
 ## [1.11.2] - 2021-01-12
 
  - There was an issue when the link was too big.
