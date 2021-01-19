@@ -34,7 +34,7 @@ PODS:
   - NotificationBannerSwift (3.0.6):
     - MarqueeLabel (~> 4.0.5)
     - SnapKit (~> 5.0.1)
-  - Siren (5.7.1)
+  - Siren (5.8.1)
   - SnapKit (5.0.1)
   - SwiftConfettiView (0.1.0)
   - Swifter (2.5.0)
@@ -179,7 +179,7 @@ SPEC CHECKSUMS:
   Logging: beeb016c9c80cf77042d62e83495816847ef108b
   MarqueeLabel: 00cc0bcd087111dca575878b3531af980559707d
   NotificationBannerSwift: 7021be2338f8f29cf424b0aca43da462bf9e2a1a
-  Siren: 76ac728f4f2f4a3576c322272e94a0e37955664f
+  Siren: de768099aff1f1c9acda4247064788a4940b4bf3
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SwiftConfettiView: 1bdbc2e6913b6b1c76d8070802b212508ad5c352
   Swifter: 4c2f8cf320c2f751c10128f841d8e9bd8609d988
