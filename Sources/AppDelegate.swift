@@ -140,7 +140,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let siren = Siren.shared
         siren.rulesManager = RulesManager(
             majorUpdateRules: .critical,
-            minorUpdateRules: .annoying,
+            minorUpdateRules: .default,
             patchUpdateRules: .default,
             revisionUpdateRules: Rules(promptFrequency: .immediately, forAlertType: .option)
         )
