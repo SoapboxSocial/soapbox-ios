@@ -261,7 +261,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
     }
 
     func loadFriends() {
-        api.friends { result in
+        api.friends(id: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)) { result in
             switch result {
             case .failure:
                 break
