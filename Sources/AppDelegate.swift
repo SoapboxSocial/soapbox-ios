@@ -48,7 +48,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_: UIApplication, open url: URL, options _: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        return Swifter.handleOpenURL(url, callbackURL: URL(string: "soapbox://")!)
+        if url.absoluteString == "soapbox://twitter/success" {
+            return Swifter.handleOpenURL(url, callbackURL: URL(string: "soapbox://")!)
+        }
+
+        guard let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true) else {
+            return false
+        }
+
+        if url.host == "room" {
+            return handleRoomURL(components: components)
+        }
+
+        return false
     }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
