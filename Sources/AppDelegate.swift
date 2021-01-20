@@ -71,12 +71,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         switch pathComponents[1] {
-        case "/login-pin":
+        case "login-pin":
             return handlePinURL(components: components)
-        case "/room":
+        case "room":
             return handleRoomURL(components: components)
-        case "/":
-            return false
+        case "user":
+            return handleUserURL(components: pathComponents)
         default:
             return false
         }
@@ -112,6 +112,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         nav.didSelect(room: room)
+        return true
+    }
+
+    private func handleUserURL(components: [String]) -> Bool {
+        if components.count < 3 {
+            return false
+        }
+
+        guard let nav = window?.rootViewController as? NavigationViewController else {
+            return false
+        }
+
+        nav.pushViewController(SceneFactory.createProfileViewController(username: components[2]), animated: true)
         return true
     }
 
