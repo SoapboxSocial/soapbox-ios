@@ -174,10 +174,11 @@ extension APIClient {
         var isFollowing: Bool?
         let image: String
         let currentRoom: Int?
+        var isBlocked: Bool?
         let linkedAccounts: [LinkedAccount]
 
         private enum CodingKeys: String, CodingKey {
-            case id, displayName = "display_name", username, followers, following, followedBy = "followed_by", isFollowing = "is_following", image, currentRoom = "current_room", bio, linkedAccounts = "linked_accounts"
+            case id, displayName = "display_name", username, followers, following, followedBy = "followed_by", isFollowing = "is_following", image, currentRoom = "current_room", bio, linkedAccounts = "linked_accounts", isBlocked = "is_blocked"
         }
     }
 
@@ -188,6 +189,10 @@ extension APIClient {
 
     func user(id: Int, callback: @escaping (Result<Profile, Error>) -> Void) {
         get(path: "/v1/users/" + String(id), callback: callback)
+    }
+
+    func user(name: String, callback: @escaping (Result<Profile, Error>) -> Void) {
+        get(path: "/v1/users/" + name, callback: callback)
     }
 
     func editProfile(displayName: String, image: UIImage?, bio: String, callback: @escaping (Result<Bool, Error>) -> Void) {
@@ -515,6 +520,16 @@ extension APIClient {
 
     func feed(callback: @escaping (Result<[StoryFeed], Error>) -> Void) {
         get(path: "/v1/me/feed", callback: callback)
+    }
+}
+
+extension APIClient {
+    func block(user: Int, callback: @escaping (Result<Void, Error>) -> Void) {
+        post(path: "/v1/blocks/create", parameters: ["id": user], callback: callback)
+    }
+
+    func unblock(user: Int, callback: @escaping (Result<Void, Error>) -> Void) {
+        void(path: "/v1/blocks/", method: .delete, parameters: ["id": user], callback: callback)
     }
 }
 

@@ -199,3 +199,14 @@
 
 "contact_us" = "Contact us";
 "shared_by_user" = "Shared by %@";
+
+"report_incident" = "Report an incident";
+"done" = "Done";
+
+"block_description" = "Blocking someone means they will no longer see or join the rooms you are in.";
+"block" = "Block";
+"unblock" = "Unblock";
+"blocked" = "Blocked";
+
+"share_profile" = "Share profile";
+"settings" = "Settings";
