@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.13.0] - 2021-01-20
+
  - Added a settings screen containing some useful links for now.
  - Adds sharing for profiles!
  - Fixes an issue with prompting for updates.
