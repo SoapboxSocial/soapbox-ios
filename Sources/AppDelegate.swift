@@ -61,21 +61,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_: UIApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
             let incomingURL = userActivity.webpageURL,
-            let components = NSURLComponents(url: incomingURL, resolvingAgainstBaseURL: true) else {
+            let components = URLComponents(url: incomingURL, resolvingAgainstBaseURL: true) else {
             return false
         }
 
-        switch components.path {
-        case "/login-pin":
+        let pathComponents = incomingURL.pathComponents
+        if pathComponents.count < 2 {
+            return false
+        }
+
+        switch pathComponents[1] {
+        case "login-pin":
             return handlePinURL(components: components)
-        case "/room":
+        case "room":
             return handleRoomURL(components: components)
+        case "user":
+            return handleUserURL(components: pathComponents)
         default:
             return false
         }
     }
 
-    private func handlePinURL(components: NSURLComponents) -> Bool {
+    private func handlePinURL(components: URLComponents) -> Bool {
         guard let param = components.queryItems?.first(where: { $0.name == "pin" }), let pin = param.value else {
             return false
         }
@@ -91,7 +98,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return auth.inject(pin: pin)
     }
 
-    private func handleRoomURL(components: NSURLComponents) -> Bool {
+    private func handleRoomURL(components: URLComponents) -> Bool {
         guard let param = components.queryItems?.first(where: { $0.name == "id" }), let str = param.value else {
             return false
         }
@@ -105,6 +112,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         nav.didSelect(room: room)
+        return true
+    }
+
+    private func handleUserURL(components: [String]) -> Bool {
+        if components.count < 3 {
+            return false
+        }
+
+        guard let nav = window?.rootViewController as? NavigationViewController else {
+            return false
+        }
+
+        nav.pushViewController(SceneFactory.createProfileViewController(username: components[2]), animated: true)
         return true
     }
 
