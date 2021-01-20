@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Adds sharing for profiles!
+
 ## [1.12.0] - 2021-01-18
 
  - Fixes a crash when clicking to listen on a story.
