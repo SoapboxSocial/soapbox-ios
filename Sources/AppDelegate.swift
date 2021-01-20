@@ -48,7 +48,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_: UIApplication, open url: URL, options _: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        return Swifter.handleOpenURL(url, callbackURL: URL(string: "soapbox://")!)
+        if url.host == "twitter" {
+            return Swifter.handleOpenURL(url, callbackURL: URL(string: "soapbox://")!)
+        }
+
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
+            return false
+        }
+
+        switch url.host {
+        case "room":
+            return handleRoomURL(components: components)
+        case "user":
+            if url.pathComponents.count < 2 {
+                return false
+            }
+
+            return handleUserURL(username: url.pathComponents[1])
+        default:
+            return false
+        }
     }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
@@ -76,7 +95,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         case "room":
             return handleRoomURL(components: components)
         case "user":
-            return handleUserURL(components: pathComponents)
+            if pathComponents.count < 3 {
+                return false
+            }
+
+            return handleUserURL(username: pathComponents[2])
         default:
             return false
         }
@@ -115,16 +138,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    private func handleUserURL(components: [String]) -> Bool {
-        if components.count < 3 {
-            return false
-        }
-
+    private func handleUserURL(username: String) -> Bool {
         guard let nav = window?.rootViewController as? NavigationViewController else {
             return false
         }
 
-        nav.pushViewController(SceneFactory.createProfileViewController(username: components[2]), animated: true)
+        nav.pushViewController(SceneFactory.createProfileViewController(username: username), animated: true)
         return true
     }
 

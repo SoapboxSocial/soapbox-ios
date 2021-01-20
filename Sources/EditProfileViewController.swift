@@ -213,7 +213,7 @@ class EditProfileViewController: UIViewController {
         }
 
         swifter.authorize(
-            withCallback: URL(string: "soapbox://success")!,
+            withCallback: URL(string: "soapbox://twitter/success")!,
             presentingFrom: self,
             forceLogin: false,
             safariDelegate: nil,
