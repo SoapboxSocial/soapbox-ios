@@ -191,6 +191,10 @@ extension APIClient {
         get(path: "/v1/users/" + String(id), callback: callback)
     }
 
+    func user(name: String, callback: @escaping (Result<Profile, Error>) -> Void) {
+        get(path: "/v1/users/" + name, callback: callback)
+    }
+
     func editProfile(displayName: String, image: UIImage?, bio: String, callback: @escaping (Result<Bool, Error>) -> Void) {
         AF.upload(
             multipartFormData: { multipartFormData in
