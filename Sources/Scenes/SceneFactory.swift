@@ -91,4 +91,8 @@ class SceneFactory {
 
         return viewController
     }
+
+    static func createSettingsViewController() -> SettingsViewController {
+        return SettingsViewController()
+    }
 }

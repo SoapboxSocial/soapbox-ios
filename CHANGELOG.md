@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Added a settings screen containing some useful links for now.
  - Adds sharing for profiles!
  - Fixes an issue with prompting for updates.
 

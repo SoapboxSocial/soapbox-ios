@@ -197,6 +197,7 @@
 
 "user_will_no_longer_be_able_to_join_room" = "%@ will no longer be able to join this room.";
 
+"contact_us" = "Contact us";
 "shared_by_user" = "Shared by %@";
 
 "report_incident" = "Report an incident";
@@ -208,3 +209,4 @@
 "blocked" = "Blocked";
 
 "share_profile" = "Share profile";
+"settings" = "Settings";
