@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - Adds sharing for profiles!
+ - Fixes an issue with prompting for updates.
 
 ## [1.12.0] - 2021-01-18
 
