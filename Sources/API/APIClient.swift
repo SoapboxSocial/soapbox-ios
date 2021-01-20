@@ -268,8 +268,8 @@ extension APIClient {
 extension APIClient {
     typealias UserListFunc = (_ id: Int, _ limit: Int, _ offset: Int, _ callback: @escaping (Result<[User], Error>) -> Void) -> Void
 
-    func friends(_ callback: @escaping (Result<[User], Error>) -> Void) {
-        userListRequest("/v1/users/friends", callback: callback)
+    func friends(id: Int, _ callback: @escaping (Result<[User], Error>) -> Void) {
+        userListRequest("/v1/users/" + String(id) + "/friends", callback: callback)
     }
 
     func followers(_ id: Int, _ limit: Int, _ offset: Int, _ callback: @escaping (Result<[User], Error>) -> Void) {
