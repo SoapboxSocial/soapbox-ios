@@ -7,6 +7,7 @@ class SettingsViewController: UIViewController {
         let view = UITableView(frame: .zero, style: .insetGrouped)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.register(cellWithClass: SettingsLinkTableViewCell.self)
+        view.backgroundColor = .background
         return view
     }()
 
