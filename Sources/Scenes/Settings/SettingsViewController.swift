@@ -12,13 +12,13 @@ class SettingsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         let title = UILabel()
         title.translatesAutoresizingMaskIntoConstraints = false
         title.text = NSLocalizedString("settings", comment: "")
         title.font = .rounded(forTextStyle: .headline, weight: .semibold)
         view.addSubview(title)
-        
+
         presenter.set(links: [
             SettingsPresenter.Link(name: NSLocalizedString("contact_us", comment: ""), link: URL(string: "mailto:support@soapbox.social")!),
             SettingsPresenter.Link(name: NSLocalizedString("terms", comment: ""), link: URL(string: "https://soapbox.social/terms")!),
@@ -39,7 +39,7 @@ class SettingsViewController: UIViewController {
         view.addSubview(tableView)
 
         tableView.reloadData()
-        
+
         NSLayoutConstraint.activate([
             title.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             title.centerYAnchor.constraint(equalTo: close.centerYAnchor),

@@ -370,7 +370,7 @@ class ProfileViewController: ViewController {
                 self.present(ac, animated: true)
             }
         }))
-        
+
         if user.id == UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
             alert.addAction(UIAlertAction(title: NSLocalizedString("settings", comment: ""), style: .default, handler: { _ in
                 self.present(SceneFactory.createSettingsViewController(), animated: true)
