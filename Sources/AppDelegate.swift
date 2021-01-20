@@ -48,7 +48,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_: UIApplication, open url: URL, options _: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        if url.absoluteString == "soapbox://twitter/success" {
+        if url.host == "twitter" {
             return Swifter.handleOpenURL(url, callbackURL: URL(string: "soapbox://")!)
         }
 
