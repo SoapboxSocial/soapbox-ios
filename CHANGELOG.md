@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fixes an issue with prompting for updates.
+
 ## [1.12.0] - 2021-01-18
 
  - Fixes a crash when clicking to listen on a story.
