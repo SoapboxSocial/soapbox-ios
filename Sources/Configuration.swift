@@ -16,6 +16,10 @@ class Configuration {
     static let cdn: URL = {
         url(key: "CDN_URL")
     }()
+    
+    static let roomAPIURL = {
+        url(key: "ROOM_API_URL")
+    }()
 
     static let roomServiceURL: String = {
         guard let urlString = Configuration.infoDictionary["ROOM_SERVICE_URL"] as? String else {

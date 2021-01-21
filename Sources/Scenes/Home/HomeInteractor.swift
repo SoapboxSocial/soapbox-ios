@@ -14,7 +14,7 @@ protocol RoomControllerDelegate {
 
 protocol HomeInteractorOutput {
     func didFailToFetchRooms()
-//    func didFetchRooms(rooms: RoomList)
+    func didFetchRooms(rooms: [RoomAPIClient.Room])
     func didJoin(room: String)
     func didLeaveRoom()
     func didFetchFeed(_ feed: [APIClient.StoryFeed])
@@ -26,28 +26,26 @@ class HomeInteractor: HomeViewControllerOutput {
     private let output: HomeInteractorOutput
     private let controller: RoomController
     private let api: APIClient
+    private let roomApi: RoomAPIClient
 
-    init(output: HomeInteractorOutput, controller: RoomController, api: APIClient) {
+    init(output: HomeInteractorOutput, controller: RoomController, api: APIClient, room: RoomAPIClient) {
         self.output = output
         self.controller = controller
         self.api = api
+        self.roomApi = room
     }
 
     func fetchData() {
         // @TODO probably want to start refresh control.
 
-//        let call = roomService.listRooms(Google_Protobuf_Empty())
-//
-//        call.response.whenComplete { result in
-//            DispatchQueue.main.async {
-//                switch result {
-//                case .failure:
-//                    self.output.didFailToFetchRooms()
-//                case let .success(list):
-//                    self.output.didFetchRooms(rooms: list)
-//                }
-//            }
-//        }
+        roomApi.rooms { result in
+            switch result {
+            case .failure:
+                self.output.didFailToFetchRooms()
+            case let .success(list):
+                self.output.didFetchRooms(rooms: list)
+            }
+        }
 
         let user = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
 

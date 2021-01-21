@@ -92,6 +92,7 @@ class Room {
             request.users = ids.map(Int64.init)
         }
 
+        // @TODO WE NEED A CALLBACK HERE THAT RETURNS THE ID
         client.create()
     }
 

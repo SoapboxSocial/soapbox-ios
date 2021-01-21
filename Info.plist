@@ -50,7 +50,7 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>We don't use this, must investigate further</string>
+	<string>We don&apos;t use this, must investigate further</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone is required</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -89,6 +89,8 @@
 	<string>LaunchScreen</string>
 	<key>UIRequiresFullScreen</key>
 	<true/>
+	<key>ROOM_API_URL</key>
+	<string>$(ROOM_API_URL)</string>
 	<key>UIStatusBarHidden</key>
 	<false/>
 	<key>UIStatusBarStyle</key>

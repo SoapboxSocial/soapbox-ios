@@ -226,7 +226,7 @@ extension HomeViewController: HomePresenterOutput {
         }
     }
 
-    func didFetchRooms(rooms: [RoomState]) {
+    func didFetchRooms(_ rooms: [RoomAPIClient.Room]) {
         // sorted is temporary
         update(.rooms(rooms.sorted(by: { $0.id < $1.id })))
     }
@@ -272,7 +272,7 @@ extension HomeViewController: HomePresenterOutput {
 extension HomeViewController {
     enum Update {
         case ownStory(Bool)
-        case rooms([RoomState])
+        case rooms([RoomAPIClient.Room])
         case feed([APIClient.StoryFeed])
     }
 
@@ -342,7 +342,7 @@ extension HomeViewController: UICollectionViewDelegate {
 
             present(vc, animated: true)
         case .roomList:
-            let room = presenter.item(for: indexPath, ofType: RoomState.self)
+            let room = presenter.item(for: indexPath, ofType: RoomAPIClient.Room.self)
             output.didSelectRoom(room: room.id)
         case .noRooms:
             return
