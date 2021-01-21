@@ -302,6 +302,10 @@ extension Room {
 }
 
 extension Room: RoomClientDelegate {
+    func room(id: String) {
+        self.id = id
+    }
+
     func roomClientDidConnect(_: RoomClient) {
         if let completion = self.completion {
             return completion(.success(()))

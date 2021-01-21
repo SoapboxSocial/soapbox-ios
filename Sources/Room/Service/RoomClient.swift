@@ -4,6 +4,7 @@ import WebRTC
 // @TODO, THIS SHOULDN'T HAVE ROOM RELATED LOGIC IN IT, SO WE NEED A DELEGATE TO SIGNAL THINGS LIKE CONNECTED ETC
 
 protocol RoomClientDelegate: AnyObject {
+    func room(id: String)
     func roomClientDidConnect(_ room: RoomClient)
     func roomClientDidDisconnect(_ room: RoomClient)
     func roomClient(_ room: RoomClient, didReceiveMessage message: Event)
@@ -149,6 +150,8 @@ extension RoomClient: SignalingClientDelegate {
     }
 
     func signalClient(_: SignalingClient, didReceiveCreateReply create: CreateReply) {
+        delegate?.room(id: create.id)
+
         set(remoteDescription: create.description_p, for: .publisher, completion: { _ in
             // @TODO
         })

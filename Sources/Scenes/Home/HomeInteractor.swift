@@ -32,7 +32,7 @@ class HomeInteractor: HomeViewControllerOutput {
         self.output = output
         self.controller = controller
         self.api = api
-        self.roomApi = room
+        roomApi = room
     }
 
     func fetchData() {

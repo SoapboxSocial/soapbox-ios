@@ -16,7 +16,7 @@ class Configuration {
     static let cdn: URL = {
         url(key: "CDN_URL")
     }()
-    
+
     static let roomAPIURL = {
         url(key: "ROOM_API_URL")
     }()

@@ -1,11 +1,10 @@
-import Foundation
 import Alamofire
+import Foundation
 import KeychainAccess
 
 // @TODO deduplicate with APICLient
 
 class RoomAPIClient {
-    
     enum ErrorCode: Int, Decodable {
         case invalidRequestBody
         case missingParameter
@@ -38,7 +37,7 @@ class RoomAPIClient {
     }
 
     let decoder = JSONDecoder()
-    
+
     // @todo put elsewhere?
     private var token: String? {
         guard let identifier = Bundle.main.bundleIdentifier else {
@@ -48,16 +47,16 @@ class RoomAPIClient {
         let keychain = Keychain(service: identifier)
         return keychain[string: "token"]
     }
-    
+
     struct Room: Decodable {
         let id: String
         let name: String
     }
-    
+
     func rooms(callback: @escaping (Result<[Room], Error>) -> Void) {
         get(path: "/v1/rooms", callback: callback)
     }
-    
+
     private func get<T: Decodable>(path: String, parameters: Parameters? = nil, callback: @escaping (Result<T, Error>) -> Void) {
         AF.request(
             Configuration.roomAPIURL.appendingPathComponent(path),
