@@ -46,7 +46,27 @@ final class SignalingClient {
         }
     }
 
-    func join(id _: String, offer _: RTCSessionDescription) {}
+    func join(id: String, offer: RTCSessionDescription) {
+        _ = stream.sendMessage(SignalRequest.with {
+            $0.join = JoinRequest.with {
+                $0.room = id
+                $0.description_p = SessionDescription.with {
+                    $0.sdp = offer.sdp
+                    $0.type = "offer"
+                }
+            }
+        })
+
+        stream.status.whenComplete { result in
+            debugPrint("first \(result)")
+            switch result {
+            case let .failure(error):
+                debugPrint(error)
+            case let .success(status):
+                debugPrint(status)
+            }
+        }
+    }
 
     func trickle(target: Trickle.Target, candidate: RTCIceCandidate) {
         return
