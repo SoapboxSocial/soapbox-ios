@@ -121,7 +121,7 @@ final class WebRTCClient: NSObject {
         peerConnection.add(audioTrack, streamIds: [streamId])
 
         // Data
-        if let dataChannel = createDataChannel() {
+        if let dataChannel = createDataChannel(label: "ion-sfu") {
             dataChannel.delegate = self
             localDataChannel = dataChannel
         }
@@ -135,12 +135,14 @@ final class WebRTCClient: NSObject {
 
     // MARK: Data Channels
 
-    private func createDataChannel() -> RTCDataChannel? {
+    private func createDataChannel(label: String) -> RTCDataChannel? {
         let config = RTCDataChannelConfiguration()
-        guard let dataChannel = self.peerConnection.dataChannel(forLabel: "ion-sfu", configuration: config) else {
+
+        guard let dataChannel = self.peerConnection.dataChannel(forLabel: label, configuration: config) else {
             debugPrint("Warning: Couldn't create data channel.")
             return nil
         }
+
         return dataChannel
     }
 
