@@ -87,8 +87,6 @@ final class SignalingClient {
             delegate?.signalClient(self, didReceiveDescription: description)
         case let .trickle(trickle):
             delegate?.signalClient(self, didReceiveTrickle: trickle)
-        case .iceConnectionState:
-            break
         case .error:
             break
         case .none:
