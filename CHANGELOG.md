@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+ - Changed the create room button!
+ - Fix settings in dark theme.
+
+## [1.13.0] - 2021-01-20
+
+ - Added a settings screen containing some useful links for now.
+ - Adds sharing for profiles!
+ - Fixes an issue with prompting for updates.
+
 ## [1.12.0] - 2021-01-18
 
  - Fixes a crash when clicking to listen on a story.

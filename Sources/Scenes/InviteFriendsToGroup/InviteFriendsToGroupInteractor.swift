@@ -19,7 +19,7 @@ class InviteFriendsToGroupInteractor: InviteFriendsToGroupViewControllerOutput {
 
     func fetchFriends() {
         // @TODO: THIS SHOULD PROBABLY PULL SOME DATA OF FRIENDS WHO ARE NOT MEMBERS
-        api.friends { result in
+        api.friends(id: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)) { result in
             switch result {
             case .failure: break
             case let .success(users):

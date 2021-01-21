@@ -16,7 +16,7 @@ class InviteFriendsListInteractor: InviteFriendsListViewControllerOutput {
     }
 
     func fetchFriends() {
-        api.friends { result in
+        api.friends(id: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)) { result in
             switch result {
             case .failure: break
             case let .success(users):
