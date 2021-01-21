@@ -89,6 +89,8 @@ final class RoomClient {
 
             // @TODO:
             // https://github.com/pion/ion-sdk-js/blob/master/src/client.ts#L180-L181
+            
+            // @TODO I THINK THIS IS BROKEN?
 
             stream.answer(completion: { answer in
                 self.signalClient.answer(description: answer)
