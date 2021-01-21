@@ -45,11 +45,6 @@ class NavigationViewController: UINavigationController {
 
         view.backgroundColor = .background
 
-        createRoomButton.frame = CGRect(
-            origin: CGPoint(x: view.frame.size.width / 2 - (70 / 2), y: view.frame.size.height - (90 + view.safeAreaInsets.bottom)),
-            size: createRoomButton.frame.size
-        )
-
         createRoomButton.addTarget(self, action: #selector(didTapCreateRoom), for: .touchUpInside)
         view.addSubview(createRoomButton)
 
@@ -64,6 +59,11 @@ class NavigationViewController: UINavigationController {
         navigationBar.isTranslucent = false
         navigationBar.barTintColor = .background
         navigationBar.tintColor = .brandColor
+
+        NSLayoutConstraint.activate([
+            createRoomButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            createRoomButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+        ])
     }
 
     @objc func didTapCreateRoom() {

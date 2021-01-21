@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+ - Changed the create room button!
+ - Fix settings in dark theme.
+
 ## [1.13.0] - 2021-01-20
 
  - Added a settings screen containing some useful links for now.
