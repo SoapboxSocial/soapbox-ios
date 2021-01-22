@@ -74,7 +74,6 @@ final class SignalingClient {
                 $0.target = target
                 $0.iceCandidate = ICECandidate.with {
                     $0.candidate = candidate.sdp
-//                    $0.sdpMid = candidate.sdpMid
                     $0.sdpMlineIndex = Int64(candidate.sdpMLineIndex)
                 }
             }
