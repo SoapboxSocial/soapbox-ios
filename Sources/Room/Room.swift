@@ -92,7 +92,6 @@ class Room {
             request.users = ids.map(Int64.init)
         }
 
-        // @TODO WE NEED A CALLBACK HERE THAT RETURNS THE ID
         client.create()
     }
 
@@ -104,19 +103,11 @@ class Room {
     func mute() {
         isMuted = true
         client.mute()
-//        rtc.muteAudio()
-//        isMuted = true
-//
-//        client.send(command: .mute(Command.Mute()))
     }
 
     func unmute() {
         isMuted = false
         client.unmute()
-//        rtc.unmuteAudio()
-//        isMuted = false
-//
-//        client.send(command: .unmute(Command.Unmute()))
     }
 
     func add(admin: Int64) {
