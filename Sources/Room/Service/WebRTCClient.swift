@@ -196,8 +196,11 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
 
 extension WebRTCClient {
     private func setTrackEnabled<T: RTCMediaStreamTrack>(_: T.Type, isEnabled: Bool) {
-        peerConnection.transceivers
-            .compactMap { $0.sender.track as? T }
+        debugPrint("senders count \(role) - \(peerConnection.senders.count)")
+        debugPrint("receiver count \(role) - \(peerConnection.senders.count)")
+        debugPrint("transceivers count \(role) - \(peerConnection.transceivers.count)")
+        peerConnection.senders
+            .compactMap { $0.track as? T }
             .forEach { $0.isEnabled = isEnabled }
     }
 }
