@@ -124,12 +124,12 @@ final class WebRTCClient: NSObject {
         // Data
         if let dataChannel = createDataChannel(label: "ion-sfu") {
             dataChannel.delegate = self
-            localDataChannel = dataChannel
+//            localDataChannel = dataChannel
         }
 
         if let dataChannel = createDataChannel(label: "soapbox") {
             dataChannel.delegate = self
-            localDataChannel = dataChannel
+//            localDataChannel = dataChannel
         }
     }
 

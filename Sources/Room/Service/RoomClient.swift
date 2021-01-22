@@ -215,12 +215,12 @@ extension RoomClient: WebRTCClientDelegate {
             return
         }
 
-        debugPrint("negotiating")
-
         client.offer(completion: { result in
             self.signalClient.offer(description: result)
         })
     }
 
-    func webRTCClient(_: WebRTCClient, didReceiveData _: Data) {}
+    func webRTCClient(_: WebRTCClient, didReceiveData data: Data) {
+        debugPrint("Data", data)
+    }
 }
