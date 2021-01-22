@@ -126,6 +126,11 @@ final class WebRTCClient: NSObject {
             dataChannel.delegate = self
             localDataChannel = dataChannel
         }
+
+        if let dataChannel = createDataChannel(label: "soapbox") {
+            dataChannel.delegate = self
+            localDataChannel = dataChannel
+        }
     }
 
     private func createAudioTrack() -> RTCAudioTrack {
