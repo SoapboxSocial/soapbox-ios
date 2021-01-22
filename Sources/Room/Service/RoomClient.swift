@@ -63,6 +63,16 @@ final class RoomClient {
         streams[.publisher]?.sendData(data)
     }
 
+    func mute() {
+        streams[.publisher]?.muteAudio()
+        send(command: .mute(Command.Mute()))
+    }
+
+    func unmute() {
+        streams[.publisher]?.unmuteAudio()
+        send(command: .unmute(Command.Unmute()))
+    }
+
     private func initialOffer(callback: @escaping (_ sdp: RTCSessionDescription) -> Void) {
         streams[.publisher] = WebRTCClient(role: .publisher, iceServers: iceServers)
         streams[.subscriber] = WebRTCClient(role: .subscriber, iceServers: iceServers)
@@ -181,11 +191,6 @@ extension RoomClient: WebRTCClientDelegate {
     func webRTCClient(_ rtc: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
         switch state {
         case .connected:
-            if rtc.role == .subscriber {
-                rtc.speakerOn()
-                rtc.unmuteAudio()
-            }
-
             if rtc.role == .publisher {
                 rtc.speakerOn()
                 rtc.unmuteAudio()

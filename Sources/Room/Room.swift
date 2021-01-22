@@ -102,6 +102,8 @@ class Room {
     }
 
     func mute() {
+        isMuted = true
+        client.mute()
 //        rtc.muteAudio()
 //        isMuted = true
 //
@@ -109,6 +111,8 @@ class Room {
     }
 
     func unmute() {
+        isMuted = false
+        client.unmute()
 //        rtc.unmuteAudio()
 //        isMuted = false
 //
