@@ -5,6 +5,7 @@ protocol WebRTCClientDelegate: AnyObject {
     func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate)
     func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState)
     func webRTCClient(_ client: WebRTCClient, didReceiveData data: Data)
+    func webRTCClientShouldNegotiate(_ client: WebRTCClient)
 }
 
 final class WebRTCClient: NSObject {
@@ -157,8 +158,8 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
         debugPrint("peerConnection new signaling state: \(stateChanged)")
     }
 
-    func peerConnection(_: RTCPeerConnection, didAdd _: RTCMediaStream) {
-        debugPrint("peerConnection did add stream")
+    func peerConnection(_: RTCPeerConnection, didAdd stream: RTCMediaStream) {
+        debugPrint("peerConnection did add stream \(stream.streamId) - \(stream.audioTracks.count)")
     }
 
     func peerConnection(_: RTCPeerConnection, didRemove _: RTCMediaStream) {
@@ -167,6 +168,7 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
 
     func peerConnectionShouldNegotiate(_: RTCPeerConnection) {
         debugPrint("peerConnection should negotiate")
+        delegate?.webRTCClientShouldNegotiate(self)
     }
 
     func peerConnection(_: RTCPeerConnection, didChange newState: RTCIceConnectionState) {

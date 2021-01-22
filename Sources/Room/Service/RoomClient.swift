@@ -89,12 +89,19 @@ final class RoomClient {
 
             // @TODO:
             // https://github.com/pion/ion-sdk-js/blob/master/src/client.ts#L180-L181
-            
+
             // @TODO I THINK THIS IS BROKEN?
 
             stream.answer(completion: { answer in
                 self.signalClient.answer(description: answer)
             })
+        }
+
+        set(remoteDescription: description, for: .publisher) { err in
+            if err != nil {
+                debugPrint("remoteDescription err: \(err)")
+                return
+            }
         }
     }
 
@@ -141,6 +148,10 @@ extension RoomClient: SignalingClientDelegate {
         if description.type == "offer" {
             negotiate(description: description)
         }
+
+        if description.type == "answer" {
+            set(remoteDescription: description, for: .publisher, completion: { _ in })
+        }
     }
 
     // @TODO THESE 2 SHOULD BE THE SAME
@@ -167,17 +178,19 @@ extension RoomClient: WebRTCClientDelegate {
         signalClient.trickle(target: client.role, candidate: candidate)
     }
 
-    func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
+    func webRTCClient(_ rtc: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
         switch state {
         case .connected:
-//            if rtc.role == .subscriber {
-//                rtc.speakerOn()
-//            }
-//
-//            if rtc.role == .publisher {
-//                rtc.unmuteAudio()
-//            }
-//
+            if rtc.role == .subscriber {
+                rtc.speakerOn()
+                rtc.unmuteAudio()
+            }
+
+            if rtc.role == .publisher {
+                rtc.speakerOn()
+                rtc.unmuteAudio()
+            }
+
             delegate?.roomClientDidConnect(self)
         case .disconnected:
             // @TODO FULLY DISCONNECT
@@ -188,6 +201,20 @@ extension RoomClient: WebRTCClientDelegate {
         default:
             return // @TODO
         }
+    }
+
+    func webRTCClientShouldNegotiate(_ client: WebRTCClient) {
+        debugPrint("negotiating")
+
+        if client.role != .publisher {
+            return
+        }
+
+        debugPrint("negotiating")
+
+        client.offer(completion: { result in
+            self.signalClient.offer(description: result)
+        })
     }
 
     func webRTCClient(_: WebRTCClient, didReceiveData _: Data) {}

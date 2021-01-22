@@ -69,27 +69,34 @@ final class SignalingClient {
     }
 
     func trickle(target: Trickle.Target, candidate: RTCIceCandidate) {
-        return
-            _ = stream.sendMessage(SignalRequest.with {
-                $0.trickle = Trickle.with {
-                    $0.target = target
-                    $0.iceCandidate = ICECandidate.with {
-                        $0.candidate = candidate.sdp
+        _ = stream.sendMessage(SignalRequest.with {
+            $0.trickle = Trickle.with {
+                $0.target = target
+                $0.iceCandidate = ICECandidate.with {
+                    $0.candidate = candidate.sdp
 //                    $0.sdpMid = candidate.sdpMid
-                        $0.sdpMlineIndex = Int64(candidate.sdpMLineIndex)
-                    }
+                    $0.sdpMlineIndex = Int64(candidate.sdpMLineIndex)
                 }
-            })
+            }
+        })
     }
 
     func answer(description: RTCSessionDescription) {
-        return
-            _ = stream.sendMessage(SignalRequest.with {
-                $0.description_p = SessionDescription.with {
-                    $0.sdp = description.description
-                    $0.type = "answer"
-                }
-            })
+        _ = stream.sendMessage(SignalRequest.with {
+            $0.description_p = SessionDescription.with {
+                $0.sdp = description.sdp
+                $0.type = "answer"
+            }
+        })
+    }
+
+    func offer(description: RTCSessionDescription) {
+        _ = stream.sendMessage(SignalRequest.with {
+            $0.description_p = SessionDescription.with {
+                $0.sdp = description.sdp
+                $0.type = "offer"
+            }
+        })
     }
 
     func close() {
