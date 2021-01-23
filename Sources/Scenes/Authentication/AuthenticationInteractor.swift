@@ -51,15 +51,11 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
     }
 
     func loginWithApple() {
-        let provider = ASAuthorizationAppleIDProvider()
-
-        let request = provider.createRequest()
+        let request = ASAuthorizationAppleIDProvider().createRequest()
         request.requestedScopes = [.fullName, .email]
 
         let authController = ASAuthorizationController(authorizationRequests: [request])
-
         authController.delegate = self
-
         authController.performRequests()
     }
 
