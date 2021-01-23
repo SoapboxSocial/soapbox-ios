@@ -96,6 +96,8 @@ extension AuthenticationViewController: AuthenticationStartViewControllerDelegat
     func didSubmit() {
         transitionTo(state: .login)
     }
+
+    func didRequestSignInWithApple() {}
 }
 
 extension AuthenticationViewController: AuthenticationEmailViewControllerDelegate {
