@@ -195,7 +195,9 @@ extension AuthenticationInteractor: NotificationManagerDelegate {
 }
 
 extension AuthenticationInteractor: ASAuthorizationControllerDelegate {
-    func authorizationController(controller _: ASAuthorizationController, didCompleteWithError _: Error) {}
+    func authorizationController(controller _: ASAuthorizationController, didCompleteWithError error: Error) {
+        output.present(error: .general)
+    }
 
     func authorizationController(controller _: ASAuthorizationController, didCompleteWithAuthorization _: ASAuthorization) {}
 }
