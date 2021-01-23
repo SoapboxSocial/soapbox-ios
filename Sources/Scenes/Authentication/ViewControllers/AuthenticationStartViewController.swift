@@ -27,7 +27,7 @@ class AuthenticationStartViewController: UIViewController {
     private let submitButton: Button = {
         let button = Button(size: .large)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle(NSLocalizedString("get_started", comment: ""), for: .normal)
+        button.setTitle(NSLocalizedString("continue_email", comment: ""), for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.backgroundColor = .white
         button.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)

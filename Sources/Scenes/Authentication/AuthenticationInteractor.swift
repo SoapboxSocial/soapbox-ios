@@ -1,3 +1,4 @@
+import AuthenticationServices
 import Foundation
 import KeychainAccess
 import UIWindowTransitions
@@ -8,7 +9,7 @@ protocol AuthenticationInteractorOutput {
     func presentLoggedInView()
 }
 
-class AuthenticationInteractor: AuthenticationViewControllerOutput {
+class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
     private let output: AuthenticationInteractorOutput
     private let api: APIClient
 
@@ -25,6 +26,7 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
     init(output: AuthenticationInteractorOutput, api: APIClient) {
         self.output = output
         self.api = api
+        super.init()
     }
 
     func login(email: String?) {
@@ -46,6 +48,19 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
                 self.output.present(state: .pin)
             }
         }
+    }
+
+    func loginWithApple() {
+        let provider = ASAuthorizationAppleIDProvider()
+
+        let request = provider.createRequest()
+        request.requestedScopes = [.fullName, .email]
+
+        let authController = ASAuthorizationController(authorizationRequests: [request])
+
+        authController.delegate = self
+
+        authController.performRequests()
     }
 
     func submitPin(pin: String?) {
@@ -177,4 +192,10 @@ extension AuthenticationInteractor: NotificationManagerDelegate {
     func deviceTokenWasSet() {
         output.present(state: .follow)
     }
+}
+
+extension AuthenticationInteractor: ASAuthorizationControllerDelegate {
+    func authorizationController(controller _: ASAuthorizationController, didCompleteWithError _: Error) {}
+
+    func authorizationController(controller _: ASAuthorizationController, didCompleteWithAuthorization _: ASAuthorization) {}
 }

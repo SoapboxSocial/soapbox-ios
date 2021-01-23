@@ -7,6 +7,7 @@ protocol AuthenticationViewControllerWithInput {
 
 protocol AuthenticationViewControllerOutput {
     func login(email: String?)
+    func loginWithApple()
     func submitPin(pin: String?)
     func register(username: String?, displayName: String?, image: UIImage?)
     func follow(users: [Int])
@@ -97,7 +98,9 @@ extension AuthenticationViewController: AuthenticationStartViewControllerDelegat
         transitionTo(state: .login)
     }
 
-    func didRequestSignInWithApple() {}
+    func didRequestSignInWithApple() {
+        output.loginWithApple()
+    }
 }
 
 extension AuthenticationViewController: AuthenticationEmailViewControllerDelegate {
