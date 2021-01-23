@@ -199,5 +199,12 @@ extension AuthenticationInteractor: ASAuthorizationControllerDelegate {
         output.present(error: .general)
     }
 
-    func authorizationController(controller _: ASAuthorizationController, didCompleteWithAuthorization _: ASAuthorization) {}
+    func authorizationController(controller _: ASAuthorizationController, didCompleteWithAuthorization auth: ASAuthorization) {
+        guard let credential = auth.credential as? ASAuthorizationAppleIDCredential else {
+            output.present(error: .general)
+            return
+        }
+
+        debugPrint(credential)
+    }
 }
