@@ -197,18 +197,15 @@ extension AuthenticationInteractor: ASAuthorizationControllerDelegate {
 
     func authorizationController(controller _: ASAuthorizationController, didCompleteWithAuthorization auth: ASAuthorization) {
         guard let credential = auth.credential as? ASAuthorizationAppleIDCredential else {
-            output.present(error: .general)
-            return
+            return output.present(error: .general)
         }
 
         guard let appleIDToken = credential.identityToken else {
-            output.present(error: .general)
-            return
+            return output.present(error: .general)
         }
 
         guard let token = String(data: appleIDToken, encoding: .utf8) else {
-            output.present(error: .general)
-            return
+            return output.present(error: .general)
         }
 
         api.login(apple: token, callback: { result in
