@@ -201,6 +201,18 @@ extension AuthenticationInteractor: ASAuthorizationControllerDelegate {
             return
         }
 
-        debugPrint(credential)
+        guard let appleIDToken = credential.identityToken else {
+            output.present(error: .general)
+            return
+        }
+
+        guard let token = String(data: appleIDToken, encoding: .utf8) else {
+            output.present(error: .general)
+            return
+        }
+
+        api.login(apple: token, callback: { result in
+            debugPrint(result)
+        })
     }
 }

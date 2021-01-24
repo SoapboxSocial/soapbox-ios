@@ -108,6 +108,25 @@ extension APIClient {
             }
     }
 
+    func login(apple: String, callback: @escaping (Result<String, Error>) -> Void) {
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/login/start/apple"), method: .post, parameters: ["token": apple], encoding: URLEncoding.default)
+            .validate()
+            .response { result in
+                self.decodable(result, callback: { (result: Result<[String: String], Error>) in
+                    switch result {
+                    case let .failure(error):
+                        callback(.failure(error))
+                    case let .success(data):
+                        guard let token = data["token"] else {
+                            return callback(.failure(.decode))
+                        }
+
+                        callback(.success(token))
+                    }
+                })
+            }
+    }
+
     func submitPin(token: String, pin: String, callback: @escaping (Result<(LoginState, User?, Int?), Error>) -> Void) {
         AF.request(Configuration.rootURL.appendingPathComponent("/v1/login/pin"), method: .post, parameters: ["token": token, "pin": pin], encoding: URLEncoding.default)
             .validate()
