@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.17.0] - 2021-01-25
+
  - Added the ability to sign in with apple.
  - Added more info to room creation.
 
