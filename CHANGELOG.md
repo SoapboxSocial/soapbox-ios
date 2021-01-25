@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Added more info to room creation.
+
 ## [1.15.0] - 2021-01-22
 
  - Changed the create room button!

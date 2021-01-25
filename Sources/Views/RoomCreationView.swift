@@ -129,6 +129,8 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         let creationView = createRoomView()
         scrollView.addSubview(creationView)
 
+        groupsSlider.delegate = self
+
         userList.delegate = self
         scrollView.addSubview(userList)
 
@@ -318,9 +320,10 @@ class RoomCreationView: UIView, UITextFieldDelegate {
     }
 
     @objc private func segmentedControlUpdated() {
+        updateVisibilityLabel()
+
         switch visibilityControl.index {
         case 0:
-            visibilityTooltip.text = NSLocalizedString("anyone_can_join", comment: "")
             button.setTitle(NSLocalizedString("start_room", comment: ""), for: .normal)
 
             // @TODO WTF?
@@ -328,9 +331,25 @@ class RoomCreationView: UIView, UITextFieldDelegate {
                 groupView.isHidden = false
             }
         case 1:
-            visibilityTooltip.text = NSLocalizedString("only_invited_can_join", comment: "")
             button.setTitle(NSLocalizedString("choose_people", comment: ""), for: .normal)
             groupView.isHidden = true
+        default:
+            break
+        }
+    }
+
+    private func updateVisibilityLabel() {
+        switch visibilityControl.index {
+        case 0:
+            if let id = groupsSlider.selectedGroup, let group = groupsSlider.data.first(where: { $0.id == id }), group.groupType == .private {
+                let text = NSLocalizedString("anyone_in_group_can_join", comment: "")
+                visibilityTooltip.text = String(format: text, group.name)
+                return
+            }
+
+            visibilityTooltip.text = NSLocalizedString("anyone_can_join", comment: "")
+        case 1:
+            visibilityTooltip.text = NSLocalizedString("only_invited_can_join", comment: "")
         default:
             break
         }
@@ -355,6 +374,18 @@ class RoomCreationView: UIView, UITextFieldDelegate {
             cancelButton.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
         }
     }
+}
+
+extension RoomCreationView: GroupsSliderDelegate {
+    func didSelect(group _: Int) {
+        updateVisibilityLabel()
+    }
+
+    @objc func didDeselect(group _: Int) {
+        updateVisibilityLabel()
+    }
+
+    func loadMoreGroups() {}
 }
 
 extension RoomCreationView: UsersListWithSearchDelegate {
