@@ -215,11 +215,13 @@ extension AuthenticationInteractor: ASAuthorizationControllerDelegate {
             case let .success(response):
                 switch response.0 {
                 case .success:
-                    guard let user = response.1, let expires = response.2 else {
+                    guard let user = response.1, let expires = response.2, let token = response.3 else {
                         return self.output.present(error: .general)
                     }
 
-                    self.store(token: self.token!, expires: expires, user: user)
+                    self.token = token
+
+                    self.store(token: token, expires: expires, user: user)
 
                     NotificationManager.shared.requestAuthorization()
 
@@ -227,6 +229,12 @@ extension AuthenticationInteractor: ASAuthorizationControllerDelegate {
                         self.output.presentLoggedInView()
                     }
                 case .register:
+                    guard let token = response.3 else {
+                        return self.output.present(error: .general)
+                    }
+
+                    self.token = token
+
                     self.output.present(state: .registration)
                 }
             }
