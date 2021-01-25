@@ -234,7 +234,7 @@ extension WebRTCClient {
 
         rtcAudioSession.lockForConfiguration()
         do {
-            try rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.mixWithOthers, .allowBluetoothA2DP, .allowBluetooth])
+            try rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.mixWithOthers, .allowBluetoothA2DP, .allowBluetooth, .defaultToSpeaker])
             try rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
             rtcAudioSession.isAudioEnabled = true
             try rtcAudioSession.setActive(true)
