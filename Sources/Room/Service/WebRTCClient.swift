@@ -104,10 +104,16 @@ final class WebRTCClient: NSObject {
     }
 
     private func configureAudioSession() {
+        if role != .publisher {
+            return
+        }
+
         rtcAudioSession.lockForConfiguration()
         do {
-            try rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
+            try rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.mixWithOthers, .allowBluetoothA2DP, .allowBluetooth])
             try rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
+            rtcAudioSession.isAudioEnabled = true
+            try rtcAudioSession.setActive(true)
         } catch {
             debugPrint("Error changeing AVAudioSession category: \(error)")
         }
@@ -221,21 +227,22 @@ extension WebRTCClient {
 
     // Force speaker
     func speakerOn() {
-        audioQueue.async { [weak self] in
-            guard let self = self else {
-                return
-            }
+//        audioQueue.async { [weak self] in
+//            guard let self = self else {
+//                return
+//            }
 
-            self.rtcAudioSession.lockForConfiguration()
-            do {
-                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.mixWithOthers, .defaultToSpeaker, .allowBluetooth, .allowBluetoothA2DP])
-                try self.rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
-                try self.rtcAudioSession.setActive(true)
-            } catch {
-                debugPrint("Couldn't force audio to speaker: \(error)")
-            }
-            self.rtcAudioSession.unlockForConfiguration()
+        rtcAudioSession.lockForConfiguration()
+        do {
+            try rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.mixWithOthers, .allowBluetoothA2DP, .allowBluetooth])
+            try rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
+            rtcAudioSession.isAudioEnabled = true
+            try rtcAudioSession.setActive(true)
+        } catch {
+            debugPrint("Error changeing AVAudioSession category: \(error)")
         }
+        rtcAudioSession.unlockForConfiguration()
+//        }
     }
 
     private func setAudioEnabled(_ isEnabled: Bool) {

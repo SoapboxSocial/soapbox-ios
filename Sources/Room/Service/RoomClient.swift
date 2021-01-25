@@ -106,13 +106,6 @@ final class RoomClient {
                 self.signalClient.answer(description: answer)
             })
         }
-
-        set(remoteDescription: description, for: .publisher) { err in
-            if err != nil {
-                debugPrint("remoteDescription err: \(err)")
-                return
-            }
-        }
     }
 
     private func set(remoteDescription: SessionDescription, for target: Trickle.Target, completion: @escaping (Swift.Error?) -> Void) {
@@ -192,6 +185,7 @@ extension RoomClient: WebRTCClientDelegate {
         switch state {
         case .connected:
             if rtc.role == .publisher {
+                rtc.speakerOn()
                 rtc.unmuteAudio()
             }
 
@@ -207,14 +201,12 @@ extension RoomClient: WebRTCClientDelegate {
         }
     }
 
-    func webRTCClientShouldNegotiate(_ client: WebRTCClient) {
-        debugPrint("negotiating")
-
-        if client.role != .publisher {
+    func webRTCClientShouldNegotiate(_: WebRTCClient) {
+        guard let stream = streams[.publisher] else {
             return
         }
 
-        client.offer(completion: { result in
+        stream.offer(completion: { result in
             self.signalClient.offer(description: result)
         })
     }
