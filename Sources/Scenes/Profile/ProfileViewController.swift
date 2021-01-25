@@ -115,7 +115,7 @@ class ProfileViewController: ViewController {
         scrollView.addSubview(content)
 
         headerView.button.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
-        headerView.button.setTitle(NSLocalizedString("unfollow", comment: ""), for: .selected)
+        headerView.button.setTitle(NSLocalizedString("following", comment: ""), for: .selected)
         headerView.button.isHidden = false
         headerView.descriptionLabel.font = .rounded(forTextStyle: .body, weight: .regular)
         content.addArrangedSubview(headerView)
@@ -336,14 +336,19 @@ class ProfileViewController: ViewController {
         }
 
         if user.isFollowing ?? false {
-            let alert = UIAlertController.confirmation(
-                onAccepted: {
-                    self.output.unfollow()
-                },
-                onDeclined: {
-                    self.headerView.button.isUserInteractionEnabled = true
-                }
+            let alert = UIAlertController(
+                title: nil,
+                message: nil,
+                preferredStyle: .actionSheet
             )
+
+            let unfollowMessage = NSLocalizedString("unfollow_profile", comment: "")
+
+            alert.addAction(UIAlertAction(title: String(format: unfollowMessage, self.user.username), style: .default, handler: { _ in
+                self.output.unfollow()
+            }))
+
+            alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
 
             present(alert, animated: true)
         } else {

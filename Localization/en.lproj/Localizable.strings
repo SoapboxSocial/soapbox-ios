@@ -210,6 +210,7 @@
 "blocked" = "Blocked";
 
 "share_profile" = "Share profile";
+"unfollow_profile" = "Unfollow %@"
 "settings" = "Settings";
 
 "create_room" = "Create Room";
