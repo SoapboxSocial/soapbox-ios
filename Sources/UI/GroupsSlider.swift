@@ -3,6 +3,7 @@ import UIKit
 @objc protocol GroupsSliderDelegate {
     func didSelect(group: Int)
     func loadMoreGroups()
+    @objc optional func didDeselect(group: Int)
     @objc optional func didTapGroupCreation()
 }
 
@@ -11,7 +12,7 @@ class GroupsSlider: UIView {
 
     var selectedGroup: Int?
 
-    private var data = [APIClient.Group]()
+    private(set) var data = [APIClient.Group]()
 
     var groupsCount: Int {
         return data.count
@@ -171,6 +172,8 @@ extension GroupsSlider: UICollectionViewDelegate {
 
         cell.selectedView.isHidden = true
         selectedGroup = nil
+
+        delegate?.didDeselect?(group: data[indexPath.item].id)
     }
 }
 
