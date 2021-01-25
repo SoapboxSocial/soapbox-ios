@@ -213,7 +213,7 @@ extension Room {
     }
 
     private func on(joined: Event.Joined) {
-        if !members.contains(where: { $0.id == joined.user.id }) {
+        if members.contains(where: { $0.id == joined.user.id }) {
             return
         }
 
