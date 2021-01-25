@@ -185,7 +185,7 @@ extension RoomClient: WebRTCClientDelegate {
         switch state {
         case .connected:
             if rtc.role == .publisher {
-                rtc.speakerOn()
+                rtc.speakerOn() // @TODO THIS PROBABLY ISN'T NEEDED HERE ANYMORE
                 rtc.unmuteAudio()
             }
 
