@@ -208,9 +208,6 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
 
 extension WebRTCClient {
     private func setTrackEnabled<T: RTCMediaStreamTrack>(_: T.Type, isEnabled: Bool) {
-        debugPrint("senders count \(role) - \(peerConnection.senders.count)")
-        debugPrint("receiver count \(role) - \(peerConnection.senders.count)")
-        debugPrint("transceivers count \(role) - \(peerConnection.transceivers.count)")
         peerConnection.senders
             .compactMap { $0.track as? T }
             .forEach { $0.isEnabled = isEnabled }
@@ -228,11 +225,6 @@ extension WebRTCClient {
 
     // Force speaker
     func speakerOn() {
-//        audioQueue.async { [weak self] in
-//            guard let self = self else {
-//                return
-//            }
-
         rtcAudioSession.lockForConfiguration()
         do {
             try rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.mixWithOthers, .allowBluetoothA2DP, .allowBluetooth, .defaultToSpeaker])
