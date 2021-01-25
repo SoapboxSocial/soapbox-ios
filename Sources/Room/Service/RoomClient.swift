@@ -1,5 +1,6 @@
 import Foundation
 import WebRTC
+import SwiftProtobuf
 
 // @TODO, THIS SHOULDN'T HAVE ROOM RELATED LOGIC IN IT, SO WE NEED A DELEGATE TO SIGNAL THINGS LIKE CONNECTED ETC
 
@@ -211,7 +212,15 @@ extension RoomClient: WebRTCClientDelegate {
         })
     }
 
-    func webRTCClient(_: WebRTCClient, didReceiveData data: Data) {
-        debugPrint("Data", data)
+    func webRTCClient(_: WebRTCClient, didReceiveData data: Data, onChannel channel: String) {
+        debugPrint("data received on \(channel)")
+        
+        if channel == "soapbox" {
+            do {
+                let msg = try Event(serializedData: data)
+            } catch {
+                debugPrint("decode error \(error)")
+            }
+        }
     }
 }

@@ -4,7 +4,7 @@ import WebRTC
 protocol WebRTCClientDelegate: AnyObject {
     func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate)
     func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState)
-    func webRTCClient(_ client: WebRTCClient, didReceiveData data: Data)
+    func webRTCClient(_ client: WebRTCClient, didReceiveData data: Data, onChannel channel: String)
     func webRTCClientShouldNegotiate(_ client: WebRTCClient)
 }
 
@@ -26,9 +26,9 @@ final class WebRTCClient: NSObject {
         kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue,
         kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueFalse,
     ]
-
-    private var localDataChannel: RTCDataChannel?
-    private var remoteDataChannel: RTCDataChannel?
+    
+    private var localDataChannels = [String: RTCDataChannel]()
+    private var remoteDataChannels = [String: RTCDataChannel]()
 
     @available(*, unavailable)
     override init() {
@@ -130,12 +130,12 @@ final class WebRTCClient: NSObject {
         // Data
         if let dataChannel = createDataChannel(label: "ion-sfu") {
             dataChannel.delegate = self
-//            localDataChannel = dataChannel
+            localDataChannels["ion-sfu"] = dataChannel
         }
 
         if let dataChannel = createDataChannel(label: "soapbox") {
             dataChannel.delegate = self
-//            localDataChannel = dataChannel
+            localDataChannels["soapbox"] = dataChannel
         }
     }
 
@@ -160,7 +160,7 @@ final class WebRTCClient: NSObject {
 
     func sendData(_ data: Data) {
         let buffer = RTCDataBuffer(data: data, isBinary: true)
-        remoteDataChannel?.sendData(buffer)
+//        remoteDataChannel?.sendData(buffer)
     }
 }
 
@@ -200,8 +200,9 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     }
 
     func peerConnection(_: RTCPeerConnection, didOpen dataChannel: RTCDataChannel) {
-        debugPrint("peerConnection did open data channel")
-        remoteDataChannel = dataChannel
+        debugPrint("peerConnection did open data channel - \(dataChannel.label)")
+        remoteDataChannels[dataChannel.label] = dataChannel
+        dataChannel.delegate = self
     }
 }
 
@@ -242,7 +243,6 @@ extension WebRTCClient {
             debugPrint("Error changeing AVAudioSession category: \(error)")
         }
         rtcAudioSession.unlockForConfiguration()
-//        }
     }
 
     private func setAudioEnabled(_ isEnabled: Bool) {
@@ -255,7 +255,7 @@ extension WebRTCClient: RTCDataChannelDelegate {
         debugPrint("dataChannel did change state: \(dataChannel.readyState)")
     }
 
-    func dataChannel(_: RTCDataChannel, didReceiveMessageWith buffer: RTCDataBuffer) {
-        delegate?.webRTCClient(self, didReceiveData: buffer.data)
+    func dataChannel(_ dataChannel: RTCDataChannel, didReceiveMessageWith buffer: RTCDataBuffer) {
+        delegate?.webRTCClient(self, didReceiveData: buffer.data, onChannel: dataChannel.label)
     }
 }
