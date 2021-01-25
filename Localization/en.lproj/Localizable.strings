@@ -186,13 +186,14 @@
 "view_image" = "View image";
 "listen_to_story" = "Listen to story";
 
-"get_started" = "Get started";
+"continue_email" = "Continue with Email";
 
 "enable_notifications" = "Enable notifications to be notified when the people you follow start a room.";
 "follow_users_to_start_talking" = "Follow some users to start talking.";
 
 "only_invited_can_join" = "Only invited users can join the room";
 "anyone_can_join" = "Anyone can join the room";
+"anyone_in_group_can_join" = "Anyone in \"%@\" can join";
 "choose_people" = "Choose people";
 
 "user_will_no_longer_be_able_to_join_room" = "%@ will no longer be able to join this room.";

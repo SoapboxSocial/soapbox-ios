@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [1.17.0] - 2021-01-25
+
+ - Added the ability to sign in with apple.
+ - Added more info to room creation.
+
+## [1.15.0] - 2021-01-22
+
  - Changed the create room button!
  - Fix settings in dark theme.
 

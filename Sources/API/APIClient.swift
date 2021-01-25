@@ -83,9 +83,10 @@ extension APIClient {
         let state: LoginState
         let expiresIn: Int?
         let user: User?
+        let token: String?
 
         private enum CodingKeys: String, CodingKey {
-            case state, expiresIn = "expires_in", user
+            case state, expiresIn = "expires_in", user, token
         }
     }
 
@@ -103,6 +104,21 @@ extension APIClient {
                         }
 
                         callback(.success(token))
+                    }
+                })
+            }
+    }
+
+    func login(apple: String, callback: @escaping (Result<(LoginState, User?, Int?, String?), Error>) -> Void) {
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/login/start/apple"), method: .post, parameters: ["token": apple], encoding: URLEncoding.default)
+            .validate()
+            .response { result in
+                self.decodable(result, callback: { (result: Result<PinEntryResponse, Error>) in
+                    switch result {
+                    case let .failure(error):
+                        callback(.failure(error))
+                    case let .success(data):
+                        callback(.success((data.state, data.user, data.expiresIn, data.token)))
                     }
                 })
             }
