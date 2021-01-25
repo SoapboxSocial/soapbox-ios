@@ -13,9 +13,8 @@ protocol RoomClientDelegate: AnyObject {
 }
 
 final class RoomClient {
-    private var streams = [Trickle.Target: WebRTCClient]() // @TODO MAY NOT NEED TRANSPORT
+    private var streams = [Trickle.Target: WebRTCClient]()
     private let signalClient: SignalingClient
-    // @TODO THIS CONTAINS WEBRTC AND SIGNALING LOGIC.
 
     private let iceServers: [RTCIceServer]
 
