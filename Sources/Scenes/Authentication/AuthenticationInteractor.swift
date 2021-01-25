@@ -200,16 +200,36 @@ extension AuthenticationInteractor: ASAuthorizationControllerDelegate {
             return output.present(error: .general)
         }
 
-        guard let appleIDToken = credential.identityToken else {
+        guard let code = credential.authorizationCode else {
             return output.present(error: .general)
         }
 
-        guard let token = String(data: appleIDToken, encoding: .utf8) else {
+        guard let token = String(data: code, encoding: .utf8) else {
             return output.present(error: .general)
         }
 
         api.login(apple: token, callback: { result in
-            debugPrint(result)
+            switch result {
+            case .failure:
+                return self.output.present(error: .general)
+            case let .success(response):
+                switch response.0 {
+                case .success:
+                    guard let user = response.1, let expires = response.2 else {
+                        return self.output.present(error: .general)
+                    }
+
+                    self.store(token: self.token!, expires: expires, user: user)
+
+                    NotificationManager.shared.requestAuthorization()
+
+                    DispatchQueue.main.async {
+                        self.output.presentLoggedInView()
+                    }
+                case .register:
+                    self.output.present(state: .registration)
+                }
+            }
         })
     }
 }
