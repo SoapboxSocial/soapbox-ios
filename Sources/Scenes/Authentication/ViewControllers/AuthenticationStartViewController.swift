@@ -1,7 +1,9 @@
+import AuthenticationServices
 import UIKit
 
 protocol AuthenticationStartViewControllerDelegate {
     func didSubmit()
+    func didRequestSignInWithApple()
 }
 
 class AuthenticationStartViewController: UIViewController {
@@ -25,10 +27,18 @@ class AuthenticationStartViewController: UIViewController {
     private let submitButton: Button = {
         let button = Button(size: .large)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle(NSLocalizedString("get_started", comment: ""), for: .normal)
+        button.setTitle(NSLocalizedString("continue_email", comment: ""), for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.backgroundColor = .white
         button.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
+        return button
+    }()
+
+    private let signInWithApple: ASAuthorizationAppleIDButton = {
+        let button = ASAuthorizationAppleIDButton(authorizationButtonType: .signIn, authorizationButtonStyle: .black)
+        button.cornerRadius = 15
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(loginWithApple), for: .touchUpInside)
         return button
     }()
 
@@ -55,6 +65,7 @@ class AuthenticationStartViewController: UIViewController {
         pinkDude.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(pinkDude)
 
+        view.addSubview(signInWithApple)
         view.addSubview(submitButton)
 
         terms.attributedText = termsNoticeAttributedString()
@@ -86,6 +97,13 @@ class AuthenticationStartViewController: UIViewController {
         NSLayoutConstraint.activate([
             logo.centerXAnchor.constraint(equalTo: logoPlaceholder.centerXAnchor),
             logo.centerYAnchor.constraint(equalTo: logoPlaceholder.centerYAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            signInWithApple.heightAnchor.constraint(equalTo: submitButton.heightAnchor),
+            signInWithApple.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            signInWithApple.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            signInWithApple.bottomAnchor.constraint(equalTo: submitButton.topAnchor, constant: -10),
         ])
 
         NSLayoutConstraint.activate([
@@ -123,5 +141,21 @@ class AuthenticationStartViewController: UIViewController {
 
     @objc private func didSubmit() {
         delegate?.didSubmit()
+    }
+}
+
+extension AuthenticationStartViewController: ASAuthorizationControllerDelegate {
+    @objc private func loginWithApple() {
+        delegate?.didRequestSignInWithApple()
+//        let provider = ASAuthorizationAppleIDProvider()
+//
+//        let request = provider.createRequest()
+//        request.requestedScopes = [.fullName, .email]
+//
+//        let authController = ASAuthorizationController(authorizationRequests: [request])
+//
+//        authController.delegate = self
+//
+//        authController.performRequests()
     }
 }

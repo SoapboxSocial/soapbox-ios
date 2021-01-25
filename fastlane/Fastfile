@@ -88,8 +88,8 @@ platform :ios do
   lane :beta do
     desc "Push a new build to the TestFlight"
 
-    ensure_git_status_clean
-    ensure_git_branch(branch: "master")
+    #ensure_git_status_clean
+    #ensure_git_branch(branch: "master")
 
     update_code_signing_settings(use_automatic_signing: false, path: xcodeproj)
 
