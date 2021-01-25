@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Added the ability to sign in with apple.
+
 ## [1.15.0] - 2021-01-22
 
  - Changed the create room button!
