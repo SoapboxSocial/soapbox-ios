@@ -44,7 +44,10 @@ class Room {
 
     private(set) var role = RoomState.RoomMember.Role.regular
 
-    private(set) var isMuted = true
+    var isMuted: Bool {
+        return client.muted
+    }
+
     private(set) var visibility = Visibility.public
 
     private(set) var members = [RoomState.RoomMember]()
@@ -101,12 +104,10 @@ class Room {
     }
 
     func mute() {
-        isMuted = true
         client.mute()
     }
 
     func unmute() {
-        isMuted = false
         client.unmute()
     }
 
@@ -262,9 +263,8 @@ extension Room {
     }
 
     private func onMutedByAdmin() {
-//        rtc.muteAudio()
-//        isMuted = true
-//        delegate?.wasMutedByAdmin()
+        client.mute()
+        delegate?.wasMutedByAdmin()
     }
 }
 

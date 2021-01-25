@@ -1,6 +1,6 @@
 import Foundation
-import WebRTC
 import SwiftProtobuf
+import WebRTC
 
 // @TODO, THIS SHOULDN'T HAVE ROOM RELATED LOGIC IN IT, SO WE NEED A DELEGATE TO SIGNAL THINGS LIKE CONNECTED ETC
 
@@ -24,6 +24,8 @@ final class RoomClient {
     enum Error: Swift.Error {
         case rtcFailure
     }
+
+    private(set) var muted = false
 
     init(signal: SignalingClient, iceServers: [RTCIceServer]) {
         self.iceServers = iceServers
@@ -67,11 +69,13 @@ final class RoomClient {
     func mute() {
         streams[.publisher]?.muteAudio()
         send(command: .mute(Command.Mute()))
+        muted = true
     }
 
     func unmute() {
         streams[.publisher]?.unmuteAudio()
         send(command: .unmute(Command.Unmute()))
+        muted = false
     }
 
     private func initialOffer(callback: @escaping (_ sdp: RTCSessionDescription) -> Void) {
@@ -213,11 +217,10 @@ extension RoomClient: WebRTCClientDelegate {
     }
 
     func webRTCClient(_: WebRTCClient, didReceiveData data: Data, onChannel channel: String) {
-        debugPrint("data received on \(channel)")
-        
         if channel == "soapbox" {
             do {
                 let msg = try Event(serializedData: data)
+                delegate?.roomClient(self, didReceiveMessage: msg)
             } catch {
                 debugPrint("decode error \(error)")
             }
