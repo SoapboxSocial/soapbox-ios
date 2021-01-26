@@ -11,7 +11,7 @@ protocol RoomViewDelegate {
 class RoomView: UIView {
     var delegate: RoomViewDelegate?
 
-    private var links = [(Int, URL)]()
+    private var links = [(Int64, URL)]()
 
     private static let iconConfig = UIImage.SymbolConfiguration(weight: .semibold)
 
@@ -214,7 +214,7 @@ class RoomView: UIView {
             lock.widthAnchor.constraint(equalToConstant: 20),
         ])
 
-        if room.visibility == .public {
+        if room.state.visibility == .public {
             lock.isHidden = true
         }
 
@@ -307,7 +307,7 @@ class RoomView: UIView {
         addSubview(bottomMuteButton)
         addSubview(shareRoomButton)
 
-        if room.visibility == .private {
+        if room.state.visibility == .private {
             shareRoomButton.isHidden = true
         }
 
@@ -377,7 +377,7 @@ class RoomView: UIView {
         if room.role != .admin {
             editNameButton.isHidden = true
 
-            if room.visibility == .private {
+            if room.state.visibility == .private {
                 inviteUsersButton.isHidden = true
             }
         }
@@ -454,13 +454,13 @@ class RoomView: UIView {
     @objc private func shareRoom() {
         tooltip.dismiss()
 
-        guard let id = room.id else {
+        if room.state.id == "" {
             return
         }
-
+        
         let items: [Any] = [
             NSLocalizedString("join_me_in_room", comment: ""),
-            URL(string: "https://soapbox.social/room?id=" + String(id))!,
+            URL(string: "https://soapbox.social/room?id=" + room.state.id)!,
         ]
 
         let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
@@ -500,7 +500,7 @@ class RoomView: UIView {
     }
 
     @objc private func exitTapped() {
-        if room.members.count == 0 {
+        if room.state.members.count == 0 {
             showExitAlert()
             return
         }
@@ -597,7 +597,7 @@ extension RoomView: UICollectionViewDelegate {
             return
         }
 
-        showMemberAction(for: room.members[indexPath.item - 1])
+        showMemberAction(for: room.state.members[indexPath.item - 1])
     }
 
     private func showMemberAction(for member: RoomState.RoomMember) {
@@ -657,7 +657,7 @@ extension RoomView: UICollectionViewDelegate {
 extension RoomView: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         // Adds the plus 1 for self.
-        return room.members.count + 1
+        return room.state.members.count + 1
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -671,7 +671,7 @@ extension RoomView: UICollectionViewDataSource {
                 role: room.role
             )
         } else {
-            cell.setup(member: room.members[indexPath.item - 1]) // @TODO apparently this can crash?
+            cell.setup(member: room.state.members[indexPath.item - 1]) // @TODO apparently this can crash?
         }
 
         return cell
@@ -687,7 +687,7 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func userDidReact(user: Int, reaction: Room.Reaction) {
+    func userDidReact(user: Int64, reaction: Room.Reaction) {
         DispatchQueue.main.async {
             guard let cells = self.members.visibleCells as? [RoomMemberCell] else {
                 return
@@ -703,14 +703,14 @@ extension RoomView: RoomDelegate {
         delegate?.roomWasClosedDueToError()
     }
 
-    func didChangeMemberMuteState(user _: Int, isMuted: Bool) {
+    func didChangeMemberMuteState(user _: Int64, isMuted: Bool) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
     }
 
     //  @todo for efficiency these should all only update the user that was changed
-    func userDidJoinRoom(user _: Int) {
+    func userDidJoinRoom(user _: Int64) {
         DispatchQueue.main.async {
             self.members.reloadData()
             self.userJoinFeedback.notificationOccurred(.success)
@@ -724,13 +724,13 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func userDidLeaveRoom(user _: Int) {
+    func userDidLeaveRoom(user _: Int64) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
     }
 
-    func didChangeUserRole(user: Int, role: RoomState.RoomMember.Role) {
+    func didChangeUserRole(user: Int64, role: RoomState.RoomMember.Role) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
@@ -746,14 +746,14 @@ extension RoomView: RoomDelegate {
             } else {
                 self.hideEditNameButton()
 
-                if self.room.visibility == .private {
+                if self.room.state.visibility == .private {
                     self.hideInviteUserButton()
                 }
             }
         }
     }
 
-    func didChangeSpeakVolume(user: Int, volume: Float) {
+    func didChangeSpeakVolume(user: Int64, volume: Float) {
         DispatchQueue.main.async {
             guard let cells = self.members.visibleCells as? [RoomMemberCell] else {
                 return
@@ -765,7 +765,7 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func didReceiveLink(from: Int, link: URL) {
+    func didReceiveLink(from: Int64, link: URL) {
         links.append((from, link))
         if links.count == 1 {
             displayNextLink()
@@ -779,7 +779,7 @@ extension RoomView: RoomDelegate {
 
         var name = "you"
         if from != 0 {
-            guard let user = room.members.first(where: { $0.id == from }) else {
+            guard let user = room.state.members.first(where: { $0.id == from }) else {
                 return
             }
 
@@ -803,8 +803,8 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func userDidRecordScreen(_ user: Int) {
-        guard let user = room.members.first(where: { $0.id == user }) else {
+    func userDidRecordScreen(_ user: Int64) {
+        guard let user = room.state.members.first(where: { $0.id == user }) else {
             return
         }
 

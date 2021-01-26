@@ -2,7 +2,7 @@ import AlamofireImage
 import UIKit
 
 class RoomMemberCell: UICollectionViewCell {
-    private(set) var user: Int?
+    private(set) var user: Int64?
 
     private var nameLabel: UILabel!
     private var muteView: UIView!
@@ -100,7 +100,7 @@ class RoomMemberCell: UICollectionViewCell {
             role: member.role
         )
 
-        user = Int(member.id)
+        user = member.id
     }
 
     func didReact(with: Room.Reaction) {

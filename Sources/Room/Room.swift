@@ -4,16 +4,16 @@ import KeychainAccess
 import WebRTC
 
 protocol RoomDelegate {
-    func userDidJoinRoom(user: Int)
-    func userDidLeaveRoom(user: Int)
-    func didChangeUserRole(user: Int, role: RoomState.RoomMember.Role)
-    func userDidReact(user: Int, reaction: Room.Reaction)
-    func didChangeMemberMuteState(user: Int, isMuted: Bool)
+    func userDidJoinRoom(user: Int64)
+    func userDidLeaveRoom(user: Int64)
+    func didChangeUserRole(user: Int64, role: RoomState.RoomMember.Role)
+    func userDidReact(user: Int64, reaction: Room.Reaction)
+    func didChangeMemberMuteState(user: Int64, isMuted: Bool)
     func roomWasClosedByRemote()
-    func didChangeSpeakVolume(user: Int, volume: Float)
-    func didReceiveLink(from: Int, link: URL)
+    func didChangeSpeakVolume(user: Int64, volume: Float)
+    func didReceiveLink(from: Int64, link: URL)
     func roomWasRenamed(_ name: String)
-    func userDidRecordScreen(_ user: Int)
+    func userDidRecordScreen(_ user: Int64)
     func wasMutedByAdmin()
 }
 
@@ -24,6 +24,7 @@ enum RoomError: Error {
 }
 
 // @TODO THIS ENTIRE THING SHOULD BE REFACTORED SO WE HANDLE WEBRTC AND GRPC NICER, EG ERRORS.
+// @TODO ADD SELF INTO STATE
 
 class Room {
     typealias ConnectionCompletion = ((Result<Void, RoomError>) -> Void)
@@ -38,8 +39,9 @@ class Room {
     }
 
     private(set) var name: String!
+    
+    private(set) var state = RoomState()
 
-    var id: String?
     var isClosed = false
 
     private(set) var role = RoomState.RoomMember.Role.regular
@@ -47,10 +49,6 @@ class Room {
     var isMuted: Bool {
         return client.muted
     }
-
-    private(set) var visibility = Visibility.public
-
-    private(set) var members = [RoomState.RoomMember]()
 
     var delegate: RoomDelegate?
 
@@ -65,7 +63,7 @@ class Room {
     }
 
     func join(id: String, completion: @escaping ConnectionCompletion) {
-        self.id = id
+        self.state.id = id
         self.completion = completion
 
         // @TODO WE NEED COMPLETION OF SOME SORTS
@@ -74,17 +72,22 @@ class Room {
 
     func create(name: String?, isPrivate: Bool, group: Int? = nil, users: [Int]? = nil, completion: @escaping ConnectionCompletion) {
         self.completion = completion
-        self.name = name
-
+        
+        if let name = name {
+            state.name = name
+        }
+        
         role = .admin
 
         if isPrivate {
-            visibility = Visibility.private
+            state.visibility = Visibility.private
+        } else {
+            state.visibility = Visibility.public
         }
 
         var request = CreateRequest.with {
             $0.name = name ?? ""
-            $0.visibility = visibility
+            $0.visibility = state.visibility
         }
 
         if let id = group {
@@ -172,29 +175,25 @@ class Room {
 
 extension Room {
     private func on(_ event: Event) {
-        let from = Int(event.from)
-
-        debugPrint(event)
-
         switch event.payload {
         case .addedAdmin:
-            on(addedAdmin: from)
+            on(addedAdmin: event.from)
         case let .invitedAdmin(evt):
             break // @TODO SHOW POPUP SAYING YOU'VE BEEN INVITED TO BECOME ADMIN
         case let .joined(evt):
             on(joined: evt)
         case .left:
-            on(left: from)
+            on(left: event.from)
         case let .linkShared(evt):
-            on(linkShare: evt, from: from)
+            on(linkShare: evt, from: event.from)
         case let .muteUpdated(evt):
-            on(muteUpdate: evt, from: from)
+            on(muteUpdate: evt, from: event.from)
         case .mutedByAdmin:
             onMutedByAdmin()
         case let .reacted(evt):
-            on(reacted: evt, from: from)
+            on(reacted: evt, from: event.from)
         case .recordedScreen:
-            on(recordedScreen: from)
+            on(recordedScreen: event.from)
         case let .removedAdmin(evt):
             on(removedAdmin: evt)
         case let .renamedRoom(evt):
@@ -204,29 +203,29 @@ extension Room {
         }
     }
 
-    private func on(addedAdmin id: Int) {
-        updateMemberRole(user: Int64(id), role: .admin)
+    private func on(addedAdmin id: Int64) {
+        updateMemberRole(user: id, role: .admin)
     }
 
     private func on(removedAdmin: Event.RemovedAdmin) {
-        updateMemberRole(user: Int64(removedAdmin.id), role: .regular)
+        updateMemberRole(user: removedAdmin.id, role: .regular)
     }
 
     private func on(joined: Event.Joined) {
-        if members.contains(where: { $0.id == joined.user.id }) {
+        if state.members.contains(where: { $0.id == joined.user.id }) {
             return
         }
 
-        members.append(joined.user)
-        delegate?.userDidJoinRoom(user: Int(joined.user.id))
+        state.members.append(joined.user)
+        delegate?.userDidJoinRoom(user: joined.user.id)
     }
 
-    private func on(left id: Int) {
-        members.removeAll(where: { $0.id == Int64(id) })
+    private func on(left id: Int64) {
+        state.members.removeAll(where: { $0.id == id })
         delegate?.userDidLeaveRoom(user: id)
     }
 
-    private func on(linkShare: Event.LinkShared, from: Int) {
+    private func on(linkShare: Event.LinkShared, from: Int64) {
         guard let url = URL(string: linkShare.link) else {
             return
         }
@@ -238,15 +237,15 @@ extension Room {
         delegate?.roomWasRenamed(roomRenamed.name)
     }
 
-    private func on(muteUpdate: Event.MuteUpdated, from: Int) {
+    private func on(muteUpdate: Event.MuteUpdated, from: Int64) {
         updateMemberMuteState(user: from, isMuted: muteUpdate.isMuted)
     }
 
-    private func on(unmuted id: Int) {
+    private func on(unmuted id: Int64) {
         updateMemberMuteState(user: id, isMuted: false)
     }
 
-    private func on(reacted: Event.Reacted, from: Int) {
+    private func on(reacted: Event.Reacted, from: Int64) {
         guard let value = String(bytes: reacted.emoji, encoding: .utf8) else {
             return
         }
@@ -258,7 +257,7 @@ extension Room {
         delegate?.userDidReact(user: from, reaction: reaction)
     }
 
-    private func on(recordedScreen id: Int) {
+    private func on(recordedScreen id: Int64) {
         delegate?.userDidRecordScreen(id)
     }
 
@@ -269,13 +268,14 @@ extension Room {
 }
 
 extension Room {
-    private func updateMemberMuteState(user: Int, isMuted: Bool) {
+    private func updateMemberMuteState(user: Int64, isMuted: Bool) {
         DispatchQueue.main.async {
-            let index = self.members.firstIndex(where: { $0.id == Int64(user) })
-            if index != nil {
-                self.members[index!].muted = isMuted
+            let index = self.state.members.firstIndex(where: { $0.id == Int64(user) })
+            guard let idx = index else {
                 return
             }
+            
+            self.state.members[idx].muted = isMuted
         }
 
         delegate?.didChangeMemberMuteState(user: user, isMuted: isMuted)
@@ -283,25 +283,28 @@ extension Room {
 
     private func updateMemberRole(user: Int64, role: RoomState.RoomMember.Role) {
         DispatchQueue.main.async {
-            let index = self.members.firstIndex(where: { $0.id == user })
+            let index = self.state.members.firstIndex(where: { $0.id == user })
             if index != nil {
-                self.members[index!].role = role
+                self.state.members[index!].role = role
                 return
             }
 
             self.role = role
         }
 
-        delegate?.didChangeUserRole(user: Int(user), role: role)
+        delegate?.didChangeUserRole(user: user, role: role)
     }
 }
 
 extension Room: RoomClientDelegate {
     func room(id: String) {
-        self.id = id
+        self.state.id = id
     }
 
     func roomClientDidConnect(_: RoomClient) {
+        
+        // @TODO ADD SELF TO ROOM STATE
+        
         if let completion = self.completion {
             return completion(.success(()))
         }
@@ -322,10 +325,17 @@ extension Room: RoomClientDelegate {
     }
 
     func roomClient(_: RoomClient, didReceiveState state: RoomState) {
-        visibility = state.visibility
-
-        members = state.members
-        name = state.name
+        self.state.visibility = state.visibility
+        
+        state.members.forEach { member in
+            if let index = self.state.members.firstIndex(where: { $0.id == member.id }) {
+                self.state.members[index] = member
+            }
+            
+            self.state.members.append(member)
+        }
+        
+        self.state.name = state.name
     }
 }
 
