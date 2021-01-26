@@ -80,7 +80,7 @@ class RoomView: UIView {
     private let pasteButton: EmojiButton = {
         let button = EmojiButton(frame: .zero)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "doc.on.clipboard", withConfiguration: iconConfig), for: .normal)
+        button.setImage(UIImage(systemName: "paperclip", withConfiguration: iconConfig), for: .normal)
         button.tintColor = .brandColor
         button.backgroundColor = .clear
         button.addTarget(self, action: #selector(pasteLink), for: .touchUpInside)
