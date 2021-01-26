@@ -176,8 +176,8 @@ class RoomView: UIView {
         room.delegate = self
 
         name.text = {
-            if let name = room.name, name != "" {
-                return name
+            if room.state.name != "" {
+                return room.state.name
             }
 
             return NSLocalizedString("current_room", comment: "")

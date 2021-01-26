@@ -38,8 +38,6 @@ class Room {
         case poop = "💩"
     }
 
-    private(set) var name: String!
-
     private(set) var state = RoomState()
 
     private let userId = Int64(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))
@@ -62,7 +60,6 @@ class Room {
         state.id = id
         self.completion = completion
 
-        // @TODO WE NEED COMPLETION OF SOME SORTS
         client.join(id: id)
     }
 
