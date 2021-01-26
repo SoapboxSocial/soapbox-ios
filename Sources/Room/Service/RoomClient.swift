@@ -23,6 +23,8 @@ final class RoomClient {
 
     enum Error: Swift.Error {
         case rtcFailure
+        case invalidSdpType
+        case targetNotFound
     }
 
     private(set) var muted = true
@@ -119,11 +121,11 @@ final class RoomClient {
 
     private func set(remoteDescription: SessionDescription, for target: Trickle.Target, completion: @escaping (Swift.Error?) -> Void) {
         guard let rtc = streams[target] else {
-            return // @TODO callback
+            return completion(Error.targetNotFound)
         }
 
         guard let type = sdpType(remoteDescription.type) else {
-            return // @TODO CALLBACK
+            return completion(Error.invalidSdpType)
         }
 
         rtc.set(remoteSdp: RTCSessionDescription(type: type, sdp: remoteDescription.sdp), completion: completion)

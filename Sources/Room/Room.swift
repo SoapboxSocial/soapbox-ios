@@ -302,8 +302,6 @@ extension Room: RoomClientDelegate {
     }
 
     func roomClientDidConnect(_: RoomClient) {
-        debugPrint("completion")
-
         if let completion = self.completion {
             return completion(.success(()))
         }
@@ -316,7 +314,7 @@ extension Room: RoomClientDelegate {
     }
 
     func roomClientDidDisconnect(_: RoomClient) {
-        // @TODO
+        delegate?.roomWasClosedByRemote()
     }
 
     func roomClient(_: RoomClient, didReceiveMessage message: Event) {
