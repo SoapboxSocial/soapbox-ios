@@ -39,7 +39,7 @@ class Room {
     }
 
     private(set) var name: String!
-    
+
     private(set) var state = RoomState()
 
     var isClosed = false
@@ -63,7 +63,7 @@ class Room {
     }
 
     func join(id: String, completion: @escaping ConnectionCompletion) {
-        self.state.id = id
+        state.id = id
         self.completion = completion
 
         // @TODO WE NEED COMPLETION OF SOME SORTS
@@ -72,11 +72,11 @@ class Room {
 
     func create(name: String?, isPrivate: Bool, group: Int? = nil, users: [Int]? = nil, completion: @escaping ConnectionCompletion) {
         self.completion = completion
-        
+
         if let name = name {
             state.name = name
         }
-        
+
         role = .admin
 
         if isPrivate {
@@ -274,7 +274,7 @@ extension Room {
             guard let idx = index else {
                 return
             }
-            
+
             self.state.members[idx].muted = isMuted
         }
 
@@ -289,6 +289,8 @@ extension Room {
                 return
             }
 
+            // @TODO NO MORE SELF.ROLE
+
             self.role = role
         }
 
@@ -298,13 +300,12 @@ extension Room {
 
 extension Room: RoomClientDelegate {
     func room(id: String) {
-        self.state.id = id
+        state.id = id
     }
 
     func roomClientDidConnect(_: RoomClient) {
-        
         // @TODO ADD SELF TO ROOM STATE
-        
+
         if let completion = self.completion {
             return completion(.success(()))
         }
@@ -326,15 +327,15 @@ extension Room: RoomClientDelegate {
 
     func roomClient(_: RoomClient, didReceiveState state: RoomState) {
         self.state.visibility = state.visibility
-        
+
         state.members.forEach { member in
             if let index = self.state.members.firstIndex(where: { $0.id == member.id }) {
                 self.state.members[index] = member
             }
-            
+
             self.state.members.append(member)
         }
-        
+
         self.state.name = state.name
     }
 }

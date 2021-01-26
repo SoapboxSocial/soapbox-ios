@@ -457,7 +457,7 @@ class RoomView: UIView {
         if room.state.id == "" {
             return
         }
-        
+
         let items: [Any] = [
             NSLocalizedString("join_me_in_room", comment: ""),
             URL(string: "https://soapbox.social/room?id=" + room.state.id)!,
