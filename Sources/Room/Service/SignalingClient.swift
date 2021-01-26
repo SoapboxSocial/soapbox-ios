@@ -113,7 +113,7 @@ final class SignalingClient {
             delegate?.signalClient(self, didReceiveDescription: description)
         case let .trickle(trickle):
             delegate?.signalClient(self, didReceiveTrickle: trickle)
-        case .error:
+        case .error: // @TODO
             break
         case .none:
             break
