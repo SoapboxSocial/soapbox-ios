@@ -56,11 +56,23 @@ final class WebRTCClient: NSObject {
         super.init()
         createMediaSenders()
 
+        if role == .publisher {
+            _ = createDataChannel(label: "ion-sfu")
+        }
+
         peerConnection.delegate = self
     }
 
     func close() {
         peerConnection.close()
+
+        for (_, channel) in localDataChannels {
+            channel.close()
+        }
+
+        for (_, channel) in remoteDataChannels {
+            channel.close()
+        }
     }
 
     func offer(completion: @escaping (_ sdp: RTCSessionDescription) -> Void) {
@@ -107,10 +119,6 @@ final class WebRTCClient: NSObject {
         // Audio
         let audioTrack = createAudioTrack()
         peerConnection.add(audioTrack, streamIds: [streamId])
-
-        // @TODO probably should not be here
-        createDataChannel(label: "ion-sfu")
-        createDataChannel(label: "soapbox")
     }
 
     private func createAudioTrack() -> RTCAudioTrack {
@@ -119,7 +127,7 @@ final class WebRTCClient: NSObject {
         return WebRTCClient.factory.audioTrack(with: audioSource, trackId: "audio")
     }
 
-    private func createDataChannel(label: String) -> RTCDataChannel? {
+    func createDataChannel(label: String) -> RTCDataChannel? {
         let config = RTCDataChannelConfiguration()
 
         guard let dataChannel = self.peerConnection.dataChannel(forLabel: label, configuration: config) else {
@@ -133,8 +141,6 @@ final class WebRTCClient: NSObject {
     }
 
     func sendData(_ label: String, data: Data) {
-        debugPrint(remoteDataChannels)
-        debugPrint(localDataChannels)
         guard let channel = remoteDataChannels[label] else {
             return
         }

@@ -65,7 +65,7 @@ final class RoomClient {
             return
         }
 
-        streams[.subscriber]?.sendData("soapbox", data: data)
+        streams[.publisher]?.sendData("soapbox", data: data)
     }
 
     func mute() {
@@ -85,8 +85,12 @@ final class RoomClient {
     }
 
     private func initialOffer(callback: @escaping (_ sdp: RTCSessionDescription) -> Void) {
-        streams[.publisher] = WebRTCClient(role: .publisher, iceServers: iceServers)
+        let publisher = WebRTCClient(role: .publisher, iceServers: iceServers)
+
+        streams[.publisher] = publisher
         streams[.subscriber] = WebRTCClient(role: .subscriber, iceServers: iceServers)
+
+        _ = publisher.createDataChannel(label: "soapbox")
 
         streams.forEach { _, stream in
             stream.delegate = self
