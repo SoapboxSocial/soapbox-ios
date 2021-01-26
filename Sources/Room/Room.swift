@@ -42,11 +42,9 @@ class Room {
 
     private(set) var state = RoomState()
 
-    var isClosed = false
+    private let userId = Int64(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))
 
-    var isMuted: Bool {
-        return client.muted
-    }
+    var isClosed = false
 
     var delegate: RoomDelegate?
 
@@ -74,9 +72,6 @@ class Room {
         if let name = name {
             state.name = name
         }
-
-//        @TODO
-//        role = .admin
 
         if isPrivate {
             state.visibility = Visibility.private
@@ -107,10 +102,14 @@ class Room {
 
     func mute() {
         client.mute()
+
+        updateMemberMuteState(user: userId, isMuted: true)
     }
 
     func unmute() {
         client.unmute()
+
+        updateMemberMuteState(user: userId, isMuted: false)
     }
 
     func add(admin: Int64) {
@@ -297,6 +296,7 @@ extension Room {
 extension Room: RoomClientDelegate {
     func room(id: String) {
         state.id = id
+        addMeToState(role: .admin)
     }
 
     func roomClientDidConnect(_: RoomClient) {
@@ -305,14 +305,6 @@ extension Room: RoomClientDelegate {
         }
 
         self.completion = nil
-
-        state.members.append(RoomState.RoomMember.with {
-            $0.id = Int64(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))
-            $0.image = UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!
-            $0.displayName = UserDefaults.standard.string(forKey: UserDefaultsKeys.userDisplay)!
-            $0.muted = true
-            $0.role = .regular
-        })
 
         completion(.success(()))
     }
@@ -342,7 +334,19 @@ extension Room: RoomClientDelegate {
             self.state.members.append(member)
         }
 
+        addMeToState(role: .regular)
+
         self.state.name = state.name
+    }
+
+    private func addMeToState(role: RoomState.RoomMember.Role) {
+        state.members.append(RoomState.RoomMember.with {
+            $0.id = Int64(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))
+            $0.image = UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!
+            $0.displayName = UserDefaults.standard.string(forKey: UserDefaultsKeys.userDisplay)!
+            $0.muted = true
+            $0.role = role
+        })
     }
 }
 

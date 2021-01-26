@@ -27,8 +27,6 @@ final class RoomClient {
         case targetNotFound
     }
 
-    private(set) var muted = true
-
     init(signal: SignalingClient, iceServers: [RTCIceServer]) {
         self.iceServers = iceServers
         signalClient = signal
@@ -65,15 +63,15 @@ final class RoomClient {
             return
         }
 
-        streams[.publisher]?.sendData("soapbox", data: data)
+        streams[.subscriber]?.sendData("soapbox", data: data)
     }
 
     func mute() {
         streams[.publisher]?.muteAudio()
+
         send(command: .muteUpdate(Command.MuteUpdate.with {
             $0.muted = true
         }))
-        muted = true
     }
 
     func unmute() {
@@ -81,7 +79,6 @@ final class RoomClient {
         send(command: .muteUpdate(Command.MuteUpdate.with {
             $0.muted = false
         }))
-        muted = false
     }
 
     private func initialOffer(callback: @escaping (_ sdp: RTCSessionDescription) -> Void) {
@@ -89,8 +86,6 @@ final class RoomClient {
 
         streams[.publisher] = publisher
         streams[.subscriber] = WebRTCClient(role: .subscriber, iceServers: iceServers)
-
-        _ = publisher.createDataChannel(label: "soapbox")
 
         streams.forEach { _, stream in
             stream.delegate = self

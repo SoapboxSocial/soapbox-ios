@@ -378,8 +378,9 @@ class RoomView: UIView {
             emojis.centerXAnchor.constraint(equalTo: centerXAnchor),
         ])
 
-        muteButton.isSelected = room.isMuted
-        bottomMuteButton.isSelected = room.isMuted
+        let isMuted = me.muted
+        muteButton.isSelected = isMuted
+        bottomMuteButton.isSelected = isMuted
 
         room.mute()
 
@@ -521,7 +522,7 @@ class RoomView: UIView {
         muteButton.isSelected.toggle()
         bottomMuteButton.isSelected.toggle()
 
-        if room.isMuted {
+        if me.muted {
             room.unmute()
         } else {
             room.mute()
