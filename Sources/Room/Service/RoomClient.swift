@@ -10,6 +10,7 @@ protocol RoomClientDelegate: AnyObject {
     func roomClientDidDisconnect(_ room: RoomClient)
     func roomClient(_ room: RoomClient, didReceiveMessage message: Event)
     func roomClient(_ room: RoomClient, failedToConnect error: RoomClient.Error)
+    func roomClient(_ room: RoomClient, didReceiveState state: RoomState)
 }
 
 final class RoomClient {
@@ -24,7 +25,7 @@ final class RoomClient {
         case rtcFailure
     }
 
-    private(set) var muted = false
+    private(set) var muted = true
 
     init(signal: SignalingClient, iceServers: [RTCIceServer]) {
         self.iceServers = iceServers
@@ -62,18 +63,22 @@ final class RoomClient {
             return
         }
 
-        streams[.publisher]?.sendData(data)
+        streams[.subscriber]?.sendData("soapbox", data: data)
     }
 
     func mute() {
         streams[.publisher]?.muteAudio()
-        send(command: .mute(Command.Mute()))
+        send(command: .muteUpdate(Command.MuteUpdate.with {
+            $0.muted = true
+        }))
         muted = true
     }
 
     func unmute() {
         streams[.publisher]?.unmuteAudio()
-        send(command: .unmute(Command.Unmute()))
+        send(command: .muteUpdate(Command.MuteUpdate.with {
+            $0.muted = false
+        }))
         muted = false
     }
 
@@ -164,6 +169,8 @@ extension RoomClient: SignalingClientDelegate {
     // @TODO THESE 2 SHOULD BE THE SAME
 
     func signalClient(_: SignalingClient, didReceiveJoinReply join: JoinReply) {
+        delegate?.roomClient(self, didReceiveState: join.room) // @TODO SHOULD PROBABLY BE INSIDE THE SET
+
         set(remoteDescription: join.description_p, for: .publisher, completion: { _ in
             // @TODO
         })

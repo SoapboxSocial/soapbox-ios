@@ -174,6 +174,8 @@ extension Room {
     private func on(_ event: Event) {
         let from = Int(event.from)
 
+        debugPrint(event)
+
         switch event.payload {
         case .addedAdmin:
             on(addedAdmin: from)
@@ -185,8 +187,8 @@ extension Room {
             on(left: from)
         case let .linkShared(evt):
             on(linkShare: evt, from: from)
-        case .muted:
-            on(muted: from)
+        case let .muteUpdated(evt):
+            on(muteUpdate: evt, from: from)
         case .mutedByAdmin:
             onMutedByAdmin()
         case let .reacted(evt):
@@ -197,8 +199,6 @@ extension Room {
             on(removedAdmin: evt)
         case let .renamedRoom(evt):
             on(roomRenamed: evt)
-        case .unmuted:
-            on(unmuted: from)
         case .none:
             break
         }
@@ -238,8 +238,8 @@ extension Room {
         delegate?.roomWasRenamed(roomRenamed.name)
     }
 
-    private func on(muted id: Int) {
-        updateMemberMuteState(user: id, isMuted: true)
+    private func on(muteUpdate: Event.MuteUpdated, from: Int) {
+        updateMemberMuteState(user: from, isMuted: muteUpdate.isMuted)
     }
 
     private func on(unmuted id: Int) {
@@ -271,7 +271,7 @@ extension Room {
 extension Room {
     private func updateMemberMuteState(user: Int, isMuted: Bool) {
         DispatchQueue.main.async {
-            let index = self.members.firstIndex(where: { $0.id == user })
+            let index = self.members.firstIndex(where: { $0.id == Int64(user) })
             if index != nil {
                 self.members[index!].muted = isMuted
                 return
@@ -302,6 +302,8 @@ extension Room: RoomClientDelegate {
     }
 
     func roomClientDidConnect(_: RoomClient) {
+        debugPrint("completion")
+
         if let completion = self.completion {
             return completion(.success(()))
         }
@@ -319,6 +321,13 @@ extension Room: RoomClientDelegate {
 
     func roomClient(_: RoomClient, didReceiveMessage message: Event) {
         on(message)
+    }
+
+    func roomClient(_: RoomClient, didReceiveState state: RoomState) {
+        visibility = state.visibility
+
+        members = state.members
+        name = state.name
     }
 }
 

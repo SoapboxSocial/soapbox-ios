@@ -128,6 +128,11 @@ final class WebRTCClient: NSObject {
         peerConnection.add(audioTrack, streamIds: [streamId])
 
         // Data
+
+//        if role != .publisher {
+//            return
+//        }
+
         if let dataChannel = createDataChannel(label: "ion-sfu") {
             dataChannel.delegate = self
             localDataChannels["ion-sfu"] = dataChannel
@@ -158,9 +163,15 @@ final class WebRTCClient: NSObject {
         return dataChannel
     }
 
-    func sendData(_ data: Data) {
-        let buffer = RTCDataBuffer(data: data, isBinary: true)
-//        remoteDataChannel?.sendData(buffer)
+    func sendData(_ label: String, data: Data) {
+        debugPrint(remoteDataChannels)
+        debugPrint(localDataChannels)
+        guard let channel = remoteDataChannels[label] else {
+            return
+        }
+
+        let res = channel.sendData(RTCDataBuffer(data: data, isBinary: true))
+        debugPrint("Send result - \(res)")
     }
 }
 
@@ -200,7 +211,7 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     }
 
     func peerConnection(_: RTCPeerConnection, didOpen dataChannel: RTCDataChannel) {
-        debugPrint("peerConnection did open data channel - \(dataChannel.label)")
+        debugPrint("peerConnection did open data channel \(role) - \(dataChannel.label)")
         remoteDataChannels[dataChannel.label] = dataChannel
         dataChannel.delegate = self
     }
@@ -244,7 +255,7 @@ extension WebRTCClient {
 
 extension WebRTCClient: RTCDataChannelDelegate {
     func dataChannelDidChangeState(_ dataChannel: RTCDataChannel) {
-        debugPrint("dataChannel did change state: \(dataChannel.readyState)")
+        debugPrint("dataChannel did change state \(role) - \(dataChannel.label) - \(dataChannel.readyState.rawValue)")
     }
 
     func dataChannel(_ dataChannel: RTCDataChannel, didReceiveMessageWith buffer: RTCDataBuffer) {
