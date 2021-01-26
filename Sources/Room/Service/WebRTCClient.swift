@@ -56,8 +56,6 @@ final class WebRTCClient: NSObject {
         super.init()
         createMediaSenders()
 
-        configureAudioSession()
-
         peerConnection.delegate = self
     }
 
@@ -103,23 +101,6 @@ final class WebRTCClient: NSObject {
         peerConnection.setLocalDescription(description, completionHandler: completion)
     }
 
-    private func configureAudioSession() {
-        if role != .publisher {
-            return
-        }
-
-        rtcAudioSession.lockForConfiguration()
-        do {
-            try rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.mixWithOthers, .allowBluetoothA2DP, .allowBluetooth])
-            try rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
-            rtcAudioSession.isAudioEnabled = true
-            try rtcAudioSession.setActive(true)
-        } catch {
-            debugPrint("Error changeing AVAudioSession category: \(error)")
-        }
-        rtcAudioSession.unlockForConfiguration()
-    }
-
     private func createMediaSenders() {
         let streamId = "stream"
 
@@ -127,38 +108,26 @@ final class WebRTCClient: NSObject {
         let audioTrack = createAudioTrack()
         peerConnection.add(audioTrack, streamIds: [streamId])
 
-        // Data
-
-//        if role != .publisher {
-//            return
-//        }
-
-        if let dataChannel = createDataChannel(label: "ion-sfu") {
-            dataChannel.delegate = self
-            localDataChannels["ion-sfu"] = dataChannel
-        }
-
-        if let dataChannel = createDataChannel(label: "soapbox") {
-            dataChannel.delegate = self
-            localDataChannels["soapbox"] = dataChannel
-        }
+        // @TODO probably should not be here
+        createDataChannel(label: "ion-sfu")
+        createDataChannel(label: "soapbox")
     }
 
     private func createAudioTrack() -> RTCAudioTrack {
         let audioConstrains = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
         let audioSource = WebRTCClient.factory.audioSource(with: audioConstrains)
-        return WebRTCClient.factory.audioTrack(with: audioSource, trackId: "audio0")
+        return WebRTCClient.factory.audioTrack(with: audioSource, trackId: "audio")
     }
-
-    // MARK: Data Channels
 
     private func createDataChannel(label: String) -> RTCDataChannel? {
         let config = RTCDataChannelConfiguration()
 
         guard let dataChannel = self.peerConnection.dataChannel(forLabel: label, configuration: config) else {
-            debugPrint("Warning: Couldn't create data channel.")
             return nil
         }
+
+        dataChannel.delegate = self
+        localDataChannels[label] = dataChannel
 
         return dataChannel
     }
