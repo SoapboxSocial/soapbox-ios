@@ -99,8 +99,8 @@ final class RoomClient {
 
     private func negotiate(description: SessionDescription) {
         set(remoteDescription: description, for: .subscriber) { err in
-            if err != nil {
-                debugPrint("remoteDescription err: \(err)")
+            if let error = err {
+                debugPrint("remoteDescription err: \(error)")
                 return
             }
 
@@ -164,7 +164,11 @@ extension RoomClient: SignalingClientDelegate {
         }
 
         if description.type == "answer" {
-            set(remoteDescription: description, for: .publisher, completion: { _ in })
+            set(remoteDescription: description, for: .publisher, completion: { err in
+                if let error = err {
+                    debugPrint(error)
+                }
+            })
         }
     }
 
