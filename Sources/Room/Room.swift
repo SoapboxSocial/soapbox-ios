@@ -300,6 +300,12 @@ extension Room: RoomClientDelegate {
     }
 
     func roomClientDidConnect(_: RoomClient) {
+        guard let completion = self.completion else {
+            return
+        }
+
+        self.completion = nil
+
         state.members.append(RoomState.RoomMember.with {
             $0.id = Int64(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))
             $0.image = UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!
@@ -308,9 +314,7 @@ extension Room: RoomClientDelegate {
             $0.role = .regular
         })
 
-        if let completion = self.completion {
-            return completion(.success(()))
-        }
+        completion(.success(()))
     }
 
     func roomClient(_: RoomClient, failedToConnect _: RoomClient.Error) {

@@ -15,6 +15,15 @@ class RoomView: UIView {
 
     private static let iconConfig = UIImage.SymbolConfiguration(weight: .semibold)
 
+    private var me: RoomState.RoomMember {
+        let id = Int64(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))
+        guard let me = room.state.members.first(where: { $0.id == id }) else {
+            fatalError("me not found!")
+        }
+
+        return me
+    }
+
     private let muteButton: EmojiButton = {
         let button = EmojiButton(frame: .zero)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -374,7 +383,7 @@ class RoomView: UIView {
 
         room.mute()
 
-        if room.role != .admin {
+        if me.role != .admin {
             editNameButton.isHidden = true
 
             if room.state.visibility == .private {
@@ -611,7 +620,7 @@ extension RoomView: UICollectionViewDelegate {
         })
         optionMenu.addAction(profileAction)
 
-        if room.role == .admin {
+        if me.role == .admin {
             optionMenu.addAction(UIAlertAction(title: NSLocalizedString("mute_user", comment: ""), style: .default, handler: { _ in
                 self.room.mute(user: member.id)
             }))
