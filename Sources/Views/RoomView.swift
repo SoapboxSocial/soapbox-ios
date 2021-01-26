@@ -500,7 +500,7 @@ class RoomView: UIView {
     }
 
     @objc private func exitTapped() {
-        if room.state.members.count == 0 {
+        if room.state.members.count == 1 {
             showExitAlert()
             return
         }
@@ -581,11 +581,12 @@ class RoomView: UIView {
 
 extension RoomView: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if indexPath.item == 0 {
+        let id = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
+        if room.state.members[indexPath.item].id == Int64(id) {
             let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
             let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
                 DispatchQueue.main.async {
-                    self.delegate?.didSelectViewProfile(id: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))
+                    self.delegate?.didSelectViewProfile(id: id)
                 }
             })
             optionMenu.addAction(profileAction)
@@ -597,7 +598,7 @@ extension RoomView: UICollectionViewDelegate {
             return
         }
 
-        showMemberAction(for: room.state.members[indexPath.item - 1])
+        showMemberAction(for: room.state.members[indexPath.item])
     }
 
     private func showMemberAction(for member: RoomState.RoomMember) {
@@ -656,23 +657,13 @@ extension RoomView: UICollectionViewDelegate {
 
 extension RoomView: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        // Adds the plus 1 for self.
-        return room.state.members.count + 1
+        return room.state.members.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withClass: RoomMemberCell.self, for: indexPath)
-        if indexPath.item == 0 {
-            // @todo this is a bit ugly
-            cell.setup(
-                name: UserDefaults.standard.string(forKey: UserDefaultsKeys.userDisplay) ?? "",
-                image: UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage) ?? "",
-                muted: room.isMuted,
-                role: room.role
-            )
-        } else {
-            cell.setup(member: room.state.members[indexPath.item - 1]) // @TODO apparently this can crash?
-        }
+
+        cell.setup(member: room.state.members[indexPath.item])
 
         return cell
     }

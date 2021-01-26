@@ -44,8 +44,6 @@ class Room {
 
     var isClosed = false
 
-    private(set) var role = RoomState.RoomMember.Role.regular
-
     var isMuted: Bool {
         return client.muted
     }
@@ -77,7 +75,8 @@ class Room {
             state.name = name
         }
 
-        role = .admin
+//        @TODO
+//        role = .admin
 
         if isPrivate {
             state.visibility = Visibility.private
@@ -284,14 +283,11 @@ extension Room {
     private func updateMemberRole(user: Int64, role: RoomState.RoomMember.Role) {
         DispatchQueue.main.async {
             let index = self.state.members.firstIndex(where: { $0.id == user })
-            if index != nil {
-                self.state.members[index!].role = role
+            guard let idx = index else {
                 return
             }
 
-            // @TODO NO MORE SELF.ROLE
-
-            self.role = role
+            self.state.members[idx].role = role
         }
 
         delegate?.didChangeUserRole(user: user, role: role)
@@ -304,7 +300,13 @@ extension Room: RoomClientDelegate {
     }
 
     func roomClientDidConnect(_: RoomClient) {
-        // @TODO ADD SELF TO ROOM STATE
+        state.members.append(RoomState.RoomMember.with {
+            $0.id = Int64(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))
+            $0.image = UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!
+            $0.displayName = UserDefaults.standard.string(forKey: UserDefaultsKeys.userDisplay)!
+            $0.muted = true
+            $0.role = .regular
+        })
 
         if let completion = self.completion {
             return completion(.success(()))
