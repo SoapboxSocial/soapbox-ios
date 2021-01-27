@@ -4,6 +4,7 @@ import KeychainAccess
 import WebRTC
 
 protocol RoomDelegate {
+    func userWasInvitedToBeAdmin(by: Int64)
     func userDidJoinRoom(user: Int64)
     func userDidLeaveRoom(user: Int64)
     func didChangeUserRole(user: Int64, role: RoomState.RoomMember.Role)
@@ -162,6 +163,10 @@ class Room {
         delegate?.roomWasRenamed(name)
     }
 
+    func acceptInvite() {
+        client.send(command: .acceptAdmin(Command.AcceptAdmin()))
+    }
+
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -172,8 +177,8 @@ extension Room {
         switch event.payload {
         case .addedAdmin:
             on(addedAdmin: event.from)
-        case let .invitedAdmin(evt):
-            break // @TODO SHOW POPUP SAYING YOU'VE BEEN INVITED TO BECOME ADMIN
+        case .invitedAdmin:
+            on(adminInvite: event.from)
         case let .joined(evt):
             on(joined: evt)
         case .left:
@@ -203,6 +208,10 @@ extension Room {
 
     private func on(removedAdmin: Event.RemovedAdmin) {
         updateMemberRole(user: removedAdmin.id, role: .regular)
+    }
+
+    private func on(adminInvite from: Int64) {
+        delegate?.userWasInvitedToBeAdmin(by: from)
     }
 
     private func on(joined: Event.Joined) {

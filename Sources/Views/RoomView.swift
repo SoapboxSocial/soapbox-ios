@@ -680,6 +680,28 @@ extension RoomView: UICollectionViewDataSource {
 }
 
 extension RoomView: RoomDelegate {
+    func userWasInvitedToBeAdmin(by: Int64) {
+        let title = NSLocalizedString("invited_to_be_admin_by", comment: "")
+
+        guard let member = room.state.members.first(where: { $0.id == by }) else {
+            return
+        }
+
+        let alert = UIAlertController(
+            title: String(format: title, member.displayName.firstName()),
+            message: NSLocalizedString("would_you_like_to_accept", comment: ""),
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .default, handler: { _ in
+            self.room.acceptInvite()
+        }))
+
+        alert.addAction(UIAlertAction(title: "no", style: .cancel))
+
+        UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
+    }
+
     func wasMutedByAdmin() {
         DispatchQueue.main.async {
             self.muteButton.isSelected = true
