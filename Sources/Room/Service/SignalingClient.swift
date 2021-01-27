@@ -11,8 +11,7 @@ protocol SignalingClientDelegate: AnyObject {
 }
 
 final class SignalingClient {
-    private let grpc: SFUClient
-    private var stream: BidirectionalStreamingCall<SignalRequest, SignalReply>!
+    private var transport: SignalClientTransport
 
     weak var delegate: SignalingClientDelegate?
 
@@ -20,56 +19,47 @@ final class SignalingClient {
         case general
     }
 
-    init(grpc: SFUClient) {
-        self.grpc = grpc
-        stream = grpc.signal(handler: handle)
+    init(transport: SignalClientTransport) {
+        self.transport = transport
+        self.transport.delegate = self
+        transport.connect()
     }
 
     func create(offer: RTCSessionDescription) {
-        _ = stream.sendMessage(SignalRequest.with {
-            $0.create = CreateRequest.with {
-                $0.description_p = SessionDescription.with {
-                    $0.sdp = offer.sdp
-                    $0.type = "offer"
+        do {
+            try send(SignalRequest.with {
+                $0.create = CreateRequest.with {
+                    $0.description_p = SessionDescription.with {
+                        $0.sdp = offer.sdp
+                        $0.type = "offer"
+                    }
                 }
-            }
-        })
-
-        stream.status.whenComplete { result in
-            debugPrint("first \(result)")
-            switch result {
-            case let .failure(error):
-                debugPrint(error)
-            case let .success(status):
-                debugPrint(status)
-            }
+            })
+        } catch {
+            debugPrint("create error \(error)")
+            delegate?.signalClient(self, failedWithError: .general)
         }
     }
 
     func join(id: String, offer: RTCSessionDescription) {
-        _ = stream.sendMessage(SignalRequest.with {
-            $0.join = JoinRequest.with {
-                $0.room = id
-                $0.description_p = SessionDescription.with {
-                    $0.sdp = offer.sdp
-                    $0.type = "offer"
+        do {
+            try send(SignalRequest.with {
+                $0.join = JoinRequest.with {
+                    $0.room = id
+                    $0.description_p = SessionDescription.with {
+                        $0.sdp = offer.sdp
+                        $0.type = "offer"
+                    }
                 }
-            }
-        })
-
-        stream.status.whenComplete { result in
-            debugPrint("first \(result)")
-            switch result {
-            case let .failure(error):
-                debugPrint(error)
-            case let .success(status):
-                debugPrint(status)
-            }
+            })
+        } catch {
+            debugPrint("join error \(error)")
+            delegate?.signalClient(self, failedWithError: .general)
         }
     }
 
     func trickle(target: Trickle.Target, candidate: RTCIceCandidate) {
-        _ = stream.sendMessage(SignalRequest.with {
+        try? send(SignalRequest.with {
             $0.trickle = Trickle.with {
                 $0.target = target
                 $0.iceCandidate = ICECandidate.with {
@@ -81,7 +71,7 @@ final class SignalingClient {
     }
 
     func answer(description: RTCSessionDescription) {
-        _ = stream.sendMessage(SignalRequest.with {
+        try? send(SignalRequest.with {
             $0.description_p = SessionDescription.with {
                 $0.sdp = description.sdp
                 $0.type = "answer"
@@ -90,7 +80,7 @@ final class SignalingClient {
     }
 
     func offer(description: RTCSessionDescription) {
-        _ = stream.sendMessage(SignalRequest.with {
+        try? send(SignalRequest.with {
             $0.description_p = SessionDescription.with {
                 $0.sdp = description.sdp
                 $0.type = "offer"
@@ -99,8 +89,11 @@ final class SignalingClient {
     }
 
     func close() {
-        _ = stream.sendEnd()
-        _ = grpc.channel.close()
+        transport.disconnect()
+    }
+
+    private func send(_ msg: SignalRequest) throws {
+        transport.send(data: try msg.serializedData())
     }
 
     private func handle(_ reply: SignalReply) {
@@ -115,6 +108,24 @@ final class SignalingClient {
             delegate?.signalClient(self, didReceiveTrickle: trickle)
         case .none:
             break
+        }
+    }
+}
+
+extension SignalingClient: SignalClientTransportDelegate {
+    func signalClientTransportDidConnect(_: SignalClientTransport) {
+        // @TODO
+    }
+
+    func signalClientTransportDidDisconnect(_: SignalClientTransport) {
+        // @TODO
+    }
+
+    func signalClientTransport(_: SignalClientTransport, didReceiveData data: Data) {
+        do {
+            handle(try SignalReply(serializedData: data))
+        } catch {
+            debugPrint("signal \(error)")
         }
     }
 }
