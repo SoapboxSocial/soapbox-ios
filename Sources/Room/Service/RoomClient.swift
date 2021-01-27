@@ -39,9 +39,15 @@ final class RoomClient {
         }
     }
 
-    func create() {
+    func create(_ request: CreateRequest) {
         initialOffer { offer in
-            self.signalClient.create(offer: offer)
+            var create = request
+            create.description_p = SessionDescription.with {
+                $0.sdp = offer.sdp
+                $0.type = "offer"
+            }
+
+            self.signalClient.create(request: create)
         }
     }
 

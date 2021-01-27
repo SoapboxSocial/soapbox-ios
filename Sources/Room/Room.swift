@@ -88,7 +88,7 @@ class Room {
             request.users = ids.map(Int64.init)
         }
 
-        client.create()
+        client.create(request)
     }
 
     func close() {

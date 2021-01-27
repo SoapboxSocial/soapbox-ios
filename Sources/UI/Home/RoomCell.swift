@@ -74,7 +74,7 @@ class RoomCell: UICollectionViewCell {
         return view
     }()
 
-    var group: RoomState.Group? {
+    var group: APIClient.Group? {
         didSet {
             if group == nil {
                 groupView.isHidden = true

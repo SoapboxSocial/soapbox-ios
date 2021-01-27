@@ -24,15 +24,10 @@ final class SignalingClient {
         transport.connect()
     }
 
-    func create(offer: RTCSessionDescription) {
+    func create(request: CreateRequest) {
         do {
             try send(SignalRequest.with {
-                $0.create = CreateRequest.with {
-                    $0.description_p = SessionDescription.with {
-                        $0.sdp = offer.sdp
-                        $0.type = "offer"
-                    }
-                }
+                $0.create = request
             })
         } catch {
             debugPrint("create error \(error)")
