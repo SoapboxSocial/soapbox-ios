@@ -164,6 +164,7 @@ class Room {
 
     func acceptInvite() {
         client.send(command: .acceptAdmin(Command.AcceptAdmin()))
+        delegate?.didChangeUserRole(user: userId, role: .admin)
     }
 
     deinit {

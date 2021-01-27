@@ -697,9 +697,11 @@ extension RoomView: RoomDelegate {
             self.room.acceptInvite()
         }))
 
-        alert.addAction(UIAlertAction(title: "no", style: .cancel))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel))
 
-        UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
+        DispatchQueue.main.async {
+            UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
+        }
     }
 
     func wasMutedByAdmin() {
@@ -758,7 +760,7 @@ extension RoomView: RoomDelegate {
             self.members.reloadData()
         }
 
-        if user != UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
+        if user != Int64(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)) {
             return
         }
 
