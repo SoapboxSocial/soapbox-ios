@@ -212,12 +212,8 @@ extension RoomClient: WebRTCClientDelegate {
             }
 
             delegate?.roomClientDidConnect(self)
-        case .disconnected:
-            close()
+        case .failed, .closed:
             delegate?.roomClientDidDisconnect(self)
-        case .failed:
-            close()
-            delegate?.roomClient(self, failedToConnect: .rtcFailure)
         default:
             return // @TODO
         }
