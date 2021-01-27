@@ -313,6 +313,7 @@ extension Room: RoomClientDelegate {
         self.completion = nil
 
         completion(.success(()))
+        startPreventing()
     }
 
     // @TODO
@@ -407,24 +408,20 @@ extension Room: RoomClientDelegate {
 //    }
 // }
 //
-// extension Room {
-//    func startPreventing() {
-//        NotificationCenter.default.addObserver(self, selector: #selector(warnOnRecord), name: UIScreen.capturedDidChangeNotification, object: nil)
-//
-//        if UIScreen.main.isCaptured {
-//            warnOnRecord()
-//        }
-//    }
-//
-//    @objc private func warnOnRecord() {
-//        if rtc.state != .connected, rtc.state != .connecting {
-//            return
-//        }
-//
-//        if !UIScreen.main.isCaptured {
-//            return
-//        }
-//
-//        send(command: .recordScreen(Command.RecordScreen()))
-//    }
-// }
+extension Room {
+    func startPreventing() {
+        NotificationCenter.default.addObserver(self, selector: #selector(warnOnRecord), name: UIScreen.capturedDidChangeNotification, object: nil)
+
+        if UIScreen.main.isCaptured {
+            warnOnRecord()
+        }
+    }
+
+    @objc private func warnOnRecord() {
+        if !UIScreen.main.isCaptured {
+            return
+        }
+
+        client.send(command: .recordScreen(Command.RecordScreen()))
+    }
+}
