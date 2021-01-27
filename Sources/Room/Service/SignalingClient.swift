@@ -1,5 +1,4 @@
 import Foundation
-import GRPC
 import WebRTC
 
 protocol SignalingClientDelegate: AnyObject {

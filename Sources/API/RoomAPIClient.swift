@@ -49,7 +49,7 @@ class RoomAPIClient {
     }
 
     struct Member: Decodable {
-        let id: String
+        let id: Int
         let displayName: String
         let image: String
 
