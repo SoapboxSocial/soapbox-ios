@@ -34,7 +34,7 @@ class RoomCell: UICollectionViewCell {
         return label
     }()
 
-    var visibility = Visibility.private {
+    var visibility = RoomAPIClient.Room.Visibility.public {
         didSet {
             if visibility == .private {
                 lock.isHidden = false

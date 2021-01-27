@@ -114,7 +114,7 @@ class HomeCollectionPresenter {
             item.style = .normal
         }
 
-//        item.visibility = room.visibility
+        item.visibility = room.visibility
         item.members = room.members
 //        item.group = nil
 //        if room.hasGroup {

@@ -14,8 +14,13 @@ class RoomAPIClient: Client {
     }
 
     struct Room: Decodable {
+        enum Visibility: String, Decodable {
+            case `public`, `private`
+        }
+
         let id: String
         let name: String
+        let visibility: Visibility
         let members: [Member]
     }
 
