@@ -19,6 +19,7 @@ final class WebRTCClient: NSObject {
     }()
 
     weak var delegate: WebRTCClientDelegate?
+    private let audioQueue = DispatchQueue(label: "audio")
     private let peerConnection: RTCPeerConnection
     private let rtcAudioSession = RTCAudioSession.sharedInstance()
     private let mediaConstrains = [
@@ -211,16 +212,21 @@ extension WebRTCClient {
 
     // Force speaker
     func speakerOn() {
-        rtcAudioSession.lockForConfiguration()
-        do {
-            try rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.mixWithOthers, .allowBluetoothA2DP, .allowBluetooth, .defaultToSpeaker])
-            try rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
-            rtcAudioSession.isAudioEnabled = true
-            try rtcAudioSession.setActive(true)
-        } catch {
-            debugPrint("Error changeing AVAudioSession category: \(error)")
+        audioQueue.async { [weak self] in
+            guard let self = self else {
+                return
+            }
+
+            self.rtcAudioSession.lockForConfiguration()
+            do {
+                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.mixWithOthers, .allowBluetoothA2DP, .allowBluetooth, .defaultToSpeaker])
+                try self.rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
+                try self.rtcAudioSession.setActive(true)
+            } catch {
+                debugPrint("Couldn't force audio to speaker: \(error)")
+            }
+            self.rtcAudioSession.unlockForConfiguration()
         }
-        rtcAudioSession.unlockForConfiguration()
     }
 
     private func setAudioEnabled(_ isEnabled: Bool) {
