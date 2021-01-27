@@ -24,7 +24,6 @@ enum RoomError: Error {
 }
 
 // @TODO THIS ENTIRE THING SHOULD BE REFACTORED SO WE HANDLE WEBRTC AND GRPC NICER, EG ERRORS.
-// @TODO ADD SELF INTO STATE
 
 class Room {
     typealias ConnectionCompletion = ((Result<Void, RoomError>) -> Void)

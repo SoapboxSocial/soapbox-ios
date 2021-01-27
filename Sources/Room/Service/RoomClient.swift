@@ -46,11 +46,12 @@ final class RoomClient {
     }
 
     func close() {
+        signalClient.delegate = nil
         signalClient.close()
 
         for (_, stream) in streams {
-            stream.close()
             stream.delegate = nil
+            stream.close()
         }
     }
 
@@ -191,7 +192,10 @@ extension RoomClient: SignalingClientDelegate {
         })
     }
 
-    func signalClient(_: SignalingClient, failedWithError _: SignalingClient.Error) {}
+    func signalClient(_: SignalingClient, failedWithError _: SignalingClient.Error) {
+        close()
+        delegate?.roomClientDidDisconnect(self)
+    }
 }
 
 extension RoomClient: WebRTCClientDelegate {
@@ -212,8 +216,8 @@ extension RoomClient: WebRTCClientDelegate {
             // @TODO FULLY DISCONNECT
             return
         case .failed:
+            close()
             delegate?.roomClient(self, failedToConnect: .rtcFailure)
-        // @TODO FULLY DISCONNECT
         default:
             return // @TODO
         }

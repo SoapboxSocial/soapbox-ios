@@ -118,7 +118,7 @@ extension SignalingClient: SignalClientTransportDelegate {
     }
 
     func signalClientTransportDidDisconnect(_: SignalClientTransport) {
-        // @TODO
+        delegate?.signalClient(self, failedWithError: .general)
     }
 
     func signalClientTransport(_: SignalClientTransport, didReceiveData data: Data) {
