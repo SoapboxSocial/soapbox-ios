@@ -126,14 +126,6 @@ struct SignalReply {
     set {payload = .trickle(newValue)}
   }
 
-  var error: String {
-    get {
-      if case .error(let v)? = payload {return v}
-      return String()
-    }
-    set {payload = .error(newValue)}
-  }
-
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum OneOf_Payload: Equatable {
@@ -141,7 +133,6 @@ struct SignalReply {
     case create(CreateReply)
     case description_p(SessionDescription)
     case trickle(Trickle)
-    case error(String)
 
   #if !swift(>=4.1)
     static func ==(lhs: SignalReply.OneOf_Payload, rhs: SignalReply.OneOf_Payload) -> Bool {
@@ -150,7 +141,6 @@ struct SignalReply {
       case (.create(let l), .create(let r)): return l == r
       case (.description_p(let l), .description_p(let r)): return l == r
       case (.trickle(let l), .trickle(let r)): return l == r
-      case (.error(let l), .error(let r)): return l == r
       default: return false
       }
     }
@@ -449,7 +439,6 @@ extension SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     3: .same(proto: "create"),
     4: .same(proto: "description"),
     5: .same(proto: "trickle"),
-    6: .same(proto: "error"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -488,11 +477,6 @@ extension SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .trickle(v)}
-      case 6:
-        if self.payload != nil {try decoder.handleConflictingOneOf()}
-        var v: String?
-        try decoder.decodeSingularStringField(value: &v)
-        if let v = v {self.payload = .error(v)}
       default: break
       }
     }
@@ -511,8 +495,6 @@ extension SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
       try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
     case .trickle(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
-    case .error(let v)?:
-      try visitor.visitSingularStringField(value: v, fieldNumber: 6)
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
