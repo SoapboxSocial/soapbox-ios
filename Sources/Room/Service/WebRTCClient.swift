@@ -53,7 +53,6 @@ final class WebRTCClient: NSObject {
         peerConnection = WebRTCClient.factory.peerConnection(with: config, constraints: constraints, delegate: nil)
 
         super.init()
-        createMediaSenders()
 
         if role == .publisher {
             _ = createDataChannel(label: "ion-sfu")
@@ -112,24 +111,27 @@ final class WebRTCClient: NSObject {
         peerConnection.setLocalDescription(description, completionHandler: completion)
     }
 
-    private func createMediaSenders() {
-        let streamId = "stream"
-
-        // Audio
-        let audioTrack = createAudioTrack()
-        peerConnection.add(audioTrack, streamIds: [streamId])
-    }
-
     private func createAudioTrack() -> RTCAudioTrack {
         let audioConstrains = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
         let audioSource = WebRTCClient.factory.audioSource(with: audioConstrains)
         return WebRTCClient.factory.audioTrack(with: audioSource, trackId: "audio")
     }
 
+    func createAudioTrack(label: String, streamId: String) -> RTCAudioTrack {
+        let audioConstrains = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
+        let audioSource = WebRTCClient.factory.audioSource(with: audioConstrains)
+
+        let track = WebRTCClient.factory.audioTrack(with: audioSource, trackId: label)
+
+        peerConnection.add(track, streamIds: [streamId])
+
+        return track
+    }
+
     func createDataChannel(label: String) -> RTCDataChannel? {
         let config = RTCDataChannelConfiguration()
 
-        guard let dataChannel = self.peerConnection.dataChannel(forLabel: label, configuration: config) else {
+        guard let dataChannel = peerConnection.dataChannel(forLabel: label, configuration: config) else {
             return nil
         }
 
@@ -144,8 +146,7 @@ final class WebRTCClient: NSObject {
             return
         }
 
-        let res = channel.sendData(RTCDataBuffer(data: data, isBinary: true))
-        debugPrint("Send result - \(res)")
+        channel.sendData(RTCDataBuffer(data: data, isBinary: true))
     }
 }
 

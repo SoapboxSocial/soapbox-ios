@@ -91,7 +91,9 @@ final class RoomClient {
             stream.delegate = self
         }
 
-        streams[.publisher]?.offer(completion: { sdp in
+        _ = publisher.createAudioTrack(label: "audio", streamId: "stream")
+
+        publisher.offer(completion: { sdp in
             callback(sdp)
         })
     }
