@@ -266,6 +266,7 @@ extension Room {
 
     private func onMutedByAdmin() {
         client.mute()
+        updateMemberMuteState(user: userId, isMuted: true)
         delegate?.wasMutedByAdmin()
     }
 }
