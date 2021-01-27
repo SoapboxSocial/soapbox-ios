@@ -44,7 +44,7 @@ class RoomCell: UICollectionViewCell {
         }
     }
 
-    var members = [RoomState.RoomMember]() {
+    var members = [RoomAPIClient.Member]() {
         didSet {
             createImageViews()
 

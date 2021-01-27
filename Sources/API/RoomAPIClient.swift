@@ -48,9 +48,20 @@ class RoomAPIClient {
         return keychain[string: "token"]
     }
 
+    struct Member: Decodable {
+        let id: String
+        let displayName: String
+        let image: String
+
+        private enum CodingKeys: String, CodingKey {
+            case id, displayName = "display_name", image
+        }
+    }
+
     struct Room: Decodable {
         let id: String
         let name: String
+        let members: [Member]
     }
 
     func rooms(callback: @escaping (Result<[Room], Error>) -> Void) {
