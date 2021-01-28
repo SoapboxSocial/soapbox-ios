@@ -4,6 +4,7 @@
 
  - This is an important update, we did a bunch of changes that should improve voice quality and network connectivity issues. The update is required, old version will no longer be supported.
  - Users will now be asked if they want to become admins.
+ - We've decided to re-enable a notification sound when a user joins the room. This is still a bit experimental.
 
 ## [1.17.0] - 2021-01-25
 
