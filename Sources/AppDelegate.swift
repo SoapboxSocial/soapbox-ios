@@ -52,10 +52,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return Swifter.handleOpenURL(url, callbackURL: URL(string: "soapbox://")!)
         }
 
-        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
-            return false
-        }
-
         if url.pathComponents.count < 2 {
             return false
         }
