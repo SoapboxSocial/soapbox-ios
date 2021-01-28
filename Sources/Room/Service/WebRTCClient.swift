@@ -1,21 +1,16 @@
-//
-//  WebRTCClient.swift
-//  WebRTC
-//
-//  Created by Stasel on 20/05/2018.
-//  Copyright © 2018 Stasel. All rights reserved.
-//
-
 import Foundation
 import WebRTC
 
 protocol WebRTCClientDelegate: AnyObject {
     func webRTCClient(_ client: WebRTCClient, didDiscoverLocalCandidate candidate: RTCIceCandidate)
     func webRTCClient(_ client: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState)
-    func webRTCClient(_ client: WebRTCClient, didChangeAudioLevel delta: Float, track ssrc: UInt32)
+    func webRTCClient(_ client: WebRTCClient, didReceiveData data: Data, onChannel channel: String)
+    func webRTCClientShouldNegotiate(_ client: WebRTCClient)
 }
 
 final class WebRTCClient: NSObject {
+    let role: Trickle.Target
+
     // The `RTCPeerConnectionFactory` is in charge of creating new RTCPeerConnection instances.
     // A new RTCPeerConnection should be created every new call, but the factory is shared.
     private static let factory: RTCPeerConnectionFactory = {
@@ -24,32 +19,25 @@ final class WebRTCClient: NSObject {
     }()
 
     weak var delegate: WebRTCClientDelegate?
+    private let audioQueue = DispatchQueue(label: "audio")
     private let peerConnection: RTCPeerConnection
     private let rtcAudioSession = RTCAudioSession.sharedInstance()
-    private let audioQueue = DispatchQueue(label: "audio")
     private let mediaConstrains = [
         kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue,
         kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueFalse,
     ]
 
-    struct AudioSampleData {
-        var duration: Float
-        var energy: Float
-    }
-
-    private var previousAudioSampleData = [UInt32: AudioSampleData]()
-    private var timer: Timer!
-
-    var state: RTCPeerConnectionState {
-        peerConnection.connectionState
-    }
+    private var localDataChannels = [String: RTCDataChannel]()
+    private var remoteDataChannels = [String: RTCDataChannel]()
 
     @available(*, unavailable)
     override init() {
         fatalError("WebRTCClient:init is unavailable")
     }
 
-    required init(iceServers: [RTCIceServer]) {
+    required init(role: Trickle.Target, iceServers: [RTCIceServer]) {
+        self.role = role
+
         let config = RTCConfiguration()
         config.iceServers = iceServers
 
@@ -66,17 +54,37 @@ final class WebRTCClient: NSObject {
         peerConnection = WebRTCClient.factory.peerConnection(with: config, constraints: constraints, delegate: nil)
 
         super.init()
-        createMediaSenders()
-        configureAudioSession()
-        peerConnection.delegate = self
 
-        createAudioLevelUpdater()
+        if role == .publisher {
+            _ = createDataChannel(label: "ion-sfu")
+        }
+
+        peerConnection.delegate = self
     }
 
     func close() {
-        // @todo remove audio track? peerConnection.removeTrack()
         peerConnection.close()
-        timer.invalidate()
+
+        for (_, channel) in localDataChannels {
+            channel.close()
+        }
+
+        for (_, channel) in remoteDataChannels {
+            channel.close()
+        }
+    }
+
+    func offer(completion: @escaping (_ sdp: RTCSessionDescription) -> Void) {
+        let constrains = RTCMediaConstraints(mandatoryConstraints: mediaConstrains, optionalConstraints: nil)
+        peerConnection.offer(for: constrains) { sdp, _ in
+            guard let sdp = sdp else {
+                return
+            }
+
+            self.peerConnection.setLocalDescription(sdp, completionHandler: { _ in
+                completion(sdp)
+            })
+        }
     }
 
     func answer(completion: @escaping (_ sdp: RTCSessionDescription) -> Void) {
@@ -100,74 +108,46 @@ final class WebRTCClient: NSObject {
         peerConnection.add(remoteCandidate)
     }
 
-    private func configureAudioSession() {
-        rtcAudioSession.lockForConfiguration()
-        do {
-            try rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
-            try rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
-        } catch {
-            debugPrint("Error changeing AVAudioSession category: \(error)")
-        }
-        rtcAudioSession.unlockForConfiguration()
-    }
-
-    private func createMediaSenders() {
-        let streamId = "stream"
-
-        // Audio
-        let audioTrack = createAudioTrack()
-        peerConnection.add(audioTrack, streamIds: [streamId])
+    func set(localDescription description: RTCSessionDescription, completion: @escaping (Error?) -> Void) {
+        peerConnection.setLocalDescription(description, completionHandler: completion)
     }
 
     private func createAudioTrack() -> RTCAudioTrack {
         let audioConstrains = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
         let audioSource = WebRTCClient.factory.audioSource(with: audioConstrains)
-        return WebRTCClient.factory.audioTrack(with: audioSource, trackId: "audio0")
+        return WebRTCClient.factory.audioTrack(with: audioSource, trackId: "audio")
     }
 
-    private func createAudioLevelUpdater() {
-        DispatchQueue.main.async {
-            // @todo maybe start and stop timer based on if room is open
-            self.timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { _ in
-                self.peerConnection.transceivers.forEach { transceiver in
+    func createAudioTrack(label: String, streamId: String) -> RTCAudioTrack {
+        let audioConstrains = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
+        let audioSource = WebRTCClient.factory.audioSource(with: audioConstrains)
 
-                    guard let track = transceiver.receiver.track as? RTCAudioTrack else {
-                        return
-                    }
+        let track = WebRTCClient.factory.audioTrack(with: audioSource, trackId: label)
 
-                    self.peerConnection.stats(for: track, statsOutputLevel: .standard, completionHandler: { stats in
-                        stats.forEach { stat in
-                            guard let energy = stat.values.value(Float.self, key: "totalAudioEnergy") else {
-                                return
-                            }
+        peerConnection.add(track, streamIds: [streamId])
 
-                            guard let ssrc = stat.values.value(UInt32.self, key: "ssrc") else {
-                                return
-                            }
+        return track
+    }
 
-                            guard let duration = stat.values.value(Float.self, key: "totalSamplesDuration") else {
-                                return
-                            }
+    func createDataChannel(label: String) -> RTCDataChannel? {
+        let config = RTCDataChannelConfiguration()
 
-                            var level: Float
-                            if let previous = self.previousAudioSampleData[ssrc] {
-                                level = Float(sqrt(Double((energy - previous.energy) / (duration - previous.duration))))
-                            } else {
-                                level = Float(sqrt(Double(energy / duration)))
-                            }
-
-                            self.previousAudioSampleData[ssrc] = AudioSampleData(duration: duration, energy: energy)
-
-                            if level.isNaN {
-                                return
-                            }
-
-                            self.delegate?.webRTCClient(self, didChangeAudioLevel: level, track: ssrc)
-                        }
-                    })
-                }
-            })
+        guard let dataChannel = peerConnection.dataChannel(forLabel: label, configuration: config) else {
+            return nil
         }
+
+        dataChannel.delegate = self
+        localDataChannels[label] = dataChannel
+
+        return dataChannel
+    }
+
+    func sendData(_ label: String, data: Data) {
+        guard let channel = remoteDataChannels[label] else {
+            return
+        }
+
+        channel.sendData(RTCDataBuffer(data: data, isBinary: true))
     }
 }
 
@@ -176,8 +156,8 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
         debugPrint("peerConnection new signaling state: \(stateChanged)")
     }
 
-    func peerConnection(_: RTCPeerConnection, didAdd _: RTCMediaStream) {
-        debugPrint("peerConnection did add stream")
+    func peerConnection(_: RTCPeerConnection, didAdd stream: RTCMediaStream) {
+        debugPrint("peerConnection did add stream \(stream.streamId) - \(stream.audioTracks.count)")
     }
 
     func peerConnection(_: RTCPeerConnection, didRemove _: RTCMediaStream) {
@@ -186,14 +166,11 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
 
     func peerConnectionShouldNegotiate(_: RTCPeerConnection) {
         debugPrint("peerConnection should negotiate")
+        delegate?.webRTCClientShouldNegotiate(self)
     }
 
     func peerConnection(_: RTCPeerConnection, didChange newState: RTCIceConnectionState) {
-        if newState == .connected {
-            configureAudioForConnectedState()
-        }
-
-        debugPrint("peerConnection state did change \(newState)")
+        debugPrint("peerConnection new connection state: \(newState.rawValue)")
         delegate?.webRTCClient(self, didChangeConnectionState: newState)
     }
 
@@ -209,8 +186,18 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
         debugPrint("peerConnection did remove candidate(s)")
     }
 
-    func peerConnection(_: RTCPeerConnection, didOpen _: RTCDataChannel) {
-        debugPrint("peerConnection did open data channel")
+    func peerConnection(_: RTCPeerConnection, didOpen dataChannel: RTCDataChannel) {
+        debugPrint("peerConnection did open data channel \(role) - \(dataChannel.label)")
+        remoteDataChannels[dataChannel.label] = dataChannel
+        dataChannel.delegate = self
+    }
+}
+
+extension WebRTCClient {
+    private func setTrackEnabled<T: RTCMediaStreamTrack>(_: T.Type, isEnabled: Bool) {
+        peerConnection.senders
+            .compactMap { $0.track as? T }
+            .forEach { $0.isEnabled = isEnabled }
     }
 }
 
@@ -223,12 +210,8 @@ extension WebRTCClient {
         setAudioEnabled(true)
     }
 
-    private func setAudioEnabled(_ isEnabled: Bool) {
-        let audioTracks = peerConnection.transceivers.compactMap { $0.sender.track as? RTCAudioTrack }
-        audioTracks.forEach { $0.isEnabled = isEnabled }
-    }
-
-    private func configureAudioForConnectedState() {
+    // Force speaker
+    func speakerOn() {
         audioQueue.async { [weak self] in
             guard let self = self else {
                 return
@@ -236,7 +219,7 @@ extension WebRTCClient {
 
             self.rtcAudioSession.lockForConfiguration()
             do {
-                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.mixWithOthers, .defaultToSpeaker, .allowBluetooth, .allowBluetoothA2DP])
+                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue, with: [.mixWithOthers, .allowBluetoothA2DP, .allowBluetooth, .defaultToSpeaker])
                 try self.rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
                 try self.rtcAudioSession.setActive(true)
             } catch {
@@ -244,5 +227,19 @@ extension WebRTCClient {
             }
             self.rtcAudioSession.unlockForConfiguration()
         }
+    }
+
+    private func setAudioEnabled(_ isEnabled: Bool) {
+        setTrackEnabled(RTCAudioTrack.self, isEnabled: isEnabled)
+    }
+}
+
+extension WebRTCClient: RTCDataChannelDelegate {
+    func dataChannelDidChangeState(_ dataChannel: RTCDataChannel) {
+        debugPrint("dataChannel did change state \(role) - \(dataChannel.label) - \(dataChannel.readyState.rawValue)")
+    }
+
+    func dataChannel(_ dataChannel: RTCDataChannel, didReceiveMessageWith buffer: RTCDataBuffer) {
+        delegate?.webRTCClient(self, didReceiveData: buffer.data, onChannel: dataChannel.label)
     }
 }

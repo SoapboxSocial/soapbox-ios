@@ -2,7 +2,7 @@ import AlamofireImage
 import UIKit
 
 class RoomMemberCell: UICollectionViewCell {
-    private(set) var user: Int?
+    private(set) var user: Int64?
 
     private var nameLabel: UILabel!
     private var muteView: UIView!
@@ -58,7 +58,7 @@ class RoomMemberCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setup(name: String, image: String, muted: Bool, role: Room.MemberRole) {
+    func setup(name: String, image: String, muted: Bool, role: RoomState.RoomMember.Role) {
         user = 0
         muteView.isHidden = true
         speakingView.isHidden = true
@@ -85,18 +85,18 @@ class RoomMemberCell: UICollectionViewCell {
             profileImage.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
         }
 
-        if role != Room.MemberRole.audience, muted {
+        if muted {
             muteView.isHidden = false
         } else {
             muteView.isHidden = true
         }
     }
 
-    func setup(member: Room.Member) {
+    func setup(member: RoomState.RoomMember) {
         setup(
             name: member.displayName,
             image: member.image,
-            muted: member.isMuted,
+            muted: member.muted,
             role: member.role
         )
 

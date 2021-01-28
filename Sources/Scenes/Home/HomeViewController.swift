@@ -5,7 +5,7 @@ import UIKit
 
 protocol HomeViewControllerOutput {
     func fetchData()
-    func didSelectRoom(room: Int)
+    func didSelectRoom(room: String)
     func fetchMe()
 }
 
@@ -226,7 +226,7 @@ extension HomeViewController: HomePresenterOutput {
         }
     }
 
-    func didFetchRooms(rooms: [RoomState]) {
+    func didFetchRooms(_ rooms: [RoomAPIClient.Room]) {
         // sorted is temporary
         update(.rooms(rooms.sorted(by: { $0.id < $1.id })))
     }
@@ -252,7 +252,7 @@ extension HomeViewController: HomePresenterOutput {
         banner.show(cornerRadius: 10, shadowBlurRadius: 15)
     }
 
-    func displayCurrentRoom(_ id: Int) {
+    func displayCurrentRoom(_ id: String) {
         presenter.currentRoom = id
 
         DispatchQueue.main.async {
@@ -272,7 +272,7 @@ extension HomeViewController: HomePresenterOutput {
 extension HomeViewController {
     enum Update {
         case ownStory(Bool)
-        case rooms([RoomState])
+        case rooms([RoomAPIClient.Room])
         case feed([APIClient.StoryFeed])
     }
 
@@ -342,8 +342,8 @@ extension HomeViewController: UICollectionViewDelegate {
 
             present(vc, animated: true)
         case .roomList:
-            let room = presenter.item(for: indexPath, ofType: RoomState.self)
-            output.didSelectRoom(room: Int(room.id))
+            let room = presenter.item(for: indexPath, ofType: RoomAPIClient.Room.self)
+            output.didSelectRoom(room: room.id)
         case .noRooms:
             return
         }

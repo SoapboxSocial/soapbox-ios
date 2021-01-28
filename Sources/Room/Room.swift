@@ -1,19 +1,19 @@
 import Foundation
-import GRPC
 import KeychainAccess
 import WebRTC
 
 protocol RoomDelegate {
-    func userDidJoinRoom(user: Int)
-    func userDidLeaveRoom(user: Int)
-    func didChangeUserRole(user: Int, role: Room.MemberRole)
-    func userDidReact(user: Int, reaction: Room.Reaction)
-    func didChangeMemberMuteState(user: Int, isMuted: Bool)
+    func userWasInvitedToBeAdmin(by: Int64)
+    func userDidJoinRoom(user: Int64)
+    func userDidLeaveRoom(user: Int64)
+    func didChangeUserRole(user: Int64, role: RoomState.RoomMember.Role)
+    func userDidReact(user: Int64, reaction: Room.Reaction)
+    func didChangeMemberMuteState(user: Int64, isMuted: Bool)
     func roomWasClosedByRemote()
-    func didChangeSpeakVolume(user: Int, volume: Float)
-    func didReceiveLink(from: Int, link: URL)
+    func didChangeSpeakVolume(user: Int64, volume: Float)
+    func didReceiveLink(from: Int64, link: URL)
     func roomWasRenamed(_ name: String)
-    func userDidRecordScreen(_ user: Int)
+    func userDidRecordScreen(_ user: Int64)
     func wasMutedByAdmin()
 }
 
@@ -23,30 +23,10 @@ enum RoomError: Error {
     case closed
 }
 
-// @TODO THIS ENTIRE THING SHOULD BE REFACTORED SO WE HANDLE WEBRTC AND GRPC NICER, EG ERRORS.
+class Room {
+    typealias ConnectionCompletion = ((Result<Void, RoomError>) -> Void)
 
-class Room: NSObject {
-    enum MemberRole: String, Decodable {
-        case admin
-        case audience
-        case speaker
-    }
-
-    struct Member: Decodable {
-        let id: Int
-        let displayName: String
-        let image: String
-        var role: MemberRole
-        var isMuted: Bool
-        var ssrc: UInt32
-
-        private enum CodingKeys: String, CodingKey {
-            case id, role, displayName = "display_name", image, isMuted = "is_muted", ssrc
-        }
-    }
-
-    private let decoder = JSONDecoder()
-    private let encoder = JSONEncoder()
+    private var completion: ConnectionCompletion?
 
     enum Reaction: String, CaseIterable {
         case thumbsUp = "👍"
@@ -55,102 +35,47 @@ class Room: NSObject {
         case poop = "💩"
     }
 
-    private(set) var name: String!
+    private(set) var state = RoomState()
 
-    var id: Int?
+    private let userId = Int64(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))
+
     var isClosed = false
-
-    private(set) var role = MemberRole.speaker
-
-    private(set) var isMuted = true
-    private(set) var visibility = Visibility.public
-
-    private(set) var members = [Member]()
-
-    private let rtc: WebRTCClient
-    private let grpc: RoomServiceClient
-    private var stream: BidirectionalStreamingCall<SignalRequest, SignalReply>!
-
-    private var completion: ((Result<Void, RoomError>) -> Void)!
 
     var delegate: RoomDelegate?
 
-    private struct Candidate: Codable {
-        let candidate: String
-        let sdpMLineIndex: Int32
-        let usernameFragment: String?
-    }
+    private let client: RoomClient
 
     let started: Date
 
-    init(rtc: WebRTCClient, grpc: RoomServiceClient) {
-        self.rtc = rtc
-        self.grpc = grpc
-
+    init(client: RoomClient) {
+        self.client = client
         started = Date(timeIntervalSince1970: Date().timeIntervalSince1970)
-
-        super.init()
-
-        stream = grpc.signal(handler: handle)
-        rtc.delegate = self
+        client.delegate = self
     }
 
-    func join(id: Int, completion: @escaping (Result<Void, RoomError>) -> Void) {
+    func join(id: String, completion: @escaping ConnectionCompletion) {
+        state.id = id
         self.completion = completion
-        self.id = id
 
-        _ = stream.sendMessage(SignalRequest.with {
-            $0.join = JoinRequest.with {
-                $0.room = Int64(id)
-            }
-        })
+        client.join(id: id)
+    }
 
-        stream.status.whenComplete { result in
-            switch result {
-            case .failure:
-                completion(.failure(.general))
-            case let .success(status):
-                switch status.code {
-                case .ok: break
-                default:
-                    guard let completion = self.completion else {
-                        if !self.isClosed {
-                            self.delegate?.roomWasClosedByRemote()
-                        }
+    func create(name: String?, isPrivate: Bool, group: Int? = nil, users: [Int]? = nil, completion: @escaping ConnectionCompletion) {
+        self.completion = completion
 
-                        return
-                    }
-
-                    if let message = status.message {
-                        switch message {
-                        case "join error room closed":
-                            return completion(.failure(.closed))
-                        case "join error room full":
-                            return completion(.failure(.fullRoom))
-                        default:
-                            break
-                        }
-                    }
-
-                    return completion(.failure(.general))
-                }
-            }
+        if let name = name {
+            state.name = name
         }
-    }
-
-    func create(name: String?, isPrivate: Bool, group: Int? = nil, users: [Int]? = nil, completion: @escaping (Result<Void, RoomError>) -> Void) {
-        self.name = name
-        self.completion = completion
-
-        role = .admin
 
         if isPrivate {
-            visibility = Visibility.private
+            state.visibility = Visibility.private
+        } else {
+            state.visibility = Visibility.public
         }
 
         var request = CreateRequest.with {
             $0.name = name ?? ""
-            $0.visibility = visibility
+            $0.visibility = state.visibility
         }
 
         if let id = group {
@@ -161,334 +86,168 @@ class Room: NSObject {
             request.users = ids.map(Int64.init)
         }
 
-        _ = stream.sendMessage(SignalRequest.with {
-            $0.create = request
-        })
-
-        stream.status.whenComplete { result in
-            switch result {
-            case let .failure(error):
-                completion(.failure(.general))
-            case let .success(status):
-                switch status.code {
-                case .ok: break
-                default:
-                    if let completion = self.completion {
-                        return completion(.failure(.general))
-                    }
-
-                    if !self.isClosed {
-                        self.delegate?.roomWasClosedByRemote()
-                    }
-                }
-            }
-        }
+        client.create(request)
     }
 
     func close() {
         isClosed = true
-        rtc.delegate = nil
-        rtc.close()
-
-        _ = stream.sendEnd()
-        _ = grpc.channel.close()
+        client.close()
     }
 
     func mute() {
-        rtc.muteAudio()
-        isMuted = true
+        client.mute()
 
-        send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.muteSpeaker
-        })
+        updateMemberMuteState(user: userId, isMuted: true)
     }
 
     func unmute() {
-        rtc.unmuteAudio()
-        isMuted = false
+        client.unmute()
 
-        send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.unmuteSpeaker
-        })
+        updateMemberMuteState(user: userId, isMuted: false)
     }
 
-    func remove(speaker: Int) {
-        send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.removeSpeaker
-            $0.data = Data(withUnsafeBytes(of: speaker.littleEndian, Array.init))
-        })
-
-        updateMemberRole(user: speaker, role: .audience)
+    func add(admin: Int64) {
+        client.send(command: .inviteAdmin(Command.InviteAdmin.with {
+            $0.id = admin
+        }))
     }
 
-    func add(speaker: Int) {
-        send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.addSpeaker
-            $0.data = Data(withUnsafeBytes(of: speaker.littleEndian, Array.init))
-        })
+    func remove(admin: Int64) {
+        client.send(command: .removeAdmin(Command.RemoveAdmin.with {
+            $0.id = admin
+        }))
 
-        updateMemberRole(user: speaker, role: .speaker)
-    }
-
-    func add(admin: Int) {
-        send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.addAdmin
-            $0.data = Data(withUnsafeBytes(of: admin.littleEndian, Array.init))
-        })
-
-        updateMemberRole(user: admin, role: .admin)
-    }
-
-    func remove(admin: Int) {
-        send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.removeAdmin
-            $0.data = Data(withUnsafeBytes(of: admin.littleEndian, Array.init))
-        })
-
-        updateMemberRole(user: admin, role: .speaker)
+        updateMemberRole(user: admin, role: .regular)
     }
 
     func invite(user: Int) {
-        stream.sendMessage(SignalRequest.with {
-            $0.invite = Invite.with {
-                $0.id = Int64(user)
-            }
-        })
+        client.send(command: .inviteUser(Command.InviteUser.with {
+            $0.id = Int64(user)
+        }))
     }
 
     func react(with reaction: Reaction) {
-        send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.reaction
-            $0.data = Data(reaction.rawValue.utf8)
-        })
-
-        delegate?.userDidReact(user: 0, reaction: reaction)
+        client.send(command: .reaction(Command.Reaction.with {
+            $0.emoji = Data(reaction.rawValue.utf8)
+        }))
     }
 
     func share(link: URL) {
-        send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.linkShare
-            $0.data = Data(link.absoluteString.utf8)
-        })
+        client.send(command: .linkShare(Command.LinkShare.with {
+            $0.link = link.absoluteString
+        }))
 
         delegate?.didReceiveLink(from: 0, link: link)
     }
 
-    func kick(user: Int) {
-        stream.sendMessage(SignalRequest.with {
-            $0.kick = Kick.with {
-                $0.id = Int64(user)
-            }
-        })
+    func kick(user: Int64) {
+        client.send(command: .kickUser(Command.KickUser.with {
+            $0.id = Int64(user)
+        }))
     }
 
-    func mute(user: Int) {
-        stream.sendMessage(SignalRequest.with {
-            $0.muteUser = MuteUser.with {
-                $0.id = Int64(user)
-            }
-        })
+    func mute(user: Int64) {
+        client.send(command: .muteUser(Command.MuteUser.with {
+            $0.id = user
+        }))
     }
 
     func rename(_ name: String) {
-        send(command: SignalRequest.Command.with {
-            $0.type = SignalRequest.Command.TypeEnum.renameRoom
-            $0.data = Data(name.utf8)
-        })
+        client.send(command: .renameRoom(Command.RenameRoom.with {
+            $0.name = name
+        }))
 
         delegate?.roomWasRenamed(name)
+    }
+
+    func acceptInvite() {
+        client.send(command: .acceptAdmin(Command.AcceptAdmin()))
+        delegate?.didChangeUserRole(user: userId, role: .admin)
     }
 
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
+}
 
-    private func handle(_ reply: SignalReply) {
-        switch reply.payload {
-        case let .join(join):
-            on(join: join)
-        case let .create(create):
-            on(create: create)
-        case let .negotiate(negotiate):
-            on(negotiate: negotiate)
-        case let .trickle(trickle):
-            on(trickle: trickle)
-        case let .event(event):
-            on(event: event)
-        default:
+extension Room {
+    private func on(_ event: Event) {
+        switch event.payload {
+        case .addedAdmin:
+            on(addedAdmin: event.from)
+        case .invitedAdmin:
+            on(adminInvite: event.from)
+        case let .joined(evt):
+            on(joined: evt)
+        case .left:
+            on(left: event.from)
+        case let .linkShared(evt):
+            on(linkShare: evt, from: event.from)
+        case let .muteUpdated(evt):
+            on(muteUpdate: evt, from: event.from)
+        case .mutedByAdmin:
+            onMutedByAdmin()
+        case let .reacted(evt):
+            on(reacted: evt, from: event.from)
+        case .recordedScreen:
+            on(recordedScreen: event.from)
+        case let .removedAdmin(evt):
+            on(removedAdmin: evt)
+        case let .renamedRoom(evt):
+            on(roomRenamed: evt)
+        case .none:
             break
         }
     }
 
-    private func on(negotiate: SessionDescription) {
-        if negotiate.type != "offer" {
-            debugPrint("\(negotiate.type) received")
+    private func on(addedAdmin id: Int64) {
+        updateMemberRole(user: id, role: .admin)
+    }
+
+    private func on(removedAdmin: Event.RemovedAdmin) {
+        updateMemberRole(user: removedAdmin.id, role: .regular)
+    }
+
+    private func on(adminInvite from: Int64) {
+        delegate?.userWasInvitedToBeAdmin(by: from)
+    }
+
+    private func on(joined: Event.Joined) {
+        if state.members.contains(where: { $0.id == joined.user.id }) {
             return
         }
 
-        receivedOffer(negotiate.sdp)
+        state.members.append(joined.user)
+        delegate?.userDidJoinRoom(user: joined.user.id)
     }
 
-    private func on(join: JoinReply) {
-        guard let role = MemberRole(rawValue: join.room.role) else {
-            return completion(.failure(RoomError.general))
-        }
-
-        visibility = join.room.visibility
-
-        self.role = role
-
-        for member in join.room.members {
-            members.append(
-                Member(
-                    id: Int(member.id),
-                    displayName: member.displayName,
-                    image: member.image,
-                    role: MemberRole(rawValue: member.role) ?? .speaker,
-                    isMuted: member.muted,
-                    ssrc: member.ssrc
-                )
-            )
-        }
-
-        name = join.room.name
-
-        receivedOffer(join.answer.sdp)
+    private func on(left id: Int64) {
+        state.members.removeAll(where: { $0.id == id })
+        delegate?.userDidLeaveRoom(user: id)
     }
 
-    private func on(create: CreateReply) {
-        // @todo may wanna do some delegate call stuff around this.
-        id = Int(create.id)
-
-        receivedOffer(create.answer.sdp)
-    }
-
-    private func on(trickle: Trickle) {
-        do {
-            let payload = try decoder.decode(Candidate.self, from: Data(trickle.init_p.utf8))
-            let candidate = RTCIceCandidate(sdp: payload.candidate, sdpMLineIndex: payload.sdpMLineIndex, sdpMid: nil)
-            rtc.set(remoteCandidate: candidate)
-        } catch {
-            debugPrint("failed to decode \(error.localizedDescription)")
-            return
-        }
-    }
-
-    private func on(event: SignalReply.Event) {
-        switch event.type {
-        case .joined:
-            didReceiveJoin(event)
-        case .left:
-            didReceiveLeft(event)
-        case .addedSpeaker:
-            didReceiveAddedSpeaker(event)
-        case .removedSpeaker:
-            didReceiveRemovedSpeaker(event)
-        case .mutedSpeaker:
-            didReceiveMuteSpeaker(event)
-        case .unmutedSpeaker:
-            didReceiveUnmuteSpeaker(event)
-        case .reacted:
-            didReceiveReacted(event)
-        case .linkShared:
-            didReceiveLinkShare(event)
-        case .addedAdmin:
-            didReceiveAddedAdmin(event)
-        case .removedAdmin:
-            didReceiveRemovedAdmin(event)
-        case .renamedRoom:
-            didReceiveRenamedRoom(event)
-        case .recordedScreen:
-            didRecordScreen(event)
-        case .mutedByAdmin:
-            wasMutedByAdmin(event)
-        case .UNRECOGNIZED:
-            return
-        }
-    }
-
-    private func receivedOffer(_ data: Data) {
-        guard let sdp = String(data: data, encoding: .utf8) else {
-            // @todo
+    private func on(linkShare: Event.LinkShared, from: Int64) {
+        guard let url = URL(string: linkShare.link) else {
             return
         }
 
-        let sessionDescription = RTCSessionDescription(type: .offer, sdp: sdp)
-
-        rtc.set(remoteSdp: sessionDescription) { error in
-            if error != nil {
-                debugPrint(error)
-                return
-            }
-
-            self.rtc.answer { description in
-                self.stream.sendMessage(SignalRequest.with {
-                    $0.negotiate = SessionDescription.with {
-                        $0.type = "answer"
-                        $0.sdp = Data(description.sdp.utf8)
-                    }
-                })
-            }
-        }
+        delegate?.didReceiveLink(from: from, link: url)
     }
 
-    private func send(command: SignalRequest.Command) {
-        stream.sendMessage(SignalRequest.with {
-            $0.command = command
-        })
-    }
-}
-
-extension Room {
-    private func didReceiveJoin(_ event: SignalReply.Event) {
-        do {
-            let member = try decoder.decode(Member.self, from: event.data)
-            if !members.contains(where: { $0.id == member.id }) {
-                members.append(member)
-                delegate?.userDidJoinRoom(user: Int(event.from))
-            }
-        } catch {
-            debugPrint("failed to decode \(error.localizedDescription)")
-        }
+    private func on(roomRenamed: Event.RenamedRoom) {
+        delegate?.roomWasRenamed(roomRenamed.name)
     }
 
-    private func didReceiveLeft(_ event: SignalReply.Event) {
-        members.removeAll(where: { $0.id == Int(event.from) })
-        delegate?.userDidLeaveRoom(user: Int(event.from))
+    private func on(muteUpdate: Event.MuteUpdated, from: Int64) {
+        updateMemberMuteState(user: from, isMuted: muteUpdate.isMuted)
     }
 
-    private func didReceiveAddedSpeaker(_ event: SignalReply.Event) {
-        updateMemberRole(user: event.data.toInt, role: .speaker)
+    private func on(unmuted id: Int64) {
+        updateMemberMuteState(user: id, isMuted: false)
     }
 
-    private func didReceiveRemovedSpeaker(_ event: SignalReply.Event) {
-        updateMemberRole(user: event.data.toInt, role: .audience)
-    }
-
-    private func didReceiveAddedAdmin(_ event: SignalReply.Event) {
-        updateMemberRole(user: event.data.toInt, role: .admin)
-    }
-
-    private func didReceiveRemovedAdmin(_ event: SignalReply.Event) {
-        updateMemberRole(user: event.data.toInt, role: .speaker)
-    }
-
-    private func didReceiveMuteSpeaker(_ event: SignalReply.Event) {
-        updateMemberMuteState(user: Int(event.from), isMuted: true)
-    }
-
-    private func didReceiveUnmuteSpeaker(_ event: SignalReply.Event) {
-        updateMemberMuteState(user: Int(event.from), isMuted: false)
-    }
-
-    private func wasMutedByAdmin(_: SignalReply.Event) {
-        rtc.muteAudio()
-        isMuted = true
-        delegate?.wasMutedByAdmin()
-    }
-
-    private func didReceiveReacted(_ event: SignalReply.Event) {
-        guard let value = String(bytes: event.data, encoding: .utf8) else {
+    private func on(reacted: Event.Reacted, from: Int64) {
+        guard let value = String(bytes: reacted.emoji, encoding: .utf8) else {
             return
         }
 
@@ -496,109 +255,163 @@ extension Room {
             return
         }
 
-        delegate?.userDidReact(user: Int(event.from), reaction: reaction)
+        delegate?.userDidReact(user: from, reaction: reaction)
     }
 
-    private func didReceiveLinkShare(_ event: SignalReply.Event) {
-        guard let value = String(bytes: event.data, encoding: .utf8) else {
-            return
-        }
-
-        guard let url = URL(string: value) else {
-            return
-        }
-
-        delegate?.didReceiveLink(from: Int(event.from), link: url)
+    private func on(recordedScreen id: Int64) {
+        delegate?.userDidRecordScreen(id)
     }
 
-    private func didReceiveRenamedRoom(_ event: SignalReply.Event) {
-        guard let value = String(bytes: event.data, encoding: .utf8) else {
-            return
-        }
-
-        delegate?.roomWasRenamed(value)
+    private func onMutedByAdmin() {
+        client.mute()
+        updateMemberMuteState(user: userId, isMuted: true)
+        delegate?.wasMutedByAdmin()
     }
+}
 
-    private func didRecordScreen(_ event: SignalReply.Event) {
-        delegate?.userDidRecordScreen(Int(event.from))
-    }
-
-    private func updateMemberMuteState(user: Int, isMuted: Bool) {
+extension Room {
+    private func updateMemberMuteState(user: Int64, isMuted: Bool) {
         DispatchQueue.main.async {
-            let index = self.members.firstIndex(where: { $0.id == user })
-            if index != nil {
-                self.members[index!].isMuted = isMuted
+            let index = self.state.members.firstIndex(where: { $0.id == Int64(user) })
+            guard let idx = index else {
                 return
             }
+
+            self.state.members[idx].muted = isMuted
         }
 
         delegate?.didChangeMemberMuteState(user: user, isMuted: isMuted)
     }
 
-    private func updateMemberRole(user: Int, role: MemberRole) {
+    private func updateMemberRole(user: Int64, role: RoomState.RoomMember.Role) {
         DispatchQueue.main.async {
-            let index = self.members.firstIndex(where: { $0.id == user })
-            if index != nil {
-                self.members[index!].role = role
+            let index = self.state.members.firstIndex(where: { $0.id == user })
+            guard let idx = index else {
                 return
             }
 
-            self.role = role
+            self.state.members[idx].role = role
         }
 
         delegate?.didChangeUserRole(user: user, role: role)
     }
 }
 
-extension Room: WebRTCClientDelegate {
-    func webRTCClient(_: WebRTCClient, didChangeAudioLevel delta: Float, track ssrc: UInt32) {
-        DispatchQueue.main.async {
-            guard let user = self.members.first(where: { $0.ssrc == ssrc }) else {
-                return
-            }
+extension Room: RoomClientDelegate {
+    func room(id: String) {
+        state.id = id
+        addMeToState(role: .admin)
+    }
 
-            self.delegate?.didChangeSpeakVolume(user: user.id, volume: delta)
+    func roomClientDidConnect(_: RoomClient) {
+        guard let completion = self.completion else {
+            return
+        }
+
+        self.completion = nil
+
+        completion(.success(()))
+        startPreventing()
+    }
+
+    // @TODO
+    func roomClient(_: RoomClient, failedToConnect error: RoomClient.Error) {
+        if let completion = self.completion {
+            switch error {
+            case .fullRoom:
+                return completion(.failure(.fullRoom))
+            case .closed:
+                return completion(.failure(.closed))
+            default:
+                return completion(.failure(.general))
+            }
         }
     }
 
-    func webRTCClient(_: WebRTCClient, didDiscoverLocalCandidate local: RTCIceCandidate) {
-        let candidate = Candidate(candidate: local.sdp, sdpMLineIndex: local.sdpMLineIndex, usernameFragment: "")
+    func roomClientDidDisconnect(_: RoomClient) {
+        delegate?.roomWasClosedByRemote()
+    }
 
-        var data: Data
+    func roomClient(_: RoomClient, didReceiveMessage message: Event) {
+        on(message)
+    }
 
-        do {
-            data = try encoder.encode(candidate)
-        } catch {
-            debugPrint("failed to encode \(error.localizedDescription)")
-            return
-        }
+    func roomClient(_: RoomClient, didReceiveState state: RoomState) {
+        self.state.visibility = state.visibility
 
-        guard let trickle = String(data: data, encoding: .utf8) else {
-            return
-        }
-
-        stream.sendMessage(SignalRequest.with {
-            $0.trickle = Trickle.with {
-                $0.init_p = trickle
+        state.members.forEach { member in
+            if let index = self.state.members.firstIndex(where: { $0.id == member.id }) {
+                self.state.members[index] = member
             }
+
+            self.state.members.append(member)
+        }
+
+        addMeToState(role: .regular)
+
+        self.state.name = state.name
+    }
+
+    private func addMeToState(role: RoomState.RoomMember.Role) {
+        state.members.append(RoomState.RoomMember.with {
+            $0.id = Int64(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))
+            $0.image = UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!
+            $0.displayName = UserDefaults.standard.string(forKey: UserDefaultsKeys.userDisplay)!
+            $0.muted = true
+            $0.role = role
         })
-    }
-
-    func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
-        if state == .connected && completion != nil {
-            completion(.success(()))
-            completion = nil
-
-            startPreventing()
-            return
-        }
-
-        if state == .failed || state == .closed {
-            delegate?.roomWasClosedByRemote()
-        }
     }
 }
 
+// extension Room: WebRTCClientDelegate {
+//    func webRTCClient(_: WebRTCClient, didChangeAudioLevel delta: Float, track ssrc: UInt32) {
+//        DispatchQueue.main.async {
+//            guard let user = self.members.first(where: { $0.ssrc == ssrc }) else {
+//                return
+//            }
+//
+//            self.delegate?.didChangeSpeakVolume(user: Int(user.id), volume: delta)
+//        }
+//    }
+//
+//    func webRTCClient(_: WebRTCClient, didDiscoverLocalCandidate local: RTCIceCandidate) {
+//        let candidate = Candidate(candidate: local.sdp, sdpMLineIndex: local.sdpMLineIndex, usernameFragment: "")
+//
+//        var data: Data
+//
+//        do {
+//            data = try encoder.encode(candidate)
+//        } catch {
+//            debugPrint("failed to encode \(error.localizedDescription)")
+//            return
+//        }
+//
+//        guard let trickle = String(data: data, encoding: .utf8) else {
+//            return
+//        }
+//
+//        stream.sendMessage(SignalRequest.with {
+//            $0.trickle = Trickle.with {
+//                $0.init_p = trickle
+//            }
+//        })
+//    }
+//
+//    func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
+//        if state == .connected && completion != nil {
+//            completion(.success(()))
+//            completion = nil
+//
+//            startPreventing()
+//            return
+//        }
+//
+//        if state == .failed || state == .closed {
+//            delegate?.roomWasClosedByRemote()
+//        }
+//    }
+// }
+//
 extension Room {
     func startPreventing() {
         NotificationCenter.default.addObserver(self, selector: #selector(warnOnRecord), name: UIScreen.capturedDidChangeNotification, object: nil)
@@ -609,16 +422,10 @@ extension Room {
     }
 
     @objc private func warnOnRecord() {
-        if rtc.state != .connected, rtc.state != .connecting {
-            return
-        }
-
         if !UIScreen.main.isCaptured {
             return
         }
 
-        _ = stream.sendMessage(SignalRequest.with {
-            $0.screenRecorded = ScreenRecorded()
-        })
+        client.send(command: .recordScreen(Command.RecordScreen()))
     }
 }

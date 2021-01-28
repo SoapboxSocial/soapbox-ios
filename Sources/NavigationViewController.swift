@@ -210,11 +210,11 @@ extension NavigationViewController: RoomViewDelegate {
 }
 
 extension NavigationViewController: RoomController {
-    func didSelect(room id: Int) {
+    func didSelect(room id: String) {
         if activityIndicator.isAnimating {
             return
         }
-        if room != nil, let roomid = room?.id, id == roomid {
+        if room != nil, let roomid = room?.state.id, id == roomid {
             presentCurrentRoom()
             return
         }
@@ -333,7 +333,7 @@ extension NavigationViewController: RoomCreationDelegate {
                         self.room = nil
                         return self.showNetworkError()
                     case .success:
-                        if let id = self.room?.id {
+                        if let id = self.room?.state.id {
                             self.roomControllerDelegate?.didJoin(room: id)
                         }
 

@@ -15,7 +15,6 @@ target 'Soapbox' do
   pod 'SwiftConfettiView'
   pod 'UIWindowTransitions'
   pod 'AlamofireImage'
-  pod 'gRPC-Swift', '~> 1.0.0-alpha.20'
   pod 'GSImageViewerController'
   pod 'Swifter', git: 'git@github.com:mattdonnelly/Swifter.git'
   pod 'CCBottomRefreshControl'

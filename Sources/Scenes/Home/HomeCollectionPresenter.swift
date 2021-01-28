@@ -2,7 +2,7 @@ import AlamofireImage
 import UIKit
 
 class HomeCollectionPresenter {
-    var currentRoom: Int?
+    var currentRoom: String?
 
     private var dataSource = [Section]()
 
@@ -91,7 +91,7 @@ class HomeCollectionPresenter {
 
     func configure(item: RoomCell, for indexPath: IndexPath) {
         let section = dataSource[indexPath.section]
-        guard let room = section.data[indexPath.row] as? RoomState else {
+        guard let room = section.data[indexPath.row] as? RoomAPIClient.Room else {
             print("Error getting room for indexPath: \(indexPath)")
             return
         }
@@ -116,14 +116,13 @@ class HomeCollectionPresenter {
 
         item.visibility = room.visibility
         item.members = room.members
-
         item.group = nil
-        if room.hasGroup {
-            item.group = room.group
+        if let group = room.group {
+            item.group = group
         }
     }
 
-    func set(rooms: [RoomState]) {
+    func set(rooms: [RoomAPIClient.Room]) {
         if rooms.isEmpty {
             removeRooms()
             return

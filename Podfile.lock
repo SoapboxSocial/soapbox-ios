@@ -4,32 +4,12 @@ PODS:
     - Alamofire (~> 5.1)
   - BetterSegmentedControl (2.0.1)
   - CCBottomRefreshControl (0.5.2)
-  - CGRPCZlib (1.0.0-alpha.23)
-  - CNIOAtomics (2.25.1)
-  - CNIOBoringSSL (2.10.2)
-  - CNIOBoringSSLShims (2.10.2):
-    - CNIOBoringSSL (= 2.10.2)
-  - CNIODarwin (2.25.1)
-  - CNIOHTTPParser (2.25.1)
-  - CNIOLinux (2.25.1)
-  - CNIOSHA1 (2.25.1)
-  - CNIOWindows (2.25.1)
   - DrawerView (1.3.1)
   - EasyTipView (2.1.0)
   - GoogleWebRTC (1.1.31999)
-  - gRPC-Swift (1.0.0-alpha.23):
-    - CGRPCZlib (= 1.0.0-alpha.23)
-    - Logging (< 2, >= 1.4.0)
-    - SwiftNIO (< 3, >= 2.25.0)
-    - SwiftNIOExtras (< 2, >= 1.7.0)
-    - SwiftNIOHTTP2 (< 2, >= 1.16.2)
-    - SwiftNIOSSL (< 3, >= 2.10.1)
-    - SwiftNIOTransportServices (< 2, >= 1.9.1)
-    - SwiftProtobuf (< 2, >= 1.14.0)
   - GSImageViewerController (1.6.3)
   - KDCircularProgress (1.5.4)
   - KeychainAccess (4.2.1)
-  - Logging (1.4.0)
   - MarqueeLabel (4.0.5)
   - NotificationBannerSwift (3.0.6):
     - MarqueeLabel (~> 4.0.5)
@@ -38,46 +18,6 @@ PODS:
   - SnapKit (5.0.1)
   - SwiftConfettiView (0.1.0)
   - Swifter (2.5.0)
-  - SwiftNIO (2.25.1):
-    - CNIOAtomics (= 2.25.1)
-    - CNIODarwin (= 2.25.1)
-    - CNIOLinux (= 2.25.1)
-    - CNIOSHA1 (= 2.25.1)
-    - CNIOWindows (= 2.25.1)
-    - SwiftNIOConcurrencyHelpers (= 2.25.1)
-  - SwiftNIOConcurrencyHelpers (2.25.1):
-    - CNIOAtomics (= 2.25.1)
-  - SwiftNIOExtras (1.7.0):
-    - SwiftNIO (< 3, >= 2.9.0)
-  - SwiftNIOFoundationCompat (2.25.1):
-    - SwiftNIO (= 2.25.1)
-  - SwiftNIOHPACK (1.16.2):
-    - SwiftNIO (< 3, >= 2.18.0)
-    - SwiftNIOConcurrencyHelpers (< 3, >= 2.18.0)
-    - SwiftNIOHTTP1 (< 3, >= 2.18.0)
-  - SwiftNIOHTTP1 (2.25.1):
-    - CNIOHTTPParser (= 2.25.1)
-    - SwiftNIO (= 2.25.1)
-    - SwiftNIOConcurrencyHelpers (= 2.25.1)
-  - SwiftNIOHTTP2 (1.16.2):
-    - SwiftNIO (< 3, >= 2.18.0)
-    - SwiftNIOConcurrencyHelpers (< 3, >= 2.18.0)
-    - SwiftNIOHPACK (= 1.16.2)
-    - SwiftNIOHTTP1 (< 3, >= 2.18.0)
-    - SwiftNIOTLS (< 3, >= 2.18.0)
-  - SwiftNIOSSL (2.10.2):
-    - CNIOBoringSSL (= 2.10.2)
-    - CNIOBoringSSLShims (= 2.10.2)
-    - SwiftNIO (< 3, >= 2.15.0)
-    - SwiftNIOConcurrencyHelpers (< 3, >= 2.15.0)
-    - SwiftNIOTLS (< 3, >= 2.15.0)
-  - SwiftNIOTLS (2.25.1):
-    - SwiftNIO (= 2.25.1)
-  - SwiftNIOTransportServices (1.9.1):
-    - SwiftNIO (< 3, >= 2.19.0)
-    - SwiftNIOConcurrencyHelpers (< 3, >= 2.19.0)
-    - SwiftNIOFoundationCompat (< 3, >= 2.19.0)
-    - SwiftNIOTLS (< 3, >= 2.19.0)
   - SwiftProtobuf (1.15.0)
   - UIWindowTransitions (1.0.0)
 
@@ -89,7 +29,6 @@ DEPENDENCIES:
   - "DrawerView (from `git@github.com:mkko/DrawerView.git`, commit `812a2ac4c01306817f5838da73ce46a45bc98830`)"
   - EasyTipView
   - GoogleWebRTC
-  - gRPC-Swift (~> 1.0.0-alpha.20)
   - GSImageViewerController
   - KDCircularProgress
   - KeychainAccess
@@ -106,37 +45,16 @@ SPEC REPOS:
     - AlamofireImage
     - BetterSegmentedControl
     - CCBottomRefreshControl
-    - CGRPCZlib
-    - CNIOAtomics
-    - CNIOBoringSSL
-    - CNIOBoringSSLShims
-    - CNIODarwin
-    - CNIOHTTPParser
-    - CNIOLinux
-    - CNIOSHA1
-    - CNIOWindows
     - EasyTipView
     - GoogleWebRTC
-    - gRPC-Swift
     - GSImageViewerController
     - KDCircularProgress
     - KeychainAccess
-    - Logging
     - MarqueeLabel
     - NotificationBannerSwift
     - Siren
     - SnapKit
     - SwiftConfettiView
-    - SwiftNIO
-    - SwiftNIOConcurrencyHelpers
-    - SwiftNIOExtras
-    - SwiftNIOFoundationCompat
-    - SwiftNIOHPACK
-    - SwiftNIOHTTP1
-    - SwiftNIOHTTP2
-    - SwiftNIOSSL
-    - SwiftNIOTLS
-    - SwiftNIOTransportServices
     - SwiftProtobuf
     - UIWindowTransitions
 
@@ -160,42 +78,21 @@ SPEC CHECKSUMS:
   AlamofireImage: c4a2ba349885fb3064feb74d2e547bd42ce9be10
   BetterSegmentedControl: 09607b27861d49cbce48b7673b74f9150a3d371a
   CCBottomRefreshControl: 389780b4488321c91d18f66a6da5ef9606df6de5
-  CGRPCZlib: d818e2870c8274f5f2be74a89cc65f9815b6256d
-  CNIOAtomics: 2ae668942b9e7ac71e0fe286d11ac9b4fe329024
-  CNIOBoringSSL: 3d59b923c8ec524308685664ae6388179c678ac7
-  CNIOBoringSSLShims: 18b267690ba0d57b22e4e69dff2904a6b1d030b8
-  CNIODarwin: 3874630a0e3506c3e86f272ad436103d27055831
-  CNIOHTTPParser: 976fcf22759946c80ff74c8a2926728d88954a83
-  CNIOLinux: e6394d7fd56d36ff43ada5796e9d96c14fcb3546
-  CNIOSHA1: 43c4a0cfdea5e8be20927d9d2237ebe4233071f8
-  CNIOWindows: 89048520e4a1484bcd5e20c252edf4089913aa7d
   DrawerView: 0c7e6c40e5076b2fb64c394fa5fc8166ff917eff
   EasyTipView: a92b6edc377b81c5ac18e9fd35d5ee78e9409488
   GoogleWebRTC: b39a78c4f5cc6b0323415b9233db03a2faa7b0f0
-  gRPC-Swift: e9848bcf4837e04523836908caa19f0cd3a45217
   GSImageViewerController: 20a257d7e3dd9ee171c2dfea659992eba2761839
   KDCircularProgress: 98200c6b8e85d22bc04eb644721d3b1e12b0686b
   KeychainAccess: 9b07f665298d13c3a85881bd3171f6f49b8151c1
-  Logging: beeb016c9c80cf77042d62e83495816847ef108b
   MarqueeLabel: 00cc0bcd087111dca575878b3531af980559707d
   NotificationBannerSwift: 7021be2338f8f29cf424b0aca43da462bf9e2a1a
   Siren: de768099aff1f1c9acda4247064788a4940b4bf3
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SwiftConfettiView: 1bdbc2e6913b6b1c76d8070802b212508ad5c352
   Swifter: 4c2f8cf320c2f751c10128f841d8e9bd8609d988
-  SwiftNIO: 3f9a197581f6dfebf65a5c85099f25197d892c8c
-  SwiftNIOConcurrencyHelpers: 3670690a0fb8d8a0a4759804d07aaf89c9599839
-  SwiftNIOExtras: 3a5d48aa8d09b4ad7e248bfc1fa46dbc28d56b35
-  SwiftNIOFoundationCompat: 707c223452d1606e1619c2309f089aeadbf2943e
-  SwiftNIOHPACK: a86298d347455478dcc0d0178b80bbbd38bdf299
-  SwiftNIOHTTP1: 566744e4a9b4425009b59dce9ed962591052b0d0
-  SwiftNIOHTTP2: 474925ac2ebabc5899892f7cafc0323eceb67f8c
-  SwiftNIOSSL: 39756339a7425d68b48f00c0f9a9e068b8f536d0
-  SwiftNIOTLS: 434418842a6bebc21864ec84229e5e3d2762ca0b
-  SwiftNIOTransportServices: a8a17a43695a09bfdd5a56426f6e515120d5dbf3
   SwiftProtobuf: 3320217e9d8fb75f36b40282e78c482640fd75dd
   UIWindowTransitions: 2237083382e11f100db7de934041bba0c4669c86
 
-PODFILE CHECKSUM: 6e4874a29229df5342caf5b53ae74ee0b393fb0d
+PODFILE CHECKSUM: 36236f1492b3ab05094d3ddf4e7afd9fdb3439f6
 
 COCOAPODS: 1.10.1

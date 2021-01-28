@@ -11,9 +11,18 @@ protocol RoomViewDelegate {
 class RoomView: UIView {
     var delegate: RoomViewDelegate?
 
-    private var links = [(Int, URL)]()
+    private var links = [(Int64, URL)]()
 
     private static let iconConfig = UIImage.SymbolConfiguration(weight: .semibold)
+
+    private var me: RoomState.RoomMember {
+        let id = Int64(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))
+        guard let me = room.state.members.first(where: { $0.id == id }) else {
+            fatalError("me not found!")
+        }
+
+        return me
+    }
 
     private let muteButton: EmojiButton = {
         let button = EmojiButton(frame: .zero)
@@ -167,8 +176,8 @@ class RoomView: UIView {
         room.delegate = self
 
         name.text = {
-            if let name = room.name, name != "" {
-                return name
+            if room.state.name != "" {
+                return room.state.name
             }
 
             return NSLocalizedString("current_room", comment: "")
@@ -214,7 +223,7 @@ class RoomView: UIView {
             lock.widthAnchor.constraint(equalToConstant: 20),
         ])
 
-        if room.visibility == .public {
+        if room.state.visibility == .public {
             lock.isHidden = true
         }
 
@@ -307,7 +316,7 @@ class RoomView: UIView {
         addSubview(bottomMuteButton)
         addSubview(shareRoomButton)
 
-        if room.visibility == .private {
+        if room.state.visibility == .private {
             shareRoomButton.isHidden = true
         }
 
@@ -369,15 +378,16 @@ class RoomView: UIView {
             emojis.centerXAnchor.constraint(equalTo: centerXAnchor),
         ])
 
-        muteButton.isSelected = room.isMuted
-        bottomMuteButton.isSelected = room.isMuted
+        let isMuted = me.muted
+        muteButton.isSelected = isMuted
+        bottomMuteButton.isSelected = isMuted
 
         room.mute()
 
-        if room.role != .admin {
+        if me.role != .admin {
             editNameButton.isHidden = true
 
-            if room.visibility == .private {
+            if room.state.visibility == .private {
                 inviteUsersButton.isHidden = true
             }
         }
@@ -454,13 +464,13 @@ class RoomView: UIView {
     @objc private func shareRoom() {
         tooltip.dismiss()
 
-        guard let id = room.id else {
+        if room.state.id == "" {
             return
         }
 
         let items: [Any] = [
             NSLocalizedString("join_me_in_room", comment: ""),
-            URL(string: "https://soapbox.social/room?id=" + String(id))!,
+            URL(string: "https://soapbox.social/room?id=" + room.state.id)!,
         ]
 
         let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
@@ -469,10 +479,6 @@ class RoomView: UIView {
     }
 
     @objc private func pasteLink() {
-        if room.role == .audience {
-            return
-        }
-
         var url: URL?
         if let pasted = UIPasteboard.general.url {
             url = pasted
@@ -504,7 +510,7 @@ class RoomView: UIView {
     }
 
     @objc private func exitTapped() {
-        if room.members.count == 0 {
+        if room.state.members.count == 1 {
             showExitAlert()
             return
         }
@@ -516,7 +522,7 @@ class RoomView: UIView {
         muteButton.isSelected.toggle()
         bottomMuteButton.isSelected.toggle()
 
-        if room.isMuted {
+        if me.muted {
             room.unmute()
         } else {
             room.mute()
@@ -585,11 +591,12 @@ class RoomView: UIView {
 
 extension RoomView: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if indexPath.item == 0 {
+        let id = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
+        if room.state.members[indexPath.item].id == Int64(id) {
             let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
             let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
                 DispatchQueue.main.async {
-                    self.delegate?.didSelectViewProfile(id: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))
+                    self.delegate?.didSelectViewProfile(id: id)
                 }
             })
             optionMenu.addAction(profileAction)
@@ -601,20 +608,20 @@ extension RoomView: UICollectionViewDelegate {
             return
         }
 
-        showMemberAction(for: room.members[indexPath.item - 1])
+        showMemberAction(for: room.state.members[indexPath.item])
     }
 
-    private func showMemberAction(for member: Room.Member) {
+    private func showMemberAction(for member: RoomState.RoomMember) {
         let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
         let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
             DispatchQueue.main.async {
-                self.delegate?.didSelectViewProfile(id: member.id)
+                self.delegate?.didSelectViewProfile(id: Int(member.id))
             }
         })
         optionMenu.addAction(profileAction)
 
-        if room.role == .admin {
+        if me.role == .admin {
             optionMenu.addAction(UIAlertAction(title: NSLocalizedString("mute_user", comment: ""), style: .default, handler: { _ in
                 self.room.mute(user: member.id)
             }))
@@ -660,29 +667,43 @@ extension RoomView: UICollectionViewDelegate {
 
 extension RoomView: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        // Adds the plus 1 for self.
-        return room.members.count + 1
+        return room.state.members.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withClass: RoomMemberCell.self, for: indexPath)
-        if indexPath.item == 0 {
-            // @todo this is a bit ugly
-            cell.setup(
-                name: UserDefaults.standard.string(forKey: UserDefaultsKeys.userDisplay) ?? "",
-                image: UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage) ?? "",
-                muted: room.isMuted,
-                role: room.role
-            )
-        } else {
-            cell.setup(member: room.members[indexPath.item - 1]) // @TODO apparently this can crash?
-        }
+
+        cell.setup(member: room.state.members[indexPath.item])
 
         return cell
     }
 }
 
 extension RoomView: RoomDelegate {
+    func userWasInvitedToBeAdmin(by: Int64) {
+        let title = NSLocalizedString("invited_to_be_admin_by", comment: "")
+
+        guard let member = room.state.members.first(where: { $0.id == by }) else {
+            return
+        }
+
+        let alert = UIAlertController(
+            title: String(format: title, member.displayName.firstName()),
+            message: NSLocalizedString("would_you_like_to_accept", comment: ""),
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .default, handler: { _ in
+            self.room.acceptInvite()
+        }))
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel))
+
+        DispatchQueue.main.async {
+            UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
+        }
+    }
+
     func wasMutedByAdmin() {
         DispatchQueue.main.async {
             self.muteButton.isSelected = true
@@ -691,7 +712,7 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func userDidReact(user: Int, reaction: Room.Reaction) {
+    func userDidReact(user: Int64, reaction: Room.Reaction) {
         DispatchQueue.main.async {
             guard let cells = self.members.visibleCells as? [RoomMemberCell] else {
                 return
@@ -707,14 +728,14 @@ extension RoomView: RoomDelegate {
         delegate?.roomWasClosedDueToError()
     }
 
-    func didChangeMemberMuteState(user _: Int, isMuted: Bool) {
+    func didChangeMemberMuteState(user _: Int64, isMuted: Bool) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
     }
 
     //  @todo for efficiency these should all only update the user that was changed
-    func userDidJoinRoom(user _: Int) {
+    func userDidJoinRoom(user _: Int64) {
         DispatchQueue.main.async {
             self.members.reloadData()
             self.userJoinFeedback.notificationOccurred(.success)
@@ -728,18 +749,18 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func userDidLeaveRoom(user _: Int) {
+    func userDidLeaveRoom(user _: Int64) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
     }
 
-    func didChangeUserRole(user: Int, role: Room.MemberRole) {
+    func didChangeUserRole(user: Int64, role: RoomState.RoomMember.Role) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
 
-        if user != UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
+        if user != Int64(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)) {
             return
         }
 
@@ -750,14 +771,14 @@ extension RoomView: RoomDelegate {
             } else {
                 self.hideEditNameButton()
 
-                if self.room.visibility == .private {
+                if self.room.state.visibility == .private {
                     self.hideInviteUserButton()
                 }
             }
         }
     }
 
-    func didChangeSpeakVolume(user: Int, volume: Float) {
+    func didChangeSpeakVolume(user: Int64, volume: Float) {
         DispatchQueue.main.async {
             guard let cells = self.members.visibleCells as? [RoomMemberCell] else {
                 return
@@ -769,7 +790,7 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func didReceiveLink(from: Int, link: URL) {
+    func didReceiveLink(from: Int64, link: URL) {
         links.append((from, link))
         if links.count == 1 {
             displayNextLink()
@@ -783,7 +804,7 @@ extension RoomView: RoomDelegate {
 
         var name = "you"
         if from != 0 {
-            guard let user = room.members.first(where: { $0.id == from }) else {
+            guard let user = room.state.members.first(where: { $0.id == from }) else {
                 return
             }
 
@@ -807,8 +828,8 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func userDidRecordScreen(_ user: Int) {
-        guard let user = room.members.first(where: { $0.id == user }) else {
+    func userDidRecordScreen(_ user: Int64) {
+        guard let user = room.state.members.first(where: { $0.id == user }) else {
             return
         }
 

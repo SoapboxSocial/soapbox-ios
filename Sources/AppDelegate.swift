@@ -122,11 +122,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func handleRoomURL(components: URLComponents) -> Bool {
-        guard let param = components.queryItems?.first(where: { $0.name == "id" }), let str = param.value else {
-            return false
-        }
-
-        guard let room = Int(str) else {
+        guard let param = components.queryItems?.first(where: { $0.name == "id" }), let room = param.value else {
             return false
         }
 
@@ -160,7 +156,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         presenter.output = viewController
 
         let nav = NavigationViewController(rootViewController: viewController)
-        let interactor = HomeInteractor(output: presenter, service: ServiceFactory.createRoomService(), controller: nav, api: APIClient())
+        let interactor = HomeInteractor(output: presenter, controller: nav, api: APIClient(), room: RoomAPIClient())
         viewController.output = interactor
 
         nav.roomControllerDelegate = interactor
@@ -291,7 +287,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
             switch category {
             case "NEW_ROOM", "ROOM_JOINED", "ROOM_INVITE":
-                guard let id = args["id"] as? Int else {
+                guard let id = args["id"] as? String else {
                     return
                 }
 
