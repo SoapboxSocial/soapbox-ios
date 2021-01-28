@@ -175,14 +175,7 @@ class RoomView: UIView {
 
         room.delegate = self
 
-        name.text = {
-            if room.state.name != "" {
-                return room.state.name
-            }
-
-            return NSLocalizedString("current_room", comment: "")
-
-        }()
+        roomWasRenamed(room.state.name)
 
         translatesAutoresizingMaskIntoConstraints = false
 
@@ -745,6 +738,11 @@ extension RoomView: RoomDelegate {
 
     func roomWasRenamed(_ name: String) {
         DispatchQueue.main.async {
+            if name == "" {
+                self.name.text = NSLocalizedString("current_room", comment: "")
+                return
+            }
+
             self.name.text = name
         }
     }
