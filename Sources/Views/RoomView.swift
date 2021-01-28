@@ -216,10 +216,6 @@ class RoomView: UIView {
             lock.widthAnchor.constraint(equalToConstant: 20),
         ])
 
-        if room.state.visibility == .public {
-            lock.isHidden = true
-        }
-
         let topButtonStack = UIStackView()
         topButtonStack.axis = .horizontal
         topButtonStack.spacing = 20
@@ -309,10 +305,6 @@ class RoomView: UIView {
         addSubview(bottomMuteButton)
         addSubview(shareRoomButton)
 
-        if room.state.visibility == .private {
-            shareRoomButton.isHidden = true
-        }
-
         buttonStack.addArrangedSubview(editNameButton)
         buttonStack.addArrangedSubview(inviteUsersButton)
 
@@ -379,11 +371,9 @@ class RoomView: UIView {
 
         if me.role != .admin {
             editNameButton.isHidden = true
-
-            if room.state.visibility == .private {
-                inviteUsersButton.isHidden = true
-            }
         }
+
+        visibilityUpdated(visibility: room.state.visibility)
     }
 
     override func layoutSubviews() {
@@ -840,6 +830,27 @@ extension RoomView: RoomDelegate {
             )
 
             banner.show()
+        }
+    }
+
+    func visibilityUpdated(visibility: Visibility) {
+        DispatchQueue.main.async {
+            switch visibility {
+            case .private:
+                self.lock.isHidden = false
+                self.shareRoomButton.isHidden = true
+
+                if self.me.role != .admin {
+                    self.inviteUsersButton.isHidden = true
+                }
+
+            case .public:
+                self.lock.isHidden = true
+                self.shareRoomButton.isHidden = false
+                self.inviteUsersButton.isHidden = false
+            default:
+                return
+            }
         }
     }
 }

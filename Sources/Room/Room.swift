@@ -15,6 +15,7 @@ protocol RoomDelegate {
     func roomWasRenamed(_ name: String)
     func userDidRecordScreen(_ user: Int64)
     func wasMutedByAdmin()
+    func visibilityUpdated(visibility: Visibility)
 }
 
 enum RoomError: Error {
@@ -195,6 +196,8 @@ extension Room {
             on(removedAdmin: evt)
         case let .renamedRoom(evt):
             on(roomRenamed: evt)
+        case let .visibilityUpdated(evt):
+            on(visibilityUpdated: evt)
         case .none:
             break
         }
@@ -260,6 +263,11 @@ extension Room {
 
     private func on(recordedScreen id: Int64) {
         delegate?.userDidRecordScreen(id)
+    }
+
+    private func on(visibilityUpdated: Event.VisibilityUpdated) {
+        state.visibility = visibilityUpdated.visibility
+        delegate?.visibilityUpdated(visibility: visibilityUpdated.visibility)
     }
 
     private func onMutedByAdmin() {
