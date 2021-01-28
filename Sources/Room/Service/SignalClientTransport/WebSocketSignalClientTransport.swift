@@ -64,10 +64,24 @@ class WebSocketSignalClientTransport: NSObject, SignalClientTransport {
             }
         }
     }
+
+    private func ping() {
+        socket?.sendPing { error in
+            if let error = error {
+                debugPrint("err sending PING \(error)")
+                return
+            }
+
+            DispatchQueue.global().asyncAfter(deadline: .now() + 30) {
+                self.ping()
+            }
+        }
+    }
 }
 
 extension WebSocketSignalClientTransport: URLSessionWebSocketDelegate, URLSessionDelegate {
     func urlSession(_: URLSession, webSocketTask _: URLSessionWebSocketTask, didOpenWithProtocol _: String?) {
+        ping()
         delegate?.signalClientTransportDidConnect(self)
     }
 
