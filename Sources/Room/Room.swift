@@ -23,8 +23,6 @@ enum RoomError: Error {
     case closed
 }
 
-// @TODO THIS ENTIRE THING SHOULD BE REFACTORED SO WE HANDLE WEBRTC AND GRPC NICER, EG ERRORS.
-
 class Room {
     typealias ConnectionCompletion = ((Result<Void, RoomError>) -> Void)
 

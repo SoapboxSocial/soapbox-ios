@@ -116,11 +116,6 @@ final class RoomClient {
                 return
             }
 
-            // @TODO:
-            // https://github.com/pion/ion-sdk-js/blob/master/src/client.ts#L180-L181
-
-            // @TODO I THINK THIS IS BROKEN?
-
             stream.answer(completion: { answer in
                 self.signalClient.answer(description: answer)
             })
@@ -180,21 +175,25 @@ extension RoomClient: SignalingClientDelegate {
         }
     }
 
-    // @TODO THESE 2 SHOULD BE THE SAME
-
     func signalClient(_: SignalingClient, didReceiveJoinReply join: JoinReply) {
-        delegate?.roomClient(self, didReceiveState: join.room) // @TODO SHOULD PROBABLY BE INSIDE THE SET
+        set(remoteDescription: join.description_p, for: .publisher, completion: { err in
+            if let err != nil {
+                self.delegate?.roomClient(self, failedToConnect: .rtcFailure)
+                return
+            }
 
-        set(remoteDescription: join.description_p, for: .publisher, completion: { _ in
-            // @TODO
+            self.delegate?.roomClient(self, didReceiveState: join.room)
         })
     }
 
     func signalClient(_: SignalingClient, didReceiveCreateReply create: CreateReply) {
-        delegate?.room(id: create.id)
-
         set(remoteDescription: create.description_p, for: .publisher, completion: { _ in
-            // @TODO
+            if let err != nil {
+                self.delegate?.roomClient(self, failedToConnect: .rtcFailure)
+                return
+            }
+
+            self.delegate?.room(id: create.id)
         })
     }
 
