@@ -155,6 +155,14 @@ struct Command {
     set {payload = .recordScreen(newValue)}
   }
 
+  var visibilityUpdate: Command.VisibilityUpdate {
+    get {
+      if case .visibilityUpdate(let v)? = payload {return v}
+      return Command.VisibilityUpdate()
+    }
+    set {payload = .visibilityUpdate(newValue)}
+  }
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum OneOf_Payload: Equatable {
@@ -169,6 +177,7 @@ struct Command {
     case kickUser(Command.KickUser)
     case muteUser(Command.MuteUser)
     case recordScreen(Command.RecordScreen)
+    case visibilityUpdate(Command.VisibilityUpdate)
 
   #if !swift(>=4.1)
     static func ==(lhs: Command.OneOf_Payload, rhs: Command.OneOf_Payload) -> Bool {
@@ -184,6 +193,7 @@ struct Command {
       case (.kickUser(let l), .kickUser(let r)): return l == r
       case (.muteUser(let l), .muteUser(let r)): return l == r
       case (.recordScreen(let l), .recordScreen(let r)): return l == r
+      case (.visibilityUpdate(let l), .visibilityUpdate(let r)): return l == r
       default: return false
       }
     }
@@ -318,6 +328,18 @@ struct Command {
     init() {}
   }
 
+  struct VisibilityUpdate {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var visibility: Visibility = .public
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
   init() {}
 }
 
@@ -418,6 +440,14 @@ struct Event {
     set {payload = .mutedByAdmin(newValue)}
   }
 
+  var visibilityUpdated: Event.VisibilityUpdated {
+    get {
+      if case .visibilityUpdated(let v)? = payload {return v}
+      return Event.VisibilityUpdated()
+    }
+    set {payload = .visibilityUpdated(newValue)}
+  }
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum OneOf_Payload: Equatable {
@@ -432,6 +462,7 @@ struct Event {
     case renamedRoom(Event.RenamedRoom)
     case recordedScreen(Event.RecordedScreen)
     case mutedByAdmin(Event.MutedByAdmin)
+    case visibilityUpdated(Event.VisibilityUpdated)
 
   #if !swift(>=4.1)
     static func ==(lhs: Event.OneOf_Payload, rhs: Event.OneOf_Payload) -> Bool {
@@ -447,6 +478,7 @@ struct Event {
       case (.renamedRoom(let l), .renamedRoom(let r)): return l == r
       case (.recordedScreen(let l), .recordedScreen(let r)): return l == r
       case (.mutedByAdmin(let l), .mutedByAdmin(let r)): return l == r
+      case (.visibilityUpdated(let l), .visibilityUpdated(let r)): return l == r
       default: return false
       }
     }
@@ -588,6 +620,18 @@ struct Event {
     // methods supported on all messages.
 
     var id: Int64 = 0
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct VisibilityUpdated {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var visibility: Visibility = .public
 
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -765,6 +809,7 @@ extension Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
     9: .same(proto: "kickUser"),
     10: .same(proto: "muteUser"),
     11: .same(proto: "recordScreen"),
+    12: .same(proto: "visibilityUpdate"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -858,6 +903,14 @@ extension Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .recordScreen(v)}
+      case 12:
+        var v: Command.VisibilityUpdate?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .visibilityUpdate(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .visibilityUpdate(v)}
       default: break
       }
     }
@@ -887,6 +940,8 @@ extension Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
       try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
     case .recordScreen(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
+    case .visibilityUpdate(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 12)
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -1198,6 +1253,35 @@ extension Command.RecordScreen: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
   }
 }
 
+extension Command.VisibilityUpdate: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Command.protoMessageName + ".VisibilityUpdate"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "visibility"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularEnumField(value: &self.visibility)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.visibility != .public {
+      try visitor.visitSingularEnumField(value: self.visibility, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Command.VisibilityUpdate, rhs: Command.VisibilityUpdate) -> Bool {
+    if lhs.visibility != rhs.visibility {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
 extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "Event"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -1213,6 +1297,7 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
     10: .same(proto: "renamedRoom"),
     11: .same(proto: "recordedScreen"),
     12: .same(proto: "mutedByAdmin"),
+    13: .same(proto: "visibilityUpdated"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1307,6 +1392,14 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .mutedByAdmin(v)}
+      case 13:
+        var v: Event.VisibilityUpdated?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .visibilityUpdated(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .visibilityUpdated(v)}
       default: break
       }
     }
@@ -1339,6 +1432,8 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
       try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
     case .mutedByAdmin(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 12)
+    case .visibilityUpdated(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 13)
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -1666,6 +1761,35 @@ extension Event.MutedByAdmin: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
 
   static func ==(lhs: Event.MutedByAdmin, rhs: Event.MutedByAdmin) -> Bool {
     if lhs.id != rhs.id {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Event.VisibilityUpdated: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Event.protoMessageName + ".VisibilityUpdated"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "visibility"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularEnumField(value: &self.visibility)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.visibility != .public {
+      try visitor.visitSingularEnumField(value: self.visibility, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Event.VisibilityUpdated, rhs: Event.VisibilityUpdated) -> Bool {
+    if lhs.visibility != rhs.visibility {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
