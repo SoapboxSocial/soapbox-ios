@@ -56,14 +56,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return false
         }
 
+        if url.pathComponents.count < 2 {
+            return false
+        }
+
         switch url.host {
         case "room":
-            return handleRoomURL(components: components)
+            return handleRoomURL(room: url.pathComponents[1])
         case "user":
-            if url.pathComponents.count < 2 {
-                return false
-            }
-
             return handleUserURL(username: url.pathComponents[1])
         default:
             return false
@@ -93,7 +93,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         case "login-pin":
             return handlePinURL(components: components)
         case "room":
-            return handleRoomURL(components: components)
+            if pathComponents.count < 3 {
+                return false
+            }
+
+            return handleRoomURL(room: pathComponents[2])
         case "user":
             if pathComponents.count < 3 {
                 return false
@@ -121,11 +125,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return auth.inject(pin: pin)
     }
 
-    private func handleRoomURL(components: URLComponents) -> Bool {
-        guard let param = components.queryItems?.first(where: { $0.name == "id" }), let room = param.value else {
-            return false
-        }
-
+    private func handleRoomURL(room: String) -> Bool {
         guard let nav = window?.rootViewController as? NavigationViewController else {
             return false
         }
