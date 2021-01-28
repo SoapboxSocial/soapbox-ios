@@ -468,7 +468,7 @@ class RoomView: UIView {
 
         let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
         ac.excludedActivityTypes = [.markupAsPDF, .openInIBooks, .addToReadingList, .assignToContact]
-        UIApplication.shared.keyWindow?.rootViewController!.present(ac, animated: true)
+        window!.rootViewController!.present(ac, animated: true)
     }
 
     @objc private func pasteLink() {
@@ -499,7 +499,7 @@ class RoomView: UIView {
 
         alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel, handler: nil))
 
-        UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
+        window!.rootViewController!.present(alert, animated: true)
     }
 
     @objc private func exitTapped() {
@@ -535,7 +535,7 @@ class RoomView: UIView {
             confirm: NSLocalizedString("leave_room", comment: "")
         )
 
-        UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
+        window!.rootViewController!.present(alert, animated: true)
     }
 
     private func exitRoom() {
@@ -571,11 +571,11 @@ class RoomView: UIView {
         let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
         alert.addAction(cancel)
 
-        UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
+        window!.rootViewController!.present(alert, animated: true)
     }
 
     @objc private func inviteTapped() {
-        UIApplication.shared.keyWindow?.rootViewController!.present(
+        window!.rootViewController!.present(
             SceneFactory.createInviteFriendsListViewController(room: room),
             animated: true
         )
@@ -597,7 +597,7 @@ extension RoomView: UICollectionViewDelegate {
             let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
             optionMenu.addAction(cancel)
 
-            UIApplication.shared.keyWindow?.rootViewController!.present(optionMenu, animated: true)
+            window!.rootViewController!.present(optionMenu, animated: true)
             return
         }
 
@@ -645,7 +645,7 @@ extension RoomView: UICollectionViewDelegate {
                     )
 
                     DispatchQueue.main.async {
-                        UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
+                        self.window!.rootViewController!.present(alert, animated: true)
                     }
                 })
             )
@@ -654,7 +654,7 @@ extension RoomView: UICollectionViewDelegate {
         let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
         optionMenu.addAction(cancel)
 
-        UIApplication.shared.keyWindow?.rootViewController!.present(optionMenu, animated: true)
+        window!.rootViewController!.present(optionMenu, animated: true)
     }
 }
 
@@ -693,7 +693,7 @@ extension RoomView: RoomDelegate {
         alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel))
 
         DispatchQueue.main.async {
-            UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
+            self.window!.rootViewController!.present(alert, animated: true)
         }
     }
 
