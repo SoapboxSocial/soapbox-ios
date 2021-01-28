@@ -16,6 +16,7 @@ final class SignalingClient {
 
     enum Error: Swift.Error {
         case general
+        case signal(SignalReply.Error)
     }
 
     init(transport: SignalClientTransport) {
@@ -100,6 +101,8 @@ final class SignalingClient {
             delegate?.signalClient(self, didReceiveDescription: description)
         case let .trickle(trickle):
             delegate?.signalClient(self, didReceiveTrickle: trickle)
+        case let .error(error):
+            delegate?.signalClient(self, failedWithError: .signal(error))
         case .none:
             break
         }

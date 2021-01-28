@@ -315,11 +315,17 @@ extension Room: RoomClientDelegate {
     }
 
     // @TODO
-    func roomClient(_: RoomClient, failedToConnect _: RoomClient.Error) {
-        // @TODO THIS SHOULD BE IF CREATE gets an error
-//        if let completion = self.completion {
-//            return completion(.failure(.general))
-//        }
+    func roomClient(_: RoomClient, failedToConnect error: RoomClient.Error) {
+        if let completion = self.completion {
+            switch error {
+            case .fullRoom:
+                return completion(.failure(.fullRoom))
+            case .closed:
+                return completion(.failure(.closed))
+            default:
+                return completion(.failure(.general))
+            }
+        }
     }
 
     func roomClientDidDisconnect(_: RoomClient) {

@@ -25,6 +25,8 @@ final class RoomClient {
         case rtcFailure
         case invalidSdpType
         case targetNotFound
+        case fullRoom
+        case closed
     }
 
     init(signal: SignalingClient, iceServers: [RTCIceServer]) {
@@ -177,7 +179,7 @@ extension RoomClient: SignalingClientDelegate {
 
     func signalClient(_: SignalingClient, didReceiveJoinReply join: JoinReply) {
         set(remoteDescription: join.description_p, for: .publisher, completion: { err in
-            if let err != nil {
+            if err != nil {
                 self.delegate?.roomClient(self, failedToConnect: .rtcFailure)
                 return
             }
@@ -187,8 +189,8 @@ extension RoomClient: SignalingClientDelegate {
     }
 
     func signalClient(_: SignalingClient, didReceiveCreateReply create: CreateReply) {
-        set(remoteDescription: create.description_p, for: .publisher, completion: { _ in
-            if let err != nil {
+        set(remoteDescription: create.description_p, for: .publisher, completion: { err in
+            if err != nil {
                 self.delegate?.roomClient(self, failedToConnect: .rtcFailure)
                 return
             }
@@ -197,9 +199,22 @@ extension RoomClient: SignalingClientDelegate {
         })
     }
 
-    func signalClient(_: SignalingClient, failedWithError _: SignalingClient.Error) {
+    func signalClient(_: SignalingClient, failedWithError error: SignalingClient.Error) {
         close()
-        delegate?.roomClientDidDisconnect(self)
+
+        switch error {
+        case .general:
+            delegate?.roomClientDidDisconnect(self)
+        case let .signal(err):
+            switch err {
+            case .closed:
+                delegate?.roomClient(self, failedToConnect: .closed)
+            case .full:
+                delegate?.roomClient(self, failedToConnect: .fullRoom)
+            default:
+                delegate?.roomClient(self, failedToConnect: .rtcFailure)
+            }
+        }
     }
 }
 

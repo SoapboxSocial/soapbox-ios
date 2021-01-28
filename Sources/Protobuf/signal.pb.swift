@@ -126,6 +126,14 @@ struct SignalReply {
     set {payload = .trickle(newValue)}
   }
 
+  var error: SignalReply.Error {
+    get {
+      if case .error(let v)? = payload {return v}
+      return .closed
+    }
+    set {payload = .error(newValue)}
+  }
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum OneOf_Payload: Equatable {
@@ -133,6 +141,7 @@ struct SignalReply {
     case create(CreateReply)
     case description_p(SessionDescription)
     case trickle(Trickle)
+    case error(SignalReply.Error)
 
   #if !swift(>=4.1)
     static func ==(lhs: SignalReply.OneOf_Payload, rhs: SignalReply.OneOf_Payload) -> Bool {
@@ -141,14 +150,59 @@ struct SignalReply {
       case (.create(let l), .create(let r)): return l == r
       case (.description_p(let l), .description_p(let r)): return l == r
       case (.trickle(let l), .trickle(let r)): return l == r
+      case (.error(let l), .error(let r)): return l == r
       default: return false
       }
     }
   #endif
   }
 
+  enum Error: SwiftProtobuf.Enum {
+    typealias RawValue = Int
+    case closed // = 0
+    case full // = 1
+    case notInvited // = 2
+    case UNRECOGNIZED(Int)
+
+    init() {
+      self = .closed
+    }
+
+    init?(rawValue: Int) {
+      switch rawValue {
+      case 0: self = .closed
+      case 1: self = .full
+      case 2: self = .notInvited
+      default: self = .UNRECOGNIZED(rawValue)
+      }
+    }
+
+    var rawValue: Int {
+      switch self {
+      case .closed: return 0
+      case .full: return 1
+      case .notInvited: return 2
+      case .UNRECOGNIZED(let i): return i
+      }
+    }
+
+  }
+
   init() {}
 }
+
+#if swift(>=4.2)
+
+extension SignalReply.Error: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  static var allCases: [SignalReply.Error] = [
+    .closed,
+    .full,
+    .notInvited,
+  ]
+}
+
+#endif  // swift(>=4.2)
 
 struct JoinRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
@@ -439,6 +493,7 @@ extension SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     3: .same(proto: "create"),
     4: .same(proto: "description"),
     5: .same(proto: "trickle"),
+    6: .same(proto: "error"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -477,6 +532,11 @@ extension SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .trickle(v)}
+      case 6:
+        if self.payload != nil {try decoder.handleConflictingOneOf()}
+        var v: SignalReply.Error?
+        try decoder.decodeSingularEnumField(value: &v)
+        if let v = v {self.payload = .error(v)}
       default: break
       }
     }
@@ -495,6 +555,8 @@ extension SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
       try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
     case .trickle(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+    case .error(let v)?:
+      try visitor.visitSingularEnumField(value: v, fieldNumber: 6)
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -506,6 +568,14 @@ extension SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
+}
+
+extension SignalReply.Error: SwiftProtobuf._ProtoNameProviding {
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "CLOSED"),
+    1: .same(proto: "FULL"),
+    2: .same(proto: "NOT_INVITED"),
+  ]
 }
 
 extension JoinRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
