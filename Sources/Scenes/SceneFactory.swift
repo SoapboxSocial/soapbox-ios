@@ -22,11 +22,11 @@ class SceneFactory {
         return viewController
     }
 
-    static func createProfileViewController(id: Int) -> ProfileViewController {
+    static func createProfileViewController(id: Int? = nil, username: String? = nil) -> ProfileViewController {
         let viewController = ProfileViewController()
         let presenter = ProfilePresenter(output: viewController)
 
-        let interactor = ProfileInteractor(output: presenter, api: APIClient(), user: id)
+        let interactor = ProfileInteractor(output: presenter, api: APIClient(), user: id, username: username)
         viewController.output = interactor
 
         return viewController
@@ -90,5 +90,9 @@ class SceneFactory {
         viewController.output = interactor
 
         return viewController
+    }
+
+    static func createSettingsViewController() -> SettingsViewController {
+        return SettingsViewController()
     }
 }

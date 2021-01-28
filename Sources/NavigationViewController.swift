@@ -45,11 +45,6 @@ class NavigationViewController: UINavigationController {
 
         view.backgroundColor = .background
 
-        createRoomButton.frame = CGRect(
-            origin: CGPoint(x: view.frame.size.width / 2 - (70 / 2), y: view.frame.size.height - (90 + view.safeAreaInsets.bottom)),
-            size: createRoomButton.frame.size
-        )
-
         createRoomButton.addTarget(self, action: #selector(didTapCreateRoom), for: .touchUpInside)
         view.addSubview(createRoomButton)
 
@@ -64,6 +59,11 @@ class NavigationViewController: UINavigationController {
         navigationBar.isTranslucent = false
         navigationBar.barTintColor = .background
         navigationBar.tintColor = .brandColor
+
+        NSLayoutConstraint.activate([
+            createRoomButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            createRoomButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+        ])
     }
 
     @objc func didTapCreateRoom() {
@@ -210,11 +210,11 @@ extension NavigationViewController: RoomViewDelegate {
 }
 
 extension NavigationViewController: RoomController {
-    func didSelect(room id: Int) {
+    func didSelect(room id: String) {
         if activityIndicator.isAnimating {
             return
         }
-        if room != nil, let roomid = room?.id, id == roomid {
+        if room != nil, let roomid = room?.state.id, id == roomid {
             presentCurrentRoom()
             return
         }
@@ -333,7 +333,7 @@ extension NavigationViewController: RoomCreationDelegate {
                         self.room = nil
                         return self.showNetworkError()
                     case .success:
-                        if let id = self.room?.id {
+                        if let id = self.room?.state.id {
                             self.roomControllerDelegate?.didJoin(room: id)
                         }
 

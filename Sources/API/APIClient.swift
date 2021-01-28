@@ -1,54 +1,8 @@
 import Alamofire
 import Foundation
 import KeychainAccess
-import WebRTC
 
-class APIClient {
-    // @todo put elsewhere?
-    private var token: String? {
-        guard let identifier = Bundle.main.bundleIdentifier else {
-            fatalError("no identifier")
-        }
-
-        let keychain = Keychain(service: identifier)
-        return keychain[string: "token"]
-    }
-
-    enum ErrorCode: Int, Decodable {
-        case invalidRequestBody
-        case missingParameter
-        case failedToRegister
-        case invalidEmail
-        case invalidUsername
-        case usernameAlreadyExists
-        case failedToLogin
-        case incorrectPin
-        case userNotFound
-        case failedToGetUser
-        case failedToGetFollowers
-        case unauthorized
-        case failedToStoreDevice
-        case notFound
-        case notAllowed
-    }
-
-    struct ErrorResponse: Decodable {
-        let code: ErrorCode
-        let message: String
-    }
-
-    enum Error: Swift.Error {
-        case preprocessing
-        case decode
-        case requestFailed
-        case endpoint(ErrorResponse)
-        case other(AFError)
-    }
-
-    let decoder = JSONDecoder()
-}
-
-extension APIClient {
+class APIClient: Client {
     enum LoginState: String, Decodable {
         case register
         case success
@@ -83,10 +37,15 @@ extension APIClient {
         let state: LoginState
         let expiresIn: Int?
         let user: User?
+        let token: String?
 
         private enum CodingKeys: String, CodingKey {
-            case state, expiresIn = "expires_in", user
+            case state, expiresIn = "expires_in", user, token
         }
+    }
+
+    init() {
+        super.init(url: Configuration.rootURL)
     }
 
     func login(email: String, callback: @escaping (Result<String, Error>) -> Void) {
@@ -103,6 +62,21 @@ extension APIClient {
                         }
 
                         callback(.success(token))
+                    }
+                })
+            }
+    }
+
+    func login(apple: String, callback: @escaping (Result<(LoginState, User?, Int?, String?), Error>) -> Void) {
+        AF.request(Configuration.rootURL.appendingPathComponent("/v1/login/start/apple"), method: .post, parameters: ["token": apple], encoding: URLEncoding.default)
+            .validate()
+            .response { result in
+                self.decodable(result, callback: { (result: Result<PinEntryResponse, Error>) in
+                    switch result {
+                    case let .failure(error):
+                        callback(.failure(error))
+                    case let .success(data):
+                        callback(.success((data.state, data.user, data.expiresIn, data.token)))
                     }
                 })
             }
@@ -174,10 +148,11 @@ extension APIClient {
         var isFollowing: Bool?
         let image: String
         let currentRoom: Int?
+        var isBlocked: Bool?
         let linkedAccounts: [LinkedAccount]
 
         private enum CodingKeys: String, CodingKey {
-            case id, displayName = "display_name", username, followers, following, followedBy = "followed_by", isFollowing = "is_following", image, currentRoom = "current_room", bio, linkedAccounts = "linked_accounts"
+            case id, displayName = "display_name", username, followers, following, followedBy = "followed_by", isFollowing = "is_following", image, currentRoom = "current_room", bio, linkedAccounts = "linked_accounts", isBlocked = "is_blocked"
         }
     }
 
@@ -188,6 +163,10 @@ extension APIClient {
 
     func user(id: Int, callback: @escaping (Result<Profile, Error>) -> Void) {
         get(path: "/v1/users/" + String(id), callback: callback)
+    }
+
+    func user(name: String, callback: @escaping (Result<Profile, Error>) -> Void) {
+        get(path: "/v1/users/" + name, callback: callback)
     }
 
     func editProfile(displayName: String, image: UIImage?, bio: String, callback: @escaping (Result<Bool, Error>) -> Void) {
@@ -263,8 +242,8 @@ extension APIClient {
 extension APIClient {
     typealias UserListFunc = (_ id: Int, _ limit: Int, _ offset: Int, _ callback: @escaping (Result<[User], Error>) -> Void) -> Void
 
-    func friends(_ callback: @escaping (Result<[User], Error>) -> Void) {
-        userListRequest("/v1/users/friends", callback: callback)
+    func friends(id: Int, _ callback: @escaping (Result<[User], Error>) -> Void) {
+        userListRequest("/v1/users/" + String(id) + "/friends", callback: callback)
     }
 
     func followers(_ id: Int, _ limit: Int, _ offset: Int, _ callback: @escaping (Result<[User], Error>) -> Void) {
@@ -519,67 +498,11 @@ extension APIClient {
 }
 
 extension APIClient {
-    private func get<T: Decodable>(path: String, parameters: Parameters? = nil, callback: @escaping (Result<T, Error>) -> Void) {
-        AF.request(
-            Configuration.rootURL.appendingPathComponent(path),
-            method: .get,
-            parameters: parameters,
-            encoding: URLEncoding.default,
-            headers: ["Authorization": self.token!]
-        )
-        .validate()
-        .response { result in
-            self.decodable(result, callback: callback)
-        }
+    func block(user: Int, callback: @escaping (Result<Void, Error>) -> Void) {
+        post(path: "/v1/blocks/create", parameters: ["id": user], callback: callback)
     }
 
-    private func post(path: String, parameters: Parameters? = nil, callback: @escaping (Result<Void, Error>) -> Void) {
-        void(path: path, method: .post, parameters: parameters, callback: callback)
-    }
-
-    private func void(path: String, method: HTTPMethod, parameters: Parameters? = nil, callback: @escaping (Result<Void, Error>) -> Void) {
-        AF.request(
-            Configuration.rootURL.appendingPathComponent(path),
-            method: method,
-            parameters: parameters,
-            encoding: URLEncoding.default,
-            headers: ["Authorization": self.token!]
-        )
-        .validate()
-        .response { result in
-            if let err = self.validate(result) {
-                return callback(.failure(err))
-            }
-
-            return callback(.success(()))
-        }
-    }
-
-    private func decodable<T: Decodable>(_ response: AFDataResponse<Data?>, callback: @escaping (Result<T, Error>) -> Void) {
-        if let err = validate(response) {
-            return callback(.failure(err))
-        }
-
-        do {
-            return callback(.success(try decoder.decode(T.self, from: response.data!)))
-        } catch {
-            return callback(.failure(.decode))
-        }
-    }
-
-    private func validate(_ response: AFDataResponse<Data?>) -> Error? {
-        guard case let .failure(err) = response.result else {
-            return nil
-        }
-
-        guard let data = response.data else {
-            return .other(err)
-        }
-
-        do {
-            return .endpoint(try decoder.decode(ErrorResponse.self, from: data))
-        } catch {
-            return (.other(err))
-        }
+    func unblock(user: Int, callback: @escaping (Result<Void, Error>) -> Void) {
+        void(path: "/v1/blocks/", method: .delete, parameters: ["id": user], callback: callback)
     }
 }

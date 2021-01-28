@@ -48,7 +48,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_: UIApplication, open url: URL, options _: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        return Swifter.handleOpenURL(url, callbackURL: URL(string: "soapbox://")!)
+        if url.host == "twitter" {
+            return Swifter.handleOpenURL(url, callbackURL: URL(string: "soapbox://")!)
+        }
+
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
+            return false
+        }
+
+        switch url.host {
+        case "room":
+            return handleRoomURL(components: components)
+        case "user":
+            if url.pathComponents.count < 2 {
+                return false
+            }
+
+            return handleUserURL(username: url.pathComponents[1])
+        default:
+            return false
+        }
     }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
@@ -61,21 +80,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_: UIApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
             let incomingURL = userActivity.webpageURL,
-            let components = NSURLComponents(url: incomingURL, resolvingAgainstBaseURL: true) else {
+            let components = URLComponents(url: incomingURL, resolvingAgainstBaseURL: true) else {
             return false
         }
 
-        switch components.path {
-        case "/login-pin":
+        let pathComponents = incomingURL.pathComponents
+        if pathComponents.count < 2 {
+            return false
+        }
+
+        switch pathComponents[1] {
+        case "login-pin":
             return handlePinURL(components: components)
-        case "/room":
+        case "room":
             return handleRoomURL(components: components)
+        case "user":
+            if pathComponents.count < 3 {
+                return false
+            }
+
+            return handleUserURL(username: pathComponents[2])
         default:
             return false
         }
     }
 
-    private func handlePinURL(components: NSURLComponents) -> Bool {
+    private func handlePinURL(components: URLComponents) -> Bool {
         guard let param = components.queryItems?.first(where: { $0.name == "pin" }), let pin = param.value else {
             return false
         }
@@ -91,12 +121,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return auth.inject(pin: pin)
     }
 
-    private func handleRoomURL(components: NSURLComponents) -> Bool {
-        guard let param = components.queryItems?.first(where: { $0.name == "id" }), let str = param.value else {
-            return false
-        }
-
-        guard let room = Int(str) else {
+    private func handleRoomURL(components: URLComponents) -> Bool {
+        guard let param = components.queryItems?.first(where: { $0.name == "id" }), let room = param.value else {
             return false
         }
 
@@ -105,6 +131,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         nav.didSelect(room: room)
+        return true
+    }
+
+    private func handleUserURL(username: String) -> Bool {
+        guard let nav = window?.rootViewController as? NavigationViewController else {
+            return false
+        }
+
+        nav.pushViewController(SceneFactory.createProfileViewController(username: username), animated: true)
         return true
     }
 
@@ -121,7 +156,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         presenter.output = viewController
 
         let nav = NavigationViewController(rootViewController: viewController)
-        let interactor = HomeInteractor(output: presenter, service: ServiceFactory.createRoomService(), controller: nav, api: APIClient())
+        let interactor = HomeInteractor(output: presenter, controller: nav, api: APIClient(), room: RoomAPIClient())
         viewController.output = interactor
 
         nav.roomControllerDelegate = interactor
@@ -140,7 +175,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let siren = Siren.shared
         siren.rulesManager = RulesManager(
             majorUpdateRules: .critical,
-            minorUpdateRules: .annoying,
+            minorUpdateRules: .default,
             patchUpdateRules: .default,
             revisionUpdateRules: Rules(promptFrequency: .immediately, forAlertType: .option)
         )
@@ -252,7 +287,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
             switch category {
             case "NEW_ROOM", "ROOM_JOINED", "ROOM_INVITE":
-                guard let id = args["id"] as? Int else {
+                guard let id = args["id"] as? String else {
                     return
                 }
 

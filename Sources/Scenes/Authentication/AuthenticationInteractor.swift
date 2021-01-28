@@ -1,3 +1,4 @@
+import AuthenticationServices
 import Foundation
 import KeychainAccess
 import UIWindowTransitions
@@ -8,7 +9,7 @@ protocol AuthenticationInteractorOutput {
     func presentLoggedInView()
 }
 
-class AuthenticationInteractor: AuthenticationViewControllerOutput {
+class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
     private let output: AuthenticationInteractorOutput
     private let api: APIClient
 
@@ -25,6 +26,7 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
     init(output: AuthenticationInteractorOutput, api: APIClient) {
         self.output = output
         self.api = api
+        super.init()
     }
 
     func login(email: String?) {
@@ -46,6 +48,15 @@ class AuthenticationInteractor: AuthenticationViewControllerOutput {
                 self.output.present(state: .pin)
             }
         }
+    }
+
+    func loginWithApple() {
+        let request = ASAuthorizationAppleIDProvider().createRequest()
+        request.requestedScopes = [.fullName, .email]
+
+        let authController = ASAuthorizationController(authorizationRequests: [request])
+        authController.delegate = self
+        authController.performRequests()
     }
 
     func submitPin(pin: String?) {
@@ -176,5 +187,57 @@ extension AuthenticationInteractor: NotificationManagerDelegate {
 
     func deviceTokenWasSet() {
         output.present(state: .follow)
+    }
+}
+
+extension AuthenticationInteractor: ASAuthorizationControllerDelegate {
+    func authorizationController(controller _: ASAuthorizationController, didCompleteWithError error: Error) {
+        output.present(error: .general)
+    }
+
+    func authorizationController(controller _: ASAuthorizationController, didCompleteWithAuthorization auth: ASAuthorization) {
+        guard let credential = auth.credential as? ASAuthorizationAppleIDCredential else {
+            return output.present(error: .general)
+        }
+
+        guard let code = credential.authorizationCode else {
+            return output.present(error: .general)
+        }
+
+        guard let token = String(data: code, encoding: .utf8) else {
+            return output.present(error: .general)
+        }
+
+        api.login(apple: token, callback: { result in
+            switch result {
+            case .failure:
+                return self.output.present(error: .general)
+            case let .success(response):
+                switch response.0 {
+                case .success:
+                    guard let user = response.1, let expires = response.2, let token = response.3 else {
+                        return self.output.present(error: .general)
+                    }
+
+                    self.token = token
+
+                    self.store(token: token, expires: expires, user: user)
+
+                    NotificationManager.shared.requestAuthorization()
+
+                    DispatchQueue.main.async {
+                        self.output.presentLoggedInView()
+                    }
+                case .register:
+                    guard let token = response.3 else {
+                        return self.output.present(error: .general)
+                    }
+
+                    self.token = token
+
+                    self.output.present(state: .registration)
+                }
+            }
+        })
     }
 }

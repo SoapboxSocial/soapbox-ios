@@ -2,6 +2,31 @@
 
 ## [Unreleased]
 
+ - This is an important update, we did a bunch of changes that should improve voice quality and network connectivity issues. The update is required, old version will no longer be supported.
+ - Users will now be asked if they want to become admins.
+
+## [1.17.0] - 2021-01-25
+
+ - Added the ability to sign in with apple.
+ - Added more info to room creation.
+
+## [1.15.0] - 2021-01-22
+
+ - Changed the create room button!
+ - Fix settings in dark theme.
+
+## [1.13.0] - 2021-01-20
+
+ - Added a settings screen containing some useful links for now.
+ - Adds sharing for profiles!
+ - Fixes an issue with prompting for updates.
+
+## [1.12.0] - 2021-01-18
+
+ - Fixes a crash when clicking to listen on a story.
+ - Added the ability to report groups and users.
+ - We now allow you to block users, if you block someone they will no longer be able to see the rooms you're in.
+
 ## [1.11.2] - 2021-01-12
 
  - There was an issue when the link was too big.

@@ -34,7 +34,7 @@ class RoomCell: UICollectionViewCell {
         return label
     }()
 
-    var visibility = Visibility.private {
+    var visibility = RoomAPIClient.Room.Visibility.public {
         didSet {
             if visibility == .private {
                 lock.isHidden = false
@@ -44,7 +44,7 @@ class RoomCell: UICollectionViewCell {
         }
     }
 
-    var members = [RoomState.RoomMember]() {
+    var members = [RoomAPIClient.Member]() {
         didSet {
             createImageViews()
 
@@ -74,7 +74,7 @@ class RoomCell: UICollectionViewCell {
         return view
     }()
 
-    var group: RoomState.Group? {
+    var group: APIClient.Group? {
         didSet {
             if group == nil {
                 groupView.isHidden = true

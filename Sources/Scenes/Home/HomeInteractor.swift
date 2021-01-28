@@ -3,19 +3,19 @@ import KeychainAccess
 import SwiftProtobuf
 
 protocol RoomController {
-    func didSelect(room id: Int)
+    func didSelect(room id: String)
 }
 
 protocol RoomControllerDelegate {
-    func didJoin(room: Int)
+    func didJoin(room: String)
     func didLeaveRoom()
     func reloadRooms()
 }
 
 protocol HomeInteractorOutput {
     func didFailToFetchRooms()
-    func didFetchRooms(rooms: RoomList)
-    func didJoin(room: Int)
+    func didFetchRooms(rooms: [RoomAPIClient.Room])
+    func didJoin(room: String)
     func didLeaveRoom()
     func didFetchFeed(_ feed: [APIClient.StoryFeed])
     func didFetchOwnStories(_ stories: [APIClient.Story])
@@ -24,30 +24,26 @@ protocol HomeInteractorOutput {
 
 class HomeInteractor: HomeViewControllerOutput {
     private let output: HomeInteractorOutput
-    private let roomService: RoomServiceClient
     private let controller: RoomController
     private let api: APIClient
+    private let roomApi: RoomAPIClient
 
-    init(output: HomeInteractorOutput, service: RoomServiceClient, controller: RoomController, api: APIClient) {
+    init(output: HomeInteractorOutput, controller: RoomController, api: APIClient, room: RoomAPIClient) {
         self.output = output
-        roomService = service
         self.controller = controller
         self.api = api
+        roomApi = room
     }
 
     func fetchData() {
         // @TODO probably want to start refresh control.
 
-        let call = roomService.listRooms(Google_Protobuf_Empty())
-
-        call.response.whenComplete { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .failure:
-                    self.output.didFailToFetchRooms()
-                case let .success(list):
-                    self.output.didFetchRooms(rooms: list)
-                }
+        roomApi.rooms { result in
+            switch result {
+            case .failure:
+                self.output.didFailToFetchRooms()
+            case let .success(list):
+                self.output.didFetchRooms(rooms: list)
             }
         }
 
@@ -97,13 +93,13 @@ class HomeInteractor: HomeViewControllerOutput {
         })
     }
 
-    func didSelectRoom(room: Int) {
+    func didSelectRoom(room: String) {
         controller.didSelect(room: room)
     }
 }
 
 extension HomeInteractor: RoomControllerDelegate {
-    func didJoin(room: Int) {
+    func didJoin(room: String) {
         output.didJoin(room: room)
     }
 

@@ -123,6 +123,25 @@ class GroupViewController: ViewController {
     @objc private func declineInvite() {
         output.declineInvite()
     }
+
+    @objc private func menuButtonPressed() {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("report_incident", comment: ""), style: .destructive, handler: { _ in
+            let view = ReportPageViewController(
+                userId: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId),
+                reportedGroupId: self.group.id
+            )
+
+            DispatchQueue.main.async {
+                self.present(view, animated: true)
+            }
+        }))
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+
+        present(alert, animated: true)
+    }
 }
 
 extension GroupViewController: GroupPresenterOutput {
@@ -140,6 +159,15 @@ extension GroupViewController: GroupPresenterOutput {
 
         membersCountView.statistic.text = String(group.members ?? 0)
 
+        let item = UIBarButtonItem(
+            image: UIImage(systemName: "ellipsis"),
+            style: .plain,
+            target: self,
+            action: #selector(menuButtonPressed)
+        )
+
+        navigationItem.rightBarButtonItem = item
+
         if let role = group.role {
             showJoinedBadge()
 
@@ -149,6 +177,7 @@ extension GroupViewController: GroupPresenterOutput {
                 headerView.button.removeTarget(self, action: #selector(didTapJoin), for: .touchUpInside)
                 headerView.button.addTarget(self, action: #selector(editPressed), for: .touchUpInside)
                 inviteButton.isHidden = false
+                navigationItem.rightBarButtonItem = nil
             }
         }
 
