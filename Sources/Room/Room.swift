@@ -173,8 +173,8 @@ class Room {
 extension Room {
     private func on(_ event: Event) {
         switch event.payload {
-        case .addedAdmin:
-            on(addedAdmin: event.from)
+        case let .addedAdmin(evt):
+            on(addedAdmin: evt)
         case .invitedAdmin:
             on(adminInvite: event.from)
         case let .joined(evt):
@@ -200,8 +200,8 @@ extension Room {
         }
     }
 
-    private func on(addedAdmin id: Int64) {
-        updateMemberRole(user: id, role: .admin)
+    private func on(addedAdmin: Event.AddedAdmin) {
+        updateMemberRole(user: addedAdmin.id, role: .admin)
     }
 
     private func on(removedAdmin: Event.RemovedAdmin) {
