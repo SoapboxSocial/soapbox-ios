@@ -90,7 +90,7 @@ class RoomView: UIView {
     private let shareRoomButton: EmojiButton = {
         let button = EmojiButton(frame: .zero)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "square.and.arrow.up.on.square", withConfiguration: RoomView.iconConfig), for: .normal)
+        button.setImage(UIImage(systemName: "square.and.arrow.up", withConfiguration: RoomView.iconConfig), for: .normal)
         button.tintColor = .brandColor
         button.backgroundColor = .clear
         button.addTarget(self, action: #selector(shareRoom), for: .touchUpInside)
