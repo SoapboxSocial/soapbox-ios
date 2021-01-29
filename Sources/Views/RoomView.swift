@@ -197,7 +197,7 @@ class RoomView: UIView {
         linkView.isHidden = true
 
         NSLayoutConstraint.activate([
-            linkView.heightAnchor.constraint(lessThanOrEqualTo: self.content.heightAnchor, multiplier: 0.66),
+            linkView.heightAnchor.constraint(lessThanOrEqualTo: content.heightAnchor, multiplier: 0.66),
         ])
 
         content.addArrangedSubview(members)
@@ -790,37 +790,6 @@ extension RoomView: RoomDelegate {
             self.linkView.displayLink(link: link, name: name)
         }
     }
-
-//    private func displayNextLink() {
-//        guard let (from, link) = links.first else {
-//            return
-//        }
-//
-//        var name = "you"
-//        if from != 0 {
-//            guard let user = room.state.members.first(where: { $0.id == from }) else {
-//                return
-//            }
-//
-//            name = user.displayName
-//        }
-//
-//        DispatchQueue.main.async {
-//            let linkView = LinkSharingView(link: link, name: name)
-//
-//            self.content.insertArrangedSubview(linkView, at: 0)
-//
-//            NSLayoutConstraint.activate([
-//                linkView.heightAnchor.constraint(lessThanOrEqualTo: self.content.heightAnchor, multiplier: 0.66),
-//            ])
-//
-//            linkView.startTimer {
-//                linkView.removeFromSuperview()
-//                self.links.removeFirst()
-//                self.displayNextLink()
-//            }
-//        }
-//    }
 
     func userDidRecordScreen(_ user: Int64) {
         guard let user = room.state.members.first(where: { $0.id == user }) else {
