@@ -215,3 +215,7 @@
 "create_room" = "Create Room";
 "invited_to_be_admin_by" = "%@ invited you to be an admin";
 "would_you_like_to_accept" = "Would you like to accept?";
+
+"change_name" = "Change name";
+"make_private" = "Make private";
+"make_public" = "Make public";

@@ -161,6 +161,15 @@ class Room {
         delegate?.roomWasRenamed(name)
     }
 
+    func updateVisibility(_ to: Visibility) {
+        client.send(command: .visibilityUpdate(Command.VisibilityUpdate.with {
+            $0.visibility = to
+        }))
+
+        state.visibility = to
+        delegate?.visibilityUpdated(visibility: to)
+    }
+
     func acceptInvite() {
         client.send(command: .acceptAdmin(Command.AcceptAdmin()))
         delegate?.didChangeUserRole(user: userId, role: .admin)
