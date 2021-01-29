@@ -44,13 +44,13 @@ class RoomView: UIView {
         return button
     }()
 
-    private let editNameButton: EmojiButton = {
+    private let settingsButton: EmojiButton = {
         let button = EmojiButton(frame: .zero)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "gearshape", withConfiguration: iconConfig), for: .normal)
         button.tintColor = .brandColor
         button.backgroundColor = .clear
-        button.addTarget(self, action: #selector(editRoomNameButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(settingsTapped), for: .touchUpInside)
         return button
     }()
 
@@ -216,10 +216,6 @@ class RoomView: UIView {
             lock.widthAnchor.constraint(equalToConstant: 20),
         ])
 
-        if room.state.visibility == .public {
-            lock.isHidden = true
-        }
-
         let topButtonStack = UIStackView()
         topButtonStack.axis = .horizontal
         topButtonStack.spacing = 20
@@ -309,11 +305,7 @@ class RoomView: UIView {
         addSubview(bottomMuteButton)
         addSubview(shareRoomButton)
 
-        if room.state.visibility == .private {
-            shareRoomButton.isHidden = true
-        }
-
-        buttonStack.addArrangedSubview(editNameButton)
+        buttonStack.addArrangedSubview(settingsButton)
         buttonStack.addArrangedSubview(inviteUsersButton)
 
         NSLayoutConstraint.activate([
@@ -322,8 +314,8 @@ class RoomView: UIView {
         ])
 
         NSLayoutConstraint.activate([
-            editNameButton.heightAnchor.constraint(equalToConstant: 32),
-            editNameButton.widthAnchor.constraint(equalToConstant: 32),
+            settingsButton.heightAnchor.constraint(equalToConstant: 32),
+            settingsButton.widthAnchor.constraint(equalToConstant: 32),
         ])
 
         NSLayoutConstraint.activate([
@@ -378,12 +370,14 @@ class RoomView: UIView {
         room.mute()
 
         if me.role != .admin {
-            editNameButton.isHidden = true
+            settingsButton.isHidden = true
 
             if room.state.visibility == .private {
                 inviteUsersButton.isHidden = true
             }
         }
+
+        visibilityUpdated(visibility: room.state.visibility)
     }
 
     override func layoutSubviews() {
@@ -420,13 +414,13 @@ class RoomView: UIView {
 
     private func hideEditNameButton() {
         UIView.animate(withDuration: 0.2) { [self] in
-            editNameButton.isHidden = true
+            settingsButton.isHidden = true
         }
     }
 
     private func showEditNameButton() {
         UIView.animate(withDuration: 0.2) { [self] in
-            editNameButton.isHidden = false
+            settingsButton.isHidden = false
         }
     }
 
@@ -553,25 +547,8 @@ class RoomView: UIView {
         }
     }
 
-    @objc private func editRoomNameButtonTapped() {
-        let alert = UIAlertController(title: NSLocalizedString("enter_name", comment: ""), message: nil, preferredStyle: .alert)
-        alert.addTextField()
-
-        let submitAction = UIAlertAction(title: NSLocalizedString("submit", comment: ""), style: .default) { [unowned alert] _ in
-            let answer = alert.textFields![0]
-            guard let text = answer.text else {
-                return
-            }
-
-            self.room.rename(text)
-        }
-
-        alert.addAction(submitAction)
-
-        let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
-        alert.addAction(cancel)
-
-        window!.rootViewController!.present(alert, animated: true)
+    @objc private func settingsTapped() {
+        RoomSettingsSheet.show(forRoom: room, on: window!.rootViewController!)
     }
 
     @objc private func inviteTapped() {
@@ -840,6 +817,27 @@ extension RoomView: RoomDelegate {
             )
 
             banner.show()
+        }
+    }
+
+    func visibilityUpdated(visibility: Visibility) {
+        DispatchQueue.main.async {
+            switch visibility {
+            case .private:
+                self.lock.isHidden = false
+                self.shareRoomButton.isHidden = true
+
+                if self.me.role != .admin {
+                    self.inviteUsersButton.isHidden = true
+                }
+
+            case .public:
+                self.lock.isHidden = true
+                self.shareRoomButton.isHidden = false
+                self.inviteUsersButton.isHidden = false
+            default:
+                return
+            }
         }
     }
 }

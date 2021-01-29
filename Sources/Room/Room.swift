@@ -15,6 +15,7 @@ protocol RoomDelegate {
     func roomWasRenamed(_ name: String)
     func userDidRecordScreen(_ user: Int64)
     func wasMutedByAdmin()
+    func visibilityUpdated(visibility: Visibility)
 }
 
 enum RoomError: Error {
@@ -160,6 +161,15 @@ class Room {
         delegate?.roomWasRenamed(name)
     }
 
+    func updateVisibility(_ to: Visibility) {
+        client.send(command: .visibilityUpdate(Command.VisibilityUpdate.with {
+            $0.visibility = to
+        }))
+
+        state.visibility = to
+        delegate?.visibilityUpdated(visibility: to)
+    }
+
     func acceptInvite() {
         client.send(command: .acceptAdmin(Command.AcceptAdmin()))
         delegate?.didChangeUserRole(user: userId, role: .admin)
@@ -195,6 +205,8 @@ extension Room {
             on(removedAdmin: evt)
         case let .renamedRoom(evt):
             on(roomRenamed: evt)
+        case let .visibilityUpdated(evt):
+            on(visibilityUpdated: evt)
         case .none:
             break
         }
@@ -260,6 +272,11 @@ extension Room {
 
     private func on(recordedScreen id: Int64) {
         delegate?.userDidRecordScreen(id)
+    }
+
+    private func on(visibilityUpdated: Event.VisibilityUpdated) {
+        state.visibility = visibilityUpdated.visibility
+        delegate?.visibilityUpdated(visibility: visibilityUpdated.visibility)
     }
 
     private func onMutedByAdmin() {
