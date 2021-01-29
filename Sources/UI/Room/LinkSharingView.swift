@@ -88,8 +88,9 @@ class LinkSharingView: UIView {
 
     private func displayNextLink() {
         guard let link = links.first else {
-            isHidden = true
-            return
+            return UIView.animate(withDuration: 0.1, animations: {
+                self.isHidden = true
+            })
         }
 
         let data = LPLinkMetadata()
@@ -97,7 +98,11 @@ class LinkSharingView: UIView {
         data.originalURL = link.url
         linkView.metadata = data
 
-        isHidden = false
+        if isHidden {
+            UIView.animate(withDuration: 0.1, animations: {
+                self.isHidden = false
+            })
+        }
 
         LPMetadataProvider().startFetchingMetadata(for: link.url, completionHandler: { metadata, _ in
             guard let data = metadata else {
@@ -128,11 +133,7 @@ class LinkSharingView: UIView {
 
             if self.progress.progress <= 0 {
                 timer.invalidate()
-                return UIView.animate(withDuration: 0.1, animations: {
-                    self.isHidden = true
-                }) { _ in
-                    completion()
-                }
+                completion()
             }
         })
     }
