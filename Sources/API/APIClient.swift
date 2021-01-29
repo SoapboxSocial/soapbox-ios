@@ -299,7 +299,7 @@ extension APIClient {
     func search(_ text: String, types: [SearchIndex], limit: Int, offset: Int, callback: @escaping (Result<SearchResponse, Error>) -> Void) {
         get(
             path: "/v1/search",
-            parameters: ["query": text, "limit": limit, "offset": offset, "type": types.flatMap { $0.rawValue }.joined(separator: ",")],
+            parameters: ["query": text, "limit": limit, "offset": offset, "type": types.compactMap { $0.rawValue }.joined(separator: ",")],
             callback: callback
         )
     }
