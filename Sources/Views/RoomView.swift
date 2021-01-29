@@ -11,8 +11,6 @@ protocol RoomViewDelegate {
 class RoomView: UIView {
     var delegate: RoomViewDelegate?
 
-    private var links = [(Int64, URL)]()
-
     private static let iconConfig = UIImage.SymbolConfiguration(weight: .semibold)
 
     private var me: RoomState.RoomMember {
@@ -148,6 +146,11 @@ class RoomView: UIView {
         return view
     }()
 
+    private let linkView: LinkSharingView = {
+        let view = LinkSharingView()
+        return view
+    }()
+
     private let room: Room
 
     private let userJoinFeedback: UINotificationFeedbackGenerator = {
@@ -188,6 +191,14 @@ class RoomView: UIView {
         addSubview(foreground)
 
         foreground.addSubview(content)
+
+        content.addArrangedSubview(linkView)
+
+        linkView.isHidden = true
+
+        NSLayoutConstraint.activate([
+            linkView.heightAnchor.constraint(lessThanOrEqualTo: self.content.heightAnchor, multiplier: 0.66),
+        ])
 
         content.addArrangedSubview(members)
 
@@ -766,17 +777,6 @@ extension RoomView: RoomDelegate {
     }
 
     func didReceiveLink(from: Int64, link: URL) {
-        links.append((from, link))
-        if links.count == 1 {
-            displayNextLink()
-        }
-    }
-
-    private func displayNextLink() {
-        guard let (from, link) = links.first else {
-            return
-        }
-
         var name = "you"
         if from != 0 {
             guard let user = room.state.members.first(where: { $0.id == from }) else {
@@ -787,21 +787,40 @@ extension RoomView: RoomDelegate {
         }
 
         DispatchQueue.main.async {
-            let linkView = LinkSharingView(link: link, name: name)
-
-            self.content.insertArrangedSubview(linkView, at: 0)
-
-            NSLayoutConstraint.activate([
-                linkView.heightAnchor.constraint(lessThanOrEqualTo: self.content.heightAnchor, multiplier: 0.66),
-            ])
-
-            linkView.startTimer {
-                linkView.removeFromSuperview()
-                self.links.removeFirst()
-                self.displayNextLink()
-            }
+            self.linkView.displayLink(link: link, name: name)
         }
     }
+
+//    private func displayNextLink() {
+//        guard let (from, link) = links.first else {
+//            return
+//        }
+//
+//        var name = "you"
+//        if from != 0 {
+//            guard let user = room.state.members.first(where: { $0.id == from }) else {
+//                return
+//            }
+//
+//            name = user.displayName
+//        }
+//
+//        DispatchQueue.main.async {
+//            let linkView = LinkSharingView(link: link, name: name)
+//
+//            self.content.insertArrangedSubview(linkView, at: 0)
+//
+//            NSLayoutConstraint.activate([
+//                linkView.heightAnchor.constraint(lessThanOrEqualTo: self.content.heightAnchor, multiplier: 0.66),
+//            ])
+//
+//            linkView.startTimer {
+//                linkView.removeFromSuperview()
+//                self.links.removeFirst()
+//                self.displayNextLink()
+//            }
+//        }
+//    }
 
     func userDidRecordScreen(_ user: Int64) {
         guard let user = room.state.members.first(where: { $0.id == user }) else {
