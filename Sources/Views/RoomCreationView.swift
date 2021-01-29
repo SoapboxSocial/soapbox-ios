@@ -27,6 +27,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         let field = TextField(frame: CGRect.zero, theme: .light)
         field.placeholder = NSLocalizedString("enter_name", comment: "")
         field.translatesAutoresizingMaskIntoConstraints = false
+        field.returnKeyType = .done
         return field
     }()
 

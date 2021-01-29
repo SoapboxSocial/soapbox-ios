@@ -6,6 +6,7 @@
  - Users will now be asked if they want to become admins.
  - Fixed an issue where a room name could be empty.
  - You can now make rooms change rooms to be public or private after creating them.
+ - Fixed keyboard in room creation.
 
 ## [1.17.0] - 2021-01-25
 
