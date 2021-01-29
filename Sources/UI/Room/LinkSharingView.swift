@@ -44,6 +44,17 @@ class LinkSharingView: UIView {
         return progress
     }()
 
+    private let pin: UIButton = {
+        let config = UIImage.SymbolConfiguration(weight: .semibold)
+
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "pin.circle", withConfiguration: config), for: .normal)
+        button.setImage(UIImage(systemName: "pin.circle.fill", withConfiguration: config), for: .selected)
+        button.tintColor = .brandColor
+        return button
+    }()
+
     init() {
         super.init(frame: .zero)
 
@@ -55,6 +66,7 @@ class LinkSharingView: UIView {
         linkView.isUserInteractionEnabled = true
 
         addSubview(linkView)
+        addSubview(pin)
 
         NSLayoutConstraint.activate([
             linkView.topAnchor.constraint(equalTo: topAnchor),
@@ -64,9 +76,16 @@ class LinkSharingView: UIView {
 
         NSLayoutConstraint.activate([
             progress.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            progress.widthAnchor.constraint(equalTo: nameLabel.heightAnchor),
-            progress.heightAnchor.constraint(equalTo: nameLabel.heightAnchor),
+            progress.widthAnchor.constraint(equalToConstant: 20),
+            progress.heightAnchor.constraint(equalToConstant: 20),
             progress.topAnchor.constraint(equalTo: linkView.bottomAnchor, constant: 5),
+        ])
+
+        NSLayoutConstraint.activate([
+            pin.leftAnchor.constraint(equalTo: progress.rightAnchor, constant: 10),
+            pin.widthAnchor.constraint(equalToConstant: 20),
+            pin.heightAnchor.constraint(equalToConstant: 20),
+            pin.topAnchor.constraint(equalTo: linkView.bottomAnchor, constant: 5),
         ])
 
         NSLayoutConstraint.activate([

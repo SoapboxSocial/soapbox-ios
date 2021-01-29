@@ -207,7 +207,7 @@ extension Room {
             on(roomRenamed: evt)
         case let .visibilityUpdated(evt):
             on(visibilityUpdated: evt)
-        case .none:
+        default: // @TODO
             break
         }
     }
