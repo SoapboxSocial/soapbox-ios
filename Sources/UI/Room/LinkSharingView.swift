@@ -67,7 +67,6 @@ class LinkSharingView: UIView {
 
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.alignment = .fill
         stack.axis = .horizontal
         stack.spacing = 10
         addSubview(stack)
