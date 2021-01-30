@@ -60,13 +60,20 @@ class LinkSharingView: UIView {
 
         translatesAutoresizingMaskIntoConstraints = false
 
-        addSubview(nameLabel)
-        addSubview(progress)
-
         linkView.isUserInteractionEnabled = true
-
         addSubview(linkView)
-        addSubview(pin)
+
+        addSubview(nameLabel)
+
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.alignment = .fill
+        stack.axis = .horizontal
+        stack.spacing = 10
+        addSubview(stack)
+
+        stack.addArrangedSubview(progress)
+        stack.addArrangedSubview(pin)
 
         NSLayoutConstraint.activate([
             linkView.topAnchor.constraint(equalTo: topAnchor),
@@ -75,14 +82,20 @@ class LinkSharingView: UIView {
         ])
 
         NSLayoutConstraint.activate([
-            progress.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            progress.widthAnchor.constraint(equalToConstant: 20),
-            progress.heightAnchor.constraint(equalToConstant: 20),
-            progress.topAnchor.constraint(equalTo: linkView.bottomAnchor, constant: 5),
+            stack.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            stack.heightAnchor.constraint(equalToConstant: 20),
+            stack.topAnchor.constraint(equalTo: linkView.bottomAnchor, constant: 5),
+            stack.rightAnchor.constraint(equalTo: pin.rightAnchor),
         ])
 
         NSLayoutConstraint.activate([
-            pin.leftAnchor.constraint(equalTo: progress.rightAnchor, constant: 10),
+            progress.leftAnchor.constraint(equalTo: stack.leftAnchor),
+            progress.widthAnchor.constraint(equalToConstant: 20),
+            progress.heightAnchor.constraint(equalToConstant: 20),
+            progress.topAnchor.constraint(equalTo: stack.topAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
             pin.widthAnchor.constraint(equalToConstant: 20),
             pin.heightAnchor.constraint(equalToConstant: 20),
             pin.topAnchor.constraint(equalTo: linkView.bottomAnchor, constant: 5),
