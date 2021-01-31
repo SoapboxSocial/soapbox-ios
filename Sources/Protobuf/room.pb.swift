@@ -171,6 +171,14 @@ struct Command {
     set {payload = .pinLink(newValue)}
   }
 
+  var unpinLink: Command.UnpinLink {
+    get {
+      if case .unpinLink(let v)? = payload {return v}
+      return Command.UnpinLink()
+    }
+    set {payload = .unpinLink(newValue)}
+  }
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum OneOf_Payload: Equatable {
@@ -187,6 +195,7 @@ struct Command {
     case recordScreen(Command.RecordScreen)
     case visibilityUpdate(Command.VisibilityUpdate)
     case pinLink(Command.PinLink)
+    case unpinLink(Command.UnpinLink)
 
   #if !swift(>=4.1)
     static func ==(lhs: Command.OneOf_Payload, rhs: Command.OneOf_Payload) -> Bool {
@@ -204,6 +213,7 @@ struct Command {
       case (.recordScreen(let l), .recordScreen(let r)): return l == r
       case (.visibilityUpdate(let l), .visibilityUpdate(let r)): return l == r
       case (.pinLink(let l), .pinLink(let r)): return l == r
+      case (.unpinLink(let l), .unpinLink(let r)): return l == r
       default: return false
       }
     }
@@ -362,6 +372,16 @@ struct Command {
     init() {}
   }
 
+  struct UnpinLink {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
   init() {}
 }
 
@@ -478,6 +498,14 @@ struct Event {
     set {payload = .pinnedLink(newValue)}
   }
 
+  var unpinnedLink: Event.UnpinnedLink {
+    get {
+      if case .unpinnedLink(let v)? = payload {return v}
+      return Event.UnpinnedLink()
+    }
+    set {payload = .unpinnedLink(newValue)}
+  }
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum OneOf_Payload: Equatable {
@@ -494,6 +522,7 @@ struct Event {
     case mutedByAdmin(Event.MutedByAdmin)
     case visibilityUpdated(Event.VisibilityUpdated)
     case pinnedLink(Event.PinnedLink)
+    case unpinnedLink(Event.UnpinnedLink)
 
   #if !swift(>=4.1)
     static func ==(lhs: Event.OneOf_Payload, rhs: Event.OneOf_Payload) -> Bool {
@@ -511,6 +540,7 @@ struct Event {
       case (.mutedByAdmin(let l), .mutedByAdmin(let r)): return l == r
       case (.visibilityUpdated(let l), .visibilityUpdated(let r)): return l == r
       case (.pinnedLink(let l), .pinnedLink(let r)): return l == r
+      case (.unpinnedLink(let l), .unpinnedLink(let r)): return l == r
       default: return false
       }
     }
@@ -676,6 +706,16 @@ struct Event {
     // methods supported on all messages.
 
     var link: String = String()
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct UnpinnedLink {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
 
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -857,6 +897,7 @@ extension Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
     11: .same(proto: "recordScreen"),
     12: .same(proto: "visibilityUpdate"),
     13: .same(proto: "pinLink"),
+    14: .same(proto: "unpinLink"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -966,6 +1007,14 @@ extension Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .pinLink(v)}
+      case 14:
+        var v: Command.UnpinLink?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .unpinLink(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .unpinLink(v)}
       default: break
       }
     }
@@ -999,6 +1048,8 @@ extension Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
       try visitor.visitSingularMessageField(value: v, fieldNumber: 12)
     case .pinLink(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 13)
+    case .unpinLink(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 14)
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -1368,6 +1419,25 @@ extension Command.PinLink: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
   }
 }
 
+extension Command.UnpinLink: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Command.protoMessageName + ".UnpinLink"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Command.UnpinLink, rhs: Command.UnpinLink) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
 extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "Event"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -1385,6 +1455,7 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
     12: .same(proto: "mutedByAdmin"),
     13: .same(proto: "visibilityUpdated"),
     14: .same(proto: "pinnedLink"),
+    15: .same(proto: "unpinnedLink"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1495,6 +1566,14 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .pinnedLink(v)}
+      case 15:
+        var v: Event.UnpinnedLink?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .unpinnedLink(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .unpinnedLink(v)}
       default: break
       }
     }
@@ -1531,6 +1610,8 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
       try visitor.visitSingularMessageField(value: v, fieldNumber: 13)
     case .pinnedLink(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 14)
+    case .unpinnedLink(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 15)
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -1916,6 +1997,25 @@ extension Event.PinnedLink: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
 
   static func ==(lhs: Event.PinnedLink, rhs: Event.PinnedLink) -> Bool {
     if lhs.link != rhs.link {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Event.UnpinnedLink: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Event.protoMessageName + ".UnpinnedLink"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Event.UnpinnedLink, rhs: Event.UnpinnedLink) -> Bool {
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
