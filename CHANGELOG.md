@@ -2,10 +2,11 @@
 
 ## [Unreleased]
 
+ - We've decided to re-enable a notification sound when a user joins the room. This is still a bit experimental.
+
 ## [2.1.1] - 2021-02-02
 
  - Fixes an echo issue.
- - We've decided to re-enable a notification sound when a user joins the room. This is still a bit experimental.
 
 ## [2.0.0] - 2021-02-01
 
