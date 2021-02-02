@@ -71,7 +71,7 @@ class CreateStoryView: UIView {
     var delegate: CreateStoryViewDelegate?
 
     private var activity: UIActivityIndicatorView = {
-        let spinner = UIActivityIndicatorView(style: .whiteLarge)
+        let spinner = UIActivityIndicatorView(style: .large)
         spinner.translatesAutoresizingMaskIntoConstraints = false
         return spinner
     }()

@@ -2,9 +2,18 @@
 
 ## [Unreleased]
 
+## [2.1.1] - 2021-02-02
+
+ - Fixes an echo issue.
+ - We've decided to re-enable a notification sound when a user joins the room. This is still a bit experimental.
+
+## [2.0.0] - 2021-02-01
+
  - This is an important update, we did a bunch of changes that should improve voice quality and network connectivity issues. The update is required, old version will no longer be supported.
  - Users will now be asked if they want to become admins.
- - We've decided to re-enable a notification sound when a user joins the room. This is still a bit experimental.
+ - Fixed an issue where a room name could be empty.
+ - You can now make rooms change rooms to be public or private after creating them.
+ - Fixed keyboard in room creation.
 
 ## [1.17.0] - 2021-01-25
 

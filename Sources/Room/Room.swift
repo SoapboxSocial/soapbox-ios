@@ -15,6 +15,7 @@ protocol RoomDelegate {
     func roomWasRenamed(_ name: String)
     func userDidRecordScreen(_ user: Int64)
     func wasMutedByAdmin()
+    func visibilityUpdated(visibility: Visibility)
 }
 
 enum RoomError: Error {
@@ -130,6 +131,8 @@ class Room {
         client.send(command: .reaction(Command.Reaction.with {
             $0.emoji = Data(reaction.rawValue.utf8)
         }))
+
+        delegate?.userDidReact(user: userId, reaction: reaction)
     }
 
     func share(link: URL) {
@@ -160,9 +163,18 @@ class Room {
         delegate?.roomWasRenamed(name)
     }
 
+    func updateVisibility(_ to: Visibility) {
+        client.send(command: .visibilityUpdate(Command.VisibilityUpdate.with {
+            $0.visibility = to
+        }))
+
+        state.visibility = to
+        delegate?.visibilityUpdated(visibility: to)
+    }
+
     func acceptInvite() {
         client.send(command: .acceptAdmin(Command.AcceptAdmin()))
-        delegate?.didChangeUserRole(user: userId, role: .admin)
+        updateMemberRole(user: userId, role: .admin)
     }
 
     deinit {
@@ -173,8 +185,8 @@ class Room {
 extension Room {
     private func on(_ event: Event) {
         switch event.payload {
-        case .addedAdmin:
-            on(addedAdmin: event.from)
+        case let .addedAdmin(evt):
+            on(addedAdmin: evt)
         case .invitedAdmin:
             on(adminInvite: event.from)
         case let .joined(evt):
@@ -195,13 +207,15 @@ extension Room {
             on(removedAdmin: evt)
         case let .renamedRoom(evt):
             on(roomRenamed: evt)
+        case let .visibilityUpdated(evt):
+            on(visibilityUpdated: evt)
         case .none:
             break
         }
     }
 
-    private func on(addedAdmin id: Int64) {
-        updateMemberRole(user: id, role: .admin)
+    private func on(addedAdmin: Event.AddedAdmin) {
+        updateMemberRole(user: addedAdmin.id, role: .admin)
     }
 
     private func on(removedAdmin: Event.RemovedAdmin) {
@@ -262,6 +276,11 @@ extension Room {
         delegate?.userDidRecordScreen(id)
     }
 
+    private func on(visibilityUpdated: Event.VisibilityUpdated) {
+        state.visibility = visibilityUpdated.visibility
+        delegate?.visibilityUpdated(visibility: visibilityUpdated.visibility)
+    }
+
     private func onMutedByAdmin() {
         client.mute()
         updateMemberMuteState(user: userId, isMuted: true)
@@ -312,6 +331,8 @@ extension Room: RoomClientDelegate {
 
         completion(.success(()))
         startPreventing()
+
+        client.createTrack()
     }
 
     // @TODO
@@ -363,55 +384,6 @@ extension Room: RoomClientDelegate {
     }
 }
 
-// extension Room: WebRTCClientDelegate {
-//    func webRTCClient(_: WebRTCClient, didChangeAudioLevel delta: Float, track ssrc: UInt32) {
-//        DispatchQueue.main.async {
-//            guard let user = self.members.first(where: { $0.ssrc == ssrc }) else {
-//                return
-//            }
-//
-//            self.delegate?.didChangeSpeakVolume(user: Int(user.id), volume: delta)
-//        }
-//    }
-//
-//    func webRTCClient(_: WebRTCClient, didDiscoverLocalCandidate local: RTCIceCandidate) {
-//        let candidate = Candidate(candidate: local.sdp, sdpMLineIndex: local.sdpMLineIndex, usernameFragment: "")
-//
-//        var data: Data
-//
-//        do {
-//            data = try encoder.encode(candidate)
-//        } catch {
-//            debugPrint("failed to encode \(error.localizedDescription)")
-//            return
-//        }
-//
-//        guard let trickle = String(data: data, encoding: .utf8) else {
-//            return
-//        }
-//
-//        stream.sendMessage(SignalRequest.with {
-//            $0.trickle = Trickle.with {
-//                $0.init_p = trickle
-//            }
-//        })
-//    }
-//
-//    func webRTCClient(_: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
-//        if state == .connected && completion != nil {
-//            completion(.success(()))
-//            completion = nil
-//
-//            startPreventing()
-//            return
-//        }
-//
-//        if state == .failed || state == .closed {
-//            delegate?.roomWasClosedByRemote()
-//        }
-//    }
-// }
-//
 extension Room {
     func startPreventing() {
         NotificationCenter.default.addObserver(self, selector: #selector(warnOnRecord), name: UIScreen.capturedDidChangeNotification, object: nil)

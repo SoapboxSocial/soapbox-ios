@@ -3,6 +3,13 @@ import LinkPresentation
 import UIKit
 
 class LinkSharingView: UIView {
+    struct Link {
+        let url: URL
+        let name: String
+    }
+
+    private var links = [Link]()
+
     private let max_length = Double(15)
 
     private let nameLabel: UILabel = {
@@ -21,8 +28,6 @@ class LinkSharingView: UIView {
         return view
     }()
 
-    private let link: URL
-
     private let progress: KDCircularProgress = {
         let progress = KDCircularProgress()
         progress.translatesAutoresizingMaskIntoConstraints = false
@@ -39,24 +44,13 @@ class LinkSharingView: UIView {
         return progress
     }()
 
-    private let provider = LPMetadataProvider()
-
-    init(link: URL, name: String) {
-        self.link = link
+    init() {
         super.init(frame: .zero)
 
         translatesAutoresizingMaskIntoConstraints = false
 
-        let text = NSLocalizedString("shared_by_user", comment: "")
-        nameLabel.text = String(format: text, name.firstName())
         addSubview(nameLabel)
-
         addSubview(progress)
-
-        let data = LPLinkMetadata()
-        data.url = link
-        data.originalURL = link
-        linkView.metadata = data
 
         linkView.isUserInteractionEnabled = true
 
@@ -67,17 +61,6 @@ class LinkSharingView: UIView {
             linkView.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
             linkView.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
         ])
-
-        provider.startFetchingMetadata(for: link, completionHandler: { metadata, _ in
-            guard let data = metadata else {
-                return // @todo
-            }
-
-            DispatchQueue.main.async {
-                self.linkView.metadata = data
-                self.linkView.sizeToFit()
-            }
-        })
 
         NSLayoutConstraint.activate([
             progress.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
@@ -96,19 +79,61 @@ class LinkSharingView: UIView {
         ])
     }
 
-    func startTimer(completion: @escaping () -> Void) {
+    func displayLink(link: URL, name: String) {
+        links.append(Link(url: link, name: name))
+        if links.count == 1 {
+            displayNextLink()
+        }
+    }
+
+    private func displayNextLink() {
+        guard let link = links.first else {
+            return UIView.animate(withDuration: 0.1, animations: {
+                self.isHidden = true
+            })
+        }
+
+        let data = LPLinkMetadata()
+        data.url = link.url
+        data.originalURL = link.url
+        linkView.metadata = data
+
+        if isHidden {
+            UIView.animate(withDuration: 0.1, animations: {
+                self.isHidden = false
+            })
+        }
+
+        LPMetadataProvider().startFetchingMetadata(for: link.url, completionHandler: { metadata, _ in
+            guard let data = metadata else {
+                return // @todo
+            }
+
+            DispatchQueue.main.async {
+                self.linkView.metadata = data
+                self.linkView.sizeToFit()
+            }
+        })
+
+        let text = NSLocalizedString("shared_by_user", comment: "")
+        nameLabel.text = String(format: text, link.name.firstName())
+
+        startTimer(completion: {
+            self.links.removeFirst()
+            self.displayNextLink()
+        })
+    }
+
+    private func startTimer(completion: @escaping () -> Void) {
         let interval = 0.1
+        progress.progress = 1.0
 
         Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { timer in
             self.progress.progress -= interval / self.max_length
 
             if self.progress.progress <= 0 {
                 timer.invalidate()
-                return UIView.animate(withDuration: 0.1, animations: {
-                    self.isHidden = true
-                }) { _ in
-                    completion()
-                }
+                completion()
             }
         })
     }

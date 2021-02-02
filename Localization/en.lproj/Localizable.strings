@@ -178,7 +178,6 @@
 
 "user_started_recording_screen" = "It looks like %@ started recording their screen!";
 
-"join_me_in_room" = "I'm currently chatting on Soapbox, why not join me?";
 "share_room_tooltip" = "Rooms are better with friends, now you can share links to them directly!";
 
 "mute_user" = "Mute";
@@ -215,3 +214,7 @@
 "create_room" = "Create Room";
 "invited_to_be_admin_by" = "%@ invited you to be an admin";
 "would_you_like_to_accept" = "Would you like to accept?";
+
+"change_name" = "Change name";
+"make_private" = "Make private";
+"make_public" = "Make public";

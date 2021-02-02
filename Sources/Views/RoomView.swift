@@ -11,8 +11,6 @@ protocol RoomViewDelegate {
 class RoomView: UIView {
     var delegate: RoomViewDelegate?
 
-    private var links = [(Int64, URL)]()
-
     private static let iconConfig = UIImage.SymbolConfiguration(weight: .semibold)
 
     private var me: RoomState.RoomMember {
@@ -44,13 +42,13 @@ class RoomView: UIView {
         return button
     }()
 
-    private let editNameButton: EmojiButton = {
+    private let settingsButton: EmojiButton = {
         let button = EmojiButton(frame: .zero)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "gearshape", withConfiguration: iconConfig), for: .normal)
         button.tintColor = .brandColor
         button.backgroundColor = .clear
-        button.addTarget(self, action: #selector(editRoomNameButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(settingsTapped), for: .touchUpInside)
         return button
     }()
 
@@ -80,7 +78,7 @@ class RoomView: UIView {
     private let pasteButton: EmojiButton = {
         let button = EmojiButton(frame: .zero)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "paperclip", withConfiguration: iconConfig), for: .normal)
+        button.setImage(UIImage(systemName: "link.badge.plus", withConfiguration: iconConfig), for: .normal)
         button.tintColor = .brandColor
         button.backgroundColor = .clear
         button.addTarget(self, action: #selector(pasteLink), for: .touchUpInside)
@@ -90,7 +88,7 @@ class RoomView: UIView {
     private let shareRoomButton: EmojiButton = {
         let button = EmojiButton(frame: .zero)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "square.and.arrow.up.on.square", withConfiguration: RoomView.iconConfig), for: .normal)
+        button.setImage(UIImage(systemName: "square.and.arrow.up", withConfiguration: RoomView.iconConfig), for: .normal)
         button.tintColor = .brandColor
         button.backgroundColor = .clear
         button.addTarget(self, action: #selector(shareRoom), for: .touchUpInside)
@@ -148,6 +146,11 @@ class RoomView: UIView {
         return view
     }()
 
+    private let linkView: LinkSharingView = {
+        let view = LinkSharingView()
+        return view
+    }()
+
     private let room: Room
 
     private let reactFeedback: UIImpactFeedbackGenerator = {
@@ -169,14 +172,7 @@ class RoomView: UIView {
 
         room.delegate = self
 
-        name.text = {
-            if room.state.name != "" {
-                return room.state.name
-            }
-
-            return NSLocalizedString("current_room", comment: "")
-
-        }()
+        roomWasRenamed(room.state.name)
 
         translatesAutoresizingMaskIntoConstraints = false
 
@@ -189,6 +185,14 @@ class RoomView: UIView {
         addSubview(foreground)
 
         foreground.addSubview(content)
+
+        content.addArrangedSubview(linkView)
+
+        linkView.isHidden = true
+
+        NSLayoutConstraint.activate([
+            linkView.heightAnchor.constraint(lessThanOrEqualTo: content.heightAnchor, multiplier: 0.66),
+        ])
 
         content.addArrangedSubview(members)
 
@@ -216,10 +220,6 @@ class RoomView: UIView {
             lock.heightAnchor.constraint(equalToConstant: 20),
             lock.widthAnchor.constraint(equalToConstant: 20),
         ])
-
-        if room.state.visibility == .public {
-            lock.isHidden = true
-        }
 
         let topButtonStack = UIStackView()
         topButtonStack.axis = .horizontal
@@ -310,11 +310,7 @@ class RoomView: UIView {
         addSubview(bottomMuteButton)
         addSubview(shareRoomButton)
 
-        if room.state.visibility == .private {
-            shareRoomButton.isHidden = true
-        }
-
-        buttonStack.addArrangedSubview(editNameButton)
+        buttonStack.addArrangedSubview(settingsButton)
         buttonStack.addArrangedSubview(inviteUsersButton)
 
         NSLayoutConstraint.activate([
@@ -323,8 +319,8 @@ class RoomView: UIView {
         ])
 
         NSLayoutConstraint.activate([
-            editNameButton.heightAnchor.constraint(equalToConstant: 32),
-            editNameButton.widthAnchor.constraint(equalToConstant: 32),
+            settingsButton.heightAnchor.constraint(equalToConstant: 32),
+            settingsButton.widthAnchor.constraint(equalToConstant: 32),
         ])
 
         NSLayoutConstraint.activate([
@@ -376,15 +372,15 @@ class RoomView: UIView {
         muteButton.isSelected = isMuted
         bottomMuteButton.isSelected = isMuted
 
-        room.mute()
-
         if me.role != .admin {
-            editNameButton.isHidden = true
+            settingsButton.isHidden = true
 
             if room.state.visibility == .private {
                 inviteUsersButton.isHidden = true
             }
         }
+
+        visibilityUpdated(visibility: room.state.visibility)
     }
 
     override func layoutSubviews() {
@@ -421,13 +417,13 @@ class RoomView: UIView {
 
     private func hideEditNameButton() {
         UIView.animate(withDuration: 0.2) { [self] in
-            editNameButton.isHidden = true
+            settingsButton.isHidden = true
         }
     }
 
     private func showEditNameButton() {
         UIView.animate(withDuration: 0.2) { [self] in
-            editNameButton.isHidden = false
+            settingsButton.isHidden = false
         }
     }
 
@@ -463,13 +459,12 @@ class RoomView: UIView {
         }
 
         let items: [Any] = [
-            NSLocalizedString("join_me_in_room", comment: ""),
-            URL(string: "https://soapbox.social/room?id=" + room.state.id)!,
+            URL(string: "https://soapbox.social/room/" + room.state.id)!,
         ]
 
         let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
         ac.excludedActivityTypes = [.markupAsPDF, .openInIBooks, .addToReadingList, .assignToContact]
-        UIApplication.shared.keyWindow?.rootViewController!.present(ac, animated: true)
+        window!.rootViewController!.present(ac, animated: true)
     }
 
     @objc private func pasteLink() {
@@ -500,7 +495,7 @@ class RoomView: UIView {
 
         alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel, handler: nil))
 
-        UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
+        window!.rootViewController!.present(alert, animated: true)
     }
 
     @objc private func exitTapped() {
@@ -536,7 +531,7 @@ class RoomView: UIView {
             confirm: NSLocalizedString("leave_room", comment: "")
         )
 
-        UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
+        window!.rootViewController!.present(alert, animated: true)
     }
 
     private func exitRoom() {
@@ -554,29 +549,12 @@ class RoomView: UIView {
         }
     }
 
-    @objc private func editRoomNameButtonTapped() {
-        let alert = UIAlertController(title: NSLocalizedString("enter_name", comment: ""), message: nil, preferredStyle: .alert)
-        alert.addTextField()
-
-        let submitAction = UIAlertAction(title: NSLocalizedString("submit", comment: ""), style: .default) { [unowned alert] _ in
-            let answer = alert.textFields![0]
-            guard let text = answer.text else {
-                return
-            }
-
-            self.room.rename(text)
-        }
-
-        alert.addAction(submitAction)
-
-        let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
-        alert.addAction(cancel)
-
-        UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
+    @objc private func settingsTapped() {
+        RoomSettingsSheet.show(forRoom: room, on: window!.rootViewController!)
     }
 
     @objc private func inviteTapped() {
-        UIApplication.shared.keyWindow?.rootViewController!.present(
+        window!.rootViewController!.present(
             SceneFactory.createInviteFriendsListViewController(room: room),
             animated: true
         )
@@ -598,7 +576,7 @@ extension RoomView: UICollectionViewDelegate {
             let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
             optionMenu.addAction(cancel)
 
-            UIApplication.shared.keyWindow?.rootViewController!.present(optionMenu, animated: true)
+            window!.rootViewController!.present(optionMenu, animated: true)
             return
         }
 
@@ -646,7 +624,7 @@ extension RoomView: UICollectionViewDelegate {
                     )
 
                     DispatchQueue.main.async {
-                        UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
+                        self.window!.rootViewController!.present(alert, animated: true)
                     }
                 })
             )
@@ -655,7 +633,7 @@ extension RoomView: UICollectionViewDelegate {
         let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
         optionMenu.addAction(cancel)
 
-        UIApplication.shared.keyWindow?.rootViewController!.present(optionMenu, animated: true)
+        window!.rootViewController!.present(optionMenu, animated: true)
     }
 }
 
@@ -694,7 +672,7 @@ extension RoomView: RoomDelegate {
         alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel))
 
         DispatchQueue.main.async {
-            UIApplication.shared.keyWindow?.rootViewController!.present(alert, animated: true)
+            self.window!.rootViewController!.present(alert, animated: true)
         }
     }
 
@@ -739,6 +717,11 @@ extension RoomView: RoomDelegate {
 
     func roomWasRenamed(_ name: String) {
         DispatchQueue.main.async {
+            if name == "" {
+                self.name.text = NSLocalizedString("current_room", comment: "")
+                return
+            }
+
             self.name.text = name
         }
     }
@@ -785,17 +768,6 @@ extension RoomView: RoomDelegate {
     }
 
     func didReceiveLink(from: Int64, link: URL) {
-        links.append((from, link))
-        if links.count == 1 {
-            displayNextLink()
-        }
-    }
-
-    private func displayNextLink() {
-        guard let (from, link) = links.first else {
-            return
-        }
-
         var name = "you"
         if from != 0 {
             guard let user = room.state.members.first(where: { $0.id == from }) else {
@@ -806,19 +778,7 @@ extension RoomView: RoomDelegate {
         }
 
         DispatchQueue.main.async {
-            let linkView = LinkSharingView(link: link, name: name)
-
-            self.content.insertArrangedSubview(linkView, at: 0)
-
-            NSLayoutConstraint.activate([
-                linkView.heightAnchor.constraint(lessThanOrEqualTo: self.content.heightAnchor, multiplier: 0.66),
-            ])
-
-            linkView.startTimer {
-                linkView.removeFromSuperview()
-                self.links.removeFirst()
-                self.displayNextLink()
-            }
+            self.linkView.displayLink(link: link, name: name)
         }
     }
 
@@ -838,6 +798,27 @@ extension RoomView: RoomDelegate {
             banner.show()
         }
     }
+
+    func visibilityUpdated(visibility: Visibility) {
+        DispatchQueue.main.async {
+            switch visibility {
+            case .private:
+                self.lock.isHidden = false
+                self.shareRoomButton.isHidden = true
+
+                if self.me.role != .admin {
+                    self.inviteUsersButton.isHidden = true
+                }
+
+            case .public:
+                self.lock.isHidden = true
+                self.shareRoomButton.isHidden = false
+                self.inviteUsersButton.isHidden = false
+            default:
+                return
+            }
+        }
+    }
 }
 
 extension RoomView: EmojiBarDelegate {
@@ -850,7 +831,7 @@ extension RoomView: EmojiBarDelegate {
 
 extension RoomView {
     private func showTooltip() {
-        if didShowTooltip {
+        if didShowTooltip || room.state.visibility == .private {
             return
         }
 

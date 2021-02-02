@@ -9,14 +9,15 @@ class CreateCell: UICollectionViewCell {
         view.layer.cornerRadius = 56 / 2
         view.layer.masksToBounds = true
 
-        let image = UIImageView(image: UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 40, weight: .semibold)))
-        image.translatesAutoresizingMaskIntoConstraints = false
-        image.tintColor = .brandColor
-        view.addSubview(image)
+        let image = UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 40, weight: .semibold))
+        let imageView = UIImageView(image: image)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.tintColor = .brandColor
+        view.addSubview(imageView)
 
         NSLayoutConstraint.activate([
-            image.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            image.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
 
         return view
