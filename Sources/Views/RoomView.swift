@@ -838,7 +838,7 @@ extension RoomView: EmojiBarDelegate {
 
 extension RoomView {
     private func showTooltip() {
-        if didShowTooltip {
+        if didShowTooltip || room.state.visibility == .private {
             return
         }
 
