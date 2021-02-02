@@ -173,7 +173,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             majorUpdateRules: .critical,
             minorUpdateRules: .default,
             patchUpdateRules: .default,
-            revisionUpdateRules: Rules(promptFrequency: .immediately, forAlertType: .option)
+            showAlertAfterCurrentVersionHasBeenReleasedForDays: 0
         )
 
         siren.wail()
