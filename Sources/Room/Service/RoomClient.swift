@@ -63,6 +63,10 @@ final class RoomClient {
         }
     }
 
+    func createTrack() {
+        _ = streams[.publisher]?.createAudioTrack(label: "audio0", streamId: "stream")
+    }
+
     func send(command: Command.OneOf_Payload) {
         let cmd = Command.with {
             $0.payload = command
@@ -99,8 +103,6 @@ final class RoomClient {
         streams.forEach { _, stream in
             stream.delegate = self
         }
-
-        _ = publisher.createAudioTrack(label: "audio", streamId: "stream")
 
         publisher.offer(completion: { sdp in
             callback(sdp)
@@ -227,7 +229,7 @@ extension RoomClient: WebRTCClientDelegate {
         switch state {
         case .connected:
             if rtc.role == .publisher {
-                rtc.unmuteAudio()
+                rtc.muteAudio()
             }
 
             rtc.speakerOn()

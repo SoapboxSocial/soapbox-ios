@@ -378,8 +378,6 @@ class RoomView: UIView {
         muteButton.isSelected = isMuted
         bottomMuteButton.isSelected = isMuted
 
-        room.mute()
-
         if me.role != .admin {
             settingsButton.isHidden = true
 
