@@ -228,12 +228,7 @@ extension RoomClient: WebRTCClientDelegate {
     func webRTCClient(_ rtc: WebRTCClient, didChangeConnectionState state: RTCIceConnectionState) {
         switch state {
         case .connected:
-            if rtc.role == .publisher {
-                rtc.muteAudio()
-            }
-
             rtc.speakerOn()
-
             delegate?.roomClientDidConnect(self)
         case .failed, .closed:
             delegate?.roomClientDidDisconnect(self)
