@@ -131,6 +131,8 @@ class Room {
         client.send(command: .reaction(Command.Reaction.with {
             $0.emoji = Data(reaction.rawValue.utf8)
         }))
+
+        delegate?.userDidReact(user: userId, reaction: reaction)
     }
 
     func share(link: URL) {
@@ -172,7 +174,7 @@ class Room {
 
     func acceptInvite() {
         client.send(command: .acceptAdmin(Command.AcceptAdmin()))
-        delegate?.didChangeUserRole(user: userId, role: .admin)
+        updateMemberRole(user: userId, role: .admin)
     }
 
     deinit {
@@ -329,6 +331,9 @@ extension Room: RoomClientDelegate {
 
         completion(.success(()))
         startPreventing()
+
+        client.createTrack()
+        client.mute()
     }
 
     // @TODO

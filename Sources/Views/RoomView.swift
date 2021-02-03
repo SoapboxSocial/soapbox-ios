@@ -378,8 +378,6 @@ class RoomView: UIView {
         muteButton.isSelected = isMuted
         bottomMuteButton.isSelected = isMuted
 
-        room.mute()
-
         if me.role != .admin {
             settingsButton.isHidden = true
 
@@ -467,7 +465,6 @@ class RoomView: UIView {
         }
 
         let items: [Any] = [
-            NSLocalizedString("join_me_in_room", comment: ""),
             URL(string: "https://soapbox.social/room/" + room.state.id)!,
         ]
 
@@ -840,7 +837,7 @@ extension RoomView: EmojiBarDelegate {
 
 extension RoomView {
     private func showTooltip() {
-        if didShowTooltip {
+        if didShowTooltip || room.state.visibility == .private {
             return
         }
 

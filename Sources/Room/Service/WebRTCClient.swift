@@ -112,12 +112,6 @@ final class WebRTCClient: NSObject {
         peerConnection.setLocalDescription(description, completionHandler: completion)
     }
 
-    private func createAudioTrack() -> RTCAudioTrack {
-        let audioConstrains = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
-        let audioSource = WebRTCClient.factory.audioSource(with: audioConstrains)
-        return WebRTCClient.factory.audioTrack(with: audioSource, trackId: "audio")
-    }
-
     func createAudioTrack(label: String, streamId: String) -> RTCAudioTrack {
         let audioConstrains = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
         let audioSource = WebRTCClient.factory.audioSource(with: audioConstrains)
@@ -125,6 +119,8 @@ final class WebRTCClient: NSObject {
         let track = WebRTCClient.factory.audioTrack(with: audioSource, trackId: label)
 
         peerConnection.add(track, streamIds: [streamId])
+
+        peerConnection.addTransceiver(with: track)
 
         return track
     }
@@ -195,8 +191,8 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
 
 extension WebRTCClient {
     private func setTrackEnabled<T: RTCMediaStreamTrack>(_: T.Type, isEnabled: Bool) {
-        peerConnection.senders
-            .compactMap { $0.track as? T }
+        peerConnection.transceivers
+            .compactMap { $0.sender.track as? T }
             .forEach { $0.isEnabled = isEnabled }
     }
 }

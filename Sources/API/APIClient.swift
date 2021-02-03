@@ -147,7 +147,7 @@ extension APIClient {
         let followedBy: Bool?
         var isFollowing: Bool?
         let image: String
-        let currentRoom: Int?
+        let currentRoom: String?
         var isBlocked: Bool?
         let linkedAccounts: [LinkedAccount]
 
