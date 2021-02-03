@@ -256,10 +256,6 @@ extension Room {
         updateMemberMuteState(user: from, isMuted: muteUpdate.isMuted)
     }
 
-    private func on(unmuted id: Int64) {
-        updateMemberMuteState(user: id, isMuted: false)
-    }
-
     private func on(reacted: Event.Reacted, from: Int64) {
         guard let value = String(bytes: reacted.emoji, encoding: .utf8) else {
             return
