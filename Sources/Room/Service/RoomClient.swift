@@ -6,6 +6,7 @@ import WebRTC
 
 protocol RoomClientDelegate: AnyObject {
     func room(id: String)
+    func room(speakers: [Int])
     func roomClientDidConnect(_ room: RoomClient)
     func roomClientDidDisconnect(_ room: RoomClient)
     func roomClient(_ room: RoomClient, didReceiveMessage message: Event)
@@ -18,6 +19,8 @@ final class RoomClient {
     private let signalClient: SignalingClient
 
     private let iceServers: [RTCIceServer]
+
+    private let decoder = JSONDecoder()
 
     weak var delegate: RoomClientDelegate?
 
@@ -64,7 +67,10 @@ final class RoomClient {
     }
 
     func createTrack() {
-        _ = streams[.publisher]?.createAudioTrack(label: "audio0", streamId: "stream")
+        _ = streams[.publisher]?.createAudioTrack(
+            label: "audio0",
+            streamId: "\(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))"
+        )
     }
 
     func send(command: Command.OneOf_Payload) {
@@ -248,13 +254,23 @@ extension RoomClient: WebRTCClientDelegate {
     }
 
     func webRTCClient(_: WebRTCClient, didReceiveData data: Data, onChannel channel: String) {
-        if channel == "soapbox" {
+        switch channel {
+        case "soapbox":
             do {
                 let msg = try Event(serializedData: data)
                 delegate?.roomClient(self, didReceiveMessage: msg)
             } catch {
                 debugPrint("decode error \(error)")
             }
+        case "ion-sfu":
+            do {
+                let speakers = try decoder.decode([String].self, from: data)
+                delegate?.room(speakers: speakers.compactMap { Int($0) })
+            } catch {
+                debugPrint("decode error \(error)")
+            }
+        default:
+            debugPrint("unknown channel \(channel)")
         }
     }
 }

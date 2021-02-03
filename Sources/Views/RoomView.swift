@@ -658,6 +658,18 @@ extension RoomView: UICollectionViewDataSource {
 }
 
 extension RoomView: RoomDelegate {
+    func usersSpeaking(users: [Int]) {
+        DispatchQueue.main.async {
+            guard let cells = self.members.visibleCells as? [RoomMemberCell] else {
+                return
+            }
+
+            for cell in cells {
+                cell.isSpeaking = users.contains(Int(cell.user ?? 0))
+            }
+        }
+    }
+
     func userWasInvitedToBeAdmin(by: Int64) {
         let title = NSLocalizedString("invited_to_be_admin_by", comment: "")
 
@@ -757,18 +769,6 @@ extension RoomView: RoomDelegate {
                 if self.room.state.visibility == .private {
                     self.hideInviteUserButton()
                 }
-            }
-        }
-    }
-
-    func didChangeSpeakVolume(user: Int64, volume: Float) {
-        DispatchQueue.main.async {
-            guard let cells = self.members.visibleCells as? [RoomMemberCell] else {
-                return
-            }
-
-            if let cell = cells.first(where: { $0.user == user }) {
-                cell.didChangeSpeakVolume(volume)
             }
         }
     }

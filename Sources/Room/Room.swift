@@ -10,12 +10,12 @@ protocol RoomDelegate {
     func userDidReact(user: Int64, reaction: Room.Reaction)
     func didChangeMemberMuteState(user: Int64, isMuted: Bool)
     func roomWasClosedByRemote()
-    func didChangeSpeakVolume(user: Int64, volume: Float)
     func didReceiveLink(from: Int64, link: URL)
     func roomWasRenamed(_ name: String)
     func userDidRecordScreen(_ user: Int64)
     func wasMutedByAdmin()
     func visibilityUpdated(visibility: Visibility)
+    func usersSpeaking(users: [Int])
 }
 
 enum RoomError: Error {
@@ -320,6 +320,10 @@ extension Room: RoomClientDelegate {
     func room(id: String) {
         state.id = id
         addMeToState(role: .admin)
+    }
+
+    func room(speakers: [Int]) {
+        delegate?.usersSpeaking(users: speakers)
     }
 
     func roomClientDidConnect(_: RoomClient) {
