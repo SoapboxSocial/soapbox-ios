@@ -56,7 +56,9 @@ final class WebRTCClient: NSObject {
         super.init()
 
         if role == .publisher {
-            _ = createDataChannel(label: "ion-sfu")
+            if let channel = createDataChannel(label: "ion-sfu") {
+                localDataChannels[channel.label] = channel
+            }
         }
 
         peerConnection.delegate = self

@@ -255,6 +255,8 @@ extension RoomClient: WebRTCClientDelegate {
             } catch {
                 debugPrint("decode error \(error)")
             }
+        } else {
+            debugPrint("message received - " + channel + " - " + (String(data: data, encoding: .utf8) ?? "RIP"))
         }
     }
 }
