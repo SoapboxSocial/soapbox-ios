@@ -332,8 +332,8 @@ extension Room: RoomClientDelegate {
         completion(.success(()))
         startPreventing()
 
-        // @TODO ONCE THIS TRACK IS CREATED WE SHOULD MUTE.
         client.createTrack()
+        client.mute()
     }
 
     // @TODO
