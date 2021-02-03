@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Removes the visibility toggle in a group room.
+
 ## [2.1.1] - 2021-02-02
 
  - Fixes an echo issue.
