@@ -19,6 +19,8 @@ final class RoomClient {
 
     private let iceServers: [RTCIceServer]
 
+    private let decoder = JSONDecoder()
+
     weak var delegate: RoomClientDelegate?
 
     enum Error: Swift.Error {
@@ -64,7 +66,10 @@ final class RoomClient {
     }
 
     func createTrack() {
-        _ = streams[.publisher]?.createAudioTrack(label: "audio0", streamId: "stream")
+        _ = streams[.publisher]?.createAudioTrack(
+            label: "audio0",
+            streamId: "\(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))"
+        )
     }
 
     func send(command: Command.OneOf_Payload) {
@@ -248,15 +253,23 @@ extension RoomClient: WebRTCClientDelegate {
     }
 
     func webRTCClient(_: WebRTCClient, didReceiveData data: Data, onChannel channel: String) {
-        if channel == "soapbox" {
+        switch channel {
+        case "soapbox":
             do {
                 let msg = try Event(serializedData: data)
                 delegate?.roomClient(self, didReceiveMessage: msg)
             } catch {
                 debugPrint("decode error \(error)")
             }
-        } else {
-            debugPrint("message received - " + channel + " - " + (String(data: data, encoding: .utf8) ?? "RIP"))
+        case "ion-sfu":
+            do {
+                let speakers = try decoder.decode([String].self, from: data)
+                debugPrint(speakers.compactMap { Int($0) })
+            } catch {
+                debugPrint("decode error \(error)")
+            }
+        default:
+            debugPrint("unknown channel \(channel)")
         }
     }
 }
