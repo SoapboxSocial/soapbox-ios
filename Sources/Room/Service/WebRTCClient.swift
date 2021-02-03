@@ -25,6 +25,7 @@ final class WebRTCClient: NSObject {
     private let mediaConstrains = [
         kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue,
         kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueFalse,
+        kRTCMediaConstraintsVoiceActivityDetection: kRTCMediaConstraintsValueTrue,
     ]
 
     private var localDataChannels = [String: RTCDataChannel]()
