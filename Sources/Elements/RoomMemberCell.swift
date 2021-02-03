@@ -10,6 +10,12 @@ class RoomMemberCell: UICollectionViewCell {
 
     private var reactionView: ReactionView!
 
+    var isSpeaking: Bool = false {
+        didSet {
+            speakingView.isHidden = !isSpeaking
+        }
+    }
+
     private var speakingView: UIView!
 
     override init(frame: CGRect) {
@@ -105,15 +111,6 @@ class RoomMemberCell: UICollectionViewCell {
 
     func didReact(with: Room.Reaction) {
         reactionView.react(with)
-    }
-
-    func didChangeSpeakVolume(_ delta: Float) {
-        if delta <= 0.02 {
-            speakingView.isHidden = true
-            return
-        }
-
-        speakingView.isHidden = false
     }
 
     override func prepareForReuse() {
