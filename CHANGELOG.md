@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - We've readded speaker indicators, we are now also showing you whether people can hear you!
+
 ## [2.1.1] - 2021-02-02
 
  - Fixes an echo issue.
