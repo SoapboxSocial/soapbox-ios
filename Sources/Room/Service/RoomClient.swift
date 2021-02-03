@@ -6,6 +6,7 @@ import WebRTC
 
 protocol RoomClientDelegate: AnyObject {
     func room(id: String)
+    func room(speakers: [Int])
     func roomClientDidConnect(_ room: RoomClient)
     func roomClientDidDisconnect(_ room: RoomClient)
     func roomClient(_ room: RoomClient, didReceiveMessage message: Event)
@@ -264,7 +265,7 @@ extension RoomClient: WebRTCClientDelegate {
         case "ion-sfu":
             do {
                 let speakers = try decoder.decode([String].self, from: data)
-                debugPrint(speakers.compactMap { Int($0) })
+                delegate?.room(speakers: speakers.compactMap { Int($0) })
             } catch {
                 debugPrint("decode error \(error)")
             }
