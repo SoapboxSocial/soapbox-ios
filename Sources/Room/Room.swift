@@ -351,6 +351,10 @@ extension Room: RoomClientDelegate {
     }
 
     func roomClientDidDisconnect(_: RoomClient) {
+        if let completion = self.completion {
+            return completion(.failure(.general))
+        }
+
         delegate?.roomWasClosedByRemote()
     }
 
