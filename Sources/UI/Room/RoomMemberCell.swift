@@ -6,8 +6,6 @@ import UIKit
 class RoomMemberCell: UICollectionViewCell {
     private(set) var user: Int64?
 
-    private static let imageConfiguration = UIImage.SymbolConfiguration(pointSize: 13, weight: .semibold)
-
     private var nameLabel: UILabel!
 
     private var muteView: UIView = {
@@ -17,7 +15,8 @@ class RoomMemberCell: UICollectionViewCell {
         view.clipsToBounds = true
         view.backgroundColor = UIColor(red: 44 / 255, green: 44 / 255, blue: 46 / 255, alpha: 1.0)
 
-        let imageView = UIImageView(image: UIImage(systemName: "mic.slash.fill", withConfiguration: imageConfiguration))
+        let conf = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
+        let imageView = UIImageView(image: UIImage(systemName: "mic.slash.fill", withConfiguration: conf))
         imageView.center = view.center
         imageView.tintColor = .white
 
@@ -32,7 +31,8 @@ class RoomMemberCell: UICollectionViewCell {
         view.layer.masksToBounds = true
         view.clipsToBounds = true
 
-        let imageView = UIImageView(image: UIImage(systemName: "waveform", withConfiguration: imageConfiguration))
+        let conf = UIImage.SymbolConfiguration(pointSize: 14, weight: .heavy)
+        let imageView = UIImageView(image: UIImage(systemName: "waveform", withConfiguration: conf))
         imageView.center = view.center
         imageView.tintColor = .white
 
