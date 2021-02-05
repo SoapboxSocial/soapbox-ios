@@ -9,7 +9,7 @@ excluded:
 identifier_name:
   excluded:
     - id
-    - to
     - i
+    - me
 disabled_rules:
     - trailing_comma

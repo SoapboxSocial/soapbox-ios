@@ -88,7 +88,7 @@ class RoomView: UIView {
     private let shareRoomButton: EmojiButton = {
         let button = EmojiButton(frame: .zero)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "square.and.arrow.up", withConfiguration: RoomView.iconConfig), for: .normal)
+        button.setImage(UIImage(systemName: "square.and.arrow.up", withConfiguration: iconConfig), for: .normal)
         button.tintColor = .brandColor
         button.backgroundColor = .clear
         button.addTarget(self, action: #selector(shareRoom), for: .touchUpInside)
@@ -281,13 +281,15 @@ class RoomView: UIView {
             topButtonStack.heightAnchor.constraint(equalToConstant: 32),
         ])
 
+        var height: CGFloat
         if UIScreen.main.bounds.height <= 736 {
-            content.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height - (68 + 20 + 32 + 40 + 57 + 76)).isActive = true
+            height = UIScreen.main.bounds.height - (68 + 20 + 32 + 40 + 57 + 76)
         } else {
-            content.heightAnchor.constraint(equalToConstant: UICollectionViewFlowLayout.heightForBubbleLayout(rows: 4, width: UIScreen.main.bounds.width)).isActive = true
+            height = UICollectionViewFlowLayout.heightForBubbleLayout(rows: 4, width: UIScreen.main.bounds.width)
         }
 
         NSLayoutConstraint.activate([
+            content.heightAnchor.constraint(equalToConstant: height),
             content.topAnchor.constraint(equalTo: exitButton.bottomAnchor, constant: 20),
             content.leftAnchor.constraint(equalTo: foreground.leftAnchor),
             content.rightAnchor.constraint(equalTo: foreground.rightAnchor),
@@ -402,9 +404,9 @@ class RoomView: UIView {
             usingSpringWithDamping: 0.6,
             initialSpringVelocity: 0.5,
             options: .curveEaseOut,
-            animations: { [self] in
-                muteButton.isHidden = false
-                muteButton.alpha = 1
+            animations: {
+                self.muteButton.isHidden = false
+                self.muteButton.alpha = 1
             }
         )
     }
@@ -414,34 +416,34 @@ class RoomView: UIView {
             withDuration: 0.1,
             delay: 0,
             options: .curveEaseOut,
-            animations: { [self] in
-                muteButton.isHidden = true
-                muteButton.alpha = 0
+            animations: {
+                self.muteButton.isHidden = true
+                self.muteButton.alpha = 0
             }
         )
     }
 
     private func hideEditNameButton() {
-        UIView.animate(withDuration: 0.2) { [self] in
-            settingsButton.isHidden = true
+        UIView.animate(withDuration: 0.2) {
+            self.settingsButton.isHidden = true
         }
     }
 
     private func showEditNameButton() {
-        UIView.animate(withDuration: 0.2) { [self] in
-            settingsButton.isHidden = false
+        UIView.animate(withDuration: 0.2) {
+            self.settingsButton.isHidden = false
         }
     }
 
     private func hideInviteUserButton() {
-        UIView.animate(withDuration: 0.2) { [self] in
-            inviteUsersButton.isHidden = true
+        UIView.animate(withDuration: 0.2) {
+            self.inviteUsersButton.isHidden = true
         }
     }
 
     private func showInviteUserButton() {
-        UIView.animate(withDuration: 0.2) { [self] in
-            inviteUsersButton.isHidden = false
+        UIView.animate(withDuration: 0.2) {
+            self.inviteUsersButton.isHidden = false
         }
     }
 
@@ -468,9 +470,9 @@ class RoomView: UIView {
             URL(string: "https://soapbox.social/room/" + room.state.id)!,
         ]
 
-        let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
-        ac.excludedActivityTypes = [.markupAsPDF, .openInIBooks, .addToReadingList, .assignToContact]
-        window!.rootViewController!.present(ac, animated: true)
+        let alert = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        alert.excludedActivityTypes = [.markupAsPDF, .openInIBooks, .addToReadingList, .assignToContact]
+        window!.rootViewController!.present(alert, animated: true)
     }
 
     @objc private func pasteLink() {
@@ -670,10 +672,10 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func userWasInvitedToBeAdmin(by: Int64) {
+    func userWasInvitedToBeAdmin(by user: Int64) {
         let title = NSLocalizedString("invited_to_be_admin_by", comment: "")
 
-        guard let member = room.state.members.first(where: { $0.id == by }) else {
+        guard let member = room.state.members.first(where: { $0.id == user }) else {
             return
         }
 
