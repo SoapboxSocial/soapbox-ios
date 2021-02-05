@@ -96,6 +96,8 @@ class RoomCreationView: UIView, UITextFieldDelegate {
 
     private let api = APIClient()
 
+    private let user = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
+
     init() {
         super.init(frame: CGRect.zero)
 
@@ -247,7 +249,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
 
     func loadGroups() {
         // @TODO Paginate
-        api.groups(id: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId), limit: 100, offset: 0, callback: { result in
+        api.groups(id: user, limit: 100, offset: 0, callback: { result in
             switch result {
             case .failure:
                 self.groupView.isHidden = true
@@ -264,7 +266,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
     }
 
     func loadFriends() {
-        api.friends(id: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)) { result in
+        api.friends(id: user) { result in
             switch result {
             case .failure:
                 break
