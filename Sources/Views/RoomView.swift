@@ -650,7 +650,10 @@ extension RoomView: UICollectionViewDataSource {
         return room.state.members.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withClass: RoomMemberCell.self, for: indexPath)
 
         cell.setup(member: room.state.members[indexPath.item])
