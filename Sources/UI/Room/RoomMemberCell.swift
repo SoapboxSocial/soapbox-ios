@@ -4,8 +4,38 @@ import UIKit
 class RoomMemberCell: UICollectionViewCell {
     private(set) var user: Int64?
 
+    private static let imageConfiguration = UIImage.SymbolConfiguration(pointSize: 13, weight: .semibold)
+
     private var nameLabel: UILabel!
-    private var muteView: UIView!
+
+    private var muteView: UIView = {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
+        view.layer.cornerRadius = 24 / 2
+        view.backgroundColor = UIColor(red: 44 / 255, green: 44 / 255, blue: 46 / 255, alpha: 1.0)
+
+        let imageView = UIImageView(image: UIImage(systemName: "mic.slash.fill", withConfiguration: imageConfiguration))
+        imageView.center = view.center
+        imageView.tintColor = .white
+
+        view.addSubview(imageView)
+
+        return view
+    }()
+
+    private var speakingView: UIView = {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
+        view.layer.cornerRadius = 24 / 2
+        view.backgroundColor = .brandColor
+
+        let imageView = UIImageView(image: UIImage(systemName: "waveform", withConfiguration: imageConfiguration))
+        imageView.center = view.center
+        imageView.tintColor = .white
+
+        view.addSubview(imageView)
+
+        return view
+    }()
+
     private var profileImage: UIImageView!
 
     private var reactionView: ReactionView!
@@ -16,7 +46,11 @@ class RoomMemberCell: UICollectionViewCell {
         }
     }
 
-    private var speakingView: UIView!
+    var isMuted: Bool = false {
+        didSet {
+            muteView.isHidden = !isMuted
+        }
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -33,31 +67,11 @@ class RoomMemberCell: UICollectionViewCell {
         nameLabel.textAlignment = .center
         addSubview(nameLabel)
 
-        speakingView = UIView(frame: CGRect(x: frame.size.width - 20, y: 0, width: 20, height: 20))
-        speakingView.backgroundColor = .background
-        speakingView.layer.cornerRadius = 10
-        speakingView.clipsToBounds = true
-        speakingView.isHidden = true
-        contentView.addSubview(speakingView)
-
-        let speakingLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-        speakingLabel.textAlignment = .center
-        speakingLabel.font = speakingLabel.font.withSize(10)
-        speakingLabel.text = "🎙️"
-        speakingView.addSubview(speakingLabel)
-
-        muteView = UIView(frame: CGRect(x: frame.size.width - 20, y: frame.size.width - 20, width: 20, height: 20))
-        muteView.backgroundColor = .background
-        muteView.layer.cornerRadius = 10
-        muteView.clipsToBounds = true
-        muteView.isHidden = true
+        muteView.frame.origin = CGPoint(x: frame.size.width - 24, y: 0)
         contentView.addSubview(muteView)
-
-        let muteLabel = UILabel(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-        muteLabel.text = "🔇"
-        muteLabel.textAlignment = .center
-        muteLabel.font = muteLabel.font.withSize(10)
-        muteView.addSubview(muteLabel)
+        
+        speakingView.frame.origin = CGPoint(x: frame.size.width - 24, y: 0)
+        contentView.addSubview(speakingView)
     }
 
     required init?(coder _: NSCoder) {
@@ -91,11 +105,7 @@ class RoomMemberCell: UICollectionViewCell {
             profileImage.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
         }
 
-        if muted {
-            muteView.isHidden = false
-        } else {
-            muteView.isHidden = true
-        }
+        isMuted = muted
     }
 
     func setup(member: RoomState.RoomMember) {
