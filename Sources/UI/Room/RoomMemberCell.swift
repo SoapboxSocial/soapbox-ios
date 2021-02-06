@@ -13,7 +13,7 @@ class RoomMemberCell: UICollectionViewCell {
         view.layer.cornerRadius = 24 / 2
         view.layer.masksToBounds = true
         view.clipsToBounds = true
-        view.backgroundColor = UIColor(red: 44 / 255, green: 44 / 255, blue: 46 / 255, alpha: 1.0)
+        view.backgroundColor = UIColor(red: 28 / 255, green: 28 / 255, blue: 30 / 255, alpha: 1.0)
 
         let conf = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
         let imageView = UIImageView(image: UIImage(systemName: "mic.slash.fill", withConfiguration: conf))
