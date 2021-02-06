@@ -2,7 +2,10 @@
 
 ## [Unreleased]
 
+## [2.2.0] - 2021-02-05
+
  - We've readded speaker indicators, we are now also showing you whether people can hear you!
+ - Made the muted indicator look a bit nicer.
 
 ## [2.1.1] - 2021-02-02
 
