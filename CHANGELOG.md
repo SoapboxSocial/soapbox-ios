@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Removed the visibility toggle in a group room.
  - We made the activity feed just a bit nicer.
  - We added welcome rooms, ensuring that new users get a great experience!
 
