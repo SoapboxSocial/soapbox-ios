@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - We added welcome rooms, ensuring that new users get a great experience!
+
 ## [2.2.0] - 2021-02-05
 
  - We've readded speaker indicators, we are now also showing you whether people can hear you!
