@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.3.0] - 2021-02-07
+
  - Removed the visibility toggle in a group room.
  - We made the activity feed just a bit nicer.
  - We added welcome rooms, ensuring that new users get a great experience!
