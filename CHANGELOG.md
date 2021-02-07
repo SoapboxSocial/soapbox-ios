@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - We made the activity feed just a bit nicer.
  - We added welcome rooms, ensuring that new users get a great experience!
 
 ## [2.2.0] - 2021-02-05
