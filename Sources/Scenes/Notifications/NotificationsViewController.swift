@@ -151,11 +151,17 @@ extension NotificationsViewController: UICollectionViewDataSource {
         let notification = notifications[indexPath.section].notifications[indexPath.item]
 
         var body: String
-        if notification.category == "NEW_FOLLOWER" {
+
+        switch notification.category {
+        case "NEW_FOLLOWER":
             body = NSLocalizedString("started_following_you", comment: "")
-        } else {
+        case "GROUP_INVITE":
             let fmt = NSLocalizedString("invited_you_to_join", comment: "")
             body = String(format: fmt, notification.group?.name ?? "")
+        case "WELCOME_ROOM":
+            body = NSLocalizedString("just_joined_welcome", comment: "")
+        default:
+            body = ""
         }
 
         let cell = collectionView.dequeueReusableCell(withClass: NotificationCell.self, for: indexPath)
@@ -205,6 +211,12 @@ extension NotificationsViewController: UICollectionViewDelegate {
             }
 
             nav.pushViewController(SceneFactory.createGroupViewController(id: id), animated: true)
+        case "WELCOME_ROOM":
+            guard let room = item.room else {
+                return
+            }
+
+            nav.didSelect(room: room)
         default:
             return
         }
