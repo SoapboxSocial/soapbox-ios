@@ -63,14 +63,14 @@ class NotificationsViewController: ViewController {
     private func layout() -> UICollectionViewCompositionalLayout {
         let size = NSCollectionLayoutSize(
             widthDimension: NSCollectionLayoutDimension.fractionalWidth(1),
-            heightDimension: .estimated(42)
+            heightDimension: .estimated(88)
         )
         let item = NSCollectionLayoutItem(layoutSize: size)
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: size, subitem: item, count: 1)
 
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
-        section.interGroupSpacing = 20
+        section.interGroupSpacing = 0
         section.boundarySupplementaryItems = [createSectionHeader()]
 
         return UICollectionViewCompositionalLayout(section: section)
@@ -169,6 +169,24 @@ extension NotificationsViewController: UICollectionViewDataSource {
 
         if notification.from.image != "" {
             cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + notification.from.image))
+        }
+
+        cell.layer.mask = nil
+        cell.layer.cornerRadius = 0
+
+        if indexPath.item == 0 {
+            cell.roundCorners(corners: [.topLeft, .topRight], radius: 30)
+        }
+
+        let count = notifications[indexPath.section].notifications.count
+        if indexPath.item == (count - 1) {
+            cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 30)
+        }
+
+        if indexPath.item == 0, count == 1 {
+            cell.layer.mask = nil
+            cell.layer.cornerRadius = 30
+            cell.layer.masksToBounds = true
         }
 
         return cell
