@@ -14,3 +14,21 @@ jobs:
       - uses: actions/checkout@v1
       - name: GitHub Action for SwiftLint
         uses: norio-nomura/action-swiftlint@3.1.0
+  
+  Build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - run: bash <(curl -Ls https://install.tuist.io)
+      - run: make setup
+      - name: setup-cocoapods
+        uses: maxim-lobanov/setup-cocoapods@v1
+        with:
+          podfile-path: Podfile.lock
+      - uses: sersoft-gmbh/xcodebuild-action@v1
+        with:
+         project: Soapbox.xcodeproj
+         scheme: Soapbox
+         destination: platform=iOS Simulator,name=iPhone 12,OS=14.2
+         action: build
