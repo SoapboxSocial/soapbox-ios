@@ -282,7 +282,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             }
 
             switch category {
-            case "NEW_ROOM", "ROOM_JOINED", "ROOM_INVITE":
+            case "NEW_ROOM", "ROOM_JOINED", "ROOM_INVITE", "WELCOME_ROOM":
                 guard let id = args["id"] as? String else {
                     return
                 }

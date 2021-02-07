@@ -22,21 +22,23 @@ class NotificationCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
+        backgroundColor = .foreground
+
         contentView.addSubview(label)
         contentView.addSubview(image)
 
         NSLayoutConstraint.activate([
             image.widthAnchor.constraint(equalToConstant: 40),
             image.heightAnchor.constraint(equalToConstant: 40),
-            image.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            image.topAnchor.constraint(equalTo: contentView.topAnchor),
+            image.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
+            image.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
         ])
 
         NSLayoutConstraint.activate([
             label.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 10),
             label.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            label.topAnchor.constraint(equalTo: contentView.topAnchor),
-            label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            label.topAnchor.constraint(equalTo: image.topAnchor),
+            label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
         ])
     }
 
@@ -44,24 +46,16 @@ class NotificationCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setText(name: String, body: String, time: Int) {
+    func setText(name: String, body: String, time _: Int) {
         let content = NSMutableAttributedString(string: name + "\n", attributes: [
             NSAttributedString.Key.foregroundColor: UIColor.label,
-            NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .body, weight: .bold),
+            NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .body, weight: .semibold),
         ])
 
         content.append(NSAttributedString(string: body, attributes: [
-            NSAttributedString.Key.foregroundColor: UIColor.label,
+            NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel,
             NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .body, weight: .regular),
         ]))
-
-        let interval = TimeInterval(time)
-        content.append(
-            NSAttributedString(
-                string: " " + Date(timeIntervalSince1970: interval).timeAgoDisplay(),
-                attributes: [NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel]
-            )
-        )
 
         label.attributedText = content
     }

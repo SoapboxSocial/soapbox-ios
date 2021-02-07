@@ -63,14 +63,14 @@ class NotificationsViewController: ViewController {
     private func layout() -> UICollectionViewCompositionalLayout {
         let size = NSCollectionLayoutSize(
             widthDimension: NSCollectionLayoutDimension.fractionalWidth(1),
-            heightDimension: .estimated(42)
+            heightDimension: .estimated(88)
         )
         let item = NSCollectionLayoutItem(layoutSize: size)
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: size, subitem: item, count: 1)
 
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
-        section.interGroupSpacing = 20
+        section.interGroupSpacing = 0
         section.boundarySupplementaryItems = [createSectionHeader()]
 
         return UICollectionViewCompositionalLayout(section: section)
@@ -151,11 +151,17 @@ extension NotificationsViewController: UICollectionViewDataSource {
         let notification = notifications[indexPath.section].notifications[indexPath.item]
 
         var body: String
-        if notification.category == "NEW_FOLLOWER" {
+
+        switch notification.category {
+        case "NEW_FOLLOWER":
             body = NSLocalizedString("started_following_you", comment: "")
-        } else {
+        case "GROUP_INVITE":
             let fmt = NSLocalizedString("invited_you_to_join", comment: "")
             body = String(format: fmt, notification.group?.name ?? "")
+        case "WELCOME_ROOM":
+            body = NSLocalizedString("just_joined_welcome", comment: "")
+        default:
+            body = ""
         }
 
         let cell = collectionView.dequeueReusableCell(withClass: NotificationCell.self, for: indexPath)
@@ -163,6 +169,24 @@ extension NotificationsViewController: UICollectionViewDataSource {
 
         if notification.from.image != "" {
             cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + notification.from.image))
+        }
+
+        cell.layer.mask = nil
+        cell.layer.cornerRadius = 0
+
+        if indexPath.item == 0 {
+            cell.roundCorners(corners: [.topLeft, .topRight], radius: 30)
+        }
+
+        let count = notifications[indexPath.section].notifications.count
+        if indexPath.item == (count - 1) {
+            cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 30)
+        }
+
+        if indexPath.item == 0, count == 1 {
+            cell.layer.mask = nil
+            cell.layer.cornerRadius = 30
+            cell.layer.masksToBounds = true
         }
 
         return cell
@@ -205,6 +229,12 @@ extension NotificationsViewController: UICollectionViewDelegate {
             }
 
             nav.pushViewController(SceneFactory.createGroupViewController(id: id), animated: true)
+        case "WELCOME_ROOM":
+            guard let room = item.room else {
+                return
+            }
+
+            nav.didSelect(room: room)
         default:
             return
         }
