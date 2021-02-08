@@ -12,8 +12,10 @@ class RoomFactory {
     ])
 
     static func create(callback: @escaping (Room) -> Void) {
+        let signal = SignalingClient(transport: WebSocketSignalClientTransport(url: Configuration.roomAPIURL))
+
         webrtc(callback: { servers in
-            callback(Room(client: RoomClient(signal: SignalingClient(transport: WebSocketSignalClientTransport(url: Configuration.roomAPIURL)), iceServers: servers)))
+            callback(Room(client: RoomClient(signal: signal, iceServers: servers)))
         })
     }
 
