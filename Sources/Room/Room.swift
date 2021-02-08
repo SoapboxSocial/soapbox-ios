@@ -16,6 +16,7 @@ protocol RoomDelegate {
     func wasMutedByAdmin()
     func visibilityUpdated(visibility: Visibility)
     func usersSpeaking(users: [Int])
+    func linkWasPinned(link: String)
 }
 
 enum RoomError: Error {
@@ -213,8 +214,12 @@ extension Room {
             on(roomRenamed: evt)
         case let .visibilityUpdated(evt):
             on(visibilityUpdated: evt)
-        default: // @TODO
-            break
+        case let .pinnedLink(evt):
+            on(pinnedLink: evt.link)
+        case .unpinnedLink:
+            linkWasUnpinned()
+        default:
+            return
         }
     }
 
@@ -280,6 +285,10 @@ extension Room {
         state.visibility = visibilityUpdated.visibility
         delegate?.visibilityUpdated(visibility: visibilityUpdated.visibility)
     }
+
+    private func on(pinnedLink _: String) {}
+
+    private func linkWasUnpinned() {}
 
     private func onMutedByAdmin() {
         client.mute()
