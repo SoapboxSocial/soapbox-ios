@@ -25,6 +25,7 @@ final class WebRTCClient: NSObject {
     private let mediaConstrains = [
         kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue,
         kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueFalse,
+        kRTCMediaConstraintsVoiceActivityDetection: kRTCMediaConstraintsValueTrue,
     ]
 
     private var localDataChannels = [String: RTCDataChannel]()
@@ -56,7 +57,9 @@ final class WebRTCClient: NSObject {
         super.init()
 
         if role == .publisher {
-            _ = createDataChannel(label: "ion-sfu")
+            if let channel = createDataChannel(label: "ion-sfu") {
+                localDataChannels[channel.label] = channel
+            }
         }
 
         peerConnection.delegate = self
@@ -191,8 +194,8 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
 
 extension WebRTCClient {
     private func setTrackEnabled<T: RTCMediaStreamTrack>(_: T.Type, isEnabled: Bool) {
-        peerConnection.transceivers
-            .compactMap { $0.sender.track as? T }
+        peerConnection.senders
+            .compactMap { $0.track as? T }
             .forEach { $0.isEnabled = isEnabled }
     }
 }

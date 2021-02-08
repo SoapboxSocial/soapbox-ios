@@ -8,13 +8,23 @@ class RoomSettingsSheet {
             self.editRoomNameButtonTapped(room: room, view: view)
         }))
 
+        if !room.state.hasGroup {
+            sheet.addAction(createVisibilityToggle(room: room))
+        }
+
+        sheet.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+
+        view.present(sheet, animated: true)
+    }
+
+    private static func createVisibilityToggle(room: Room) -> UIAlertAction {
         let visibility = room.state.visibility
         var label = NSLocalizedString("make_private", comment: "")
         if visibility == .private {
             label = NSLocalizedString("make_public", comment: "")
         }
 
-        sheet.addAction(UIAlertAction(title: label, style: .destructive, handler: { _ in
+        return UIAlertAction(title: label, style: .destructive, handler: { _ in
             switch visibility {
             case .private:
                 room.updateVisibility(.public)
@@ -23,11 +33,7 @@ class RoomSettingsSheet {
             default:
                 return
             }
-        }))
-
-        sheet.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-
-        view.present(sheet, animated: true)
+        })
     }
 
     private static func editRoomNameButtonTapped(room: Room, view: UIViewController) {

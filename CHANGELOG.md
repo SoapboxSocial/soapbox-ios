@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [2.3.0] - 2021-02-07
+
+ - Removed the visibility toggle in a group room.
+ - We made the activity feed just a bit nicer.
+ - We added welcome rooms, ensuring that new users get a great experience!
+
+## [2.2.0] - 2021-02-05
+
+ - We've readded speaker indicators, we are now also showing you whether people can hear you!
+ - Made the muted indicator look a bit nicer.
+
 ## [2.1.1] - 2021-02-02
 
  - Fixes an echo issue.
