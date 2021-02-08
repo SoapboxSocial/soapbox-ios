@@ -31,6 +31,8 @@ final class WebRTCClient: NSObject {
     private var localDataChannels = [String: RTCDataChannel]()
     private var remoteDataChannels = [String: RTCDataChannel]()
 
+    private var tracks = [String: RTCMediaStreamTrack]()
+
     @available(*, unavailable)
     override init() {
         fatalError("WebRTCClient:init is unavailable")
@@ -125,6 +127,8 @@ final class WebRTCClient: NSObject {
 
         peerConnection.addTransceiver(with: track)
 
+        tracks[label] = track
+
         return track
     }
 
@@ -194,9 +198,7 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
 
 extension WebRTCClient {
     private func setTrackEnabled<T: RTCMediaStreamTrack>(_: T.Type, isEnabled: Bool) {
-        peerConnection.senders
-            .compactMap { $0.track as? T }
-            .forEach { $0.isEnabled = isEnabled }
+        tracks.forEach { $1.isEnabled = isEnabled }
     }
 }
 
