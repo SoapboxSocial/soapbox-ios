@@ -71,4 +71,11 @@ class CollectionViewSectionViewMore: UICollectionReusableView {
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        activity.isHidden = true
+        label.isHidden = false
+    }
 }
