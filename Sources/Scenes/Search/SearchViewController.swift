@@ -168,11 +168,36 @@ extension SearchViewController: UICollectionViewDataSource {
     }
 
     @objc private func showMoreGroups() {
-        output.loadMore(type: .groups)
+        loadMore(type: .groups)
     }
 
     @objc private func showMoreUsers() {
-        output.loadMore(type: .users)
+        loadMore(type: .users)
+    }
+
+    private func loadMore(type: APIClient.SearchIndex) {
+        var section = SearchCollectionPresenter.SectionType.userList
+        if type == .groups {
+            section = .groupList
+        }
+
+        guard let index = presenter.index(of: section) else {
+            return
+        }
+
+        let cell = collection.dequeueReusableSupplementaryView(
+            ofKind: UICollectionView.elementKindSectionFooter,
+            withClass: CollectionViewSectionViewMore.self,
+            for: IndexPath(item: 0, section: index)
+        )
+
+        if cell.isLoading {
+            return
+        }
+
+        cell.isLoading = true
+
+        output.loadMore(type: type)
     }
 }
 
@@ -196,6 +221,8 @@ extension SearchViewController: SearchPresenterOutput {
     }
 
     func displayMore(users: [APIClient.User]) {
+        hideActivityFor(section: .userList)
+
         if users.isEmpty {
             return
         }
@@ -212,6 +239,8 @@ extension SearchViewController: SearchPresenterOutput {
     }
 
     func displayMore(groups: [APIClient.Group]) {
+        hideActivityFor(section: .groupList)
+
         if groups.isEmpty {
             return
         }
@@ -229,6 +258,20 @@ extension SearchViewController: SearchPresenterOutput {
 
     func displaySearchError() {
         collection.refreshControl?.endRefreshing()
+    }
+
+    private func hideActivityFor(section: SearchCollectionPresenter.SectionType) {
+        guard let index = presenter.index(of: section) else {
+            return
+        }
+
+        let cell = collection.dequeueReusableSupplementaryView(
+            ofKind: UICollectionView.elementKindSectionFooter,
+            withClass: CollectionViewSectionViewMore.self,
+            for: IndexPath(item: 0, section: index)
+        )
+
+        cell.isLoading = false
     }
 }
 

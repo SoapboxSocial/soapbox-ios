@@ -1,6 +1,26 @@
 import UIKit
 
 class CollectionViewSectionViewMore: UICollectionReusableView {
+    var isLoading = false {
+        didSet {
+            if isLoading {
+                label.isHidden = true
+                activity.isHidden = false
+                activity.startAnimating()
+            } else {
+                label.isHidden = false
+                activity.isHidden = true
+                activity.stopAnimating()
+            }
+        }
+    }
+
+    private let activity: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .medium)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
     private let label: UILabel = {
         let label = UILabel()
         label.textColor = .label
@@ -35,6 +55,16 @@ class CollectionViewSectionViewMore: UICollectionReusableView {
         NSLayoutConstraint.activate([
             label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+        ])
+
+        label.isHidden = false
+        activity.isHidden = true
+
+        view.addSubview(activity)
+
+        NSLayoutConstraint.activate([
+            activity.centerXAnchor.constraint(equalTo: centerXAnchor),
+            activity.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
     }
 
