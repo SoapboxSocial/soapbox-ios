@@ -63,8 +63,8 @@ class CollectionViewSectionViewMore: UICollectionReusableView {
         view.addSubview(activity)
 
         NSLayoutConstraint.activate([
-            activity.centerXAnchor.constraint(equalTo: centerXAnchor),
-            activity.centerYAnchor.constraint(equalTo: centerYAnchor),
+            activity.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activity.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
     }
 
