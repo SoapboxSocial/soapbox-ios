@@ -30,10 +30,6 @@ class NotificationsViewController: ViewController {
 
         title = NSLocalizedString("activity", comment: "")
 
-        navigationController?.navigationBar.titleTextAttributes = [
-            NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .body, weight: .medium),
-        ]
-
         collection = UICollectionView(frame: .zero, collectionViewLayout: layout())
         collection.dataSource = self
         collection.delegate = self

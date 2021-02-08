@@ -38,6 +38,10 @@ class NavigationViewController: UINavigationController {
         edgeSwipeGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handleSwipe))
         edgeSwipeGestureRecognizer!.edges = .left
         view.addGestureRecognizer(edgeSwipeGestureRecognizer!)
+
+        navigationBar.titleTextAttributes = [
+            NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .headline, weight: .semibold),
+        ]
     }
 
     override func viewDidAppear(_ animated: Bool) {
