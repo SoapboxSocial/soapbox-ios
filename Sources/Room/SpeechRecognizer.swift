@@ -34,16 +34,6 @@ class SpeechRecognizer: NSObject {
                 }
             }
         }
-
-//        let inputNode = audioEngine.inputNode
-//
-//        let recordingFormat = inputNode.outputFormat(forBus: 0)
-//        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
-//            self.recognitionRequest?.append(buffer)
-//        }
-//
-//        audioEngine.prepare()
-//        try audioEngine.start()
     }
 
     private func start() {
@@ -59,21 +49,18 @@ class SpeechRecognizer: NSObject {
         recognitionRequest.shouldReportPartialResults = true
 
         // Keep speech recognition data on device
-        if #available(iOS 13, *) {
-            recognitionRequest.requiresOnDeviceRecognition = false
-        }
+        recognitionRequest.requiresOnDeviceRecognition = false
 
         // Create a recognition task for the speech recognition session.
         // Keep a reference to the task so that it can be canceled.
         recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest) { result, error in
-            var isFinal = false
 
             if let result = result {
                 // Update the text view with the results.
                 print("Text \(result.bestTranscription.formattedString)")
             }
 
-            if error != nil || isFinal {
+            if error != nil {
                 // Stop recognizing speech if there is a problem.
                 self.audioEngine.stop()
                 inputNode.removeTap(onBus: 0)
