@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.4.0] - 2021-02-09
+
  - Fixes to audio quality!
 
 ## [2.3.0] - 2021-02-07
