@@ -96,7 +96,7 @@
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleDarkContent</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>I want to write down everything you say</string>
+	<string>This is used to generate closed captions for other listeners in a room.</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

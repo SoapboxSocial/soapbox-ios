@@ -1,5 +1,6 @@
 NSMicrophoneUsageDescription = "To chat in rooms, we will need microphone access.";
 NSPhotoLibraryUsageDescription = "Photo access will be used chose a profile picture.";
+NSSpeechRecognitionUsageDescription = "This is used to generate closed captions for other listeners in a room.";
 
 NEW_ROOM = "New room";
 NEW_PRIVATE_ROOM = "New private room";
