@@ -2,13 +2,14 @@ import Foundation
 import Speech
 
 class SpeechRecognizer: NSObject {
+
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))!
+    private let engine = AVAudioEngine()
 
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
 
     private var recognitionTask: SFSpeechRecognitionTask?
 
-    private let audioEngine = AVAudioEngine()
 
     override init() {
         super.init()
@@ -41,7 +42,7 @@ class SpeechRecognizer: NSObject {
         recognitionTask = nil
 
         // Configure the audio session for the app.
-        let inputNode = audioEngine.inputNode
+        let inputNode = engine.inputNode
 
         // Create and configure the speech recognition request.
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
@@ -62,7 +63,7 @@ class SpeechRecognizer: NSObject {
 
             if error != nil {
                 // Stop recognizing speech if there is a problem.
-                self.audioEngine.stop()
+                self.engine.stop()
                 inputNode.removeTap(onBus: 0)
 
                 self.recognitionRequest = nil
@@ -76,10 +77,10 @@ class SpeechRecognizer: NSObject {
             self.recognitionRequest?.append(buffer)
         }
 
-        audioEngine.prepare()
+        engine.prepare()
 
         do {
-            try audioEngine.start()
+            try engine.start()
         } catch {
             debugPrint("fuck")
         }
