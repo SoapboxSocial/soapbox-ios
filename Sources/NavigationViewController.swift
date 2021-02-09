@@ -20,6 +20,8 @@ class NavigationViewController: UINavigationController {
     private var interactionController: PanTransition?
     private var edgeSwipeGestureRecognizer: UIScreenEdgePanGestureRecognizer?
 
+    private var speech: SpeechRecognizer!
+
     override init(rootViewController: UIViewController) {
         createRoomButton = CreateRoomButton()
 
@@ -101,6 +103,9 @@ class NavigationViewController: UINavigationController {
             drawer.setPosition(.open, animated: true)
             return
         }
+
+        speech = SpeechRecognizer()
+        speech.recognize()
 
         roomView = RoomView(room: room!)
         roomView!.delegate = self
