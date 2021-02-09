@@ -201,12 +201,6 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
 }
 
 extension WebRTCClient {
-    private func setTrackEnabled<T: RTCMediaStreamTrack>(_: T.Type, isEnabled: Bool) {
-        tracks.forEach { $1.isEnabled = isEnabled }
-    }
-}
-
-extension WebRTCClient {
     func muteAudio() {
         setAudioEnabled(false)
     }
@@ -235,7 +229,7 @@ extension WebRTCClient {
     }
 
     private func setAudioEnabled(_ isEnabled: Bool) {
-        setTrackEnabled(RTCAudioTrack.self, isEnabled: isEnabled)
+        tracks.forEach { $1.isEnabled = isEnabled }
     }
 }
 
