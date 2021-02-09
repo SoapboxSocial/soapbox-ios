@@ -125,7 +125,11 @@ final class WebRTCClient: NSObject {
 
         peerConnection.add(track, streamIds: [streamId])
 
-        peerConnection.addTransceiver(with: track)
+        let conf = RTCRtpTransceiverInit()
+        conf.streamIds = [streamId]
+        conf.direction = .sendOnly
+
+        peerConnection.addTransceiver(with: track, init: conf)
 
         tracks[label] = track
 
