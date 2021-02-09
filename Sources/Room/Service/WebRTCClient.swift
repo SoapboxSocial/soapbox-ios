@@ -161,6 +161,16 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
 
     func peerConnection(_: RTCPeerConnection, didAdd stream: RTCMediaStream) {
         debugPrint("peerConnection did add stream \(stream.streamId) - \(stream.audioTracks.count)")
+
+        if role == .subscriber {
+            peerConnection.transceivers
+                .compactMap { $0.sender.track as? RTCAudioTrack }
+                .forEach { $0.isEnabled = false }
+
+            peerConnection.senders
+                .compactMap { $0.track as? RTCAudioTrack }
+                .forEach { $0.isEnabled = false }
+        }
     }
 
     func peerConnection(_: RTCPeerConnection, didRemove _: RTCMediaStream) {
