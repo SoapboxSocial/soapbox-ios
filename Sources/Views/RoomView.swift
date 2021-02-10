@@ -195,6 +195,7 @@ class RoomView: UIView {
         content.addArrangedSubview(linkView)
 
         linkView.isHidden = true
+        linkView.delegate = self
 
         NSLayoutConstraint.activate([
             linkView.heightAnchor.constraint(lessThanOrEqualTo: content.heightAnchor, multiplier: 0.66),
@@ -838,6 +839,12 @@ extension RoomView: EmojiBarDelegate {
         reactFeedback.impactOccurred()
         reactFeedback.prepare()
     }
+}
+
+extension RoomView: LinkSharingViewDelegate {
+    func didPin(link _: URL) {}
+
+    func didUnpin() {}
 }
 
 extension RoomView {

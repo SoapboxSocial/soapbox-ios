@@ -2,7 +2,10 @@ import KDCircularProgress
 import LinkPresentation
 import UIKit
 
-protocol LinkShareViewDelegate: AnyObject {}
+protocol LinkSharingViewDelegate: AnyObject {
+    func didPin(link: URL)
+    func didUnpin()
+}
 
 // @TODO It would be nice if data was handled elsewhere,
 // Also it would be nice if metadata is prefetch when there is a long link queue.
