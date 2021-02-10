@@ -65,7 +65,7 @@ class LinkSharingView: UIView {
         return button
     }()
 
-    var delegate: LinkShareViewDelegate?
+    weak var delegate: LinkSharingViewDelegate?
 
     init() {
         super.init(frame: .zero)
