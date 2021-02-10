@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fixes margin on notifications.
+
 ## [2.4.0] - 2021-02-09
 
  - Fixes to audio quality!
