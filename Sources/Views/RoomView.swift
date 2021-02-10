@@ -826,8 +826,9 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func linkWasPinned(link _: String) {
+    func linkWasPinned(link: URL) {
         pasteButton.isHidden = true
+        linkView.displayLink(link: link, name: "poop", isPinned: true)
     }
 }
 

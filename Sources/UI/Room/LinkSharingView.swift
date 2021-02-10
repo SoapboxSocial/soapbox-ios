@@ -2,10 +2,13 @@ import KDCircularProgress
 import LinkPresentation
 import UIKit
 
+protocol LinkShareViewDelegate: AnyObject {}
+
 class LinkSharingView: UIView {
     struct Link {
         let url: URL
         let name: String
+        let pinned: Bool
     }
 
     private var links = [Link]()
@@ -51,9 +54,12 @@ class LinkSharingView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "pin.circle", withConfiguration: config), for: .normal)
         button.setImage(UIImage(systemName: "pin.circle.fill", withConfiguration: config), for: .selected)
+        button.addTarget(self, action: #selector(pinPressed), for: .touchUpInside)
         button.tintColor = .brandColor
         return button
     }()
+
+    var delegate: LinkShareViewDelegate?
 
     init() {
         super.init(frame: .zero)
@@ -110,8 +116,12 @@ class LinkSharingView: UIView {
         ])
     }
 
-    func displayLink(link: URL, name: String) {
-        links.append(Link(url: link, name: name))
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func displayLink(link: URL, name: String, isPinned: Bool = false) {
+        links.append(Link(url: link, name: name, pinned: isPinned))
         if links.count == 1 {
             displayNextLink()
         }
@@ -149,9 +159,14 @@ class LinkSharingView: UIView {
         let text = NSLocalizedString("shared_by_user", comment: "")
         nameLabel.text = String(format: text, link.name.firstName())
 
+        if link.pinned {
+            progress.isHidden = true
+            pin.isSelected = true
+            return
+        }
+
         startTimer(completion: {
-            self.links.removeFirst()
-            self.displayNextLink()
+            self.next()
         })
     }
 
@@ -169,7 +184,12 @@ class LinkSharingView: UIView {
         })
     }
 
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    private func next() {
+        links.removeFirst()
+        displayNextLink()
+    }
+
+    @objc private func pinPressed() {
+        pin.isSelected.toggle()
     }
 }
