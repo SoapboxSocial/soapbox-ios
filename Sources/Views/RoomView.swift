@@ -842,9 +842,13 @@ extension RoomView: EmojiBarDelegate {
 }
 
 extension RoomView: LinkSharingViewDelegate {
-    func didPin(link _: URL) {}
+    func didPin(link: URL) {
+        room.pin(link: link)
+    }
 
-    func didUnpin() {}
+    func didUnpin() {
+        room.unpin()
+    }
 }
 
 extension RoomView {

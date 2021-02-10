@@ -182,6 +182,20 @@ class Room {
         updateMemberRole(user: userId, role: .admin)
     }
 
+    func pin(link: URL) {
+        client.send(command: .pinLink(Command.PinLink.with {
+            $0.link = link.absoluteString
+        }))
+
+        // @TODO MARK AS PINNED, UI?
+    }
+
+    func unpin() {
+        client.send(command: .unpinLink(Command.UnpinLink()))
+
+        // @TODO UI?
+    }
+
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
