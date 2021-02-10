@@ -825,6 +825,10 @@ extension RoomView: RoomDelegate {
             }
         }
     }
+
+    func linkWasPinned(link _: String) {
+        pasteButton.isHidden = true
+    }
 }
 
 extension RoomView: EmojiBarDelegate {

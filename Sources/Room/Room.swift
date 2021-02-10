@@ -286,9 +286,9 @@ extension Room {
         delegate?.visibilityUpdated(visibility: visibilityUpdated.visibility)
     }
 
-    private func on(pinnedLink _: String) {}
-
-    private func linkWasUnpinned() {}
+    private func on(pinnedLink link: String) {
+        delegate?.linkWasPinned(link: link)
+    }
 
     private func onMutedByAdmin() {
         client.mute()
