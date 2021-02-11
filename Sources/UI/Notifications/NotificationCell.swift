@@ -36,7 +36,7 @@ class NotificationCell: UICollectionViewCell {
 
         NSLayoutConstraint.activate([
             label.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 10),
-            label.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            label.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
             label.topAnchor.constraint(equalTo: image.topAnchor),
             label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
         ])
