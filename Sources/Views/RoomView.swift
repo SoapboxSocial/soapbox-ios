@@ -390,6 +390,14 @@ class RoomView: UIView {
         }
 
         visibilityUpdated(visibility: room.state.visibility)
+
+        if room.state.link != "" {
+            guard let url = URL(string: room.state.link) else {
+                return
+            }
+
+            linkView.pinned(link: url)
+        }
     }
 
     override func layoutSubviews() {
