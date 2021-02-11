@@ -20,8 +20,25 @@ brew install fastlane
 sudo gem install cocoapods
 ```
 
-4. To start building run:
+4. Setup the XCode project:
 
 ```sh
 make setup
 ```
+
+## Contributing
+
+Open the Xcode Workspace once the generation has completed and get contributing!
+
+### Branch Naming
+
+We like to stick to a consistent branch naming pattern to keep things clean.
+
+Please stick to the following:
+
+- `enhancement/my-branch-name`:
+  For anything related to improving a feature, part of the app, updating translation files, updating screenshots, etc.
+- `fix/my-branch-name`:
+  For anything related to fixes for a broken feature, typos, etc.
+- `feature/my-branch-name`:
+  For anything related to building out new parts of the app, overhauls of parts of the app, etc.
