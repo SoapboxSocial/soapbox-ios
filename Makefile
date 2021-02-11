@@ -25,10 +25,10 @@ endif
 clean:
 	rm -rf .build $(APP).xcodeproj $(APP).xcworkspace Package.pins Pods Podfile.lock
 
-test: clean xcode install_deps
+test: clean setup install_deps
 	set -o pipefail && swift test | $(XCPRETTY)
 
-build: clean xcode install_deps
+build: clean setup install_deps
 	set -o pipefail && swift build | $(XCPRETTY)
 
 lint:
