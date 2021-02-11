@@ -20,8 +20,4 @@ class UserDefaultsKeys {
     class var username: String {
         return "username"
     }
-
-    class var tooltipShownAmount: String {
-        return "tooltipShownAmount"
-    }
 }
