@@ -379,6 +379,8 @@ class RoomView: UIView {
         muteButton.isSelected = isMuted
         bottomMuteButton.isSelected = isMuted
 
+        linkView.adminRoleChanged(isAdmin: me.role == .admin)
+
         if me.role != .admin {
             settingsButton.isHidden = true
 
@@ -762,9 +764,11 @@ extension RoomView: RoomDelegate {
 
         DispatchQueue.main.async {
             if role == .admin {
+                self.linkView.adminRoleChanged(isAdmin: true)
                 self.showEditNameButton()
                 self.showInviteUserButton()
             } else {
+                self.linkView.adminRoleChanged(isAdmin: false)
                 self.hideEditNameButton()
 
                 if self.room.state.visibility == .private {
@@ -828,8 +832,19 @@ extension RoomView: RoomDelegate {
     }
 
     func linkWasPinned(link: URL) {
-        pasteButton.isHidden = true
-        linkView.displayLink(link: link, name: "poop", isPinned: true)
+        DispatchQueue.main.async {
+            self.pasteButton.isHidden = true
+        }
+
+        linkView.pinned(link: link)
+    }
+
+    func pinnedLinkWasRemoved() {
+        DispatchQueue.main.async {
+            self.pasteButton.isHidden = false
+        }
+
+        linkView.removePinnedLink()
     }
 }
 

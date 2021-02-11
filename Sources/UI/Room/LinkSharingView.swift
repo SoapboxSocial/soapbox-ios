@@ -65,6 +65,8 @@ class LinkSharingView: UIView {
         return button
     }()
 
+    private var timer: Timer?
+
     weak var delegate: LinkSharingViewDelegate?
 
     init() {
@@ -133,6 +135,39 @@ class LinkSharingView: UIView {
         }
     }
 
+    func pinned(link: URL) {
+        guard let top = links.first else {
+            return displayLink(link: link, name: "", isPinned: true)
+        }
+
+        if top.url == link {
+            timer?.invalidate()
+            timer = nil
+
+            links[0] = Link(url: top.url, name: top.name, pinned: true)
+
+            DispatchQueue.main.async {
+                self.progress.isHidden = true
+            }
+
+            return
+        }
+
+        displayLink(link: link, name: "", isPinned: true)
+    }
+
+    func removePinnedLink() {
+        guard let link = links.first else {
+            return
+        }
+
+        if link.pinned != true {
+            return
+        }
+
+        next()
+    }
+
     private func displayNextLink() {
         guard let link = links.first else {
             return UIView.animate(withDuration: 0.1, animations: {
@@ -171,16 +206,27 @@ class LinkSharingView: UIView {
             return
         }
 
+        progress.isHidden = false
+        pin.isSelected = false
+
         startTimer(completion: {
             self.next()
         })
+    }
+
+    func adminRoleChanged(isAdmin: Bool) {
+        if isAdmin {
+            pin.isHidden = false
+        } else {
+            pin.isHidden = true
+        }
     }
 
     private func startTimer(completion: @escaping () -> Void) {
         let interval = 0.1
         progress.progress = 1.0
 
-        Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { timer in
+        timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { timer in
             self.progress.progress -= interval / self.max_length
 
             if self.progress.progress <= 0 {
@@ -191,11 +237,30 @@ class LinkSharingView: UIView {
     }
 
     private func next() {
-        links.removeFirst()
-        displayNextLink()
+        DispatchQueue.main.async {
+            self.links.removeFirst()
+            self.displayNextLink()
+        }
     }
 
     @objc private func pinPressed() {
+        guard let link = links.first else {
+            return
+        }
+
         pin.isSelected.toggle()
+
+        if let timer = self.timer {
+            timer.invalidate()
+            self.timer = nil
+        }
+
+        if pin.isSelected {
+            progress.isHidden = true
+            delegate?.didPin(link: link.url)
+        } else {
+            next()
+            delegate?.didUnpin()
+        }
     }
 }
