@@ -337,12 +337,6 @@ class RoomView: UIView {
         visibilityUpdated(visibility: room.state.visibility)
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-
-        showTooltip()
-    }
-
     func showMuteButton() {
         UIView.animate(
             withDuration: 0.1,
@@ -797,28 +791,5 @@ extension RoomView: ButtonBarDelegate {
         alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel, handler: nil))
 
         window!.rootViewController!.present(alert, animated: true)
-    }
-}
-
-extension RoomView {
-    private func showTooltip() {
-        if didShowTooltip || room.state.visibility == .private {
-            return
-        }
-
-        let count = UserDefaults.standard.integer(forKey: UserDefaultsKeys.tooltipShownAmount)
-        if count >= 3 {
-            return
-        }
-
-        didShowTooltip = true
-        // @TODO
-        // tooltip.show(forVielw: shareRoomButton, withinSuperview: self)
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-            self.tooltip.dismiss()
-        }
-
-        UserDefaults.standard.set(count + 1, forKey: UserDefaultsKeys.tooltipShownAmount)
     }
 }
