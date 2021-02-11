@@ -203,11 +203,13 @@ class LinkSharingView: UIView {
         if link.pinned {
             progress.isHidden = true
             pin.isSelected = true
+            nameLabel.isHidden = true
             return
         }
 
         progress.isHidden = false
         pin.isSelected = false
+        nameLabel.isHidden = false
 
         startTimer(completion: {
             self.next()

@@ -400,6 +400,7 @@ extension Room: RoomClientDelegate {
 
     func roomClient(_: RoomClient, didReceiveState state: RoomState) {
         self.state.visibility = state.visibility
+        self.state.link = state.link
 
         state.members.forEach { member in
             if let index = self.state.members.firstIndex(where: { $0.id == member.id }) {
