@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Added the ability for admins to pin links in rooms!
  - Fixes margin on notifications.
 
 ## [2.4.0] - 2021-02-09
