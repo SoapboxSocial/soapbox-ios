@@ -421,13 +421,13 @@ class RoomView: UIView {
         )
     }
 
-    private func hideEditNameButton() {
+    private func hideSettingsButton() {
         UIView.animate(withDuration: 0.2) { [self] in
             settingsButton.isHidden = true
         }
     }
 
-    private func showEditNameButton() {
+    private func showSettingsButton() {
         UIView.animate(withDuration: 0.2) { [self] in
             settingsButton.isHidden = false
         }
@@ -761,10 +761,10 @@ extension RoomView: RoomDelegate {
 
         DispatchQueue.main.async {
             if role == .admin {
-                self.showEditNameButton()
+                self.showSettingsButton()
                 self.showInviteUserButton()
             } else {
-                self.hideEditNameButton()
+                self.hideSettingsButton()
 
                 if self.room.state.visibility == .private {
                     self.hideInviteUserButton()
