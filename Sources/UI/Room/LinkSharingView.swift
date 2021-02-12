@@ -10,6 +10,8 @@ protocol LinkSharingViewDelegate: AnyObject {
 // @TODO It would be nice if data was handled elsewhere,
 // Also it would be nice if metadata is prefetch when there is a long link queue.
 
+// @TODO WOULD BE NICE TO CLEAN UP LINK PINNING.
+
 class LinkSharingView: UIView {
     struct Link {
         let url: URL
