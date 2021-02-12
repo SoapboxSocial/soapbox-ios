@@ -188,13 +188,12 @@ class Room {
             $0.link = link.absoluteString
         }))
 
-        // @TODO MARK AS PINNED, UI?
+        delegate?.linkWasPinned(link: link)
     }
 
     func unpin() {
         client.send(command: .unpinLink(Command.UnpinLink()))
-
-        // @TODO UI?
+        delegate?.pinnedLinkWasRemoved()
     }
 
     deinit {

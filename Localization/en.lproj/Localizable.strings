@@ -220,3 +220,5 @@
 "change_name" = "Change name";
 "make_private" = "Make private";
 "make_public" = "Make public";
+
+"pinned" = "Pinned";

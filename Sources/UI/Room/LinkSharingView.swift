@@ -150,6 +150,7 @@ class LinkSharingView: UIView {
                 self.links[0] = Link(url: top.url, name: top.name, pinned: true)
                 self.progress.isHidden = true
                 self.pin.isSelected = true
+                self.nameLabel.text = NSLocalizedString("pinned", comment: "")
             }
 
             return
@@ -205,7 +206,7 @@ class LinkSharingView: UIView {
         if link.pinned {
             progress.isHidden = true
             pin.isSelected = true
-            nameLabel.isHidden = true
+            nameLabel.text = NSLocalizedString("pinned", comment: "")
             return
         }
 
@@ -254,18 +255,9 @@ class LinkSharingView: UIView {
 
         pin.isSelected.toggle()
 
-        if let timer = self.timer {
-            timer.invalidate()
-            self.timer = nil
-        }
-
-        links[0] = Link(url: link.url, name: link.name, pinned: true)
-
         if pin.isSelected {
-            progress.isHidden = true
             delegate?.didPin(link: link.url)
         } else {
-            next()
             delegate?.didUnpin()
         }
     }
