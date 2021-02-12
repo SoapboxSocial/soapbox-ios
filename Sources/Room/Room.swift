@@ -16,6 +16,8 @@ protocol RoomDelegate {
     func wasMutedByAdmin()
     func visibilityUpdated(visibility: Visibility)
     func usersSpeaking(users: [Int])
+    func linkWasPinned(link: URL)
+    func pinnedLinkWasRemoved()
 }
 
 enum RoomError: Error {
@@ -181,6 +183,19 @@ class Room {
         updateMemberRole(user: userId, role: .admin)
     }
 
+    func pin(link: URL) {
+        client.send(command: .pinLink(Command.PinLink.with {
+            $0.link = link.absoluteString
+        }))
+
+        delegate?.linkWasPinned(link: link)
+    }
+
+    func unpin() {
+        client.send(command: .unpinLink(Command.UnpinLink()))
+        delegate?.pinnedLinkWasRemoved()
+    }
+
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -213,8 +228,12 @@ extension Room {
             on(roomRenamed: evt)
         case let .visibilityUpdated(evt):
             on(visibilityUpdated: evt)
-        case .none:
-            break
+        case let .pinnedLink(evt):
+            on(pinnedLink: evt.link)
+        case .unpinnedLink:
+            linkWasUnpinned()
+        default:
+            return
         }
     }
 
@@ -279,6 +298,18 @@ extension Room {
     private func on(visibilityUpdated: Event.VisibilityUpdated) {
         state.visibility = visibilityUpdated.visibility
         delegate?.visibilityUpdated(visibility: visibilityUpdated.visibility)
+    }
+
+    private func on(pinnedLink link: String) {
+        guard let url = URL(string: link) else {
+            return
+        }
+
+        delegate?.linkWasPinned(link: url)
+    }
+
+    private func linkWasUnpinned() {
+        delegate?.pinnedLinkWasRemoved()
     }
 
     private func onMutedByAdmin() {
@@ -368,6 +399,7 @@ extension Room: RoomClientDelegate {
 
     func roomClient(_: RoomClient, didReceiveState state: RoomState) {
         self.state.visibility = state.visibility
+        self.state.link = state.link
 
         state.members.forEach { member in
             if let index = self.state.members.firstIndex(where: { $0.id == member.id }) {

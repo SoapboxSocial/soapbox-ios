@@ -184,6 +184,7 @@ class RoomView: UIView {
         content.addArrangedSubview(linkView)
 
         linkView.isHidden = true
+        linkView.delegate = self
 
         NSLayoutConstraint.activate([
             linkView.heightAnchor.constraint(lessThanOrEqualTo: content.heightAnchor, multiplier: 0.66),
@@ -344,6 +345,8 @@ class RoomView: UIView {
         muteButton.isSelected = isMuted
         bottomMuteButton.isSelected = isMuted
 
+        linkView.adminRoleChanged(isAdmin: me.role == .admin)
+
         if me.role != .admin {
             leftButtonBar.hide(button: .settings)
 
@@ -353,6 +356,14 @@ class RoomView: UIView {
         }
 
         visibilityUpdated(visibility: room.state.visibility)
+
+        if room.state.link != "" {
+            guard let url = URL(string: room.state.link) else {
+                return
+            }
+
+            linkView.pinned(link: url)
+        }
     }
 
     func showMuteButton() {
@@ -639,9 +650,11 @@ extension RoomView: RoomDelegate {
 
         DispatchQueue.main.async {
             if role == .admin {
+                self.linkView.adminRoleChanged(isAdmin: true)
                 self.leftButtonBar.show(button: .settings)
                 self.leftButtonBar.show(button: .invite)
             } else {
+                self.linkView.adminRoleChanged(isAdmin: false)
                 self.leftButtonBar.hide(button: .settings)
 
                 if self.room.state.visibility == .private {
@@ -703,6 +716,22 @@ extension RoomView: RoomDelegate {
             }
         }
     }
+
+    func linkWasPinned(link: URL) {
+        DispatchQueue.main.async {
+            self.rightButtonBar.hide(button: .paste)
+        }
+
+        linkView.pinned(link: link)
+    }
+
+    func pinnedLinkWasRemoved() {
+        DispatchQueue.main.async {
+            self.rightButtonBar.show(button: .paste)
+        }
+
+        linkView.removePinnedLink()
+    }
 }
 
 extension RoomView: EmojiBarDelegate {
@@ -710,6 +739,18 @@ extension RoomView: EmojiBarDelegate {
         room.react(with: reaction)
         reactFeedback.impactOccurred()
         reactFeedback.prepare()
+    }
+}
+
+extension RoomView: LinkSharingViewDelegate {
+    func didPin(link: URL) {
+        room.pin(link: link)
+        rightButtonBar.hide(button: .paste)
+    }
+
+    func didUnpin() {
+        room.unpin()
+        rightButtonBar.show(button: .paste)
     }
 }
 
