@@ -148,6 +148,7 @@ class LinkSharingView: UIView {
 
             DispatchQueue.main.async {
                 self.progress.isHidden = true
+                self.pin.isSelected = true
             }
 
             return
