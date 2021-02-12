@@ -1,15 +1,14 @@
 import UIKit
 
-protocol ButtonBarDelegate: AnyObject {
-    func didTap(button: String)
+@objc protocol ButtonBarDelegate: AnyObject {
+    @objc func didTap(button: Any)
 }
 
-class ButtonBar: UIView {
-    struct Item {
-        let name: String
-        let icon: String
-    }
+protocol Item {
+    func icon() -> String
+}
 
+class ButtonBar<E: RawRepresentable & Hashable & Item & CaseIterable>: UIView where E.RawValue == String {
     let stack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
@@ -18,17 +17,17 @@ class ButtonBar: UIView {
         return stack
     }()
 
-    private class Button: UIButton {
-        var name: String?
+    class Button: UIButton {
+        var value: E!
     }
 
     private let iconConfig = UIImage.SymbolConfiguration(weight: .semibold)
 
-    private var buttons = [String: Button]()
+    private var buttons = [E: Button]()
 
     weak var delegate: ButtonBarDelegate?
 
-    init(buttons: [Item]) {
+    init() {
         super.init(frame: .zero)
 
         translatesAutoresizingMaskIntoConstraints = false
@@ -37,16 +36,16 @@ class ButtonBar: UIView {
 
         var anchor: NSLayoutXAxisAnchor!
 
-        for item in buttons {
+        for item in E.allCases {
             let button = Button(frame: .zero)
             button.translatesAutoresizingMaskIntoConstraints = false
-            button.setImage(UIImage(systemName: item.icon, withConfiguration: iconConfig), for: .normal)
+            button.setImage(UIImage(systemName: item.icon(), withConfiguration: iconConfig), for: .normal)
             button.tintColor = .brandColor
             button.backgroundColor = .clear
-            button.name = item.name
-            button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+            button.value = item
+            button.addTarget(delegate, action: #selector(delegate?.didTap(button:)), for: .touchUpInside)
 
-            self.buttons[item.name] = button
+            buttons[item] = button
 
             stack.addArrangedSubview(button)
 
@@ -65,11 +64,7 @@ class ButtonBar: UIView {
         ])
     }
 
-    @objc private func buttonTapped(_ button: Button) {
-        delegate?.didTap(button: button.name!)
-    }
-
-    func hide(button name: String) {
+    func hide(button name: E) {
         guard let button = buttons[name] else {
             return
         }
@@ -77,7 +72,7 @@ class ButtonBar: UIView {
         button.isHidden = true
     }
 
-    func show(button name: String) {
+    func show(button name: E) {
         guard let button = buttons[name] else {
             return
         }
