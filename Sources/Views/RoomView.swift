@@ -129,8 +129,34 @@ class RoomView: UIView {
 
     private var didShowTooltip = false
 
-    private var leftButtonBar: ButtonBar!
-    private var rightButtonBar: ButtonBar!
+    enum RightButtonBar: String, Item, CaseIterable {
+        case share, paste
+
+        func icon() -> String {
+            switch self {
+            case .share:
+                return "square.and.arrow.up"
+            case .paste:
+                return "link.badge.plus"
+            }
+        }
+    }
+
+    enum LeftButtonBar: String, Item, CaseIterable {
+        case settings, invite
+
+        func icon() -> String {
+            switch self {
+            case .settings:
+                return "gearshape"
+            case .invite:
+                return "person.badge.plus"
+            }
+        }
+    }
+
+    private var leftButtonBar = ButtonBar<LeftButtonBar>()
+    private var rightButtonBar = ButtonBar<RightButtonBar>()
 
     init(room: Room) {
         self.room = room
@@ -272,10 +298,6 @@ class RoomView: UIView {
         bottomMuteButton.backgroundColor = .roomBackground
         addSubview(bottomMuteButton)
 
-        leftButtonBar = ButtonBar(buttons: [
-            ButtonBar.Item(name: "settings", icon: "gearshape"),
-            ButtonBar.Item(name: "invite", icon: "person.badge.plus"),
-        ])
         leftButtonBar.delegate = self
         buttonBar.addSubview(leftButtonBar)
 
@@ -285,10 +307,6 @@ class RoomView: UIView {
             leftButtonBar.heightAnchor.constraint(equalToConstant: 32),
         ])
 
-        rightButtonBar = ButtonBar(buttons: [
-            ButtonBar.Item(name: "share", icon: "square.and.arrow.up"),
-            ButtonBar.Item(name: "paste", icon: "link.badge.plus"),
-        ])
         rightButtonBar.delegate = self
         buttonBar.addSubview(rightButtonBar)
 
@@ -327,10 +345,10 @@ class RoomView: UIView {
         bottomMuteButton.isSelected = isMuted
 
         if me.role != .admin {
-            leftButtonBar.hide(button: "settings")
+            leftButtonBar.hide(button: .settings)
 
             if room.state.visibility == .private {
-                leftButtonBar.hide(button: "invite")
+                leftButtonBar.hide(button: .invite)
             }
         }
 
@@ -361,30 +379,6 @@ class RoomView: UIView {
                 muteButton.alpha = 0
             }
         )
-    }
-
-    private func hideSettingsButton() {
-        UIView.animate(withDuration: 0.2) { [self] in
-            self.leftButtonBar.hide(button: "settings")
-        }
-    }
-
-    private func showSettingsButton() {
-        UIView.animate(withDuration: 0.2) { [self] in
-            self.leftButtonBar.show(button: "settings")
-        }
-    }
-
-    private func hideInviteUserButton() {
-        UIView.animate(withDuration: 0.2) { [self] in
-            self.leftButtonBar.hide(button: "invite")
-        }
-    }
-
-    private func showInviteUserButton() {
-        UIView.animate(withDuration: 0.2) { [self] in
-            self.leftButtonBar.show(button: "invite")
-        }
     }
 
     required init?(coder _: NSCoder) {
@@ -645,13 +639,13 @@ extension RoomView: RoomDelegate {
 
         DispatchQueue.main.async {
             if role == .admin {
-                self.showSettingsButton()
-                self.showInviteUserButton()
+                self.leftButtonBar.show(button: .settings)
+                self.leftButtonBar.show(button: .invite)
             } else {
-                self.hideSettingsButton()
+                self.leftButtonBar.hide(button: .settings)
 
                 if self.room.state.visibility == .private {
-                    self.hideInviteUserButton()
+                    self.leftButtonBar.hide(button: .invite)
                 }
             }
         }
@@ -694,16 +688,16 @@ extension RoomView: RoomDelegate {
             switch visibility {
             case .private:
                 self.lock.isHidden = false
-                self.rightButtonBar.hide(button: "share")
+                self.rightButtonBar.hide(button: .share)
 
                 if self.me.role != .admin {
-                    self.leftButtonBar.hide(button: "invite")
+                    self.leftButtonBar.hide(button: .invite)
                 }
 
             case .public:
                 self.lock.isHidden = true
-                self.rightButtonBar.show(button: "share")
-                self.leftButtonBar.show(button: "invite")
+                self.rightButtonBar.show(button: .share)
+                self.leftButtonBar.show(button: .invite)
             default:
                 return
             }
@@ -720,16 +714,26 @@ extension RoomView: EmojiBarDelegate {
 }
 
 extension RoomView: ButtonBarDelegate {
-    func didTap(button: String) {
-        switch button {
-        case "settings":
-            settingsTapped()
-        case "invite":
-            inviteTapped()
-        case "share":
-            shareTapped()
-        case "paste":
-            pasteTapped()
+    func didTap(button sender: UIButton) {
+        switch sender {
+        case let button as ButtonBar<RightButtonBar>.Button:
+            switch button.value {
+            case .paste:
+                return pasteTapped()
+            case .share:
+                return shareTapped()
+            default:
+                return
+            }
+        case let button as ButtonBar<LeftButtonBar>.Button:
+            switch button.value {
+            case .invite:
+                return inviteTapped()
+            case .settings:
+                return settingsTapped()
+            default:
+                return
+            }
         default:
             return
         }
