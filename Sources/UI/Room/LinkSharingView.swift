@@ -144,9 +144,8 @@ class LinkSharingView: UIView {
             timer?.invalidate()
             timer = nil
 
-            links[0] = Link(url: top.url, name: top.name, pinned: true)
-
             DispatchQueue.main.async {
+                self.links[0] = Link(url: top.url, name: top.name, pinned: true)
                 self.progress.isHidden = true
                 self.pin.isSelected = true
             }
@@ -257,6 +256,8 @@ class LinkSharingView: UIView {
             timer.invalidate()
             self.timer = nil
         }
+
+        links[0] = Link(url: link.url, name: link.name, pinned: true)
 
         if pin.isSelected {
             progress.isHidden = true

@@ -745,12 +745,12 @@ extension RoomView: EmojiBarDelegate {
 extension RoomView: LinkSharingViewDelegate {
     func didPin(link: URL) {
         room.pin(link: link)
-        self.rightButtonBar.hide(button: .paste)
+        rightButtonBar.hide(button: .paste)
     }
 
     func didUnpin() {
         room.unpin()
-        self.rightButtonBar.show(button: .paste)
+        rightButtonBar.show(button: .paste)
     }
 }
 
