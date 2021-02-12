@@ -1,7 +1,7 @@
 import UIKit
 
 @objc protocol ButtonBarDelegate: AnyObject {
-    @objc func didTap(button: Any)
+    @objc func didTap(button: UIButton)
 }
 
 protocol Item {

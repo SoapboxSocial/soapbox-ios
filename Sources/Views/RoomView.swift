@@ -714,7 +714,7 @@ extension RoomView: EmojiBarDelegate {
 }
 
 extension RoomView: ButtonBarDelegate {
-    func didTap(button sender: Any) {
+    func didTap(button sender: UIButton) {
         switch sender {
         case let button as ButtonBar<RightButtonBar>.Button:
             switch button.value {
