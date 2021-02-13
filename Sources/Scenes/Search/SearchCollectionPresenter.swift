@@ -7,6 +7,7 @@ class SearchCollectionPresenter {
     enum SectionType: Int, CaseIterable {
         case userList
         case groupList
+        case inviteFriends
     }
 
     struct Section {
@@ -17,6 +18,11 @@ class SearchCollectionPresenter {
 
     var numberOfSections: Int {
         return dataSource.count
+    }
+
+    // @TODO
+    init() {
+        dataSource.append(Section(type: .inviteFriends, title: "", data: []))
     }
 
     func sectionTitle(for sectionIndex: Int) -> String {
@@ -33,6 +39,12 @@ class SearchCollectionPresenter {
     }
 
     func numberOfItems(for sectionIndex: Int) -> Int {
+        let section = dataSource[sectionIndex]
+
+        if section.type == .inviteFriends {
+            return 1
+        }
+
         return dataSource[sectionIndex].data.count
     }
 
@@ -118,7 +130,12 @@ class SearchCollectionPresenter {
             return
         }
 
-        dataSource.insert(Section(type: .userList, title: NSLocalizedString("users", comment: ""), data: users), at: 0)
+        var index = 0
+        if dataSource.first(where: { $0.type == .inviteFriends }) != nil {
+            index = 1
+        }
+
+        dataSource.insert(Section(type: .userList, title: NSLocalizedString("users", comment: ""), data: users), at: index)
     }
 
     func append(users: [APIClient.User]) {

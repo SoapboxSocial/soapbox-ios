@@ -35,6 +35,7 @@ class SearchViewController: ViewController {
 
         collection.register(cellWithClass: UserCell.self)
         collection.register(cellWithClass: GroupSearchCell.self)
+        collection.register(cellWithClass: InviteFriendsCell.self)
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: CollectionViewSectionViewMore.self)
 
@@ -77,6 +78,8 @@ class SearchViewController: ViewController {
                 let section = NSCollectionLayoutSection.fullWidthSection()
                 section.boundarySupplementaryItems = [self.createSectionHeader(), self.createSectionFooter()]
                 return section
+            case .inviteFriends:
+                return NSCollectionLayoutSection.fullWidthSection(height: 182)
             }
         }
 
@@ -119,6 +122,8 @@ extension SearchViewController: UICollectionViewDelegate {
         case .groupList:
             let group = presenter.item(for: IndexPath(item: indexPath.item, section: indexPath.section), ofType: APIClient.Group.self)
             navigationController?.pushViewController(SceneFactory.createGroupViewController(id: group.id), animated: true)
+        case .inviteFriends:
+            return
         }
     }
 }
@@ -142,6 +147,8 @@ extension SearchViewController: UICollectionViewDataSource {
             let cell = collectionView.dequeueReusableCell(withClass: UserCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
+        case .inviteFriends:
+            return collectionView.dequeueReusableCell(withClass: InviteFriendsCell.self, for: indexPath)
         }
     }
 
@@ -156,6 +163,8 @@ extension SearchViewController: UICollectionViewDataSource {
             case .userList:
                 let recognizer = UITapGestureRecognizer(target: self, action: #selector(showMoreUsers))
                 cell.view.addGestureRecognizer(recognizer)
+            case .inviteFriends:
+                break
             }
 
             return cell
