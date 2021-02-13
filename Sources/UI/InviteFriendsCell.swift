@@ -1,3 +1,4 @@
+import LinkPresentation
 import UIKit
 
 class InviteFriendsCell: UICollectionViewCell {
@@ -24,8 +25,12 @@ class InviteFriendsCell: UICollectionViewCell {
         return image
     }()
 
+    private let sharing = MetadataItemSource(metadata: LPLinkMetadata())
+
     override init(frame _: CGRect) {
         super.init(frame: .zero)
+
+        button.addTarget(self, action: #selector(share), for: .touchUpInside)
 
         contentView.addSubview(title)
         contentView.addSubview(button)
@@ -49,5 +54,11 @@ class InviteFriendsCell: UICollectionViewCell {
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    @objc private func share() {
+        let ac = UIActivityViewController(activityItems: [sharing], applicationActivities: nil)
+        ac.excludedActivityTypes = [.markupAsPDF, .openInIBooks, .addToReadingList, .assignToContact, .print, .saveToCameraRoll]
+        window!.rootViewController!.present(ac, animated: true)
     }
 }
