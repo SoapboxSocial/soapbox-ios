@@ -9,12 +9,11 @@ class MetadataItemSource: NSObject, UIActivityItemSource {
     }
 
     func activityViewControllerPlaceholderItem(_: UIActivityViewController) -> Any {
-        return metadata.title
+        return metadata.originalURL
     }
 
     func activityViewController(_: UIActivityViewController, itemForActivityType _: UIActivity.ActivityType?) -> Any? {
-        // @TODO
-        return nil
+        return metadata.originalURL
     }
 
     func activityViewControllerLinkMetadata(_: UIActivityViewController) -> LPLinkMetadata? {

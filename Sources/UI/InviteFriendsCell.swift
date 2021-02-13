@@ -25,7 +25,13 @@ class InviteFriendsCell: UICollectionViewCell {
         return image
     }()
 
-    private let sharing = MetadataItemSource(metadata: LPLinkMetadata())
+    private let sharing: MetadataItemSource = {
+        let metadata = LPLinkMetadata()
+        metadata.originalURL = URL(string: "https://apps.apple.com/us/app/soapbox-talk-with-anyone/id1529283270")!
+        metadata.title = NSLocalizedString("soapbox_share_sheet", comment: "")
+
+        return MetadataItemSource(metadata: metadata)
+    }()
 
     override init(frame _: CGRect) {
         super.init(frame: .zero)
