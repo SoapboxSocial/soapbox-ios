@@ -1,4 +1,5 @@
 import DrawerView
+import LinkPresentation
 import NotificationBannerSwift
 import UIKit
 
@@ -798,11 +799,13 @@ extension RoomView: ButtonBarDelegate {
             return
         }
 
-        let items: [Any] = [
-            URL(string: "https://soapbox.social/room/" + room.state.id)!,
-        ]
+        let data = LPLinkMetadata()
+        data.originalURL = URL(string: "https://soapbox.social/room/" + room.state.id)!
 
-        let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        let format = NSLocalizedString("share_room", comment: "")
+        data.title = String(format: format, name.text!)
+
+        let ac = UIActivityViewController(activityItems: [MetadataItemSource(metadata: data)], applicationActivities: nil)
         ac.excludedActivityTypes = [.markupAsPDF, .openInIBooks, .addToReadingList, .assignToContact]
         window!.rootViewController!.present(ac, animated: true)
     }
