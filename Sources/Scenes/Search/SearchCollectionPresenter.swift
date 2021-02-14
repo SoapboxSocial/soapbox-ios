@@ -20,11 +20,6 @@ class SearchCollectionPresenter {
         return dataSource.count
     }
 
-    // @TODO
-    init() {
-        dataSource.append(Section(type: .inviteFriends, title: "", data: []))
-    }
-
     func sectionTitle(for sectionIndex: Int) -> String {
         return dataSource[sectionIndex].title
     }
@@ -152,6 +147,10 @@ class SearchCollectionPresenter {
         }
 
         dataSource[index].data.append(contentsOf: groups)
+    }
+
+    func appendInviteFriendsSection() {
+        dataSource.insert(Section(type: .inviteFriends, title: "", data: []), at: 0)
     }
 
     func index(of section: SectionType) -> Int? {
