@@ -6,6 +6,7 @@ class MetadataItemSource: NSObject, UIActivityItemSource {
 
     init(metadata: LPLinkMetadata) {
         self.metadata = metadata
+        self.metadata.imageProvider = NSItemProvider(contentsOf: Bundle.main.url(forResource: "logo", withExtension: "png"))
     }
 
     func activityViewControllerPlaceholderItem(_: UIActivityViewController) -> Any {
