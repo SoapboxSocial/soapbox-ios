@@ -20,4 +20,8 @@ class UserDefaultsKeys {
     class var username: String {
         return "username"
     }
+
+    class var inviteFriendsShownCount: String {
+        return "inviteFriendsShownCount"
+    }
 }
