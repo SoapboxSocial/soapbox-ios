@@ -367,7 +367,6 @@ extension Room: RoomClientDelegate {
         completion(.success(()))
         startPreventing()
 
-        client.createTrack()
         client.mute()
     }
 

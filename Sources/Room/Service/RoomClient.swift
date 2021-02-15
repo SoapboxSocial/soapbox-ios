@@ -66,13 +66,6 @@ final class RoomClient {
         }
     }
 
-    func createTrack() {
-        _ = streams[.publisher]?.createAudioTrack(
-            label: "audio0",
-            streamId: "\(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))"
-        )
-    }
-
     func send(command: Command.OneOf_Payload) {
         let cmd = Command.with {
             $0.payload = command
@@ -109,6 +102,11 @@ final class RoomClient {
         streams.forEach { _, stream in
             stream.delegate = self
         }
+
+        _ = publisher.createAudioTrack(
+            label: "audio0",
+            streamId: "\(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))"
+        )
 
         publisher.offer(completion: { sdp in
             callback(sdp)
