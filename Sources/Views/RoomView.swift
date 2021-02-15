@@ -164,6 +164,8 @@ class RoomView: UIView {
 
         super.init(frame: CGRect.zero)
 
+        isUserInteractionEnabled = true
+
         backgroundColor = .roomBackground
 
         room.delegate = self
@@ -176,6 +178,7 @@ class RoomView: UIView {
         buttonBar.backgroundColor = .roomButtonBar
         buttonBar.translatesAutoresizingMaskIntoConstraints = false
         buttonBar.layer.cornerRadius = 25
+        buttonBar.isUserInteractionEnabled = true
         addSubview(buttonBar)
 
         addSubview(foreground)
@@ -298,7 +301,7 @@ class RoomView: UIView {
         ])
 
         bottomMuteButton.backgroundColor = .roomBackground
-        addSubview(bottomMuteButton)
+        buttonBar.addSubview(bottomMuteButton)
 
         leftButtonBar.delegate = self
         buttonBar.addSubview(leftButtonBar)
@@ -757,29 +760,27 @@ extension RoomView: LinkSharingViewDelegate {
 
 extension RoomView: ButtonBarDelegate {
     func didTap(button sender: UIButton) {
-        DispatchQueue.main.async {
-            switch sender {
-            case let button as ButtonBar<RightButtonBar>.Button:
-                switch button.value {
-                case .paste:
-                    return self.pasteTapped()
-                case .share:
-                    return self.shareTapped()
-                default:
-                    return
-                }
-            case let button as ButtonBar<LeftButtonBar>.Button:
-                switch button.value {
-                case .invite:
-                    return self.inviteTapped()
-                case .settings:
-                    return self.settingsTapped()
-                default:
-                    return
-                }
+        switch sender {
+        case let button as ButtonBar<RightButtonBar>.Button:
+            switch button.value {
+            case .paste:
+                return pasteTapped()
+            case .share:
+                return shareTapped()
             default:
                 return
             }
+        case let button as ButtonBar<LeftButtonBar>.Button:
+            switch button.value {
+            case .invite:
+                return inviteTapped()
+            case .settings:
+                return settingsTapped()
+            default:
+                return
+            }
+        default:
+            return
         }
     }
 
