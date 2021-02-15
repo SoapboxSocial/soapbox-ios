@@ -418,13 +418,13 @@ class RoomView: UIView {
         muteButton.isSelected.toggle()
         bottomMuteButton.isSelected.toggle()
 
-        if me.muted {
-            room.unmute()
-        } else {
-            room.mute()
-        }
-
         DispatchQueue.main.async {
+            if self.me.muted {
+                self.room.unmute()
+            } else {
+                self.room.mute()
+            }
+
             self.members.reloadData()
         }
     }
@@ -757,27 +757,29 @@ extension RoomView: LinkSharingViewDelegate {
 
 extension RoomView: ButtonBarDelegate {
     func didTap(button sender: UIButton) {
-        switch sender {
-        case let button as ButtonBar<RightButtonBar>.Button:
-            switch button.value {
-            case .paste:
-                return pasteTapped()
-            case .share:
-                return shareTapped()
+        DispatchQueue.main.async {
+            switch sender {
+            case let button as ButtonBar<RightButtonBar>.Button:
+                switch button.value {
+                case .paste:
+                    return self.pasteTapped()
+                case .share:
+                    return self.shareTapped()
+                default:
+                    return
+                }
+            case let button as ButtonBar<LeftButtonBar>.Button:
+                switch button.value {
+                case .invite:
+                    return self.inviteTapped()
+                case .settings:
+                    return self.settingsTapped()
+                default:
+                    return
+                }
             default:
                 return
             }
-        case let button as ButtonBar<LeftButtonBar>.Button:
-            switch button.value {
-            case .invite:
-                return inviteTapped()
-            case .settings:
-                return settingsTapped()
-            default:
-                return
-            }
-        default:
-            return
         }
     }
 
