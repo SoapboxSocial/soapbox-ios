@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.7.0] - 2021-02-16
+
  - We think we got it, the pesky echo!
  - Potential fix that stopped users from being able to unmute.
 
