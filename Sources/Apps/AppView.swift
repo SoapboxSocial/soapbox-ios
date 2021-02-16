@@ -13,6 +13,8 @@ class AppView: UIView {
     private let webView: WKWebView = {
         let config = WKWebViewConfiguration()
         config.allowsInlineMediaPlayback = true
+//        @TODO
+//        config.limitsNavigationsToAppBoundDomains = true
         config.preferences.javaScriptEnabled = true
 
         let view = WKWebView(frame: .zero, configuration: config)
