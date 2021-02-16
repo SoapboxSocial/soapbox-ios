@@ -48,7 +48,7 @@ class MiniAppView: UIView {
     }
 
     // @TODO
-    private func respond(type: Response, msg: String) {
+    private func respond(type: Response, msg _: String) {
         webView.evaluateJavaScript(type.rawValue, completionHandler: { result, error in
             if result != nil { // @TODO
                 return
