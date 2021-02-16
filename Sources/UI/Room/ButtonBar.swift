@@ -4,11 +4,11 @@ import UIKit
     @objc func didTap(button: UIButton)
 }
 
-protocol Item {
+protocol Item: RawRepresentable, Hashable, CaseIterable {
     func icon() -> String
 }
 
-class ButtonBar<E: RawRepresentable & Hashable & Item & CaseIterable>: UIView where E.RawValue == String {
+class ButtonBar<E: Item>: UIView where E.RawValue == String {
     let stack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal

@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Potential fix that stopped users from being able to unmute.
+
 ## [2.5.0] - 2021-02-12
 
  - Added the ability for admins to pin links in rooms!

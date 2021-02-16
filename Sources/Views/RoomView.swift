@@ -166,6 +166,8 @@ class RoomView: UIView {
 
         super.init(frame: CGRect.zero)
 
+        isUserInteractionEnabled = true
+
         backgroundColor = .roomBackground
 
         room.delegate = self
@@ -178,6 +180,7 @@ class RoomView: UIView {
         buttonBar.backgroundColor = .roomButtonBar
         buttonBar.translatesAutoresizingMaskIntoConstraints = false
         buttonBar.layer.cornerRadius = 25
+        buttonBar.isUserInteractionEnabled = true
         addSubview(buttonBar)
 
         addSubview(foreground)
@@ -300,7 +303,7 @@ class RoomView: UIView {
         ])
 
         bottomMuteButton.backgroundColor = .roomBackground
-        addSubview(bottomMuteButton)
+        buttonBar.addSubview(bottomMuteButton)
 
         leftButtonBar.delegate = self
         buttonBar.addSubview(leftButtonBar)
@@ -420,13 +423,13 @@ class RoomView: UIView {
         muteButton.isSelected.toggle()
         bottomMuteButton.isSelected.toggle()
 
-        if me.muted {
-            room.unmute()
-        } else {
-            room.mute()
-        }
-
         DispatchQueue.main.async {
+            if self.me.muted {
+                self.room.unmute()
+            } else {
+                self.room.mute()
+            }
+
             self.members.reloadData()
         }
     }
