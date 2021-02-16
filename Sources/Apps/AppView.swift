@@ -46,8 +46,8 @@ class AppView: UIView {
     }
 
     // @TODO
-    private func respond(msg _: String) {
-        webView.evaluateJavaScript("", completionHandler: { result, error in
+    private func respond(type: Response, msg: String) {
+        webView.evaluateJavaScript(type.rawValue, completionHandler: { result, error in
             if result != nil { // @TODO
                 return
             }
