@@ -144,7 +144,7 @@ class RoomView: UIView {
     }
 
     enum LeftButtonBar: String, Item, CaseIterable {
-        case settings, invite
+        case settings, invite, miniApp
 
         func icon() -> String {
             switch self {
@@ -152,6 +152,8 @@ class RoomView: UIView {
                 return "gearshape"
             case .invite:
                 return "person.badge.plus"
+            case .miniApp:
+                return "gamecontroller"
             }
         }
     }

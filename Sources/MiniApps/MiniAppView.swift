@@ -1,7 +1,7 @@
 import UIKit
 import WebKit
 
-class AppView: UIView {
+class MiniAppView: UIView {
     enum Query: String, CaseIterable {
         case room, user, members
     }
@@ -62,7 +62,7 @@ class AppView: UIView {
 }
 
 // @TODO WE NEED ACCESS CONTROL FOR THIS, WE NEED TO FIGURE OUT HOW ONLY THE ROOM KING OR WHATEVER SHOULD RESPOND
-extension AppView: WKScriptMessageHandler {
+extension MiniAppView: WKScriptMessageHandler {
     func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {
         guard let event = Query(rawValue: message.name) else {
             return
