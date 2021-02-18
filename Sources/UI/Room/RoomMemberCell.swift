@@ -139,6 +139,13 @@ class RoomMemberCell: UICollectionViewCell {
         user = member.id
     }
 
+    func blank() {
+        nameLabel.text = ""
+        profileImage.backgroundColor = .clear
+        isSpeaking = false
+        isMuted = false
+    }
+
     func didReact(with: Room.Reaction) {
         reactionView.react(with)
     }
