@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.8.0] - 2021-02-18
+
  - Fixes an issue that caused the app to fully crash while users are in a room.
 
 ## [2.7.0] - 2021-02-16
