@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fixes an issue that caused the app to fully crash while users are in a room.
+
 ## [2.7.0] - 2021-02-16
 
  - We think we got it, the pesky echo!
