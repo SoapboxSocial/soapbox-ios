@@ -29,7 +29,7 @@ class SearchViewController: ViewController {
         collection.backgroundColor = .clear
         collection.keyboardDismissMode = .onDrag
 
-        showInviteFriends()
+        presenter.appendInviteFriendsSection()
 
         let refresh = UIRefreshControl()
         refresh.addTarget(self, action: #selector(endRefresh), for: .valueChanged)
@@ -67,16 +67,6 @@ class SearchViewController: ViewController {
             collection.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 20),
             collection.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
-    }
-
-    private func showInviteFriends() {
-        let count = UserDefaults.standard.integer(forKey: UserDefaultsKeys.inviteFriendsShownCount)
-        if count > 3 {
-            return
-        }
-
-        UserDefaults.standard.set(count + 1, forKey: UserDefaultsKeys.inviteFriendsShownCount)
-        presenter.appendInviteFriendsSection()
     }
 
     private func makeLayout() -> UICollectionViewLayout {
