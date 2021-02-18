@@ -248,6 +248,7 @@ extension SearchViewController: UITextFieldDelegate {
         var text = "*"
         if let input = searchBar.text, input != "" {
             text = input
+            presenter.removeInviteFriendsSection()
         }
 
         collection.refreshControl?.beginRefreshing()

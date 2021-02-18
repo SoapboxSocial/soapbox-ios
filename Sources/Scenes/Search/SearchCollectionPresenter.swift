@@ -153,6 +153,10 @@ class SearchCollectionPresenter {
         dataSource.insert(Section(type: .inviteFriends, title: "", data: []), at: 0)
     }
 
+    func removeInviteFriendsSection() {
+        dataSource.removeAll(where: { $0.type == .inviteFriends })
+    }
+
     func index(of section: SectionType) -> Int? {
         return dataSource.firstIndex(where: { $0.type == section })
     }
