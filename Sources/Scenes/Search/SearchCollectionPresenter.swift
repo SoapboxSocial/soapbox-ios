@@ -40,10 +40,15 @@ class SearchCollectionPresenter {
             return 1
         }
 
-        return dataSource[sectionIndex].data.count
+        let count = dataSource[sectionIndex].data.count
+        if count == 0 {
+            return 0
+        }
+
+        return count + 1
     }
 
-    func configure(item: GroupSearchCell, for indexPath: IndexPath) {
+    func configure(item: CollectionViewCell, forGroup indexPath: IndexPath) {
         let section = dataSource[indexPath.section]
         guard let group = section.data[indexPath.row] as? APIClient.Group else {
             print("Error getting active user for indexPath: \(indexPath)")
@@ -67,7 +72,7 @@ class SearchCollectionPresenter {
             item.layer.masksToBounds = true
         }
 
-        item.name.text = group.name
+        item.title.text = group.name
 
         item.image.image = nil
         if let image = group.image, image != "" {
@@ -75,7 +80,7 @@ class SearchCollectionPresenter {
         }
     }
 
-    func configure(item: UserCell, for indexPath: IndexPath) {
+    func configure(item: CollectionViewCell, forUser indexPath: IndexPath) {
         let section = dataSource[indexPath.section]
         guard let user = section.data[indexPath.row] as? APIClient.User else {
             print("Error getting active user for indexPath: \(indexPath)")
@@ -99,8 +104,8 @@ class SearchCollectionPresenter {
             item.layer.masksToBounds = true
         }
 
-        item.displayName.text = user.displayName
-        item.username.text = "@" + user.username
+        item.title.text = user.displayName
+        item.subtitle.text = "@" + user.username
 
         item.image.image = nil
         if let image = user.image, image != "" {
