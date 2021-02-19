@@ -55,23 +55,6 @@ class SearchCollectionPresenter {
             return
         }
 
-        item.layer.mask = nil
-        item.layer.cornerRadius = 0
-
-        if indexPath.item == 0 {
-            item.roundCorners(corners: [.topLeft, .topRight], radius: 30)
-        }
-
-        if indexPath.item == (section.data.count - 1) {
-            item.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 30)
-        }
-
-        if indexPath.item == 0, section.data.count == 1 {
-            item.layer.mask = nil
-            item.layer.cornerRadius = 30
-            item.layer.masksToBounds = true
-        }
-
         item.title.text = group.name
 
         item.image.image = nil
@@ -85,23 +68,6 @@ class SearchCollectionPresenter {
         guard let user = section.data[indexPath.row] as? APIClient.User else {
             print("Error getting active user for indexPath: \(indexPath)")
             return
-        }
-
-        item.layer.mask = nil
-        item.layer.cornerRadius = 0
-
-        if indexPath.item == 0 {
-            item.roundCorners(corners: [.topLeft, .topRight], radius: 30)
-        }
-
-        if indexPath.item == (section.data.count - 1) {
-            item.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 30)
-        }
-
-        if indexPath.item == 0, section.data.count == 1 {
-            item.layer.mask = nil
-            item.layer.cornerRadius = 30
-            item.layer.masksToBounds = true
         }
 
         item.title.text = user.displayName
