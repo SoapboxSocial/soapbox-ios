@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - We shortened the bio length to 150 characters from 300.
+
 ## [2.8.0] - 2021-02-18
 
  - Fixes an issue that caused the app to fully crash while users are in a room.
