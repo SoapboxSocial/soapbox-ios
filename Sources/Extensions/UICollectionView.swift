@@ -29,4 +29,34 @@ extension UICollectionView {
         }
         return cell
     }
+
+    func section(height: CGFloat = 48, hasHeader: Bool = false, hasFooter: Bool = false, hasBackground: Bool = true) -> NSCollectionLayoutSection {
+        let section = NSCollectionLayoutSection.fullWidthSection(height: height, hasHeader: hasHeader, hasFooter: hasFooter, hasBackground: hasBackground)
+
+        if hasHeader {
+            section.boundarySupplementaryItems.append(header())
+        }
+
+        if hasFooter {
+            section.boundarySupplementaryItems.append(footer())
+        }
+
+        return section
+    }
+
+    func header() -> NSCollectionLayoutBoundarySupplementaryItem {
+        return NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(38)),
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top
+        )
+    }
+
+    func footer() -> NSCollectionLayoutBoundarySupplementaryItem {
+        return NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(105)),
+            elementKind: UICollectionView.elementKindSectionFooter,
+            alignment: .bottom
+        )
+    }
 }

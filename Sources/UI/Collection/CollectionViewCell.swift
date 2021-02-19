@@ -17,6 +17,7 @@ class CollectionViewCell: UICollectionViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .rounded(forTextStyle: .body, weight: .semibold)
         label.textColor = .label
+        label.numberOfLines = 0
         return label
     }()
 
