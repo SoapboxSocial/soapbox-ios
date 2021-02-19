@@ -1,4 +1,3 @@
-import CCBottomRefreshControl
 import NotificationBannerSwift
 import UIKit
 
@@ -12,33 +11,22 @@ class UserListViewController: ViewController {
     private var collection: UICollectionView!
     private var users = [APIClient.User]()
 
-    private let paginate = UIRefreshControl()
-
     override func viewDidLoad() {
         view.backgroundColor = .background
 
-        let layout = UICollectionViewCompositionalLayout { (_: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-            NSCollectionLayoutSection.fullWidthSectionV2()
-        }
-
-        layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
-        layout.register(CollectionBackgroundView.self, forDecorationViewOfKind: "background")
-
-        collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.delegate = self
         collection.dataSource = self
         collection.backgroundColor = .clear
 
         collection.register(cellWithClass: CollectionViewCell.self)
+        collection.register(cellWithClass: CollectionViewMoreCellCollectionViewCell.self)
+        collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: EmptyCollectionFooterView.self)
 
         output.loadUsers()
 
         view.addSubview(collection)
-
-        paginate.addTarget(self, action: #selector(loadMore), for: .valueChanged)
-        paginate.triggerVerticalOffset = 100
-        collection.bottomRefreshControl = paginate
 
         NSLayoutConstraint.activate([
             collection.leftAnchor.constraint(equalTo: view.leftAnchor),
@@ -48,8 +36,33 @@ class UserListViewController: ViewController {
         ])
     }
 
-    @objc private func loadMore() {
-        output.loadUsers()
+    private func makeLayout() -> UICollectionViewLayout {
+        let layout = UICollectionViewCompositionalLayout { (_: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            let section = NSCollectionLayoutSection.fullWidthSectionV2(hasFooter: true)
+            section.boundarySupplementaryItems = [self.createSectionFooter(height: 105)]
+            return section
+        }
+
+        layout.register(CollectionBackgroundView.self, forDecorationViewOfKind: "background")
+        layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
+
+        return layout
+    }
+
+    private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
+        return NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(38)),
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top
+        )
+    }
+
+    private func createSectionFooter(height: CGFloat = 58) -> NSCollectionLayoutBoundarySupplementaryItem {
+        return NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(height)),
+            elementKind: UICollectionView.elementKindSectionFooter,
+            alignment: .bottom
+        )
     }
 }
 
@@ -68,7 +81,6 @@ extension UserListViewController: UserListPresenterOutput {
         self.users.append(contentsOf: users)
 
         DispatchQueue.main.async {
-            self.collection.bottomRefreshControl?.endRefreshing()
             self.collection.reloadData()
         }
     }
@@ -76,27 +88,23 @@ extension UserListViewController: UserListPresenterOutput {
 
 extension UserListViewController: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        return users.count
+        if users.count == 0 {
+            return 0
+        }
+
+        if users.count % 10 != 0 {
+            return users.count
+        }
+
+        return users.count + 1
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withClass: CollectionViewCell.self, for: indexPath)
-//        cell.layer.mask = nil
-//        cell.layer.cornerRadius = 0
-//        if indexPath.item == 0 {
-//            cell.roundCorners(corners: [.topLeft, .topRight], radius: 30)
-//        }
-//
-//        if indexPath.item == (users.count - 1) {
-//            cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 30)
-//        }
-//
-//        if indexPath.item == 0, users.count == 1 {
-//            cell.layer.mask = nil
-//            cell.layer.cornerRadius = 30
-//            cell.layer.masksToBounds = true
-//        }
+        if indexPath.item == users.count {
+            return collection.dequeueReusableCell(withClass: CollectionViewMoreCellCollectionViewCell.self, for: indexPath)
+        }
 
+        let cell = collectionView.dequeueReusableCell(withClass: CollectionViewCell.self, for: indexPath)
         let user = users[indexPath.item]
 
         cell.title.text = user.displayName
@@ -113,6 +121,10 @@ extension UserListViewController: UICollectionViewDataSource {
 extension UserListViewController: UICollectionViewDelegate {
     // @TODO probably needs to be in the interactor?
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.item == users.count {
+            return output.loadUsers()
+        }
+
         navigationController?.pushViewController(SceneFactory.createProfileViewController(id: users[indexPath.item].id), animated: true)
     }
 }
