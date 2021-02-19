@@ -73,12 +73,12 @@ class SearchViewController: ViewController {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             switch self.presenter.sectionType(for: sectionIndex) {
             case .groupList:
-                let section = NSCollectionLayoutSection.fullWidthSectionV2(hasHeader: true, hasFooter: true)
+                let section = NSCollectionLayoutSection.fullWidthSection(hasHeader: true, hasFooter: true)
                 section.boundarySupplementaryItems = [self.createSectionHeader(), self.createSectionFooter(height: 105)]
                 return section
             case .userList:
                 let needsFooter = self.presenter.index(of: .groupList) == nil
-                let section = NSCollectionLayoutSection.fullWidthSectionV2(hasHeader: true, hasFooter: needsFooter)
+                let section = NSCollectionLayoutSection.fullWidthSection(hasHeader: true, hasFooter: needsFooter)
                 section.boundarySupplementaryItems = [self.createSectionHeader()]
 
                 if needsFooter {
@@ -87,7 +87,7 @@ class SearchViewController: ViewController {
 
                 return section
             case .inviteFriends:
-                return NSCollectionLayoutSection.fullWidthSection(height: 182)
+                return NSCollectionLayoutSection.fullWidthSection(height: 182, hasBackground: false)
             }
         }
 

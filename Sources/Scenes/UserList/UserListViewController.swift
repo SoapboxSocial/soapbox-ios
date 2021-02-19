@@ -38,7 +38,7 @@ class UserListViewController: ViewController {
 
     private func makeLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { (_: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-            let section = NSCollectionLayoutSection.fullWidthSectionV2(hasFooter: true)
+            let section = NSCollectionLayoutSection.fullWidthSection(hasFooter: true)
             section.boundarySupplementaryItems = [self.createSectionFooter(height: 105)]
             return section
         }
