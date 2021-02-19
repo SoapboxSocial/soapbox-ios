@@ -18,4 +18,31 @@ extension NSCollectionLayoutSection {
 
         return layoutSection
     }
+
+    static func fullWidthSectionV2(height: CGFloat = 48, hasHeader: Bool = false) -> NSCollectionLayoutSection {
+        let inset = CGFloat(20)
+
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(height))
+        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(height))
+        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitems: [layoutItem])
+
+        layoutGroup.contentInsets = .zero
+
+        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: inset, leading: inset, bottom: inset, trailing: inset)
+        layoutSection.interGroupSpacing = inset
+
+        var topBackgroundInset = CGFloat(0)
+        if hasHeader {
+            topBackgroundInset = 38
+        }
+
+        let backgroundItem = NSCollectionLayoutDecorationItem.background(elementKind: "background")
+        backgroundItem.contentInsets = NSDirectionalEdgeInsets(top: topBackgroundInset, leading: inset, bottom: 0, trailing: inset)
+        layoutSection.decorationItems = [backgroundItem]
+
+        return layoutSection
+    }
 }

@@ -35,8 +35,7 @@ class SearchViewController: ViewController {
         refresh.addTarget(self, action: #selector(endRefresh), for: .valueChanged)
         collection.refreshControl = refresh
 
-        collection.register(cellWithClass: UserCell.self)
-        collection.register(cellWithClass: GroupSearchCell.self)
+        collection.register(cellWithClass: CollectionViewCell.self)
         collection.register(cellWithClass: InviteFriendsCell.self)
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: CollectionViewSectionViewMore.self)
@@ -73,18 +72,19 @@ class SearchViewController: ViewController {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             switch self.presenter.sectionType(for: sectionIndex) {
             case .groupList:
-                let section = NSCollectionLayoutSection.fullWidthSection()
-                section.boundarySupplementaryItems = [self.createSectionHeader(), self.createSectionFooter(height: 105 + 38)]
+                let section = NSCollectionLayoutSection.fullWidthSectionV2(hasHeader: true)
+                section.boundarySupplementaryItems = [self.createSectionHeader()]
                 return section
             case .userList:
-                let section = NSCollectionLayoutSection.fullWidthSection()
-                section.boundarySupplementaryItems = [self.createSectionHeader(), self.createSectionFooter()]
+                let section = NSCollectionLayoutSection.fullWidthSectionV2(hasHeader: true)
+                section.boundarySupplementaryItems = [self.createSectionHeader()]
                 return section
             case .inviteFriends:
                 return NSCollectionLayoutSection.fullWidthSection(height: 182)
             }
         }
 
+        layout.register(CollectionBackgroundView.self, forDecorationViewOfKind: "background")
         layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
         layout.configuration.interSectionSpacing = 20
 
@@ -93,7 +93,7 @@ class SearchViewController: ViewController {
 
     private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
         return NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(80)),
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(38)),
             elementKind: UICollectionView.elementKindSectionHeader,
             alignment: .top
         )
@@ -142,12 +142,12 @@ extension SearchViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch presenter.sectionType(for: indexPath.section) {
         case .groupList:
-            let cell = collectionView.dequeueReusableCell(withClass: GroupSearchCell.self, for: indexPath)
-            presenter.configure(item: cell, for: indexPath)
+            let cell = collectionView.dequeueReusableCell(withClass: CollectionViewCell.self, for: indexPath)
+            presenter.configure(item: cell, forGroup: indexPath)
             return cell
         case .userList:
-            let cell = collectionView.dequeueReusableCell(withClass: UserCell.self, for: indexPath)
-            presenter.configure(item: cell, for: indexPath)
+            let cell = collectionView.dequeueReusableCell(withClass: CollectionViewCell.self, for: indexPath)
+            presenter.configure(item: cell, forUser: indexPath)
             return cell
         case .inviteFriends:
             return collectionView.dequeueReusableCell(withClass: InviteFriendsCell.self, for: indexPath)

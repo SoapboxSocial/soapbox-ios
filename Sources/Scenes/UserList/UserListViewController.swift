@@ -17,7 +17,12 @@ class UserListViewController: ViewController {
     override func viewDidLoad() {
         view.backgroundColor = .background
 
-        let layout = UICollectionViewFlowLayout.usersLayout()
+        let layout = UICollectionViewCompositionalLayout { (_: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            NSCollectionLayoutSection.fullWidthSectionV2()
+        }
+
+        layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
+        layout.register(CollectionBackgroundView.self, forDecorationViewOfKind: "background")
 
         collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.translatesAutoresizingMaskIntoConstraints = false
@@ -25,7 +30,7 @@ class UserListViewController: ViewController {
         collection.dataSource = self
         collection.backgroundColor = .clear
 
-        collection.register(cellWithClass: UserCell.self)
+        collection.register(cellWithClass: CollectionViewCell.self)
 
         output.loadUsers()
 
@@ -75,28 +80,27 @@ extension UserListViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withClass: UserCell.self, for: indexPath)
-        cell.layer.mask = nil
-        cell.layer.cornerRadius = 0
-
-        if indexPath.item == 0 {
-            cell.roundCorners(corners: [.topLeft, .topRight], radius: 30)
-        }
-
-        if indexPath.item == (users.count - 1) {
-            cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 30)
-        }
-
-        if indexPath.item == 0, users.count == 1 {
-            cell.layer.mask = nil
-            cell.layer.cornerRadius = 30
-            cell.layer.masksToBounds = true
-        }
+        let cell = collectionView.dequeueReusableCell(withClass: CollectionViewCell.self, for: indexPath)
+//        cell.layer.mask = nil
+//        cell.layer.cornerRadius = 0
+//        if indexPath.item == 0 {
+//            cell.roundCorners(corners: [.topLeft, .topRight], radius: 30)
+//        }
+//
+//        if indexPath.item == (users.count - 1) {
+//            cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 30)
+//        }
+//
+//        if indexPath.item == 0, users.count == 1 {
+//            cell.layer.mask = nil
+//            cell.layer.cornerRadius = 30
+//            cell.layer.masksToBounds = true
+//        }
 
         let user = users[indexPath.item]
 
-        cell.displayName.text = user.displayName
-        cell.username.text = "@" + user.username
+        cell.title.text = user.displayName
+        cell.subtitle.text = "@" + user.username
 
         if let image = user.image, image != "" {
             cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
