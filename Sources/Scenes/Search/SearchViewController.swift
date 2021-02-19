@@ -39,7 +39,7 @@ class SearchViewController: ViewController {
         collection.register(cellWithClass: InviteFriendsCell.self)
         collection.register(cellWithClass: CollectionViewMoreCellCollectionViewCell.self)
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
-        collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: CollectionViewSectionViewMore.self)
+        collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: EmptyCollectionFooterView.self)
 
         output.search("*")
 
@@ -73,12 +73,18 @@ class SearchViewController: ViewController {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             switch self.presenter.sectionType(for: sectionIndex) {
             case .groupList:
-                let section = NSCollectionLayoutSection.fullWidthSectionV2(hasHeader: true)
-                section.boundarySupplementaryItems = [self.createSectionHeader()]
+                let section = NSCollectionLayoutSection.fullWidthSectionV2(hasHeader: true, hasFooter: true)
+                section.boundarySupplementaryItems = [self.createSectionHeader(), self.createSectionFooter(height: 105)]
                 return section
             case .userList:
-                let section = NSCollectionLayoutSection.fullWidthSectionV2(hasHeader: true)
+                let needsFooter = self.presenter.index(of: .groupList) == nil
+                let section = NSCollectionLayoutSection.fullWidthSectionV2(hasHeader: true, hasFooter: needsFooter)
                 section.boundarySupplementaryItems = [self.createSectionHeader()]
+
+                if needsFooter {
+                    section.boundarySupplementaryItems.append(self.createSectionFooter(height: 105))
+                }
+
                 return section
             case .inviteFriends:
                 return NSCollectionLayoutSection.fullWidthSection(height: 182)
@@ -87,7 +93,6 @@ class SearchViewController: ViewController {
 
         layout.register(CollectionBackgroundView.self, forDecorationViewOfKind: "background")
         layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
-        layout.configuration.interSectionSpacing = 20
 
         return layout
     }
@@ -102,7 +107,7 @@ class SearchViewController: ViewController {
 
     private func createSectionFooter(height: CGFloat = 58) -> NSCollectionLayoutBoundarySupplementaryItem {
         return NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(height)),
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(height)),
             elementKind: UICollectionView.elementKindSectionFooter,
             alignment: .bottom
         )
@@ -171,28 +176,18 @@ extension SearchViewController: UICollectionViewDataSource {
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-//        if kind == UICollectionView.elementKindSectionFooter {
-//            let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionViewMore.self, for: indexPath)
-//
-//            switch presenter.sectionType(for: indexPath.section) {
-//            case .groupList:
-//                let recognizer = UITapGestureRecognizer(target: self, action: #selector(showMoreGroups))
-//                cell.view.addGestureRecognizer(recognizer)
-//            case .userList:
-//                let recognizer = UITapGestureRecognizer(target: self, action: #selector(showMoreUsers))
-//                cell.view.addGestureRecognizer(recognizer)
-//            case .inviteFriends:
-//                break
-//            }
-//
-//            return cell
-//        }
-
-        let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
-        cell.label.font = .rounded(forTextStyle: .title2, weight: .bold)
-        cell.label.text = presenter.sectionTitle(for: indexPath.section)
-        return cell
+    func collectionView(_: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        switch kind {
+        case UICollectionView.elementKindSectionFooter:
+            return collection.dequeueReusableSupplementaryView(ofKind: kind, withClass: EmptyCollectionFooterView.self, for: indexPath)
+        case UICollectionView.elementKindSectionHeader:
+            let cell = collection.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
+            cell.label.font = .rounded(forTextStyle: .title2, weight: .bold)
+            cell.label.text = presenter.sectionTitle(for: indexPath.section)
+            return cell
+        default:
+            fatalError("unknown kind: \(kind)")
+        }
     }
 }
 
