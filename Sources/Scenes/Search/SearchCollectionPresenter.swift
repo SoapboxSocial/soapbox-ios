@@ -40,7 +40,12 @@ class SearchCollectionPresenter {
             return 1
         }
 
-        return dataSource[sectionIndex].data.count
+        let count = dataSource[sectionIndex].data.count
+        if count == 0 {
+            return 0
+        }
+
+        return count + 1
     }
 
     func configure(item: CollectionViewCell, forGroup indexPath: IndexPath) {

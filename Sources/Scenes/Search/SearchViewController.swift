@@ -37,6 +37,7 @@ class SearchViewController: ViewController {
 
         collection.register(cellWithClass: CollectionViewCell.self)
         collection.register(cellWithClass: InviteFriendsCell.self)
+        collection.register(cellWithClass: CollectionViewMoreCellCollectionViewCell.self)
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: CollectionViewSectionViewMore.self)
 
@@ -142,10 +143,18 @@ extension SearchViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch presenter.sectionType(for: indexPath.section) {
         case .groupList:
+            if (indexPath.item + 1) == presenter.numberOfItems(for: indexPath.section) {
+                return collectionView.dequeueReusableCell(withClass: CollectionViewMoreCellCollectionViewCell.self, for: indexPath)
+            }
+
             let cell = collectionView.dequeueReusableCell(withClass: CollectionViewCell.self, for: indexPath)
             presenter.configure(item: cell, forGroup: indexPath)
             return cell
         case .userList:
+            if (indexPath.item + 1) == presenter.numberOfItems(for: indexPath.section) {
+                return collectionView.dequeueReusableCell(withClass: CollectionViewMoreCellCollectionViewCell.self, for: indexPath)
+            }
+
             let cell = collectionView.dequeueReusableCell(withClass: CollectionViewCell.self, for: indexPath)
             presenter.configure(item: cell, forUser: indexPath)
             return cell
