@@ -57,6 +57,7 @@ class NotificationsViewController: ViewController {
         output.loadNotifications()
     }
 
+    // @TODO PROBABLY WORTH MOVING SOME OF THIS INTO A SHARED CLASS
     private func layout() -> UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             let needsFooter = sectionIndex + 1 == self.notifications.count
@@ -64,7 +65,7 @@ class NotificationsViewController: ViewController {
             section.boundarySupplementaryItems = [self.createSectionHeader()]
 
             if needsFooter {
-                section.boundarySupplementaryItems.append(self.createSectionFooter(height: 105))
+                section.boundarySupplementaryItems.append(self.createSectionFooter())
             }
 
             return section
@@ -84,9 +85,9 @@ class NotificationsViewController: ViewController {
         )
     }
 
-    private func createSectionFooter(height: CGFloat = 58) -> NSCollectionLayoutBoundarySupplementaryItem {
+    private func createSectionFooter() -> NSCollectionLayoutBoundarySupplementaryItem {
         return NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(height)),
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(105)),
             elementKind: UICollectionView.elementKindSectionFooter,
             alignment: .bottom
         )
