@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - We changed the way user lists look a bit, showing more on a screen.
+
 ## [2.8.0] - 2021-02-18
 
  - Fixes an issue that caused the app to fully crash while users are in a room.
