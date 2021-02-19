@@ -60,37 +60,13 @@ class NotificationsViewController: ViewController {
     // @TODO PROBABLY WORTH MOVING SOME OF THIS INTO A SHARED CLASS
     private func layout() -> UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-            let needsFooter = sectionIndex + 1 == self.notifications.count
-            let section = NSCollectionLayoutSection.fullWidthSection(hasHeader: true, hasFooter: false)
-            section.boundarySupplementaryItems = [self.createSectionHeader()]
-
-            if needsFooter {
-                section.boundarySupplementaryItems.append(self.createSectionFooter())
-            }
-
-            return section
+            self.collection.section(hasHeader: true, hasFooter: sectionIndex + 1 == self.notifications.count)
         }
 
         layout.register(CollectionBackgroundView.self, forDecorationViewOfKind: "background")
         layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
 
         return layout
-    }
-
-    private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
-        return NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(38)),
-            elementKind: UICollectionView.elementKindSectionHeader,
-            alignment: .top
-        )
-    }
-
-    private func createSectionFooter() -> NSCollectionLayoutBoundarySupplementaryItem {
-        return NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(105)),
-            elementKind: UICollectionView.elementKindSectionFooter,
-            alignment: .bottom
-        )
     }
 }
 

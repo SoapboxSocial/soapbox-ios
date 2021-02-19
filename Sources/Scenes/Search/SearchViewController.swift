@@ -73,21 +73,11 @@ class SearchViewController: ViewController {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             switch self.presenter.sectionType(for: sectionIndex) {
             case .groupList:
-                let section = NSCollectionLayoutSection.fullWidthSection(hasHeader: true, hasFooter: true)
-                section.boundarySupplementaryItems = [self.createSectionHeader(), self.createSectionFooter(height: 105)]
-                return section
+                return self.collection.section(hasHeader: true, hasFooter: true)
             case .userList:
-                let needsFooter = self.presenter.index(of: .groupList) == nil
-                let section = NSCollectionLayoutSection.fullWidthSection(hasHeader: true, hasFooter: needsFooter)
-                section.boundarySupplementaryItems = [self.createSectionHeader()]
-
-                if needsFooter {
-                    section.boundarySupplementaryItems.append(self.createSectionFooter(height: 105))
-                }
-
-                return section
+                return self.collection.section(hasHeader: true, hasFooter: self.presenter.index(of: .groupList) == nil)
             case .inviteFriends:
-                return NSCollectionLayoutSection.fullWidthSection(height: 182, hasBackground: false)
+                return self.collection.section(height: 182, hasBackground: false)
             }
         }
 
@@ -95,22 +85,6 @@ class SearchViewController: ViewController {
         layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
 
         return layout
-    }
-
-    private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
-        return NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(38)),
-            elementKind: UICollectionView.elementKindSectionHeader,
-            alignment: .top
-        )
-    }
-
-    private func createSectionFooter(height: CGFloat = 58) -> NSCollectionLayoutBoundarySupplementaryItem {
-        return NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(height)),
-            elementKind: UICollectionView.elementKindSectionFooter,
-            alignment: .bottom
-        )
     }
 
     @objc private func endRefresh() {

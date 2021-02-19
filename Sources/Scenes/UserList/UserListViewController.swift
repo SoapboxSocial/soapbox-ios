@@ -39,31 +39,15 @@ class UserListViewController: ViewController {
     private func makeLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { (_: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             let hasBackground = self.users.count > 0
-            let section = NSCollectionLayoutSection.fullWidthSection(hasFooter: true, hasBackground: hasBackground)
-            section.boundarySupplementaryItems = [self.createSectionFooter(height: 105)]
-            return section
+//            let section = NSCollectionLayoutSection.fullWidthSection(hasFooter: true, hasBackground: hasBackground)
+//            section.boundarySupplementaryItems = [self.collection.footer()]
+            return self.collection.section(hasFooter: true, hasBackground: self.users.count > 0)
         }
 
         layout.register(CollectionBackgroundView.self, forDecorationViewOfKind: "background")
         layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
 
         return layout
-    }
-
-    private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
-        return NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(38)),
-            elementKind: UICollectionView.elementKindSectionHeader,
-            alignment: .top
-        )
-    }
-
-    private func createSectionFooter(height: CGFloat = 58) -> NSCollectionLayoutBoundarySupplementaryItem {
-        return NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(height)),
-            elementKind: UICollectionView.elementKindSectionFooter,
-            alignment: .bottom
-        )
     }
 }
 
