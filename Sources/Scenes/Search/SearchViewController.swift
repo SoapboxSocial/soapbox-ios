@@ -120,9 +120,17 @@ extension SearchViewController: UICollectionViewDelegate {
 
         switch presenter.sectionType(for: indexPath.section) {
         case .userList:
+            if (indexPath.item + 1) == presenter.numberOfItems(for: indexPath.section) {
+                return output.loadMore(type: .users)
+            }
+
             let user = presenter.item(for: IndexPath(item: indexPath.item, section: indexPath.section), ofType: APIClient.User.self)
             navigationController?.pushViewController(SceneFactory.createProfileViewController(id: user.id), animated: true)
         case .groupList:
+            if (indexPath.item + 1) == presenter.numberOfItems(for: indexPath.section) {
+                return output.loadMore(type: .groups)
+            }
+
             let group = presenter.item(for: IndexPath(item: indexPath.item, section: indexPath.section), ofType: APIClient.Group.self)
             navigationController?.pushViewController(SceneFactory.createGroupViewController(id: group.id), animated: true)
         case .inviteFriends:
@@ -164,35 +172,27 @@ extension SearchViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        if kind == UICollectionView.elementKindSectionFooter {
-            let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionViewMore.self, for: indexPath)
-
-            switch presenter.sectionType(for: indexPath.section) {
-            case .groupList:
-                let recognizer = UITapGestureRecognizer(target: self, action: #selector(showMoreGroups))
-                cell.view.addGestureRecognizer(recognizer)
-            case .userList:
-                let recognizer = UITapGestureRecognizer(target: self, action: #selector(showMoreUsers))
-                cell.view.addGestureRecognizer(recognizer)
-            case .inviteFriends:
-                break
-            }
-
-            return cell
-        }
+//        if kind == UICollectionView.elementKindSectionFooter {
+//            let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionViewMore.self, for: indexPath)
+//
+//            switch presenter.sectionType(for: indexPath.section) {
+//            case .groupList:
+//                let recognizer = UITapGestureRecognizer(target: self, action: #selector(showMoreGroups))
+//                cell.view.addGestureRecognizer(recognizer)
+//            case .userList:
+//                let recognizer = UITapGestureRecognizer(target: self, action: #selector(showMoreUsers))
+//                cell.view.addGestureRecognizer(recognizer)
+//            case .inviteFriends:
+//                break
+//            }
+//
+//            return cell
+//        }
 
         let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
         cell.label.font = .rounded(forTextStyle: .title2, weight: .bold)
         cell.label.text = presenter.sectionTitle(for: indexPath.section)
         return cell
-    }
-
-    @objc private func showMoreGroups() {
-        output.loadMore(type: .groups)
-    }
-
-    @objc private func showMoreUsers() {
-        output.loadMore(type: .users)
     }
 }
 
