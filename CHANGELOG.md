@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.9.0] - 2021-02-19
+
  - We changed the way user lists look a bit, showing more on a screen.
  - We shortened the bio length to 150 characters from 300.
 
