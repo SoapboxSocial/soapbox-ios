@@ -21,7 +21,7 @@ class UserListViewController: ViewController {
         collection.backgroundColor = .clear
 
         collection.register(cellWithClass: CollectionViewCell.self)
-        collection.register(cellWithClass: CollectionViewMoreCellCollectionViewCell.self)
+        collection.register(cellWithClass: ViewMoreCellCollectionViewCell.self)
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: EmptyCollectionFooterView.self)
 
         output.loadUsers()
@@ -101,7 +101,7 @@ extension UserListViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if indexPath.item == users.count {
-            return collection.dequeueReusableCell(withClass: CollectionViewMoreCellCollectionViewCell.self, for: indexPath)
+            return collection.dequeueReusableCell(withClass: ViewMoreCellCollectionViewCell.self, for: indexPath)
         }
 
         let cell = collectionView.dequeueReusableCell(withClass: CollectionViewCell.self, for: indexPath)

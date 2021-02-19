@@ -1,6 +1,6 @@
 import UIKit
 
-class CollectionViewMoreCellCollectionViewCell: UICollectionViewCell {
+class ViewMoreCellCollectionViewCell: UICollectionViewCell {
     var title: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
