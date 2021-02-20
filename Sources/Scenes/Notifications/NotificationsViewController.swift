@@ -57,7 +57,6 @@ class NotificationsViewController: ViewController {
         output.loadNotifications()
     }
 
-    // @TODO PROBABLY WORTH MOVING SOME OF THIS INTO A SHARED CLASS
     private func layout() -> UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             self.collection.section(hasHeader: true, hasFooter: sectionIndex + 1 == self.notifications.count)
