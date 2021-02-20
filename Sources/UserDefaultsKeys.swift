@@ -20,4 +20,8 @@ class UserDefaultsKeys {
     class var username: String {
         return "username"
     }
+
+    class var theme: String {
+        return "settings.theme"
+    }
 }

@@ -28,6 +28,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }()
 
+        setTheme()
+
         window?.makeKeyAndVisible()
 
         updateNotify()
@@ -217,6 +219,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         completionHandler(true)
+    }
+
+    func setTheme() {
+        guard let theme = Theme(rawValue: UserDefaults.standard.integer(forKey: UserDefaultsKeys.theme)) else {
+            window?.overrideUserInterfaceStyle = .unspecified
+            return
+        }
+
+        switch theme {
+        case .dark:
+            window?.overrideUserInterfaceStyle = .dark
+        case .light:
+            window?.overrideUserInterfaceStyle = .light
+        case .system:
+            window?.overrideUserInterfaceStyle = .unspecified
+        }
     }
 }
 
