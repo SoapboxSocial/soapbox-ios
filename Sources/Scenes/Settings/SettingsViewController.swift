@@ -71,29 +71,28 @@ class SettingsViewController: UIViewController {
     }
 
     private func createThemeSetting() -> SettingsPresenter.Appearance {
-        SettingsPresenter.Appearance(
+        return SettingsPresenter.Appearance(
             name: NSLocalizedString("theme", comment: ""),
             handler: {
-                let sheet = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+                let sheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+                func themeToggle(theme: Theme) {
+                    UserDefaults.standard.set(theme.rawValue, forKey: UserDefaultsKeys.theme)
+                    self.tableView.reloadData()
+                    (UIApplication.shared.delegate as! AppDelegate).setTheme()
+                }
 
                 sheet.addAction(UIAlertAction(title: NSLocalizedString("system", comment: ""), style: .default, handler: { _ in
-                    UserDefaults.standard.set(Theme.system.rawValue, forKey: UserDefaultsKeys.theme)
+                    themeToggle(theme: .system)
                 }))
 
                 sheet.addAction(UIAlertAction(title: NSLocalizedString("dark", comment: ""), style: .default, handler: { _ in
-                    UserDefaults.standard.set(Theme.dark.rawValue, forKey: UserDefaultsKeys.theme)
+                    themeToggle(theme: .dark)
                 }))
 
                 sheet.addAction(UIAlertAction(title: NSLocalizedString("light", comment: ""), style: .default, handler: { _ in
-                    UserDefaults.standard.set(Theme.light.rawValue, forKey: UserDefaultsKeys.theme)
+                    themeToggle(theme: .light)
                 }))
-
-                // @TODO THIS DOESN'T WORK
-                sheet.willDismissHandler = {
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                    }
-                }
 
                 DispatchQueue.main.async {
                     self.present(sheet, animated: true)

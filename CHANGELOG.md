@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Added the ability to toggle the theme in the app for Freddy.
+
 ## [2.9.0] - 2021-02-19
 
  - We changed the way user lists look a bit, showing more on a screen.
