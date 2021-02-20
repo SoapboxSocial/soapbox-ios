@@ -7,6 +7,7 @@ class SettingsViewController: UIViewController {
         let view = UITableView(frame: .zero, style: .insetGrouped)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.register(cellWithClass: SettingsLinkTableViewCell.self)
+        view.register(cellWithClass: SettingsSelectionTableViewCell.self)
         view.backgroundColor = .background
         return view
     }()
@@ -19,6 +20,10 @@ class SettingsViewController: UIViewController {
         title.text = NSLocalizedString("settings", comment: "")
         title.font = .rounded(forTextStyle: .headline, weight: .semibold)
         view.addSubview(title)
+
+        presenter.set(appearance: [
+            createThemeSetting(),
+        ])
 
         presenter.set(links: [
             SettingsPresenter.Link(name: NSLocalizedString("contact_us", comment: ""), link: URL(string: "mailto:support@soapbox.social")!),
@@ -64,13 +69,66 @@ class SettingsViewController: UIViewController {
     @objc private func didTapClose() {
         dismiss(animated: true)
     }
+
+    private func createThemeSetting() -> SettingsPresenter.Appearance {
+        SettingsPresenter.Appearance(
+            name: NSLocalizedString("theme", comment: ""),
+            handler: {
+                let sheet = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+                sheet.addAction(UIAlertAction(title: NSLocalizedString("system", comment: ""), style: .default, handler: { _ in
+                    UserDefaults.standard.set(Theme.system.rawValue, forKey: UserDefaultsKeys.theme)
+                }))
+
+                sheet.addAction(UIAlertAction(title: NSLocalizedString("dark", comment: ""), style: .default, handler: { _ in
+                    UserDefaults.standard.set(Theme.dark.rawValue, forKey: UserDefaultsKeys.theme)
+                }))
+
+                sheet.addAction(UIAlertAction(title: NSLocalizedString("light", comment: ""), style: .default, handler: { _ in
+                    UserDefaults.standard.set(Theme.light.rawValue, forKey: UserDefaultsKeys.theme)
+                }))
+
+                // @TODO THIS DOESN'T WORK
+                sheet.willDismissHandler = {
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
+                }
+
+                DispatchQueue.main.async {
+                    self.present(sheet, animated: true)
+                }
+            },
+            value: {
+                guard let setting = Theme(rawValue: UserDefaults.standard.integer(forKey: UserDefaultsKeys.theme)) else {
+                    return NSLocalizedString("system", comment: "")
+                }
+
+                switch setting {
+                case .dark:
+                    return NSLocalizedString("dark", comment: "")
+                case .light:
+                    return NSLocalizedString("light", comment: "")
+                case .system:
+                    return NSLocalizedString("system", comment: "")
+                }
+            }
+        )
+    }
 }
 
 extension SettingsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        let link = presenter.item(for: indexPath, ofType: SettingsPresenter.Link.self)
-        UIApplication.shared.open(link.link)
+        switch presenter.sectionType(for: indexPath.section) {
+        case .appearance:
+            tableView.deselectRow(at: indexPath, animated: true)
+            let selection = presenter.item(for: indexPath, ofType: SettingsPresenter.Appearance.self)
+            selection.handler()
+        case .links:
+            tableView.deselectRow(at: indexPath, animated: true)
+            let link = presenter.item(for: indexPath, ofType: SettingsPresenter.Link.self)
+            UIApplication.shared.open(link.link)
+        }
     }
 }
 
@@ -84,8 +142,19 @@ extension SettingsViewController: UITableViewDataSource {
     }
 
     func tableView(_: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withClass: SettingsLinkTableViewCell.self, for: indexPath)
-        presenter.configure(item: cell, for: indexPath)
-        return cell
+        switch presenter.sectionType(for: indexPath.section) {
+        case .appearance:
+            let cell = tableView.dequeueReusableCell(withClass: SettingsSelectionTableViewCell.self, for: indexPath)
+            presenter.configure(item: cell, for: indexPath)
+            return cell
+        case .links:
+            let cell = tableView.dequeueReusableCell(withClass: SettingsLinkTableViewCell.self, for: indexPath)
+            presenter.configure(item: cell, for: indexPath)
+            return cell
+        }
+    }
+
+    func tableView(_: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return presenter.title(for: section)
     }
 }

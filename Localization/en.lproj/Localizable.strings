@@ -228,3 +228,9 @@
 
 "soapbox_share_sheet" = "Soapbox: Talk With Anyone";
 "share_room" = "Share %@";
+
+"appearance" = "Appearance";
+"theme" = "Theme";
+"light" = "Light";
+"dark" = "Dark";
+"system" = "System";
