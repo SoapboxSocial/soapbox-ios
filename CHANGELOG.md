@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.10.0] - 2021-02-20
+
  - Added the ability to toggle the theme in the app for Freddy.
  - Fixed some UI issues on the notifications screen.
 
