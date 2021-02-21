@@ -2,6 +2,23 @@
 
 ## [Unreleased]
 
+## [2.10.0] - 2021-02-20
+
+ - Added the ability to toggle the theme in the app for Freddy.
+ - Fixed some UI issues on the notifications screen.
+
+## [2.9.0] - 2021-02-19
+
+ - We changed the way user lists look a bit, showing more on a screen.
+ - We shortened the bio length to 150 characters from 300.
+
+## [2.8.0] - 2021-02-18
+
+ - Fixes an issue that caused the app to fully crash while users are in a room.
+
+## [2.7.0] - 2021-02-16
+
+ - We think we got it, the pesky echo!
  - Potential fix that stopped users from being able to unmute.
 
 ## [2.5.0] - 2021-02-12

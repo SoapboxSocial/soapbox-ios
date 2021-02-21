@@ -82,7 +82,7 @@ class EditProfileViewController: UIViewController {
         view.addSubview(bioLabel)
 
         bioTextField = TextView()
-        bioTextField.maxLength = 300
+        bioTextField.maxLength = 150
         bioTextField.translatesAutoresizingMaskIntoConstraints = false
         bioTextField.text = user.bio
         view.addSubview(bioTextField)

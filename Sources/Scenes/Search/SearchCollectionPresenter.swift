@@ -40,34 +40,22 @@ class SearchCollectionPresenter {
             return 1
         }
 
-        return dataSource[sectionIndex].data.count
+        let count = dataSource[sectionIndex].data.count
+        if count == 0 {
+            return 0
+        }
+
+        return count + 1
     }
 
-    func configure(item: GroupSearchCell, for indexPath: IndexPath) {
+    func configure(item: CollectionViewCell, forGroup indexPath: IndexPath) {
         let section = dataSource[indexPath.section]
         guard let group = section.data[indexPath.row] as? APIClient.Group else {
             print("Error getting active user for indexPath: \(indexPath)")
             return
         }
 
-        item.layer.mask = nil
-        item.layer.cornerRadius = 0
-
-        if indexPath.item == 0 {
-            item.roundCorners(corners: [.topLeft, .topRight], radius: 30)
-        }
-
-        if indexPath.item == (section.data.count - 1) {
-            item.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 30)
-        }
-
-        if indexPath.item == 0, section.data.count == 1 {
-            item.layer.mask = nil
-            item.layer.cornerRadius = 30
-            item.layer.masksToBounds = true
-        }
-
-        item.name.text = group.name
+        item.title.text = group.name
 
         item.image.image = nil
         if let image = group.image, image != "" {
@@ -75,32 +63,15 @@ class SearchCollectionPresenter {
         }
     }
 
-    func configure(item: UserCell, for indexPath: IndexPath) {
+    func configure(item: CollectionViewCell, forUser indexPath: IndexPath) {
         let section = dataSource[indexPath.section]
         guard let user = section.data[indexPath.row] as? APIClient.User else {
             print("Error getting active user for indexPath: \(indexPath)")
             return
         }
 
-        item.layer.mask = nil
-        item.layer.cornerRadius = 0
-
-        if indexPath.item == 0 {
-            item.roundCorners(corners: [.topLeft, .topRight], radius: 30)
-        }
-
-        if indexPath.item == (section.data.count - 1) {
-            item.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 30)
-        }
-
-        if indexPath.item == 0, section.data.count == 1 {
-            item.layer.mask = nil
-            item.layer.cornerRadius = 30
-            item.layer.masksToBounds = true
-        }
-
-        item.displayName.text = user.displayName
-        item.username.text = "@" + user.username
+        item.title.text = user.displayName
+        item.subtitle.text = "@" + user.username
 
         item.image.image = nil
         if let image = user.image, image != "" {
@@ -151,6 +122,10 @@ class SearchCollectionPresenter {
 
     func appendInviteFriendsSection() {
         dataSource.insert(Section(type: .inviteFriends, title: "", data: []), at: 0)
+    }
+
+    func removeInviteFriendsSection() {
+        dataSource.removeAll(where: { $0.type == .inviteFriends })
     }
 
     func index(of section: SectionType) -> Int? {

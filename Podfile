@@ -17,7 +17,6 @@ target 'Soapbox' do
   pod 'AlamofireImage'
   pod 'GSImageViewerController'
   pod 'Swifter', git: 'git@github.com:mattdonnelly/Swifter.git'
-  pod 'CCBottomRefreshControl'
   pod 'BetterSegmentedControl', '~> 2.0'
   pod 'EasyTipView'
   pod 'Siren'

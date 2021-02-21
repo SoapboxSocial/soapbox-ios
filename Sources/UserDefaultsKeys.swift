@@ -21,7 +21,7 @@ class UserDefaultsKeys {
         return "username"
     }
 
-    class var inviteFriendsShownCount: String {
-        return "inviteFriendsShownCount"
+    class var theme: String {
+        return "settings.theme"
     }
 }

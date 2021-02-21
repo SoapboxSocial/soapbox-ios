@@ -36,6 +36,7 @@ class NotificationsViewController: ViewController {
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.register(cellWithClass: NotificationCell.self)
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
+        collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: EmptyCollectionFooterView.self)
         collection.backgroundColor = .clear
         view.addSubview(collection)
 
@@ -57,27 +58,14 @@ class NotificationsViewController: ViewController {
     }
 
     private func layout() -> UICollectionViewCompositionalLayout {
-        let size = NSCollectionLayoutSize(
-            widthDimension: NSCollectionLayoutDimension.fractionalWidth(1),
-            heightDimension: .estimated(88)
-        )
-        let item = NSCollectionLayoutItem(layoutSize: size)
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: size, subitem: item, count: 1)
+        let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            self.collection.section(hasHeader: true, hasFooter: sectionIndex + 1 == self.notifications.count)
+        }
 
-        let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
-        section.interGroupSpacing = 0
-        section.boundarySupplementaryItems = [createSectionHeader()]
+        layout.register(CollectionBackgroundView.self, forDecorationViewOfKind: "background")
+        layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
 
-        return UICollectionViewCompositionalLayout(section: section)
-    }
-
-    private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
-        return NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(24)),
-            elementKind: UICollectionView.elementKindSectionHeader,
-            alignment: .top
-        )
+        return layout
     }
 }
 
@@ -161,35 +149,21 @@ extension NotificationsViewController: UICollectionViewDataSource {
         }
 
         let cell = collectionView.dequeueReusableCell(withClass: NotificationCell.self, for: indexPath)
-        cell.setText(name: notification.from.username, body: body, time: notification.timestamp)
+        cell.setText(name: notification.from.username, body: body)
 
         if notification.from.image != "" {
             cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + notification.from.image))
         }
 
-        cell.layer.mask = nil
-        cell.layer.cornerRadius = 0
-
-        if indexPath.item == 0 {
-            cell.roundCorners(corners: [.topLeft, .topRight], radius: 30)
-        }
-
-        let count = notifications[indexPath.section].notifications.count
-        if indexPath.item == (count - 1) {
-            cell.roundCorners(corners: [.bottomLeft, .bottomRight], radius: 30)
-        }
-
-        if indexPath.item == 0, count == 1 {
-            cell.layer.mask = nil
-            cell.layer.cornerRadius = 30
-            cell.layer.masksToBounds = true
-        }
-
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
+    func collectionView(_: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionFooter {
+            return collection.dequeueReusableSupplementaryView(ofKind: kind, withClass: EmptyCollectionFooterView.self, for: indexPath)
+        }
+
+        let cell = collection.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
         cell.label.font = .rounded(forTextStyle: .title3, weight: .bold)
 
         switch notifications[indexPath.section].time {

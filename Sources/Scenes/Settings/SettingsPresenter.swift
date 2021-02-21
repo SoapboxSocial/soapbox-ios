@@ -4,18 +4,25 @@ class SettingsPresenter {
     private var dataSource = [Section]()
 
     enum SectionType: Int, CaseIterable {
+        case appearance
         case links
     }
 
     struct Section {
         let type: SectionType
-        let title: String
+        let title: String?
         var data: [Any]
     }
 
     struct Link {
         let name: String
         let link: URL
+    }
+
+    struct Appearance {
+        let name: String
+        let handler: () -> Void
+        let value: () -> String
     }
 
     var numberOfSections: Int {
@@ -34,6 +41,10 @@ class SettingsPresenter {
         return dataSource[sectionIndex].data.count
     }
 
+    func title(for sectionIndex: Int) -> String? {
+        return dataSource[sectionIndex].title
+    }
+
     func configure(item: SettingsLinkTableViewCell, for indexPath: IndexPath) {
         guard let link = dataSource[indexPath.section].data[indexPath.row] as? Link else {
             return
@@ -42,8 +53,20 @@ class SettingsPresenter {
         item.textLabel?.text = link.name
     }
 
+    func configure(item: SettingsSelectionTableViewCell, for indexPath: IndexPath) {
+        guard let selection = dataSource[indexPath.section].data[indexPath.row] as? Appearance else {
+            return
+        }
+
+        item.textLabel?.text = selection.name
+        item.selection.text = selection.value()
+    }
+
     func set(links: [Link]) {
-        dataSource.removeAll(where: { $0.type == .links })
-        dataSource.append(Section(type: .links, title: "", data: links))
+        dataSource.append(Section(type: .links, title: nil, data: links))
+    }
+
+    func set(appearance: [Appearance]) {
+        dataSource.append(Section(type: .appearance, title: NSLocalizedString("appearance", comment: ""), data: appearance))
     }
 }

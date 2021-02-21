@@ -546,7 +546,12 @@ extension RoomView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withClass: RoomMemberCell.self, for: indexPath)
 
-        cell.setup(member: room.state.members[indexPath.item])
+        // This is a hack, there were occasions where it tried to add someone to the room UI.
+        if indexPath.item < room.state.members.count {
+            cell.setup(member: room.state.members[indexPath.item])
+        } else {
+            cell.blank()
+        }
 
         return cell
     }
