@@ -113,7 +113,6 @@ class MiniAppView: UIView {
     }
 }
 
-// @TODO WE NEED ACCESS CONTROL FOR THIS, WE NEED TO FIGURE OUT HOW ONLY THE ROOM KING OR WHATEVER SHOULD RESPOND
 extension MiniAppView: WKScriptMessageHandler {
     func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {
         guard let event = Query(rawValue: message.name) else {
