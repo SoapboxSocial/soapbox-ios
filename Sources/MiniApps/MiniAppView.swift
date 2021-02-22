@@ -99,14 +99,12 @@ class MiniAppView: UIView {
 
             let eval = String(format: "window.mitt.emit(\"%@\", %@);", type.rawValue, String(data: encoded, encoding: .utf8)!)
             webView.evaluateJavaScript(eval, completionHandler: { result, error in
-                if result != nil { // @TODO
-                    debugPrint("fucking \(error)")
+                if result != nil {
                     return
                 }
 
                 if error != nil {
-                    debugPrint("fuck \(error)")
-                    // @TODO
+                    debugPrint("evaluteJavaScript error \(error!)")
                 }
             })
         } catch {
