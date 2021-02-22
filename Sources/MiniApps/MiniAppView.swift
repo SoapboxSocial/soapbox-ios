@@ -10,14 +10,16 @@ class MiniAppView: UIView {
         let displayName: String
         let id: Int
         let image: String
-        let username: String
 
         private enum CodingKeys: String, CodingKey {
-            case id, displayName = "display_name", username, image
+            case id, displayName = "display_name", image
         }
     }
 
-    struct RoomData: Encodable {}
+    struct RoomData: Encodable {
+        let id: String
+        let name: String
+    }
 
     enum ResponseData: Encodable {
         case room(RoomData), user(UserData), members([UserData])
@@ -90,9 +92,12 @@ class MiniAppView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func respond(_ type: Query, response: Response) {
+    private func respond(_ type: Query, sequence: Int64, data: ResponseData) {
         do {
-            let eval = String(format: "window.mitt.emit(\"%@\", %@);", type.rawValue, String(data: try encoder.encode(response), encoding: .utf8)!)
+            let response = Response(sequence: sequence, data: data)
+            let encoded = try encoder.encode(response)
+
+            let eval = String(format: "window.mitt.emit(\"%@\", %@);", type.rawValue, String(data: encoded, encoding: .utf8)!)
             webView.evaluateJavaScript(eval, completionHandler: { result, error in
                 if result != nil { // @TODO
                     debugPrint("fucking \(error)")
@@ -127,19 +132,25 @@ extension MiniAppView: WKScriptMessageHandler {
 
         switch event {
         case .room:
-            return
+            respond(event, sequence: sequence.int64Value, data: .room(RoomData(id: room.state.id, name: room.state.name)))
         case .user:
             let user = UserStore.get()
 
-            return respond(
+            respond(
                 event,
-                response: Response(
-                    sequence: sequence.int64Value,
-                    data: .user(UserData(displayName: user.displayName, id: user.id, image: user.image ?? "", username: user.username))
-                )
+                sequence: sequence.int64Value,
+                data: .user(UserData(displayName: user.displayName, id: user.id, image: user.image ?? ""))
             )
         case .members:
-            return
+            let members = room.state.members.map {
+                UserData(displayName: $0.displayName, id: Int($0.id), image: $0.image)
+            }
+            
+            respond(
+                event,
+                sequence: sequence.int64Value,
+                data: .members(members))
+            )
         }
     }
 }
