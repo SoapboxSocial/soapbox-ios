@@ -796,19 +796,31 @@ extension RoomView: ButtonBarDelegate {
     }
 
     private func miniAppTapped() {
-        if miniApp != nil {
-            return
-        }
+        let drawer = DrawerView(withView: MiniAppsDirectoryView())
+        drawer.attachTo(view: window!)
+        drawer.snapPositions = [.closed, .open]
+        drawer.backgroundEffect = nil
+        drawer.backgroundColor = .foreground
+        drawer.cornerRadius = 30
+        drawer.openHeightBehavior = .fixed(height: frame.size.height / 2)
 
-        miniApp = MiniAppView(app: "", room: room)
+        drawer.setPosition(.closed, animated: false)
+        drawer.setPosition(.open, animated: true)
+//        disable()
 
-        content.insertArrangedSubview(miniApp!, at: 0)
-
-        NSLayoutConstraint.activate([
-            miniApp!.heightAnchor.constraint(equalTo: content.heightAnchor, multiplier: 0.66),
-            miniApp!.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
-            miniApp!.rightAnchor.constraint(equalTo: rightAnchor, constant: -20), // @todo content.rightanchor doesn't seem to work
-        ])
+//        if miniApp != nil {
+//            return
+//        }
+//
+//        miniApp = MiniAppView(app: "", room: room)
+//
+//        content.insertArrangedSubview(miniApp!, at: 0)
+//
+//        NSLayoutConstraint.activate([
+//            miniApp!.heightAnchor.constraint(equalTo: content.heightAnchor, multiplier: 0.66),
+//            miniApp!.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
+//            miniApp!.rightAnchor.constraint(equalTo: rightAnchor, constant: -20), // @todo content.rightanchor doesn't seem to work
+//        ])
     }
 
     private func settingsTapped() {
