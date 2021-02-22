@@ -83,7 +83,7 @@ class MiniAppView: UIView {
             webView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
 
-        webView.load(URLRequest(url: URL(string: "https://soapbox-apps.vercel.app/polls")!))
+        webView.load(URLRequest(url: URL(string: "https://soapbox-apps.vercel.app/polls?roomID=\(room.state.id)")!))
     }
 
     required init?(coder _: NSCoder) {
