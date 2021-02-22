@@ -161,6 +161,8 @@ class RoomView: UIView {
     private var leftButtonBar = ButtonBar<LeftButtonBar>()
     private var rightButtonBar = ButtonBar<RightButtonBar>()
 
+    private var miniApp: MiniAppView?
+
     init(room: Room) {
         self.room = room
 
@@ -783,12 +785,30 @@ extension RoomView: ButtonBarDelegate {
                 return inviteTapped()
             case .settings:
                 return settingsTapped()
+            case .miniApp:
+                return miniAppTapped()
             default:
                 return
             }
         default:
             return
         }
+    }
+
+    private func miniAppTapped() {
+        if miniApp != nil {
+            return
+        }
+
+        miniApp = MiniAppView(app: "", room: room)
+
+        content.insertArrangedSubview(miniApp!, at: 0)
+
+        NSLayoutConstraint.activate([
+            miniApp!.heightAnchor.constraint(equalTo: content.heightAnchor, multiplier: 0.66),
+            miniApp!.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
+            miniApp!.rightAnchor.constraint(equalTo: rightAnchor, constant: -20), // @todo content.rightanchor doesn't seem to work
+        ])
     }
 
     private func settingsTapped() {
