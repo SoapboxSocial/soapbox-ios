@@ -142,7 +142,7 @@ extension MiniAppView: WKScriptMessageHandler {
             let members = room.state.members.map {
                 UserData(displayName: $0.displayName, id: Int($0.id), image: $0.image)
             }
-            
+
             respond(event, sequence: sequence.int64Value, data: .members(members))
         }
     }

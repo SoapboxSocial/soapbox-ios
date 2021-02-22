@@ -419,7 +419,7 @@ extension Room: RoomClientDelegate {
 
     private func addMeToState(role: RoomState.RoomMember.Role) {
         let user = UserStore.get()
-        
+
         state.members.append(RoomState.RoomMember.with {
             $0.id = Int64(user.id)
             $0.image = user.image ?? ""
