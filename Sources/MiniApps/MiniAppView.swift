@@ -146,11 +146,7 @@ extension MiniAppView: WKScriptMessageHandler {
                 UserData(displayName: $0.displayName, id: Int($0.id), image: $0.image)
             }
             
-            respond(
-                event,
-                sequence: sequence.int64Value,
-                data: .members(members))
-            )
+            respond(event, sequence: sequence.int64Value, data: .members(members))
         }
     }
 }
