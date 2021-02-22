@@ -210,7 +210,7 @@ class RoomView: UIView {
         stack.axis = .horizontal
         stack.spacing = 10
         stack.translatesAutoresizingMaskIntoConstraints = false
-        topBar.addSubview(stack)
+        addSubview(stack)
 
         stack.addArrangedSubview(lock)
         stack.addArrangedSubview(name)
@@ -224,8 +224,9 @@ class RoomView: UIView {
         let topButtonStack = UIStackView()
         topButtonStack.axis = .horizontal
         topButtonStack.spacing = 20
+        topButtonStack.alignment = .center
         topButtonStack.translatesAutoresizingMaskIntoConstraints = false
-        topBar.addSubview(topButtonStack)
+        addSubview(topButtonStack)
 
         topButtonStack.addArrangedSubview(muteButton)
         topButtonStack.addArrangedSubview(exitButton)
@@ -258,7 +259,6 @@ class RoomView: UIView {
 
         NSLayoutConstraint.activate([
             exitButton.topAnchor.constraint(equalTo: foreground.topAnchor, constant: 20),
-            exitButton.rightAnchor.constraint(equalTo: foreground.rightAnchor, constant: -20),
             exitButton.heightAnchor.constraint(equalToConstant: 32),
             exitButton.widthAnchor.constraint(equalToConstant: 32),
         ])
@@ -271,7 +271,7 @@ class RoomView: UIView {
         ])
 
         NSLayoutConstraint.activate([
-            topButtonStack.rightAnchor.constraint(equalTo: rightAnchor),
+            topButtonStack.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
             topButtonStack.heightAnchor.constraint(equalToConstant: 32),
         ])
 
@@ -301,10 +301,10 @@ class RoomView: UIView {
         ])
 
         bottomMuteButton.backgroundColor = .roomBackground
-        buttonBar.addSubview(bottomMuteButton)
+        addSubview(bottomMuteButton)
 
         leftButtonBar.delegate = self
-        buttonBar.addSubview(leftButtonBar)
+        addSubview(leftButtonBar)
 
         NSLayoutConstraint.activate([
             leftButtonBar.centerYAnchor.constraint(equalTo: bottomMuteButton.centerYAnchor),
@@ -313,7 +313,7 @@ class RoomView: UIView {
         ])
 
         rightButtonBar.delegate = self
-        buttonBar.addSubview(rightButtonBar)
+        addSubview(rightButtonBar)
 
         NSLayoutConstraint.activate([
             rightButtonBar.centerYAnchor.constraint(equalTo: bottomMuteButton.centerYAnchor),
