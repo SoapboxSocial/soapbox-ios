@@ -147,6 +147,21 @@ class MiniView: UIView {
         ])
 
         webView.load(URLRequest(url: URL(string: "https://soapbox-apps.vercel.app\(app)?roomID=\(room.state.id)")!))
+
+        let id = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
+        guard let user = room.state.members.first(where: { $0.id == Int64(id) }) else {
+            return
+        }
+
+        adminRoleChanged(isAdmin: user.role == .admin)
+    }
+
+    func adminRoleChanged(isAdmin: Bool) {
+        if isAdmin {
+            buttonView.isHidden = false
+        } else {
+            buttonView.isHidden = true
+        }
     }
 
     required init?(coder _: NSCoder) {

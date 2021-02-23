@@ -373,6 +373,10 @@ class RoomView: UIView {
 
             linkView.pinned(link: url)
         }
+
+        if room.state.mini != "" {
+            open(mini: room.state.mini)
+        }
     }
 
     func showMuteButton() {
@@ -669,6 +673,10 @@ extension RoomView: RoomDelegate {
                 self.leftButtonBar.show(button: .settings)
                 self.leftButtonBar.show(button: .minis)
                 self.leftButtonBar.show(button: .invite)
+
+                if let mini = self.miniView {
+                    mini.adminRoleChanged(isAdmin: true)
+                }
             } else {
                 self.linkView.adminRoleChanged(isAdmin: false)
                 self.leftButtonBar.hide(button: .settings)
@@ -676,6 +684,10 @@ extension RoomView: RoomDelegate {
 
                 if self.room.state.visibility == .private {
                     self.leftButtonBar.hide(button: .invite)
+                }
+
+                if let mini = self.miniView {
+                    mini.adminRoleChanged(isAdmin: false)
                 }
             }
         }
@@ -752,6 +764,7 @@ extension RoomView: RoomDelegate {
 
     func opened(mini: String) {
         DispatchQueue.main.async {
+            self.leftButtonBar.hide(button: .minis)
             self.open(mini: mini)
         }
     }
@@ -760,6 +773,8 @@ extension RoomView: RoomDelegate {
         if miniView == nil {
             return
         }
+
+        leftButtonBar.show(button: .minis)
 
         content.removeArrangedSubview(miniView!)
         miniView = nil
