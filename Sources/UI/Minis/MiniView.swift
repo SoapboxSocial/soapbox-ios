@@ -97,7 +97,7 @@ class MiniView: UIView {
         return view
     }()
 
-    init(app: MinisDirectoryView.App, room: Room) {
+    init(app: String, room: Room) {
         self.room = room
 
         super.init(frame: .zero)
@@ -146,7 +146,7 @@ class MiniView: UIView {
             content.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
 
-        webView.load(URLRequest(url: URL(string: "https://soapbox-apps.vercel.app\(app.slug)?roomID=\(room.state.id)")!))
+        webView.load(URLRequest(url: URL(string: "https://soapbox-apps.vercel.app\(app)?roomID=\(room.state.id)")!))
     }
 
     required init?(coder _: NSCoder) {

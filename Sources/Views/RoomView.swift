@@ -357,6 +357,7 @@ class RoomView: UIView {
 
         if me.role != .admin {
             leftButtonBar.hide(button: .settings)
+            leftButtonBar.hide(button: .minis)
 
             if room.state.visibility == .private {
                 leftButtonBar.hide(button: .invite)
@@ -666,10 +667,12 @@ extension RoomView: RoomDelegate {
             if role == .admin {
                 self.linkView.adminRoleChanged(isAdmin: true)
                 self.leftButtonBar.show(button: .settings)
+                self.leftButtonBar.show(button: .minis)
                 self.leftButtonBar.show(button: .invite)
             } else {
                 self.linkView.adminRoleChanged(isAdmin: false)
                 self.leftButtonBar.hide(button: .settings)
+                self.leftButtonBar.hide(button: .minis)
 
                 if self.room.state.visibility == .private {
                     self.leftButtonBar.hide(button: .invite)
@@ -746,6 +749,16 @@ extension RoomView: RoomDelegate {
 
         linkView.removePinnedLink()
     }
+
+    func opened(mini: String) {
+        DispatchQueue.main.async {
+            self.open(mini: mini)
+        }
+    }
+
+    func closedMini() {
+        content.removeArrangedSubview(miniView!)
+    }
 }
 
 extension RoomView: EmojiBarDelegate {
@@ -812,7 +825,8 @@ extension RoomView: ButtonBarDelegate {
                 drawer.removeFromSuperview()
 
                 // @TODO: We should ensure one can't start an app when one is already open.
-                self.open(mini: app)
+//                self.open(mini: app.slug)
+                self.room.open(mini: app.slug)
             })
         }
 
@@ -880,7 +894,7 @@ extension RoomView: ButtonBarDelegate {
         window!.rootViewController!.present(alert, animated: true)
     }
 
-    private func open(mini: MinisDirectoryView.App) {
+    private func open(mini: String) {
         if miniView != nil {
             return
         }

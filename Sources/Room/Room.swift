@@ -18,6 +18,8 @@ protocol RoomDelegate {
     func usersSpeaking(users: [Int])
     func linkWasPinned(link: URL)
     func pinnedLinkWasRemoved()
+    func opened(mini: String)
+    func closedMini()
 }
 
 enum RoomError: Error {
@@ -196,6 +198,17 @@ class Room {
         delegate?.pinnedLinkWasRemoved()
     }
 
+    func open(mini: String) {
+        delegate?.opened(mini: mini)
+
+        // @TODO THIS SHOULD BE A CALLBACK ON THE VIEW ONCE LOADING IS DONE
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            self.client.send(command: .openMini(Command.OpenMini.with {
+                $0.mini = mini
+            }))
+        }
+    }
+
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -232,6 +245,10 @@ extension Room {
             on(pinnedLink: evt.link)
         case .unpinnedLink:
             linkWasUnpinned()
+        case let .openedMini(evt):
+            on(openedMini: evt.mini)
+        case .closedMini:
+            onMiniClosed()
         default:
             return
         }
@@ -316,6 +333,14 @@ extension Room {
         client.mute()
         updateMemberMuteState(user: userId, isMuted: true)
         delegate?.wasMutedByAdmin()
+    }
+
+    private func on(openedMini mini: String) {
+        delegate?.opened(mini: mini)
+    }
+
+    private func onMiniClosed() {
+        delegate?.closedMini()
     }
 }
 
