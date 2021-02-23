@@ -152,7 +152,12 @@ class MiniView: UIView {
             content.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
 
-        webView.load(URLRequest(url: URL(string: "https://soapbox-apps.vercel.app\(app)?roomID=\(room.state.id)")!))
+        guard var url = URL(string: "https://soapbox-apps.vercel.app\(app)") else {
+            return
+        }
+
+        url.appendQueryParameters(["roomID": room.state.id])
+        webView.load(URLRequest(url: url))
 
         let id = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
         guard let user = room.state.members.first(where: { $0.id == Int64(id) }) else {

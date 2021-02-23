@@ -761,6 +761,7 @@ extension RoomView: RoomDelegate {
     func opened(mini: String) {
         DispatchQueue.main.async {
             self.leftButtonBar.hide(button: .minis)
+            self.rightButtonBar.hide(button: .paste)
             self.open(mini: mini)
         }
     }
@@ -771,7 +772,10 @@ extension RoomView: RoomDelegate {
                 return
             }
 
+            self.miniView?.close()
+
             self.leftButtonBar.show(button: .minis)
+            self.rightButtonBar.show(button: .paste)
 
             self.miniView?.removeFromSuperview()
             self.miniView = nil
