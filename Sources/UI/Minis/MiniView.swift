@@ -1,6 +1,10 @@
 import UIKit
 import WebKit
 
+protocol MiniViewDelegate {
+    func didTapCloseMiniView(_ view: MiniView)
+}
+
 class MiniView: UIView {
     enum Query: String, CaseIterable {
         case room, user, members
@@ -80,7 +84,7 @@ class MiniView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "xmark.circle", withConfiguration: UIImage.SymbolConfiguration(weight: .semibold)), for: .normal)
         button.tintColor = .systemRed
-//        button.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         return button
     }()
 
@@ -96,6 +100,8 @@ class MiniView: UIView {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+
+    var delegate: MiniViewDelegate?
 
     init(app: String, room: Room) {
         self.room = room
@@ -228,6 +234,10 @@ extension MiniView: WKScriptMessageHandler {
 
     func close() {
         write(.close, data: "{}")
+    }
+
+    @objc private func exitTapped() {
+        delegate?.didTapCloseMiniView(self)
     }
 }
 

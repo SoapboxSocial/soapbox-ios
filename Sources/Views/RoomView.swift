@@ -770,14 +770,16 @@ extension RoomView: RoomDelegate {
     }
 
     func closedMini() {
-        if miniView == nil {
-            return
+        DispatchQueue.main.async {
+            if miniView == nil {
+                return
+            }
+
+            leftButtonBar.show(button: .minis)
+
+            miniView?.removeFromSuperview()
+            miniView = nil
         }
-
-        leftButtonBar.show(button: .minis)
-
-        content.removeArrangedSubview(miniView!)
-        miniView = nil
     }
 }
 
@@ -920,6 +922,7 @@ extension RoomView: ButtonBarDelegate {
         }
 
         miniView = MiniView(app: mini, room: room)
+        miniView?.delegate = self
 
         content.insertArrangedSubview(miniView!, at: 0)
 
@@ -928,5 +931,11 @@ extension RoomView: ButtonBarDelegate {
             miniView!.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
             miniView!.rightAnchor.constraint(equalTo: rightAnchor, constant: -20), // @todo content.rightanchor doesn't seem to work
         ])
+    }
+}
+
+extension RoomView: MiniViewDelegate {
+    func didTapCloseMiniView(_: MiniView) {
+        room.closeMini()
     }
 }
