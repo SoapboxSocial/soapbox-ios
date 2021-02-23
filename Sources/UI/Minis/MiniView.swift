@@ -63,7 +63,7 @@ class MiniView: UIView {
     }()
 
     private let loadingIndicator: UIActivityIndicatorView = {
-        let view = UIActivityIndicatorView(style: .medium)
+        let view = UIActivityIndicatorView(style: .large)
         view.hidesWhenStopped = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
