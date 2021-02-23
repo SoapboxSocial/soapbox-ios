@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [2.11.0] - 2021-02-22
+
+ - Fix for users who couldn't unmute.
+
 ## [2.10.0] - 2021-02-20
 
  - Added the ability to toggle the theme in the app for Freddy.
