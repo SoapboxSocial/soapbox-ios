@@ -126,10 +126,6 @@ class RoomView: UIView {
         return generator
     }()
 
-    private let tooltip = Tooltip.create(text: NSLocalizedString("share_room_tooltip", comment: ""))
-
-    private var didShowTooltip = false
-
     enum RightButtonBar: String, Item, CaseIterable {
         case share, paste
 
@@ -801,8 +797,6 @@ extension RoomView: ButtonBarDelegate {
     }
 
     private func shareTapped() {
-        tooltip.dismiss()
-
         if room.state.id == "" {
             return
         }

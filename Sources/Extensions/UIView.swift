@@ -8,13 +8,6 @@ enum UIViewEdge: Equatable {
 }
 
 extension UIView {
-    func roundCorners(corners: UIRectCorner, radius: CGFloat) {
-        let path = UIBezierPath(roundedRect: bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
-        let mask = CAShapeLayer()
-        mask.path = path.cgPath
-        layer.mask = mask
-    }
-
     func autoPinEdgesToSuperview(margin: CGFloat = 0) {
         autoPinToSuperview(edges: [
             .top(margin: margin),
