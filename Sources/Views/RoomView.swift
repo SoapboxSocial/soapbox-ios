@@ -796,9 +796,6 @@ extension RoomView: ButtonBarDelegate {
     private func minisTapped() {
         let directory = MinisDirectoryView()
 
-        directory.onSelected = { _ in
-        }
-
         let drawer = DrawerView(withView: directory)
         drawer.attachTo(view: window!)
         drawer.snapPositions = [.closed, .open]
@@ -807,23 +804,26 @@ extension RoomView: ButtonBarDelegate {
         drawer.cornerRadius = 30
         drawer.openHeightBehavior = .fixed(height: frame.size.height / 2)
 
+        directory.onSelected = { _ in
+            drawer.setPosition(.closed, animated: true, completion: { _ in
+                drawer.removeFromSuperview()
+
+                // @TODO: We should ensure one can't start an app when one is already open.
+
+                let miniApp = MiniView(app: "", room: self.room)
+
+                self.content.insertArrangedSubview(miniApp, at: 0)
+
+                NSLayoutConstraint.activate([
+                    miniApp.heightAnchor.constraint(equalTo: self.content.heightAnchor, multiplier: 0.66),
+                    miniApp.leftAnchor.constraint(equalTo: self.content.leftAnchor, constant: 20),
+                    miniApp.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -20), // @todo content.rightanchor doesn't seem to work
+                ])
+            })
+        }
+
         drawer.setPosition(.closed, animated: false)
         drawer.setPosition(.open, animated: true)
-//        disable()
-
-//        if miniApp != nil {
-//            return
-//        }
-//
-//        miniApp = MiniAppView(app: "", room: room)
-//
-//        content.insertArrangedSubview(miniApp!, at: 0)
-//
-//        NSLayoutConstraint.activate([
-//            miniApp!.heightAnchor.constraint(equalTo: content.heightAnchor, multiplier: 0.66),
-//            miniApp!.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
-//            miniApp!.rightAnchor.constraint(equalTo: rightAnchor, constant: -20), // @todo content.rightanchor doesn't seem to work
-//        ])
     }
 
     private func settingsTapped() {

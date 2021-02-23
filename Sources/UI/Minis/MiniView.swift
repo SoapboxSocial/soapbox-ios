@@ -1,7 +1,7 @@
 import UIKit
 import WebKit
 
-class MinisView: UIView {
+class MiniView: UIView {
     enum Query: String, CaseIterable {
         case room, user, members
     }
@@ -113,7 +113,7 @@ class MinisView: UIView {
     }
 }
 
-extension MinisView: WKScriptMessageHandler {
+extension MiniView: WKScriptMessageHandler {
     func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {
         guard let event = Query(rawValue: message.name) else {
             return

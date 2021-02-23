@@ -76,7 +76,12 @@ class MinisDirectoryView: UIView {
     }
 }
 
-extension MinisDirectoryView: UICollectionViewDelegate {}
+extension MinisDirectoryView: UICollectionViewDelegate {
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let app = apps[indexPath.item]
+        onSelected?(app)
+    }
+}
 
 extension MinisDirectoryView: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
