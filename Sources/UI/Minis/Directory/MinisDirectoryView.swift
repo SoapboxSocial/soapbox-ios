@@ -30,6 +30,8 @@ class MinisDirectoryView: UIView {
         return view
     }()
 
+    var onSelected: ((App) -> Void)?
+
     init() {
         super.init(frame: .zero)
 
@@ -41,7 +43,7 @@ class MinisDirectoryView: UIView {
 
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = NSLocalizedString("apps", comment: "")
+        label.text = NSLocalizedString("minis", comment: "")
         label.font = .rounded(forTextStyle: .title2, weight: .bold)
         addSubview(label)
 

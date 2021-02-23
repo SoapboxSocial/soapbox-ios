@@ -794,7 +794,12 @@ extension RoomView: ButtonBarDelegate {
     }
 
     private func minisTapped() {
-        let drawer = DrawerView(withView: MinisDirectoryView())
+        let directory = MinisDirectoryView()
+
+        directory.onSelected = { _ in
+        }
+
+        let drawer = DrawerView(withView: directory)
         drawer.attachTo(view: window!)
         drawer.snapPositions = [.closed, .open]
         drawer.backgroundEffect = nil
