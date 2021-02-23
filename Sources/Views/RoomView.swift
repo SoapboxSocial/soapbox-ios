@@ -212,7 +212,7 @@ class RoomView: UIView {
         stack.axis = .horizontal
         stack.spacing = 10
         stack.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(stack)
+        topBar.addSubview(stack)
 
         stack.addArrangedSubview(lock)
         stack.addArrangedSubview(name)
@@ -228,7 +228,7 @@ class RoomView: UIView {
         topButtonStack.spacing = 20
         topButtonStack.alignment = .center
         topButtonStack.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(topButtonStack)
+        topBar.addSubview(topButtonStack)
 
         topButtonStack.addArrangedSubview(muteButton)
         topButtonStack.addArrangedSubview(exitButton)
