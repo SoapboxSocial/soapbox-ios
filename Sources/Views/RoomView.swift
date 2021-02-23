@@ -757,7 +757,12 @@ extension RoomView: RoomDelegate {
     }
 
     func closedMini() {
+        if miniView == nil {
+            return
+        }
+
         content.removeArrangedSubview(miniView!)
+        miniView = nil
     }
 }
 
