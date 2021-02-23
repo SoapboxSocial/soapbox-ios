@@ -13,7 +13,6 @@ class HomeViewController: ViewController {
     private let refresh = UIRefreshControl()
 
     private var collection: UICollectionView!
-    private var rooms = [RoomState]()
     private let presenter = HomeCollectionPresenter()
 
     var output: HomeViewControllerOutput!
