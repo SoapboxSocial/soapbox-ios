@@ -1,6 +1,6 @@
 import UIKit
 
-class MiniAppsDirectoryView: UIView {
+class MinisDirectoryView: UIView {
     struct App {
         let name: String
         let description: String
@@ -26,7 +26,7 @@ class MiniAppsDirectoryView: UIView {
         let view = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewCompositionalLayout(section: section))
         view.backgroundColor = .foreground
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.register(cellWithClass: MiniAppsDirectoryCell.self)
+        view.register(cellWithClass: MinisDirectoryCell.self)
         return view
     }()
 
@@ -74,15 +74,15 @@ class MiniAppsDirectoryView: UIView {
     }
 }
 
-extension MiniAppsDirectoryView: UICollectionViewDelegate {}
+extension MinisDirectoryView: UICollectionViewDelegate {}
 
-extension MiniAppsDirectoryView: UICollectionViewDataSource {
+extension MinisDirectoryView: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
         return apps.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withClass: MiniAppsDirectoryCell.self, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withClass: MinisDirectoryCell.self, for: indexPath)
 
         let data = apps[indexPath.item]
 

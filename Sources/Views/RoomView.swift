@@ -144,7 +144,7 @@ class RoomView: UIView {
     }
 
     enum LeftButtonBar: String, Item, CaseIterable {
-        case settings, invite, miniApp
+        case settings, invite, minis
 
         func icon() -> String {
             switch self {
@@ -152,7 +152,7 @@ class RoomView: UIView {
                 return "gearshape"
             case .invite:
                 return "person.badge.plus"
-            case .miniApp:
+            case .minis:
                 return "gamecontroller"
             }
         }
@@ -160,8 +160,6 @@ class RoomView: UIView {
 
     private var leftButtonBar = ButtonBar<LeftButtonBar>()
     private var rightButtonBar = ButtonBar<RightButtonBar>()
-
-    private var miniApp: MiniAppView?
 
     init(room: Room) {
         self.room = room
@@ -785,8 +783,8 @@ extension RoomView: ButtonBarDelegate {
                 return inviteTapped()
             case .settings:
                 return settingsTapped()
-            case .miniApp:
-                return miniAppTapped()
+            case .minis:
+                return minisTapped()
             default:
                 return
             }
@@ -795,8 +793,8 @@ extension RoomView: ButtonBarDelegate {
         }
     }
 
-    private func miniAppTapped() {
-        let drawer = DrawerView(withView: MiniAppsDirectoryView())
+    private func minisTapped() {
+        let drawer = DrawerView(withView: MinisDirectoryView())
         drawer.attachTo(view: window!)
         drawer.snapPositions = [.closed, .open]
         drawer.backgroundEffect = nil

@@ -1,6 +1,6 @@
 import UIKit
 
-class MiniAppsDirectoryCell: UICollectionViewCell {
+class MinisDirectoryCell: UICollectionViewCell {
     let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
