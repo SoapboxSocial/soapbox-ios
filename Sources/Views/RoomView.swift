@@ -771,14 +771,14 @@ extension RoomView: RoomDelegate {
 
     func closedMini() {
         DispatchQueue.main.async {
-            if miniView == nil {
+            if self.miniView == nil {
                 return
             }
 
-            leftButtonBar.show(button: .minis)
+            self.leftButtonBar.show(button: .minis)
 
-            miniView?.removeFromSuperview()
-            miniView = nil
+            self.miniView?.removeFromSuperview()
+            self.miniView = nil
         }
     }
 }
