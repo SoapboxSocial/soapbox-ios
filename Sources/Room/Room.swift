@@ -202,11 +202,9 @@ class Room {
         delegate?.opened(mini: mini, isAppOpener: true)
 
         // @TODO THIS SHOULD BE A CALLBACK ON THE VIEW ONCE LOADING IS DONE
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            self.client.send(command: .openMini(Command.OpenMini.with {
-                $0.mini = mini
-            }))
-        }
+        client.send(command: .openMini(Command.OpenMini.with {
+            $0.mini = mini
+        }))
     }
 
     func closeMini() {
