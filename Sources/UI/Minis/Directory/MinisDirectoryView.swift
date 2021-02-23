@@ -38,7 +38,7 @@ class MinisDirectoryView: UIView {
 
         let handle = UIView()
         handle.translatesAutoresizingMaskIntoConstraints = false
-        handle.backgroundColor = .handle
+        handle.backgroundColor = UIColor.black.withAlphaComponent(0.2)
         handle.layer.cornerRadius = 2.5
         addSubview(handle)
 
