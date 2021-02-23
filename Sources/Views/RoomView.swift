@@ -371,7 +371,7 @@ class RoomView: UIView {
         }
 
         if room.state.mini != "" {
-            open(mini: room.state.mini)
+            open(mini: room.state.mini, isAppOpener: false)
         }
     }
 
@@ -758,11 +758,11 @@ extension RoomView: RoomDelegate {
         linkView.removePinnedLink()
     }
 
-    func opened(mini: String) {
+    func opened(mini: String, isAppOpener opener: Bool) {
         DispatchQueue.main.async {
             self.leftButtonBar.hide(button: .minis)
             self.rightButtonBar.hide(button: .paste)
-            self.open(mini: mini)
+            self.open(mini: mini, isAppOpener: opener)
         }
     }
 
@@ -914,12 +914,12 @@ extension RoomView: ButtonBarDelegate {
         window!.rootViewController!.present(alert, animated: true)
     }
 
-    private func open(mini: String) {
+    private func open(mini: String, isAppOpener opener: Bool) {
         if miniView != nil {
             return
         }
 
-        miniView = MiniView(app: mini, room: room)
+        miniView = MiniView(app: mini, room: room, appOpener: opener)
         miniView?.delegate = self
 
         content.insertArrangedSubview(miniView!, at: 0)

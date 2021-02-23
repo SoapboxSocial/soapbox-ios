@@ -103,7 +103,7 @@ class MiniView: UIView {
 
     var delegate: MiniViewDelegate?
 
-    init(app: String, room: Room) {
+    init(app: String, room: Room, appOpener: Bool = false) {
         self.room = room
 
         super.init(frame: .zero)
@@ -157,6 +157,11 @@ class MiniView: UIView {
         }
 
         url.appendQueryParameters(["roomID": room.state.id])
+
+        if appOpener {
+            url.appendQueryParameters(["isAppOpener": "true"])
+        }
+
         webView.load(URLRequest(url: url))
 
         let id = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)

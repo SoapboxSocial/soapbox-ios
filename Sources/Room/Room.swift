@@ -18,7 +18,7 @@ protocol RoomDelegate {
     func usersSpeaking(users: [Int])
     func linkWasPinned(link: URL)
     func pinnedLinkWasRemoved()
-    func opened(mini: String)
+    func opened(mini: String, isAppOpener: Bool)
     func closedMini()
 }
 
@@ -199,7 +199,7 @@ class Room {
     }
 
     func open(mini: String) {
-        delegate?.opened(mini: mini)
+        delegate?.opened(mini: mini, isAppOpener: true)
 
         // @TODO THIS SHOULD BE A CALLBACK ON THE VIEW ONCE LOADING IS DONE
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
@@ -341,7 +341,7 @@ extension Room {
     }
 
     private func on(openedMini mini: String) {
-        delegate?.opened(mini: mini)
+        delegate?.opened(mini: mini, isAppOpener: false)
     }
 
     private func onMiniClosed() {
