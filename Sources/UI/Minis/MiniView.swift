@@ -50,6 +50,16 @@ class MiniView: UIView {
 
     private let encoder = JSONEncoder()
 
+    private let content: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.spacing = 5
+        stack.distribution = .fill
+        stack.alignment = .fill
+        stack.axis = .vertical
+        return stack
+    }()
+
     private let webView: WKWebView = {
         let config = WKWebViewConfiguration()
         config.allowsInlineMediaPlayback = true
@@ -58,6 +68,24 @@ class MiniView: UIView {
         config.preferences.javaScriptEnabled = true
 
         let view = WKWebView(frame: .zero, configuration: config)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 10
+        view.layer.masksToBounds = true
+        view.clipsToBounds = true
+        return view
+    }()
+
+    private let exitButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "xmark.circle", withConfiguration: UIImage.SymbolConfiguration(weight: .semibold)), for: .normal)
+        button.tintColor = .systemRed
+//        button.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
+        return button
+    }()
+
+    private let buttonView: UIView = {
+        let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -76,21 +104,35 @@ class MiniView: UIView {
 
         translatesAutoresizingMaskIntoConstraints = false
 
-        layer.cornerRadius = 10
-        layer.masksToBounds = true
-        clipsToBounds = true
-
         backgroundColor = .clear
         webView.backgroundColor = .clear
 
         addSubview(loadingIndicator)
+        addSubview(content)
 
         webView.navigationDelegate = self
-        addSubview(webView)
+
+        buttonView.addSubview(exitButton)
+
+        content.addArrangedSubview(webView)
+        content.addArrangedSubview(buttonView)
 
         for event in Query.allCases {
             webView.configuration.userContentController.add(self, name: event.rawValue)
         }
+
+        NSLayoutConstraint.activate([
+            buttonView.leftAnchor.constraint(equalTo: leftAnchor),
+            buttonView.rightAnchor.constraint(equalTo: rightAnchor),
+            buttonView.heightAnchor.constraint(equalToConstant: 20),
+        ])
+
+        NSLayoutConstraint.activate([
+            exitButton.widthAnchor.constraint(equalToConstant: 20),
+            exitButton.heightAnchor.constraint(equalToConstant: 20),
+            exitButton.topAnchor.constraint(equalTo: webView.bottomAnchor, constant: 5),
+            exitButton.leftAnchor.constraint(equalTo: content.leftAnchor),
+        ])
 
         NSLayoutConstraint.activate([
             loadingIndicator.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -98,10 +140,10 @@ class MiniView: UIView {
         ])
 
         NSLayoutConstraint.activate([
-            webView.leftAnchor.constraint(equalTo: leftAnchor),
-            webView.rightAnchor.constraint(equalTo: rightAnchor),
-            webView.topAnchor.constraint(equalTo: topAnchor),
-            webView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            content.leftAnchor.constraint(equalTo: leftAnchor),
+            content.rightAnchor.constraint(equalTo: rightAnchor),
+            content.topAnchor.constraint(equalTo: topAnchor),
+            content.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
 
         webView.load(URLRequest(url: URL(string: "https://soapbox-apps.vercel.app\(app.slug)?roomID=\(room.state.id)")!))
