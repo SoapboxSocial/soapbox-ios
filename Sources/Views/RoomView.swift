@@ -161,6 +161,8 @@ class RoomView: UIView {
     private var leftButtonBar = ButtonBar<LeftButtonBar>()
     private var rightButtonBar = ButtonBar<RightButtonBar>()
 
+    private var miniView: MiniView?
+
     init(room: Room) {
         self.room = room
 
@@ -448,6 +450,7 @@ class RoomView: UIView {
 
     private func exitRoom() {
         room.close()
+        miniView?.close()
         delegate?.roomDidExit()
     }
 
@@ -809,16 +812,7 @@ extension RoomView: ButtonBarDelegate {
                 drawer.removeFromSuperview()
 
                 // @TODO: We should ensure one can't start an app when one is already open.
-
-                let miniApp = MiniView(app: app, room: self.room)
-
-                self.content.insertArrangedSubview(miniApp, at: 0)
-
-                NSLayoutConstraint.activate([
-                    miniApp.heightAnchor.constraint(equalTo: self.content.heightAnchor, multiplier: 0.66),
-                    miniApp.leftAnchor.constraint(equalTo: self.content.leftAnchor, constant: 20),
-                    miniApp.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -20), // @todo content.rightanchor doesn't seem to work
-                ])
+                self.open(mini: app)
             })
         }
 
@@ -884,5 +878,21 @@ extension RoomView: ButtonBarDelegate {
         alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel, handler: nil))
 
         window!.rootViewController!.present(alert, animated: true)
+    }
+
+    private func open(mini: MinisDirectoryView.App) {
+        if miniView != nil {
+            return
+        }
+
+        miniView = MiniView(app: mini, room: room)
+
+        content.insertArrangedSubview(miniView!, at: 0)
+
+        NSLayoutConstraint.activate([
+            miniView!.heightAnchor.constraint(equalTo: content.heightAnchor, multiplier: 0.66),
+            miniView!.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
+            miniView!.rightAnchor.constraint(equalTo: rightAnchor, constant: -20), // @todo content.rightanchor doesn't seem to work
+        ])
     }
 }
