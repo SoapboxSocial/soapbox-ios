@@ -6,6 +6,10 @@ class MiniView: UIView {
         case room, user, members
     }
 
+    enum Event: String, CaseIterable {
+        case room, user, members, close
+    }
+
     struct UserData: Codable {
         let displayName: String
         let id: Int
@@ -58,6 +62,13 @@ class MiniView: UIView {
         return view
     }()
 
+    private let loadingIndicator: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .medium)
+        view.hidesWhenStopped = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
     init(app: MinisDirectoryView.App, room: Room) {
         self.room = room
 
@@ -72,11 +83,19 @@ class MiniView: UIView {
         backgroundColor = .clear
         webView.backgroundColor = .clear
 
+        addSubview(loadingIndicator)
+
+        webView.navigationDelegate = self
         addSubview(webView)
 
         for event in Query.allCases {
             webView.configuration.userContentController.add(self, name: event.rawValue)
         }
+
+        NSLayoutConstraint.activate([
+            loadingIndicator.centerYAnchor.constraint(equalTo: centerYAnchor),
+            loadingIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
+        ])
 
         NSLayoutConstraint.activate([
             webView.leftAnchor.constraint(equalTo: leftAnchor),
@@ -92,24 +111,27 @@ class MiniView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func respond(_ type: Query, sequence: Int64, data: ResponseData) {
+    private func respond(_ event: Event, sequence: Int64, data: ResponseData) {
         do {
             let response = Response(sequence: sequence, data: data)
             let encoded = try encoder.encode(response)
-
-            let eval = String(format: "window.mitt.emit(\"%@\", %@);", type.rawValue, String(data: encoded, encoding: .utf8)!)
-            webView.evaluateJavaScript(eval, completionHandler: { result, error in
-                if result != nil {
-                    return
-                }
-
-                if error != nil {
-                    debugPrint("evaluteJavaScript error \(error!)")
-                }
-            })
+            write(event, data: String(data: encoded, encoding: .utf8)!)
         } catch {
             debugPrint("error \(error)")
         }
+    }
+
+    private func write(_ event: Event, data: String) {
+        let eval = String(format: "window.mitt.emit(\"%@\", %@);", event.rawValue, data)
+        webView.evaluateJavaScript(eval, completionHandler: { result, error in
+            if result != nil {
+                return
+            }
+
+            if error != nil {
+                debugPrint("evaluteJavaScript error \(error!)")
+            }
+        })
     }
 }
 
@@ -129,12 +151,12 @@ extension MiniView: WKScriptMessageHandler {
 
         switch event {
         case .room:
-            respond(event, sequence: sequence.int64Value, data: .room(RoomData(id: room.state.id, name: room.state.name)))
+            respond(.room, sequence: sequence.int64Value, data: .room(RoomData(id: room.state.id, name: room.state.name)))
         case .user:
             let user = UserStore.get()
 
             respond(
-                event,
+                .user,
                 sequence: sequence.int64Value,
                 data: .user(UserData(displayName: user.displayName, id: user.id, image: user.image ?? ""))
             )
@@ -143,7 +165,21 @@ extension MiniView: WKScriptMessageHandler {
                 UserData(displayName: $0.displayName, id: Int($0.id), image: $0.image)
             }
 
-            respond(event, sequence: sequence.int64Value, data: .members(members))
+            respond(.members, sequence: sequence.int64Value, data: .members(members))
         }
+    }
+
+    func close() {
+        write(.close, data: "{}")
+    }
+}
+
+extension MiniView: WKNavigationDelegate {
+    func webView(_: WKWebView, didStartProvisionalNavigation _: WKNavigation!) {
+        loadingIndicator.startAnimating()
+    }
+
+    func webView(_: WKWebView, didFinish _: WKNavigation!) {
+        loadingIndicator.stopAnimating()
     }
 }
