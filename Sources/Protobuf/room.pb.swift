@@ -844,6 +844,8 @@ struct RoomState {
 
   var link: String = String()
 
+  var mini: String = String()
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   struct RoomMember {
@@ -2262,6 +2264,7 @@ extension RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     5: .same(proto: "visibility"),
     6: .same(proto: "group"),
     7: .same(proto: "link"),
+    8: .same(proto: "mini"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -2274,6 +2277,7 @@ extension RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
       case 5: try decoder.decodeSingularEnumField(value: &self.visibility)
       case 6: try decoder.decodeSingularMessageField(value: &self._group)
       case 7: try decoder.decodeSingularStringField(value: &self.link)
+      case 8: try decoder.decodeSingularStringField(value: &self.mini)
       default: break
       }
     }
@@ -2301,6 +2305,9 @@ extension RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     if !self.link.isEmpty {
       try visitor.visitSingularStringField(value: self.link, fieldNumber: 7)
     }
+    if !self.mini.isEmpty {
+      try visitor.visitSingularStringField(value: self.mini, fieldNumber: 8)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -2312,6 +2319,7 @@ extension RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     if lhs.visibility != rhs.visibility {return false}
     if lhs._group != rhs._group {return false}
     if lhs.link != rhs.link {return false}
+    if lhs.mini != rhs.mini {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
