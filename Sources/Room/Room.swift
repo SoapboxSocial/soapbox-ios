@@ -209,6 +209,11 @@ class Room {
         }
     }
 
+    func closeMini() {
+        client.send(command: .closeMini(Command.CloseMini()))
+        delegate?.closedMini()
+    }
+
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
