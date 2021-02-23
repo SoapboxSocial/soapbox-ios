@@ -804,13 +804,13 @@ extension RoomView: ButtonBarDelegate {
         drawer.cornerRadius = 30
         drawer.openHeightBehavior = .fixed(height: frame.size.height / 2)
 
-        directory.onSelected = { _ in
+        directory.onSelected = { app in
             drawer.setPosition(.closed, animated: true, completion: { _ in
                 drawer.removeFromSuperview()
 
                 // @TODO: We should ensure one can't start an app when one is already open.
 
-                let miniApp = MiniView(app: "", room: self.room)
+                let miniApp = MiniView(app: app, room: self.room)
 
                 self.content.insertArrangedSubview(miniApp, at: 0)
 

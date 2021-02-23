@@ -4,11 +4,12 @@ class MinisDirectoryView: UIView {
     struct App {
         let name: String
         let description: String
+        let slug: String
     }
 
     private var apps = [
-        App(name: "Polls", description: "Quick and simple polls."),
-        App(name: "Would you rather?", description: "Choose your dilemma. See what the room says."),
+        App(name: "Polls", description: "Quick and simple polls.", slug: "/polls"),
+        App(name: "Would you rather?", description: "Choose your dilemma. See what the room says.", slug: "/polls"),
     ]
 
     let collection: UICollectionView = {
