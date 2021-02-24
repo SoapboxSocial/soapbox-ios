@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - When leaving a room as an admin, you now rejoin as one!
+
 ## [2.11.0] - 2021-02-22
 
  - Fix for users who couldn't unmute.
