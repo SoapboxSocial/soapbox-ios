@@ -7,7 +7,7 @@ class MinisDirectoryView: UIView {
         let slug: String
     }
 
-    private var minis: [APIClient.Mini]
+    private var minis = [APIClient.Mini]()
 
     let collection: UICollectionView = {
         let size = NSCollectionLayoutSize(
@@ -48,6 +48,18 @@ class MinisDirectoryView: UIView {
         collection.delegate = self
         collection.dataSource = self
         addSubview(collection)
+
+        APIClient().minis(callback: { result in
+            switch result {
+            case .failure(let error):
+                return // @TODO
+            case let .success(minis):
+                self.minis = minis
+                DispatchQueue.main.async {
+                    self.collection.reloadData()
+                }
+            }
+        })
 
         NSLayoutConstraint.activate([
             handle.centerXAnchor.constraint(equalTo: centerXAnchor),
