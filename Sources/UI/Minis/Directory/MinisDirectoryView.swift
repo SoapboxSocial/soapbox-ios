@@ -7,10 +7,7 @@ class MinisDirectoryView: UIView {
         let slug: String
     }
 
-    private var apps = [
-        App(name: "Polls", description: "Quick and simple polls.", slug: "/polls"),
-        App(name: "Would you rather?", description: "Choose your dilemma. See what the room says.", slug: "/polls"),
-    ]
+    private var minis: [APIClient.Mini]
 
     let collection: UICollectionView = {
         let size = NSCollectionLayoutSize(
@@ -31,7 +28,7 @@ class MinisDirectoryView: UIView {
         return view
     }()
 
-    var onSelected: ((App) -> Void)?
+    var onSelected: ((APIClient.Mini) -> Void)?
 
     init() {
         super.init(frame: .zero)
@@ -79,20 +76,20 @@ class MinisDirectoryView: UIView {
 
 extension MinisDirectoryView: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let app = apps[indexPath.item]
+        let app = minis[indexPath.item]
         onSelected?(app)
     }
 }
 
 extension MinisDirectoryView: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
-        return apps.count
+        return minis.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withClass: MinisDirectoryCell.self, for: indexPath)
 
-        let data = apps[indexPath.item]
+        let data = minis[indexPath.item]
 
         cell.titleLabel.text = data.name
         cell.descriptionLabel.text = data.description
