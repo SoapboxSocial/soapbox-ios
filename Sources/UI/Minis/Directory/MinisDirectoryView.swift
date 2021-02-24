@@ -51,7 +51,7 @@ class MinisDirectoryView: UIView {
 
         APIClient().minis(callback: { result in
             switch result {
-            case .failure(let error):
+            case .failure:
                 return // @TODO
             case let .success(minis):
                 self.minis = minis
