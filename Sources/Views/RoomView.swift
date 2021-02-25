@@ -829,6 +829,7 @@ extension RoomView: ButtonBarDelegate {
         let directory = MinisDirectoryView()
 
         let drawer = DrawerView(withView: directory)
+        drawer.delegate = self
         drawer.attachTo(view: window!)
         drawer.snapPositions = [.closed, .open]
         drawer.backgroundEffect = nil
@@ -838,10 +839,6 @@ extension RoomView: ButtonBarDelegate {
 
         directory.onSelected = { app in
             drawer.setPosition(.closed, animated: true, completion: { _ in
-                drawer.removeFromSuperview()
-
-                // @TODO: We should ensure one can't start an app when one is already open.
-//                self.open(mini: app.slug)
                 self.room.open(mini: app.slug)
             })
         }
@@ -929,5 +926,13 @@ extension RoomView: ButtonBarDelegate {
 extension RoomView: MiniViewDelegate {
     func didTapCloseMiniView(_: MiniView) {
         room.closeMini()
+    }
+}
+
+extension RoomView: DrawerViewDelegate {
+    func drawer(_ drawerView: DrawerView, didTransitionTo position: DrawerPosition) {
+        if position == .closed {
+            drawerView.removeFromSuperview()
+        }
     }
 }
