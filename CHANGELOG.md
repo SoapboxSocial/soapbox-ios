@@ -3,6 +3,50 @@
 ## [Unreleased]
 
  - We've decided to re-enable a notification sound when a user joins the room. This is still a bit experimental.
+ - Fixed the search inputs background on the light theme.
+
+## [2.11.0] - 2021-02-22
+
+ - Fix for users who couldn't unmute.
+
+## [2.10.0] - 2021-02-20
+
+ - Added the ability to toggle the theme in the app for Freddy.
+ - Fixed some UI issues on the notifications screen.
+
+## [2.9.0] - 2021-02-19
+
+ - We changed the way user lists look a bit, showing more on a screen.
+ - We shortened the bio length to 150 characters from 300.
+
+## [2.8.0] - 2021-02-18
+
+ - Fixes an issue that caused the app to fully crash while users are in a room.
+
+## [2.7.0] - 2021-02-16
+
+ - We think we got it, the pesky echo!
+ - Potential fix that stopped users from being able to unmute.
+
+## [2.5.0] - 2021-02-12
+
+ - Added the ability for admins to pin links in rooms!
+ - Fixes margin on notifications.
+
+## [2.4.0] - 2021-02-09
+
+ - Fixes to audio quality!
+
+## [2.3.0] - 2021-02-07
+
+ - Removed the visibility toggle in a group room.
+ - We made the activity feed just a bit nicer.
+ - We added welcome rooms, ensuring that new users get a great experience!
+
+## [2.2.0] - 2021-02-05
+
+ - We've readded speaker indicators, we are now also showing you whether people can hear you!
+ - Made the muted indicator look a bit nicer.
 
 ## [2.1.1] - 2021-02-02
 

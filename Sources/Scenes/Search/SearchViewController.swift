@@ -29,14 +29,17 @@ class SearchViewController: ViewController {
         collection.backgroundColor = .clear
         collection.keyboardDismissMode = .onDrag
 
+        presenter.appendInviteFriendsSection()
+
         let refresh = UIRefreshControl()
         refresh.addTarget(self, action: #selector(endRefresh), for: .valueChanged)
         collection.refreshControl = refresh
 
-        collection.register(cellWithClass: UserCell.self)
-        collection.register(cellWithClass: GroupSearchCell.self)
+        collection.register(cellWithClass: CollectionViewCell.self)
+        collection.register(cellWithClass: InviteFriendsCell.self)
+        collection.register(cellWithClass: ViewMoreCellCollectionViewCell.self)
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
-        collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: CollectionViewSectionViewMore.self)
+        collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: EmptyCollectionFooterView.self)
 
         output.search("*")
 
@@ -70,36 +73,18 @@ class SearchViewController: ViewController {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             switch self.presenter.sectionType(for: sectionIndex) {
             case .groupList:
-                let section = NSCollectionLayoutSection.fullWidthSection()
-                section.boundarySupplementaryItems = [self.createSectionHeader(), self.createSectionFooter(height: 105 + 38)]
-                return section
+                return self.collection.section(hasHeader: true, hasFooter: true)
             case .userList:
-                let section = NSCollectionLayoutSection.fullWidthSection()
-                section.boundarySupplementaryItems = [self.createSectionHeader(), self.createSectionFooter()]
-                return section
+                return self.collection.section(hasHeader: true, hasFooter: self.presenter.index(of: .groupList) == nil)
+            case .inviteFriends:
+                return self.collection.section(height: 182, hasBackground: false)
             }
         }
 
+        layout.register(CollectionBackgroundView.self, forDecorationViewOfKind: "background")
         layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
-        layout.configuration.interSectionSpacing = 20
 
         return layout
-    }
-
-    private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
-        return NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(80)),
-            elementKind: UICollectionView.elementKindSectionHeader,
-            alignment: .top
-        )
-    }
-
-    private func createSectionFooter(height: CGFloat = 58) -> NSCollectionLayoutBoundarySupplementaryItem {
-        return NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(height)),
-            elementKind: UICollectionView.elementKindSectionFooter,
-            alignment: .bottom
-        )
     }
 
     @objc private func endRefresh() {
@@ -114,11 +99,21 @@ extension SearchViewController: UICollectionViewDelegate {
 
         switch presenter.sectionType(for: indexPath.section) {
         case .userList:
+            if (indexPath.item + 1) == presenter.numberOfItems(for: indexPath.section) {
+                return output.loadMore(type: .users)
+            }
+
             let user = presenter.item(for: IndexPath(item: indexPath.item, section: indexPath.section), ofType: APIClient.User.self)
             navigationController?.pushViewController(SceneFactory.createProfileViewController(id: user.id), animated: true)
         case .groupList:
+            if (indexPath.item + 1) == presenter.numberOfItems(for: indexPath.section) {
+                return output.loadMore(type: .groups)
+            }
+
             let group = presenter.item(for: IndexPath(item: indexPath.item, section: indexPath.section), ofType: APIClient.Group.self)
             navigationController?.pushViewController(SceneFactory.createGroupViewController(id: group.id), animated: true)
+        case .inviteFriends:
+            return
         }
     }
 }
@@ -135,44 +130,38 @@ extension SearchViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch presenter.sectionType(for: indexPath.section) {
         case .groupList:
-            let cell = collectionView.dequeueReusableCell(withClass: GroupSearchCell.self, for: indexPath)
-            presenter.configure(item: cell, for: indexPath)
-            return cell
-        case .userList:
-            let cell = collectionView.dequeueReusableCell(withClass: UserCell.self, for: indexPath)
-            presenter.configure(item: cell, for: indexPath)
-            return cell
-        }
-    }
-
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        if kind == UICollectionView.elementKindSectionFooter {
-            let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionViewMore.self, for: indexPath)
-
-            switch presenter.sectionType(for: indexPath.section) {
-            case .groupList:
-                let recognizer = UITapGestureRecognizer(target: self, action: #selector(showMoreGroups))
-                cell.view.addGestureRecognizer(recognizer)
-            case .userList:
-                let recognizer = UITapGestureRecognizer(target: self, action: #selector(showMoreUsers))
-                cell.view.addGestureRecognizer(recognizer)
+            if (indexPath.item + 1) == presenter.numberOfItems(for: indexPath.section) {
+                return collectionView.dequeueReusableCell(withClass: ViewMoreCellCollectionViewCell.self, for: indexPath)
             }
 
+            let cell = collectionView.dequeueReusableCell(withClass: CollectionViewCell.self, for: indexPath)
+            presenter.configure(item: cell, forGroup: indexPath)
             return cell
+        case .userList:
+            if (indexPath.item + 1) == presenter.numberOfItems(for: indexPath.section) {
+                return collectionView.dequeueReusableCell(withClass: ViewMoreCellCollectionViewCell.self, for: indexPath)
+            }
+
+            let cell = collectionView.dequeueReusableCell(withClass: CollectionViewCell.self, for: indexPath)
+            presenter.configure(item: cell, forUser: indexPath)
+            return cell
+        case .inviteFriends:
+            return collectionView.dequeueReusableCell(withClass: InviteFriendsCell.self, for: indexPath)
         }
-
-        let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
-        cell.label.font = .rounded(forTextStyle: .title2, weight: .bold)
-        cell.label.text = presenter.sectionTitle(for: indexPath.section)
-        return cell
     }
 
-    @objc private func showMoreGroups() {
-        output.loadMore(type: .groups)
-    }
-
-    @objc private func showMoreUsers() {
-        output.loadMore(type: .users)
+    func collectionView(_: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        switch kind {
+        case UICollectionView.elementKindSectionFooter:
+            return collection.dequeueReusableSupplementaryView(ofKind: kind, withClass: EmptyCollectionFooterView.self, for: indexPath)
+        case UICollectionView.elementKindSectionHeader:
+            let cell = collection.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
+            cell.label.font = .rounded(forTextStyle: .title2, weight: .bold)
+            cell.label.text = presenter.sectionTitle(for: indexPath.section)
+            return cell
+        default:
+            fatalError("unknown kind: \(kind)")
+        }
     }
 }
 
@@ -237,6 +226,7 @@ extension SearchViewController: UITextFieldDelegate {
         var text = "*"
         if let input = searchBar.text, input != "" {
             text = input
+            presenter.removeInviteFriendsSection()
         }
 
         collection.refreshControl?.beginRefreshing()

@@ -1,10 +1,11 @@
 import UIKit
 
-class CollectionViewEmptyFooter: UICollectionReusableView {
+class CollectionBackgroundView: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        heightAnchor.constraint(equalToConstant: 105).isActive = true
+        backgroundColor = .foreground
+        layer.cornerRadius = 30
     }
 
     required init?(coder _: NSCoder) {

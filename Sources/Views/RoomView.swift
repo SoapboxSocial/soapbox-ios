@@ -1,4 +1,5 @@
 import DrawerView
+import LinkPresentation
 import NotificationBannerSwift
 import UIKit
 
@@ -42,26 +43,6 @@ class RoomView: UIView {
         return button
     }()
 
-    private let settingsButton: EmojiButton = {
-        let button = EmojiButton(frame: .zero)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "gearshape", withConfiguration: iconConfig), for: .normal)
-        button.tintColor = .brandColor
-        button.backgroundColor = .clear
-        button.addTarget(self, action: #selector(settingsTapped), for: .touchUpInside)
-        return button
-    }()
-
-    private let inviteUsersButton: EmojiButton = {
-        let button = EmojiButton(frame: .zero)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "person.badge.plus", withConfiguration: iconConfig), for: .normal)
-        button.tintColor = .brandColor
-        button.backgroundColor = .clear
-        button.addTarget(self, action: #selector(inviteTapped), for: .touchUpInside)
-        return button
-    }()
-
     private let bottomMuteButton: EmojiButton = {
         let iconConfig = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold)
 
@@ -72,26 +53,6 @@ class RoomView: UIView {
         button.tintColor = .brandColor
         button.backgroundColor = .clear
         button.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
-        return button
-    }()
-
-    private let pasteButton: EmojiButton = {
-        let button = EmojiButton(frame: .zero)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "link.badge.plus", withConfiguration: iconConfig), for: .normal)
-        button.tintColor = .brandColor
-        button.backgroundColor = .clear
-        button.addTarget(self, action: #selector(pasteLink), for: .touchUpInside)
-        return button
-    }()
-
-    private let shareRoomButton: EmojiButton = {
-        let button = EmojiButton(frame: .zero)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "square.and.arrow.up", withConfiguration: RoomView.iconConfig), for: .normal)
-        button.tintColor = .brandColor
-        button.backgroundColor = .clear
-        button.addTarget(self, action: #selector(shareRoom), for: .touchUpInside)
         return button
     }()
 
@@ -159,14 +120,41 @@ class RoomView: UIView {
         return generator
     }()
 
-    private let tooltip = Tooltip.create(text: NSLocalizedString("share_room_tooltip", comment: ""))
+    enum RightButtonBar: String, Item, CaseIterable {
+        case share, paste
 
-    private var didShowTooltip = false
+        func icon() -> String {
+            switch self {
+            case .share:
+                return "square.and.arrow.up"
+            case .paste:
+                return "link.badge.plus"
+            }
+        }
+    }
+
+    enum LeftButtonBar: String, Item, CaseIterable {
+        case settings, invite
+
+        func icon() -> String {
+            switch self {
+            case .settings:
+                return "gearshape"
+            case .invite:
+                return "person.badge.plus"
+            }
+        }
+    }
+
+    private var leftButtonBar = ButtonBar<LeftButtonBar>()
+    private var rightButtonBar = ButtonBar<RightButtonBar>()
 
     init(room: Room) {
         self.room = room
 
         super.init(frame: CGRect.zero)
+
+        isUserInteractionEnabled = true
 
         backgroundColor = .roomBackground
 
@@ -180,6 +168,7 @@ class RoomView: UIView {
         buttonBar.backgroundColor = .roomButtonBar
         buttonBar.translatesAutoresizingMaskIntoConstraints = false
         buttonBar.layer.cornerRadius = 25
+        buttonBar.isUserInteractionEnabled = true
         addSubview(buttonBar)
 
         addSubview(foreground)
@@ -189,6 +178,7 @@ class RoomView: UIView {
         content.addArrangedSubview(linkView)
 
         linkView.isHidden = true
+        linkView.delegate = self
 
         NSLayoutConstraint.activate([
             linkView.heightAnchor.constraint(lessThanOrEqualTo: content.heightAnchor, multiplier: 0.66),
@@ -224,6 +214,7 @@ class RoomView: UIView {
         let topButtonStack = UIStackView()
         topButtonStack.axis = .horizontal
         topButtonStack.spacing = 20
+        topButtonStack.alignment = .center
         topButtonStack.translatesAutoresizingMaskIntoConstraints = false
         topBar.addSubview(topButtonStack)
 
@@ -258,7 +249,6 @@ class RoomView: UIView {
 
         NSLayoutConstraint.activate([
             exitButton.topAnchor.constraint(equalTo: foreground.topAnchor, constant: 20),
-            exitButton.rightAnchor.constraint(equalTo: foreground.rightAnchor, constant: -20),
             exitButton.heightAnchor.constraint(equalToConstant: 32),
             exitButton.widthAnchor.constraint(equalToConstant: 32),
         ])
@@ -271,7 +261,7 @@ class RoomView: UIView {
         ])
 
         NSLayoutConstraint.activate([
-            topButtonStack.rightAnchor.constraint(equalTo: rightAnchor),
+            topButtonStack.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
             topButtonStack.heightAnchor.constraint(equalToConstant: 32),
         ])
 
@@ -300,55 +290,32 @@ class RoomView: UIView {
             topBar.bottomAnchor.constraint(equalTo: content.topAnchor),
         ])
 
-        let buttonStack = UIStackView()
-        buttonStack.translatesAutoresizingMaskIntoConstraints = false
-        buttonStack.axis = .horizontal
-        buttonStack.spacing = 10
-        buttonBar.addSubview(buttonStack)
-
-        addSubview(pasteButton)
-        addSubview(bottomMuteButton)
-        addSubview(shareRoomButton)
-
-        buttonStack.addArrangedSubview(settingsButton)
-        buttonStack.addArrangedSubview(inviteUsersButton)
-
-        NSLayoutConstraint.activate([
-            buttonStack.centerYAnchor.constraint(equalTo: bottomMuteButton.centerYAnchor),
-            buttonStack.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-        ])
-
-        NSLayoutConstraint.activate([
-            settingsButton.heightAnchor.constraint(equalToConstant: 32),
-            settingsButton.widthAnchor.constraint(equalToConstant: 32),
-        ])
-
-        NSLayoutConstraint.activate([
-            inviteUsersButton.heightAnchor.constraint(equalToConstant: 32),
-            inviteUsersButton.widthAnchor.constraint(equalToConstant: 32),
-        ])
-
         bottomMuteButton.backgroundColor = .roomBackground
+        addSubview(bottomMuteButton)
+
+        leftButtonBar.delegate = self
+        addSubview(leftButtonBar)
+
+        NSLayoutConstraint.activate([
+            leftButtonBar.centerYAnchor.constraint(equalTo: bottomMuteButton.centerYAnchor),
+            leftButtonBar.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            leftButtonBar.heightAnchor.constraint(equalToConstant: 32),
+        ])
+
+        rightButtonBar.delegate = self
+        addSubview(rightButtonBar)
+
+        NSLayoutConstraint.activate([
+            rightButtonBar.centerYAnchor.constraint(equalTo: bottomMuteButton.centerYAnchor),
+            rightButtonBar.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            rightButtonBar.heightAnchor.constraint(equalToConstant: 32),
+        ])
 
         NSLayoutConstraint.activate([
             bottomMuteButton.topAnchor.constraint(equalTo: foreground.bottomAnchor, constant: 10),
             bottomMuteButton.centerXAnchor.constraint(equalTo: centerXAnchor),
             bottomMuteButton.heightAnchor.constraint(equalToConstant: 56),
             bottomMuteButton.widthAnchor.constraint(equalToConstant: 56),
-        ])
-
-        NSLayoutConstraint.activate([
-            pasteButton.centerYAnchor.constraint(equalTo: bottomMuteButton.centerYAnchor),
-            pasteButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
-            pasteButton.heightAnchor.constraint(equalToConstant: 32),
-            pasteButton.widthAnchor.constraint(equalToConstant: 32),
-        ])
-
-        NSLayoutConstraint.activate([
-            shareRoomButton.centerYAnchor.constraint(equalTo: bottomMuteButton.centerYAnchor),
-            shareRoomButton.rightAnchor.constraint(equalTo: pasteButton.leftAnchor, constant: -10),
-            shareRoomButton.heightAnchor.constraint(equalToConstant: 32),
-            shareRoomButton.widthAnchor.constraint(equalToConstant: 32),
         ])
 
         NSLayoutConstraint.activate([
@@ -372,21 +339,25 @@ class RoomView: UIView {
         muteButton.isSelected = isMuted
         bottomMuteButton.isSelected = isMuted
 
+        linkView.adminRoleChanged(isAdmin: me.role == .admin)
+
         if me.role != .admin {
-            settingsButton.isHidden = true
+            leftButtonBar.hide(button: .settings)
 
             if room.state.visibility == .private {
-                inviteUsersButton.isHidden = true
+                leftButtonBar.hide(button: .invite)
             }
         }
 
         visibilityUpdated(visibility: room.state.visibility)
-    }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
+        if room.state.link != "" {
+            guard let url = URL(string: room.state.link) else {
+                return
+            }
 
-        showTooltip()
+            linkView.pinned(link: url)
+        }
     }
 
     func showMuteButton() {
@@ -415,30 +386,6 @@ class RoomView: UIView {
         )
     }
 
-    private func hideEditNameButton() {
-        UIView.animate(withDuration: 0.2) { [self] in
-            settingsButton.isHidden = true
-        }
-    }
-
-    private func showEditNameButton() {
-        UIView.animate(withDuration: 0.2) { [self] in
-            settingsButton.isHidden = false
-        }
-    }
-
-    private func hideInviteUserButton() {
-        UIView.animate(withDuration: 0.2) { [self] in
-            inviteUsersButton.isHidden = true
-        }
-    }
-
-    private func showInviteUserButton() {
-        UIView.animate(withDuration: 0.2) { [self] in
-            inviteUsersButton.isHidden = false
-        }
-    }
-
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -449,53 +396,6 @@ class RoomView: UIView {
 
     static func height() -> CGFloat {
         return UICollectionViewFlowLayout.heightForBubbleLayout(rows: 4, width: UIScreen.main.bounds.width) + 76 + 104
-    }
-
-    @objc private func shareRoom() {
-        tooltip.dismiss()
-
-        if room.state.id == "" {
-            return
-        }
-
-        let items: [Any] = [
-            URL(string: "https://soapbox.social/room/" + room.state.id)!,
-        ]
-
-        let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
-        ac.excludedActivityTypes = [.markupAsPDF, .openInIBooks, .addToReadingList, .assignToContact]
-        window!.rootViewController!.present(ac, animated: true)
-    }
-
-    @objc private func pasteLink() {
-        var url: URL?
-        if let pasted = UIPasteboard.general.url {
-            url = pasted
-        }
-
-        if let str = UIPasteboard.general.string, let pasted = URL(string: str) {
-            url = pasted
-        }
-
-        if url == nil || !UIApplication.shared.canOpenURL(url!) {
-            let banner = NotificationBanner(title: NSLocalizedString("nothing_to_share", comment: ""))
-            banner.show()
-            return
-        }
-
-        let alert = UIAlertController(
-            title: NSLocalizedString("would_you_like_to_share_link", comment: ""),
-            message: url!.absoluteString,
-            preferredStyle: .alert
-        )
-
-        alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .default, handler: { _ in
-            self.room.share(link: url!)
-        }))
-
-        alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel, handler: nil))
-
-        window!.rootViewController!.present(alert, animated: true)
     }
 
     @objc private func exitTapped() {
@@ -511,13 +411,13 @@ class RoomView: UIView {
         muteButton.isSelected.toggle()
         bottomMuteButton.isSelected.toggle()
 
-        if me.muted {
-            room.unmute()
-        } else {
-            room.mute()
-        }
-
         DispatchQueue.main.async {
+            if self.me.muted {
+                self.room.unmute()
+            } else {
+                self.room.mute()
+            }
+
             self.members.reloadData()
         }
     }
@@ -547,17 +447,6 @@ class RoomView: UIView {
         if parent.position == .collapsed {
             parent.setPosition(.open, animated: true)
         }
-    }
-
-    @objc private func settingsTapped() {
-        RoomSettingsSheet.show(forRoom: room, on: window!.rootViewController!)
-    }
-
-    @objc private func inviteTapped() {
-        window!.rootViewController!.present(
-            SceneFactory.createInviteFriendsListViewController(room: room),
-            animated: true
-        )
     }
 }
 
@@ -645,13 +534,30 @@ extension RoomView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withClass: RoomMemberCell.self, for: indexPath)
 
-        cell.setup(member: room.state.members[indexPath.item])
+        // This is a hack, there were occasions where it tried to add someone to the room UI.
+        if indexPath.item < room.state.members.count {
+            cell.setup(member: room.state.members[indexPath.item])
+        } else {
+            cell.blank()
+        }
 
         return cell
     }
 }
 
 extension RoomView: RoomDelegate {
+    func usersSpeaking(users: [Int]) {
+        DispatchQueue.main.async {
+            guard let cells = self.members.visibleCells as? [RoomMemberCell] else {
+                return
+            }
+
+            for cell in cells {
+                cell.isSpeaking = users.contains(Int(cell.user ?? 0))
+            }
+        }
+    }
+
     func userWasInvitedToBeAdmin(by: Int64) {
         let title = NSLocalizedString("invited_to_be_admin_by", comment: "")
 
@@ -743,26 +649,16 @@ extension RoomView: RoomDelegate {
 
         DispatchQueue.main.async {
             if role == .admin {
-                self.showEditNameButton()
-                self.showInviteUserButton()
+                self.linkView.adminRoleChanged(isAdmin: true)
+                self.leftButtonBar.show(button: .settings)
+                self.leftButtonBar.show(button: .invite)
             } else {
-                self.hideEditNameButton()
+                self.linkView.adminRoleChanged(isAdmin: false)
+                self.leftButtonBar.hide(button: .settings)
 
                 if self.room.state.visibility == .private {
-                    self.hideInviteUserButton()
+                    self.leftButtonBar.hide(button: .invite)
                 }
-            }
-        }
-    }
-
-    func didChangeSpeakVolume(user: Int64, volume: Float) {
-        DispatchQueue.main.async {
-            guard let cells = self.members.visibleCells as? [RoomMemberCell] else {
-                return
-            }
-
-            if let cell = cells.first(where: { $0.user == user }) {
-                cell.didChangeSpeakVolume(volume)
             }
         }
     }
@@ -804,20 +700,36 @@ extension RoomView: RoomDelegate {
             switch visibility {
             case .private:
                 self.lock.isHidden = false
-                self.shareRoomButton.isHidden = true
+                self.rightButtonBar.hide(button: .share)
 
                 if self.me.role != .admin {
-                    self.inviteUsersButton.isHidden = true
+                    self.leftButtonBar.hide(button: .invite)
                 }
 
             case .public:
                 self.lock.isHidden = true
-                self.shareRoomButton.isHidden = false
-                self.inviteUsersButton.isHidden = false
+                self.rightButtonBar.show(button: .share)
+                self.leftButtonBar.show(button: .invite)
             default:
                 return
             }
         }
+    }
+
+    func linkWasPinned(link: URL) {
+        DispatchQueue.main.async {
+            self.rightButtonBar.hide(button: .paste)
+        }
+
+        linkView.pinned(link: link)
+    }
+
+    func pinnedLinkWasRemoved() {
+        DispatchQueue.main.async {
+            self.rightButtonBar.show(button: .paste)
+        }
+
+        linkView.removePinnedLink()
     }
 }
 
@@ -829,24 +741,99 @@ extension RoomView: EmojiBarDelegate {
     }
 }
 
-extension RoomView {
-    private func showTooltip() {
-        if didShowTooltip || room.state.visibility == .private {
+extension RoomView: LinkSharingViewDelegate {
+    func didPin(link: URL) {
+        room.pin(link: link)
+        rightButtonBar.hide(button: .paste)
+    }
+
+    func didUnpin() {
+        room.unpin()
+        rightButtonBar.show(button: .paste)
+    }
+}
+
+extension RoomView: ButtonBarDelegate {
+    func didTap(button sender: UIButton) {
+        switch sender {
+        case let button as ButtonBar<RightButtonBar>.Button:
+            switch button.value {
+            case .paste:
+                return pasteTapped()
+            case .share:
+                return shareTapped()
+            default:
+                return
+            }
+        case let button as ButtonBar<LeftButtonBar>.Button:
+            switch button.value {
+            case .invite:
+                return inviteTapped()
+            case .settings:
+                return settingsTapped()
+            default:
+                return
+            }
+        default:
+            return
+        }
+    }
+
+    private func settingsTapped() {
+        RoomSettingsSheet.show(forRoom: room, on: window!.rootViewController!)
+    }
+
+    private func inviteTapped() {
+        window!.rootViewController!.present(
+            SceneFactory.createInviteFriendsListViewController(room: room),
+            animated: true
+        )
+    }
+
+    private func shareTapped() {
+        if room.state.id == "" {
             return
         }
 
-        let count = UserDefaults.standard.integer(forKey: UserDefaultsKeys.tooltipShownAmount)
-        if count >= 3 {
+        let data = LPLinkMetadata()
+        data.originalURL = URL(string: "https://soapbox.social/room/" + room.state.id)!
+
+        let format = NSLocalizedString("share_room", comment: "")
+        data.title = String(format: format, name.text!)
+
+        let ac = UIActivityViewController(activityItems: [MetadataItemSource(metadata: data)], applicationActivities: nil)
+        ac.excludedActivityTypes = [.markupAsPDF, .openInIBooks, .addToReadingList, .assignToContact]
+        window!.rootViewController!.present(ac, animated: true)
+    }
+
+    private func pasteTapped() {
+        var url: URL?
+        if let pasted = UIPasteboard.general.url {
+            url = pasted
+        }
+
+        if let str = UIPasteboard.general.string, let pasted = URL(string: str) {
+            url = pasted
+        }
+
+        if url == nil || !UIApplication.shared.canOpenURL(url!) {
+            let banner = NotificationBanner(title: NSLocalizedString("nothing_to_share", comment: ""))
+            banner.show()
             return
         }
 
-        didShowTooltip = true
-        tooltip.show(forView: shareRoomButton, withinSuperview: self)
+        let alert = UIAlertController(
+            title: NSLocalizedString("would_you_like_to_share_link", comment: ""),
+            message: url!.absoluteString,
+            preferredStyle: .alert
+        )
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-            self.tooltip.dismiss()
-        }
+        alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .default, handler: { _ in
+            self.room.share(link: url!)
+        }))
 
-        UserDefaults.standard.set(count + 1, forKey: UserDefaultsKeys.tooltipShownAmount)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel, handler: nil))
+
+        window!.rootViewController!.present(alert, animated: true)
     }
 }

@@ -142,20 +142,25 @@ class AuthenticationStartViewController: UIViewController {
     @objc private func didSubmit() {
         delegate?.didSubmit()
     }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        let height = submitButton.frame.size.height
+        let newFontHeight = height * 0.43
+
+        guard let font = submitButton.titleLabel?.font else {
+            return
+        }
+
+        if newFontHeight < font.pointSize {
+            submitButton.titleLabel?.font = .rounded(withPointSize: newFontHeight, weight: .bold)
+        }
+    }
 }
 
 extension AuthenticationStartViewController: ASAuthorizationControllerDelegate {
     @objc private func loginWithApple() {
         delegate?.didRequestSignInWithApple()
-//        let provider = ASAuthorizationAppleIDProvider()
-//
-//        let request = provider.createRequest()
-//        request.requestedScopes = [.fullName, .email]
-//
-//        let authController = ASAuthorizationController(authorizationRequests: [request])
-//
-//        authController.delegate = self
-//
-//        authController.performRequests()
     }
 }

@@ -10,12 +10,14 @@ protocol RoomDelegate {
     func userDidReact(user: Int64, reaction: Room.Reaction)
     func didChangeMemberMuteState(user: Int64, isMuted: Bool)
     func roomWasClosedByRemote()
-    func didChangeSpeakVolume(user: Int64, volume: Float)
     func didReceiveLink(from: Int64, link: URL)
     func roomWasRenamed(_ name: String)
     func userDidRecordScreen(_ user: Int64)
     func wasMutedByAdmin()
     func visibilityUpdated(visibility: Visibility)
+    func usersSpeaking(users: [Int])
+    func linkWasPinned(link: URL)
+    func pinnedLinkWasRemoved()
 }
 
 enum RoomError: Error {
@@ -81,6 +83,10 @@ class Room {
 
         if let id = group {
             request.group = Int64(id)
+
+            // This is a hack, when a room is created we don't get the group etc back.
+            // However we need it to ensure the admin can't change visibility if the room is in a group.
+            state.group.id = Int64(id)
         }
 
         if let ids = users {
@@ -177,6 +183,19 @@ class Room {
         updateMemberRole(user: userId, role: .admin)
     }
 
+    func pin(link: URL) {
+        client.send(command: .pinLink(Command.PinLink.with {
+            $0.link = link.absoluteString
+        }))
+
+        delegate?.linkWasPinned(link: link)
+    }
+
+    func unpin() {
+        client.send(command: .unpinLink(Command.UnpinLink()))
+        delegate?.pinnedLinkWasRemoved()
+    }
+
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -209,8 +228,12 @@ extension Room {
             on(roomRenamed: evt)
         case let .visibilityUpdated(evt):
             on(visibilityUpdated: evt)
-        case .none:
-            break
+        case let .pinnedLink(evt):
+            on(pinnedLink: evt.link)
+        case .unpinnedLink:
+            linkWasUnpinned()
+        default:
+            return
         }
     }
 
@@ -256,10 +279,6 @@ extension Room {
         updateMemberMuteState(user: from, isMuted: muteUpdate.isMuted)
     }
 
-    private func on(unmuted id: Int64) {
-        updateMemberMuteState(user: id, isMuted: false)
-    }
-
     private func on(reacted: Event.Reacted, from: Int64) {
         guard let value = String(bytes: reacted.emoji, encoding: .utf8) else {
             return
@@ -279,6 +298,18 @@ extension Room {
     private func on(visibilityUpdated: Event.VisibilityUpdated) {
         state.visibility = visibilityUpdated.visibility
         delegate?.visibilityUpdated(visibility: visibilityUpdated.visibility)
+    }
+
+    private func on(pinnedLink link: String) {
+        guard let url = URL(string: link) else {
+            return
+        }
+
+        delegate?.linkWasPinned(link: url)
+    }
+
+    private func linkWasUnpinned() {
+        delegate?.pinnedLinkWasRemoved()
     }
 
     private func onMutedByAdmin() {
@@ -322,6 +353,10 @@ extension Room: RoomClientDelegate {
         addMeToState(role: .admin)
     }
 
+    func room(speakers: [Int]) {
+        delegate?.usersSpeaking(users: speakers)
+    }
+
     func roomClientDidConnect(_: RoomClient) {
         guard let completion = self.completion else {
             return
@@ -332,7 +367,7 @@ extension Room: RoomClientDelegate {
         completion(.success(()))
         startPreventing()
 
-        client.createTrack()
+        client.mute()
     }
 
     // @TODO
@@ -350,6 +385,10 @@ extension Room: RoomClientDelegate {
     }
 
     func roomClientDidDisconnect(_: RoomClient) {
+        if let completion = self.completion {
+            return completion(.failure(.general))
+        }
+
         delegate?.roomWasClosedByRemote()
     }
 
@@ -359,6 +398,7 @@ extension Room: RoomClientDelegate {
 
     func roomClient(_: RoomClient, didReceiveState state: RoomState) {
         self.state.visibility = state.visibility
+        self.state.link = state.link
 
         state.members.forEach { member in
             if let index = self.state.members.firstIndex(where: { $0.id == member.id }) {
@@ -366,6 +406,10 @@ extension Room: RoomClientDelegate {
             }
 
             self.state.members.append(member)
+        }
+
+        if state.hasGroup {
+            self.state.group = state.group
         }
 
         addMeToState(role: .regular)

@@ -21,7 +21,7 @@ class UserDefaultsKeys {
         return "username"
     }
 
-    class var tooltipShownAmount: String {
-        return "tooltipShownAmount"
+    class var theme: String {
+        return "settings.theme"
     }
 }

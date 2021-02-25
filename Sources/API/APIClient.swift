@@ -30,6 +30,7 @@ class APIClient: Client {
         let timestamp: Int
         var from: NotificationUser
         var group: Group?
+        let room: String?
         let category: String
     }
 

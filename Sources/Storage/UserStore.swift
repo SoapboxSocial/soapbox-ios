@@ -1,6 +1,5 @@
 import Foundation
 
-// @todo what we want to do is store the user
 class UserStore {
     public static func store(user: APIClient.User) {
         UserDefaults.standard.set(user.username, forKey: UserDefaultsKeys.username)

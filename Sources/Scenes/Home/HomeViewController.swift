@@ -12,8 +12,7 @@ protocol HomeViewControllerOutput {
 class HomeViewController: ViewController {
     private let refresh = UIRefreshControl()
 
-    private var collection: CollectionView!
-    private var rooms = [RoomState]()
+    private var collection: UICollectionView!
     private let presenter = HomeCollectionPresenter()
 
     var output: HomeViewControllerOutput!
@@ -43,13 +42,14 @@ class HomeViewController: ViewController {
 
         view.backgroundColor = .background
 
-        collection = CollectionView(frame: .zero, collectionViewLayout: makeLayout())
+        collection = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
         collection.delegate = self
         collection.dataSource = self
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.backgroundColor = .clear
 
         collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
+        collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: EmptyCollectionFooterView.self)
         collection.register(cellWithClass: EmptyRoomCollectionViewCell.self)
         collection.register(cellWithClass: RoomCell.self)
         collection.register(cellWithClass: StoryCell.self)
@@ -210,7 +210,7 @@ class HomeViewController: ViewController {
 
     private func createSectionFooter() -> NSCollectionLayoutBoundarySupplementaryItem {
         return NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(105)),
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(105)),
             elementKind: UICollectionView.elementKindSectionFooter,
             alignment: .bottom
         )
@@ -393,16 +393,17 @@ extension HomeViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        if kind == UICollectionView.elementKindSectionFooter {
-            return collection.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
+        switch kind {
+        case UICollectionView.elementKindSectionFooter:
+            return collection.dequeueReusableSupplementaryView(ofKind: kind, withClass: EmptyCollectionFooterView.self, for: indexPath)
+        case UICollectionView.elementKindSectionHeader:
+            let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
+            cell.label.text = presenter.title(for: indexPath.section)
+            cell.label.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
+            return cell
+        default:
+            fatalError("unknown kind: \(kind)")
         }
-
-        let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
-
-        cell.label.text = presenter.title(for: indexPath.section)
-        cell.label.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
-
-        return cell
     }
 }
 
@@ -416,14 +417,6 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
             withHorizontalFittingPriority: .required,
             verticalFittingPriority: .fittingSizeLevel
         )
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        if rooms.count == 0 {
-            return CGSize.zero
-        }
-
-        return collection.collectionView(collectionView, layout: layout, referenceSizeForFooterInSection: section)
     }
 }
 

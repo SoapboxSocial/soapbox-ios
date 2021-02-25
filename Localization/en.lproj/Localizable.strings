@@ -58,6 +58,7 @@
 "room_invite_with_name_notification" = "%@ invited you to join the room \"%@\"";
 "room_invite_notification" = "%@ invited you to join a room";
 "group_invite_notification" = "%@ invited you to join the group \"%@\"";
+"welcome_room_notification" = "%@ just signed up, why not welcome them?";
 
 "new_room_with_group_notification" = "%@ created a room in \"%@\", why not join them?";
 "new_room_with_group_and_name_notification" = "%@ created the room \"%@\" in \"%@\", why not join them?";
@@ -131,6 +132,7 @@
 
 "invited_you_to_join" = "invited you to join %@.";
 "user_invited_you_to_join_group" = "%@ invited you to join %@.";
+"just_joined_welcome" = "just joined, why not welcome them?";
 
 "accept" = "Accept";
 "decline" = "Decline";
@@ -218,3 +220,17 @@
 "change_name" = "Change name";
 "make_private" = "Make private";
 "make_public" = "Make public";
+
+"pinned" = "Pinned";
+
+"send_invite" = "Send an Invite";
+"better_with_friends" = "Soapbox is more fun with friends. Invite yours";
+
+"soapbox_share_sheet" = "Soapbox: Talk With Anyone";
+"share_room" = "Share %@";
+
+"appearance" = "Appearance";
+"theme" = "Theme";
+"light" = "Light";
+"dark" = "Dark";
+"system" = "System";

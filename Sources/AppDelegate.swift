@@ -18,8 +18,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         UNUserNotificationCenter.current().delegate = self
 
-        UIBarButtonItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .body, weight: .bold)], for: .normal)
-
         let loggedIn = isLoggedIn()
 
         window!.rootViewController = { () -> UIViewController in
@@ -29,6 +27,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return createLoginView()
             }
         }()
+
+        setTheme()
 
         window?.makeKeyAndVisible()
 
@@ -220,6 +220,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         completionHandler(true)
     }
+
+    func setTheme() {
+        guard let theme = Theme(rawValue: UserDefaults.standard.integer(forKey: UserDefaultsKeys.theme)) else {
+            window?.overrideUserInterfaceStyle = .unspecified
+            return
+        }
+
+        switch theme {
+        case .dark:
+            window?.overrideUserInterfaceStyle = .dark
+        case .light:
+            window?.overrideUserInterfaceStyle = .light
+        case .system:
+            window?.overrideUserInterfaceStyle = .unspecified
+        }
+    }
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
@@ -282,7 +298,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             }
 
             switch category {
-            case "NEW_ROOM", "ROOM_JOINED", "ROOM_INVITE":
+            case "NEW_ROOM", "ROOM_JOINED", "ROOM_INVITE", "WELCOME_ROOM":
                 guard let id = args["id"] as? String else {
                     return
                 }
