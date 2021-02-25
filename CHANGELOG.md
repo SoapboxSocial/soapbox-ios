@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+ - When leaving a room as an admin, you now rejoin as one!
+ - We've decided to re-enable a notification sound when a user joins the room. This is still a bit experimental.
+ - Fixed the search inputs background on the light theme.
+
 ## [2.11.0] - 2021-02-22
 
  - Fix for users who couldn't unmute.

@@ -424,7 +424,7 @@ extension Room: RoomClientDelegate {
         on(message)
     }
 
-    func roomClient(_: RoomClient, didReceiveState state: RoomState) {
+    func roomClient(_: RoomClient, didReceiveState state: RoomState, andRole role: RoomState.RoomMember.Role) {
         self.state.visibility = state.visibility
         self.state.link = state.link
 
@@ -440,7 +440,7 @@ extension Room: RoomClientDelegate {
             self.state.group = state.group
         }
 
-        addMeToState(role: .regular)
+        addMeToState(role: role)
 
         self.state.name = state.name
     }
