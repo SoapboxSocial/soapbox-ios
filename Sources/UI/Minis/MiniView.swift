@@ -152,7 +152,7 @@ class MiniView: UIView {
             content.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
 
-        guard var url = URL(string: "https://soapbox-apps.vercel.app\(app)") else {
+        guard var url = URL(string: "https://app.soapbox.social\(app)") else {
             return
         }
 
