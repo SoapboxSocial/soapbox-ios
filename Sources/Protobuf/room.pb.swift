@@ -179,6 +179,22 @@ struct Command {
     set {payload = .unpinLink(newValue)}
   }
 
+  var openMini: Command.OpenMini {
+    get {
+      if case .openMini(let v)? = payload {return v}
+      return Command.OpenMini()
+    }
+    set {payload = .openMini(newValue)}
+  }
+
+  var closeMini: Command.CloseMini {
+    get {
+      if case .closeMini(let v)? = payload {return v}
+      return Command.CloseMini()
+    }
+    set {payload = .closeMini(newValue)}
+  }
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum OneOf_Payload: Equatable {
@@ -196,6 +212,8 @@ struct Command {
     case visibilityUpdate(Command.VisibilityUpdate)
     case pinLink(Command.PinLink)
     case unpinLink(Command.UnpinLink)
+    case openMini(Command.OpenMini)
+    case closeMini(Command.CloseMini)
 
   #if !swift(>=4.1)
     static func ==(lhs: Command.OneOf_Payload, rhs: Command.OneOf_Payload) -> Bool {
@@ -214,6 +232,8 @@ struct Command {
       case (.visibilityUpdate(let l), .visibilityUpdate(let r)): return l == r
       case (.pinLink(let l), .pinLink(let r)): return l == r
       case (.unpinLink(let l), .unpinLink(let r)): return l == r
+      case (.openMini(let l), .openMini(let r)): return l == r
+      case (.closeMini(let l), .closeMini(let r)): return l == r
       default: return false
       }
     }
@@ -382,6 +402,28 @@ struct Command {
     init() {}
   }
 
+  struct OpenMini {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var mini: String = String()
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct CloseMini {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
   init() {}
 }
 
@@ -390,120 +432,142 @@ struct Event {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var from: Int64 = 0
+  var from: Int64 {
+    get {return _storage._from}
+    set {_uniqueStorage()._from = newValue}
+  }
 
-  var payload: Event.OneOf_Payload? = nil
+  var payload: OneOf_Payload? {
+    get {return _storage._payload}
+    set {_uniqueStorage()._payload = newValue}
+  }
 
   var joined: Event.Joined {
     get {
-      if case .joined(let v)? = payload {return v}
+      if case .joined(let v)? = _storage._payload {return v}
       return Event.Joined()
     }
-    set {payload = .joined(newValue)}
+    set {_uniqueStorage()._payload = .joined(newValue)}
   }
 
   var left: Event.Left {
     get {
-      if case .left(let v)? = payload {return v}
+      if case .left(let v)? = _storage._payload {return v}
       return Event.Left()
     }
-    set {payload = .left(newValue)}
+    set {_uniqueStorage()._payload = .left(newValue)}
   }
 
   var muteUpdated: Event.MuteUpdated {
     get {
-      if case .muteUpdated(let v)? = payload {return v}
+      if case .muteUpdated(let v)? = _storage._payload {return v}
       return Event.MuteUpdated()
     }
-    set {payload = .muteUpdated(newValue)}
+    set {_uniqueStorage()._payload = .muteUpdated(newValue)}
   }
 
   var reacted: Event.Reacted {
     get {
-      if case .reacted(let v)? = payload {return v}
+      if case .reacted(let v)? = _storage._payload {return v}
       return Event.Reacted()
     }
-    set {payload = .reacted(newValue)}
+    set {_uniqueStorage()._payload = .reacted(newValue)}
   }
 
   var linkShared: Event.LinkShared {
     get {
-      if case .linkShared(let v)? = payload {return v}
+      if case .linkShared(let v)? = _storage._payload {return v}
       return Event.LinkShared()
     }
-    set {payload = .linkShared(newValue)}
+    set {_uniqueStorage()._payload = .linkShared(newValue)}
   }
 
   var invitedAdmin: Event.InvitedAdmin {
     get {
-      if case .invitedAdmin(let v)? = payload {return v}
+      if case .invitedAdmin(let v)? = _storage._payload {return v}
       return Event.InvitedAdmin()
     }
-    set {payload = .invitedAdmin(newValue)}
+    set {_uniqueStorage()._payload = .invitedAdmin(newValue)}
   }
 
   var addedAdmin: Event.AddedAdmin {
     get {
-      if case .addedAdmin(let v)? = payload {return v}
+      if case .addedAdmin(let v)? = _storage._payload {return v}
       return Event.AddedAdmin()
     }
-    set {payload = .addedAdmin(newValue)}
+    set {_uniqueStorage()._payload = .addedAdmin(newValue)}
   }
 
   var removedAdmin: Event.RemovedAdmin {
     get {
-      if case .removedAdmin(let v)? = payload {return v}
+      if case .removedAdmin(let v)? = _storage._payload {return v}
       return Event.RemovedAdmin()
     }
-    set {payload = .removedAdmin(newValue)}
+    set {_uniqueStorage()._payload = .removedAdmin(newValue)}
   }
 
   var renamedRoom: Event.RenamedRoom {
     get {
-      if case .renamedRoom(let v)? = payload {return v}
+      if case .renamedRoom(let v)? = _storage._payload {return v}
       return Event.RenamedRoom()
     }
-    set {payload = .renamedRoom(newValue)}
+    set {_uniqueStorage()._payload = .renamedRoom(newValue)}
   }
 
   var recordedScreen: Event.RecordedScreen {
     get {
-      if case .recordedScreen(let v)? = payload {return v}
+      if case .recordedScreen(let v)? = _storage._payload {return v}
       return Event.RecordedScreen()
     }
-    set {payload = .recordedScreen(newValue)}
+    set {_uniqueStorage()._payload = .recordedScreen(newValue)}
   }
 
   var mutedByAdmin: Event.MutedByAdmin {
     get {
-      if case .mutedByAdmin(let v)? = payload {return v}
+      if case .mutedByAdmin(let v)? = _storage._payload {return v}
       return Event.MutedByAdmin()
     }
-    set {payload = .mutedByAdmin(newValue)}
+    set {_uniqueStorage()._payload = .mutedByAdmin(newValue)}
   }
 
   var visibilityUpdated: Event.VisibilityUpdated {
     get {
-      if case .visibilityUpdated(let v)? = payload {return v}
+      if case .visibilityUpdated(let v)? = _storage._payload {return v}
       return Event.VisibilityUpdated()
     }
-    set {payload = .visibilityUpdated(newValue)}
+    set {_uniqueStorage()._payload = .visibilityUpdated(newValue)}
   }
 
   var pinnedLink: Event.PinnedLink {
     get {
-      if case .pinnedLink(let v)? = payload {return v}
+      if case .pinnedLink(let v)? = _storage._payload {return v}
       return Event.PinnedLink()
     }
-    set {payload = .pinnedLink(newValue)}
+    set {_uniqueStorage()._payload = .pinnedLink(newValue)}
   }
 
   var unpinnedLink: Event.UnpinnedLink {
     get {
-      if case .unpinnedLink(let v)? = payload {return v}
+      if case .unpinnedLink(let v)? = _storage._payload {return v}
       return Event.UnpinnedLink()
     }
-    set {payload = .unpinnedLink(newValue)}
+    set {_uniqueStorage()._payload = .unpinnedLink(newValue)}
+  }
+
+  var openedMini: Event.OpenedMini {
+    get {
+      if case .openedMini(let v)? = _storage._payload {return v}
+      return Event.OpenedMini()
+    }
+    set {_uniqueStorage()._payload = .openedMini(newValue)}
+  }
+
+  var closedMini: Event.ClosedMini {
+    get {
+      if case .closedMini(let v)? = _storage._payload {return v}
+      return Event.ClosedMini()
+    }
+    set {_uniqueStorage()._payload = .closedMini(newValue)}
   }
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -523,6 +587,8 @@ struct Event {
     case visibilityUpdated(Event.VisibilityUpdated)
     case pinnedLink(Event.PinnedLink)
     case unpinnedLink(Event.UnpinnedLink)
+    case openedMini(Event.OpenedMini)
+    case closedMini(Event.ClosedMini)
 
   #if !swift(>=4.1)
     static func ==(lhs: Event.OneOf_Payload, rhs: Event.OneOf_Payload) -> Bool {
@@ -541,6 +607,8 @@ struct Event {
       case (.visibilityUpdated(let l), .visibilityUpdated(let r)): return l == r
       case (.pinnedLink(let l), .pinnedLink(let r)): return l == r
       case (.unpinnedLink(let l), .unpinnedLink(let r)): return l == r
+      case (.openedMini(let l), .openedMini(let r)): return l == r
+      case (.closedMini(let l), .closedMini(let r)): return l == r
       default: return false
       }
     }
@@ -722,7 +790,31 @@ struct Event {
     init() {}
   }
 
+  struct OpenedMini {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var mini: String = String()
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
+  struct ClosedMini {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
   init() {}
+
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 struct RoomState {
@@ -751,6 +843,8 @@ struct RoomState {
   mutating func clearGroup() {self._group = nil}
 
   var link: String = String()
+
+  var mini: String = String()
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -863,6 +957,8 @@ extension Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
     12: .same(proto: "visibilityUpdate"),
     13: .same(proto: "pinLink"),
     14: .same(proto: "unpinLink"),
+    15: .same(proto: "openMini"),
+    16: .same(proto: "closeMini"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -980,6 +1076,22 @@ extension Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .unpinLink(v)}
+      case 15:
+        var v: Command.OpenMini?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .openMini(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .openMini(v)}
+      case 16:
+        var v: Command.CloseMini?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .closeMini(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .closeMini(v)}
       default: break
       }
     }
@@ -1015,6 +1127,10 @@ extension Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
       try visitor.visitSingularMessageField(value: v, fieldNumber: 13)
     case .unpinLink(let v)?:
       try visitor.visitSingularMessageField(value: v, fieldNumber: 14)
+    case .openMini(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 15)
+    case .closeMini(let v)?:
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 16)
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -1403,6 +1519,54 @@ extension Command.UnpinLink: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
   }
 }
 
+extension Command.OpenMini: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Command.protoMessageName + ".OpenMini"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "mini"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularStringField(value: &self.mini)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.mini.isEmpty {
+      try visitor.visitSingularStringField(value: self.mini, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Command.OpenMini, rhs: Command.OpenMini) -> Bool {
+    if lhs.mini != rhs.mini {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Command.CloseMini: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Command.protoMessageName + ".CloseMini"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Command.CloseMini, rhs: Command.CloseMini) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
 extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "Event"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -1421,170 +1585,226 @@ extension Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase
     13: .same(proto: "visibilityUpdated"),
     14: .same(proto: "pinnedLink"),
     15: .same(proto: "unpinnedLink"),
+    16: .same(proto: "openedMini"),
+    17: .same(proto: "closedMini"),
   ]
 
+  fileprivate class _StorageClass {
+    var _from: Int64 = 0
+    var _payload: Event.OneOf_Payload?
+
+    static let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _from = source._from
+      _payload = source._payload
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.from)
-      case 2:
-        var v: Event.Joined?
-        if let current = self.payload {
-          try decoder.handleConflictingOneOf()
-          if case .joined(let m) = current {v = m}
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        switch fieldNumber {
+        case 1: try decoder.decodeSingularInt64Field(value: &_storage._from)
+        case 2:
+          var v: Event.Joined?
+          if let current = _storage._payload {
+            try decoder.handleConflictingOneOf()
+            if case .joined(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._payload = .joined(v)}
+        case 3:
+          var v: Event.Left?
+          if let current = _storage._payload {
+            try decoder.handleConflictingOneOf()
+            if case .left(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._payload = .left(v)}
+        case 4:
+          var v: Event.MuteUpdated?
+          if let current = _storage._payload {
+            try decoder.handleConflictingOneOf()
+            if case .muteUpdated(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._payload = .muteUpdated(v)}
+        case 5:
+          var v: Event.Reacted?
+          if let current = _storage._payload {
+            try decoder.handleConflictingOneOf()
+            if case .reacted(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._payload = .reacted(v)}
+        case 6:
+          var v: Event.LinkShared?
+          if let current = _storage._payload {
+            try decoder.handleConflictingOneOf()
+            if case .linkShared(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._payload = .linkShared(v)}
+        case 7:
+          var v: Event.InvitedAdmin?
+          if let current = _storage._payload {
+            try decoder.handleConflictingOneOf()
+            if case .invitedAdmin(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._payload = .invitedAdmin(v)}
+        case 8:
+          var v: Event.AddedAdmin?
+          if let current = _storage._payload {
+            try decoder.handleConflictingOneOf()
+            if case .addedAdmin(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._payload = .addedAdmin(v)}
+        case 9:
+          var v: Event.RemovedAdmin?
+          if let current = _storage._payload {
+            try decoder.handleConflictingOneOf()
+            if case .removedAdmin(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._payload = .removedAdmin(v)}
+        case 10:
+          var v: Event.RenamedRoom?
+          if let current = _storage._payload {
+            try decoder.handleConflictingOneOf()
+            if case .renamedRoom(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._payload = .renamedRoom(v)}
+        case 11:
+          var v: Event.RecordedScreen?
+          if let current = _storage._payload {
+            try decoder.handleConflictingOneOf()
+            if case .recordedScreen(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._payload = .recordedScreen(v)}
+        case 12:
+          var v: Event.MutedByAdmin?
+          if let current = _storage._payload {
+            try decoder.handleConflictingOneOf()
+            if case .mutedByAdmin(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._payload = .mutedByAdmin(v)}
+        case 13:
+          var v: Event.VisibilityUpdated?
+          if let current = _storage._payload {
+            try decoder.handleConflictingOneOf()
+            if case .visibilityUpdated(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._payload = .visibilityUpdated(v)}
+        case 14:
+          var v: Event.PinnedLink?
+          if let current = _storage._payload {
+            try decoder.handleConflictingOneOf()
+            if case .pinnedLink(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._payload = .pinnedLink(v)}
+        case 15:
+          var v: Event.UnpinnedLink?
+          if let current = _storage._payload {
+            try decoder.handleConflictingOneOf()
+            if case .unpinnedLink(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._payload = .unpinnedLink(v)}
+        case 16:
+          var v: Event.OpenedMini?
+          if let current = _storage._payload {
+            try decoder.handleConflictingOneOf()
+            if case .openedMini(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._payload = .openedMini(v)}
+        case 17:
+          var v: Event.ClosedMini?
+          if let current = _storage._payload {
+            try decoder.handleConflictingOneOf()
+            if case .closedMini(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._payload = .closedMini(v)}
+        default: break
         }
-        try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .joined(v)}
-      case 3:
-        var v: Event.Left?
-        if let current = self.payload {
-          try decoder.handleConflictingOneOf()
-          if case .left(let m) = current {v = m}
-        }
-        try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .left(v)}
-      case 4:
-        var v: Event.MuteUpdated?
-        if let current = self.payload {
-          try decoder.handleConflictingOneOf()
-          if case .muteUpdated(let m) = current {v = m}
-        }
-        try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .muteUpdated(v)}
-      case 5:
-        var v: Event.Reacted?
-        if let current = self.payload {
-          try decoder.handleConflictingOneOf()
-          if case .reacted(let m) = current {v = m}
-        }
-        try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .reacted(v)}
-      case 6:
-        var v: Event.LinkShared?
-        if let current = self.payload {
-          try decoder.handleConflictingOneOf()
-          if case .linkShared(let m) = current {v = m}
-        }
-        try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .linkShared(v)}
-      case 7:
-        var v: Event.InvitedAdmin?
-        if let current = self.payload {
-          try decoder.handleConflictingOneOf()
-          if case .invitedAdmin(let m) = current {v = m}
-        }
-        try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .invitedAdmin(v)}
-      case 8:
-        var v: Event.AddedAdmin?
-        if let current = self.payload {
-          try decoder.handleConflictingOneOf()
-          if case .addedAdmin(let m) = current {v = m}
-        }
-        try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .addedAdmin(v)}
-      case 9:
-        var v: Event.RemovedAdmin?
-        if let current = self.payload {
-          try decoder.handleConflictingOneOf()
-          if case .removedAdmin(let m) = current {v = m}
-        }
-        try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .removedAdmin(v)}
-      case 10:
-        var v: Event.RenamedRoom?
-        if let current = self.payload {
-          try decoder.handleConflictingOneOf()
-          if case .renamedRoom(let m) = current {v = m}
-        }
-        try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .renamedRoom(v)}
-      case 11:
-        var v: Event.RecordedScreen?
-        if let current = self.payload {
-          try decoder.handleConflictingOneOf()
-          if case .recordedScreen(let m) = current {v = m}
-        }
-        try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .recordedScreen(v)}
-      case 12:
-        var v: Event.MutedByAdmin?
-        if let current = self.payload {
-          try decoder.handleConflictingOneOf()
-          if case .mutedByAdmin(let m) = current {v = m}
-        }
-        try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .mutedByAdmin(v)}
-      case 13:
-        var v: Event.VisibilityUpdated?
-        if let current = self.payload {
-          try decoder.handleConflictingOneOf()
-          if case .visibilityUpdated(let m) = current {v = m}
-        }
-        try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .visibilityUpdated(v)}
-      case 14:
-        var v: Event.PinnedLink?
-        if let current = self.payload {
-          try decoder.handleConflictingOneOf()
-          if case .pinnedLink(let m) = current {v = m}
-        }
-        try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .pinnedLink(v)}
-      case 15:
-        var v: Event.UnpinnedLink?
-        if let current = self.payload {
-          try decoder.handleConflictingOneOf()
-          if case .unpinnedLink(let m) = current {v = m}
-        }
-        try decoder.decodeSingularMessageField(value: &v)
-        if let v = v {self.payload = .unpinnedLink(v)}
-      default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.from != 0 {
-      try visitor.visitSingularInt64Field(value: self.from, fieldNumber: 1)
-    }
-    switch self.payload {
-    case .joined(let v)?:
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    case .left(let v)?:
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-    case .muteUpdated(let v)?:
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
-    case .reacted(let v)?:
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
-    case .linkShared(let v)?:
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
-    case .invitedAdmin(let v)?:
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
-    case .addedAdmin(let v)?:
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
-    case .removedAdmin(let v)?:
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
-    case .renamedRoom(let v)?:
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
-    case .recordedScreen(let v)?:
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
-    case .mutedByAdmin(let v)?:
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 12)
-    case .visibilityUpdated(let v)?:
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 13)
-    case .pinnedLink(let v)?:
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 14)
-    case .unpinnedLink(let v)?:
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 15)
-    case nil: break
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      if _storage._from != 0 {
+        try visitor.visitSingularInt64Field(value: _storage._from, fieldNumber: 1)
+      }
+      switch _storage._payload {
+      case .joined(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+      case .left(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+      case .muteUpdated(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+      case .reacted(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+      case .linkShared(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
+      case .invitedAdmin(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+      case .addedAdmin(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
+      case .removedAdmin(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
+      case .renamedRoom(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
+      case .recordedScreen(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
+      case .mutedByAdmin(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 12)
+      case .visibilityUpdated(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 13)
+      case .pinnedLink(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 14)
+      case .unpinnedLink(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 15)
+      case .openedMini(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 16)
+      case .closedMini(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 17)
+      case nil: break
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: Event, rhs: Event) -> Bool {
-    if lhs.from != rhs.from {return false}
-    if lhs.payload != rhs.payload {return false}
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._from != rhs_storage._from {return false}
+        if _storage._payload != rhs_storage._payload {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1986,6 +2206,54 @@ extension Event.UnpinnedLink: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
   }
 }
 
+extension Event.OpenedMini: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Event.protoMessageName + ".OpenedMini"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "mini"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularStringField(value: &self.mini)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.mini.isEmpty {
+      try visitor.visitSingularStringField(value: self.mini, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Event.OpenedMini, rhs: Event.OpenedMini) -> Bool {
+    if lhs.mini != rhs.mini {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Event.ClosedMini: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Event.protoMessageName + ".ClosedMini"
+  static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Event.ClosedMini, rhs: Event.ClosedMini) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
 extension RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = "RoomState"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -1996,6 +2264,7 @@ extension RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     5: .same(proto: "visibility"),
     6: .same(proto: "group"),
     7: .same(proto: "link"),
+    8: .same(proto: "mini"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -2008,6 +2277,7 @@ extension RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
       case 5: try decoder.decodeSingularEnumField(value: &self.visibility)
       case 6: try decoder.decodeSingularMessageField(value: &self._group)
       case 7: try decoder.decodeSingularStringField(value: &self.link)
+      case 8: try decoder.decodeSingularStringField(value: &self.mini)
       default: break
       }
     }
@@ -2035,6 +2305,9 @@ extension RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     if !self.link.isEmpty {
       try visitor.visitSingularStringField(value: self.link, fieldNumber: 7)
     }
+    if !self.mini.isEmpty {
+      try visitor.visitSingularStringField(value: self.mini, fieldNumber: 8)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -2046,6 +2319,7 @@ extension RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     if lhs.visibility != rhs.visibility {return false}
     if lhs._group != rhs._group {return false}
     if lhs.link != rhs.link {return false}
+    if lhs.mini != rhs.mini {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

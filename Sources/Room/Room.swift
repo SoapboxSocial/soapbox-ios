@@ -18,6 +18,8 @@ protocol RoomDelegate {
     func usersSpeaking(users: [Int])
     func linkWasPinned(link: URL)
     func pinnedLinkWasRemoved()
+    func opened(mini: String, isAppOpener: Bool)
+    func closedMini()
 }
 
 enum RoomError: Error {
@@ -196,6 +198,20 @@ class Room {
         delegate?.pinnedLinkWasRemoved()
     }
 
+    func open(mini: String) {
+        delegate?.opened(mini: mini, isAppOpener: true)
+
+        // @TODO THIS SHOULD BE A CALLBACK ON THE VIEW ONCE LOADING IS DONE
+        client.send(command: .openMini(Command.OpenMini.with {
+            $0.mini = mini
+        }))
+    }
+
+    func closeMini() {
+        client.send(command: .closeMini(Command.CloseMini()))
+        delegate?.closedMini()
+    }
+
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -232,6 +248,10 @@ extension Room {
             on(pinnedLink: evt.link)
         case .unpinnedLink:
             linkWasUnpinned()
+        case let .openedMini(evt):
+            on(openedMini: evt.mini)
+        case .closedMini:
+            onMiniClosed()
         default:
             return
         }
@@ -316,6 +336,14 @@ extension Room {
         client.mute()
         updateMemberMuteState(user: userId, isMuted: true)
         delegate?.wasMutedByAdmin()
+    }
+
+    private func on(openedMini mini: String) {
+        delegate?.opened(mini: mini, isAppOpener: false)
+    }
+
+    private func onMiniClosed() {
+        delegate?.closedMini()
     }
 }
 
@@ -418,10 +446,12 @@ extension Room: RoomClientDelegate {
     }
 
     private func addMeToState(role: RoomState.RoomMember.Role) {
+        let user = UserStore.get()
+
         state.members.append(RoomState.RoomMember.with {
-            $0.id = Int64(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))
-            $0.image = UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!
-            $0.displayName = UserDefaults.standard.string(forKey: UserDefaultsKeys.userDisplay)!
+            $0.id = Int64(user.id)
+            $0.image = user.image ?? ""
+            $0.displayName = user.displayName
             $0.muted = true
             $0.role = role
         })

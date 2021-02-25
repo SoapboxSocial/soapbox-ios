@@ -507,3 +507,17 @@ extension APIClient {
         void(path: "/v1/blocks/", method: .delete, parameters: ["id": user], callback: callback)
     }
 }
+
+extension APIClient {
+    struct Mini: Decodable {
+        let id: Int
+        let name: String
+        let image: String
+        let slug: String
+        let description: String
+    }
+
+    func minis(callback: @escaping (Result<[Mini], Error>) -> Void) {
+        get(path: "/v1/minis", callback: callback)
+    }
+}

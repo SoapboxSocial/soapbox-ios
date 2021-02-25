@@ -134,7 +134,7 @@ class RoomView: UIView {
     }
 
     enum LeftButtonBar: String, Item, CaseIterable {
-        case settings, invite
+        case settings, invite, minis
 
         func icon() -> String {
             switch self {
@@ -142,12 +142,16 @@ class RoomView: UIView {
                 return "gearshape"
             case .invite:
                 return "person.badge.plus"
+            case .minis:
+                return "gamecontroller"
             }
         }
     }
 
     private var leftButtonBar = ButtonBar<LeftButtonBar>()
     private var rightButtonBar = ButtonBar<RightButtonBar>()
+
+    private var miniView: MiniView?
 
     init(room: Room) {
         self.room = room
@@ -343,6 +347,7 @@ class RoomView: UIView {
 
         if me.role != .admin {
             leftButtonBar.hide(button: .settings)
+            leftButtonBar.hide(button: .minis)
 
             if room.state.visibility == .private {
                 leftButtonBar.hide(button: .invite)
@@ -357,6 +362,10 @@ class RoomView: UIView {
             }
 
             linkView.pinned(link: url)
+        }
+
+        if room.state.mini != "" {
+            open(mini: room.state.mini, isAppOpener: false)
         }
     }
 
@@ -436,6 +445,7 @@ class RoomView: UIView {
 
     private func exitRoom() {
         room.close()
+        miniView?.close()
         delegate?.roomDidExit()
     }
 
@@ -651,13 +661,23 @@ extension RoomView: RoomDelegate {
             if role == .admin {
                 self.linkView.adminRoleChanged(isAdmin: true)
                 self.leftButtonBar.show(button: .settings)
+                self.leftButtonBar.show(button: .minis)
                 self.leftButtonBar.show(button: .invite)
+
+                if let mini = self.miniView {
+                    mini.adminRoleChanged(isAdmin: true)
+                }
             } else {
                 self.linkView.adminRoleChanged(isAdmin: false)
                 self.leftButtonBar.hide(button: .settings)
+                self.leftButtonBar.hide(button: .minis)
 
                 if self.room.state.visibility == .private {
                     self.leftButtonBar.hide(button: .invite)
+                }
+
+                if let mini = self.miniView {
+                    mini.adminRoleChanged(isAdmin: false)
                 }
             }
         }
@@ -731,6 +751,30 @@ extension RoomView: RoomDelegate {
 
         linkView.removePinnedLink()
     }
+
+    func opened(mini: String, isAppOpener opener: Bool) {
+        DispatchQueue.main.async {
+            self.leftButtonBar.hide(button: .minis)
+            self.rightButtonBar.hide(button: .paste)
+            self.open(mini: mini, isAppOpener: opener)
+        }
+    }
+
+    func closedMini() {
+        DispatchQueue.main.async {
+            if self.miniView == nil {
+                return
+            }
+
+            self.miniView?.close()
+
+            self.leftButtonBar.show(button: .minis)
+            self.rightButtonBar.show(button: .paste)
+
+            self.miniView?.removeFromSuperview()
+            self.miniView = nil
+        }
+    }
 }
 
 extension RoomView: EmojiBarDelegate {
@@ -771,12 +815,36 @@ extension RoomView: ButtonBarDelegate {
                 return inviteTapped()
             case .settings:
                 return settingsTapped()
+            case .minis:
+                return minisTapped()
             default:
                 return
             }
         default:
             return
         }
+    }
+
+    private func minisTapped() {
+        let directory = MinisDirectoryView()
+
+        let drawer = DrawerView(withView: directory)
+        drawer.delegate = self
+        drawer.attachTo(view: window!)
+        drawer.snapPositions = [.closed, .open]
+        drawer.backgroundEffect = nil
+        drawer.backgroundColor = .foreground
+        drawer.cornerRadius = 30
+        drawer.openHeightBehavior = .fixed(height: frame.size.height / 2)
+
+        directory.onSelected = { app in
+            drawer.setPosition(.closed, animated: true, completion: { _ in
+                self.room.open(mini: app.slug)
+            })
+        }
+
+        drawer.setPosition(.closed, animated: false)
+        drawer.setPosition(.open, animated: true)
     }
 
     private func settingsTapped() {
@@ -835,5 +903,36 @@ extension RoomView: ButtonBarDelegate {
         alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel, handler: nil))
 
         window!.rootViewController!.present(alert, animated: true)
+    }
+
+    private func open(mini: String, isAppOpener opener: Bool) {
+        if miniView != nil {
+            return
+        }
+
+        miniView = MiniView(app: mini, room: room, appOpener: opener)
+        miniView?.delegate = self
+
+        content.insertArrangedSubview(miniView!, at: 0)
+
+        NSLayoutConstraint.activate([
+            miniView!.heightAnchor.constraint(equalTo: content.heightAnchor, multiplier: 0.66),
+            miniView!.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
+            miniView!.rightAnchor.constraint(equalTo: rightAnchor, constant: -20), // @todo content.rightanchor doesn't seem to work
+        ])
+    }
+}
+
+extension RoomView: MiniViewDelegate {
+    func didTapCloseMiniView(_: MiniView) {
+        room.closeMini()
+    }
+}
+
+extension RoomView: DrawerViewDelegate {
+    func drawer(_ drawerView: DrawerView, didTransitionTo position: DrawerPosition) {
+        if position == .closed {
+            drawerView.removeFromSuperview()
+        }
     }
 }
