@@ -200,7 +200,7 @@ class MiniView: UIView {
             if let completion = completion {
                 completion()
             }
-            
+
             if result != nil {
                 return
             }

@@ -772,13 +772,14 @@ extension RoomView: RoomDelegate {
                 if !source {
                     return
                 }
-                
-                debugPrint("wtf")
-                
+
                 mini?.removeFromSuperview()
             }
 
-            self.leftButtonBar.show(button: .minis)
+            if self.me.role == .admin {
+                self.leftButtonBar.show(button: .minis)
+            }
+
             self.rightButtonBar.show(button: .paste)
 
             if !source {
