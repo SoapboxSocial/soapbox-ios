@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.13.0] - 2021-02-25
+
  - Presenting Minis: Launch Polls, games and more right inside the room!
  - When leaving a room as an admin, you now rejoin as one. (For Toya)
  - We've decided to re-enable a notification sound when a user joins the room. This is still a bit experimental (Ozan :P).
