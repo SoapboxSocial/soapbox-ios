@@ -11,11 +11,11 @@ class Sounds {
         do {
             blopPlayer = try AVAudioPlayer(contentsOf: url)
 
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: .mixWithOthers)
-            try AVAudioSession.sharedInstance().setActive(true)
-
             blopPlayer?.volume = 0.6
-            blopPlayer?.play()
+
+            DispatchQueue.global(qos: .background).async {
+                self.blopPlayer?.play()
+            }
         } catch {
             debugPrint("\(error)")
         }
