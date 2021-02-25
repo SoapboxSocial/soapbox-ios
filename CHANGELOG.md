@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fixed the search inputs background on the light theme.
+
 ## [2.11.0] - 2021-02-22
 
  - Fix for users who couldn't unmute.
