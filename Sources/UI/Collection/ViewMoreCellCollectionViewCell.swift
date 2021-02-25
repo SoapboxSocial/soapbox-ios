@@ -11,7 +11,7 @@ class ViewMoreCellCollectionViewCell: UICollectionViewCell {
         return label
     }()
 
-    var activityIndicator: UIActivityIndicatorView = {
+    private var activityIndicator: UIActivityIndicatorView = {
         let view = UIActivityIndicatorView(style: .medium)
         view.hidesWhenStopped = true
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -62,6 +62,11 @@ class ViewMoreCellCollectionViewCell: UICollectionViewCell {
         ])
     }
 
+    func stop() {
+        activityIndicator.stopAnimating()
+        title.isHidden = false
+    }
+
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -74,7 +79,6 @@ class ViewMoreCellCollectionViewCell: UICollectionViewCell {
     }
 
     override func prepareForReuse() {
-        activityIndicator.stopAnimating()
-        title.isHidden = false
+        stop()
     }
 }
