@@ -250,6 +250,8 @@ struct JoinReply {
   /// Clears the value of `room`. Subsequent reads from it will return its default value.
   mutating func clearRoom() {self._room = nil}
 
+  var role: RoomState.RoomMember.Role = .regular
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   init() {}
@@ -618,6 +620,7 @@ extension JoinReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "description"),
     2: .same(proto: "room"),
+    3: .same(proto: "role"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -625,6 +628,7 @@ extension JoinReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
       switch fieldNumber {
       case 1: try decoder.decodeSingularMessageField(value: &self._description_p)
       case 2: try decoder.decodeSingularMessageField(value: &self._room)
+      case 3: try decoder.decodeSingularEnumField(value: &self.role)
       default: break
       }
     }
@@ -637,12 +641,16 @@ extension JoinReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     if let v = self._room {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
     }
+    if self.role != .regular {
+      try visitor.visitSingularEnumField(value: self.role, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: JoinReply, rhs: JoinReply) -> Bool {
     if lhs._description_p != rhs._description_p {return false}
     if lhs._room != rhs._room {return false}
+    if lhs.role != rhs.role {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

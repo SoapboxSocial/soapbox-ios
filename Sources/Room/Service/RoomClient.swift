@@ -11,7 +11,7 @@ protocol RoomClientDelegate: AnyObject {
     func roomClientDidDisconnect(_ room: RoomClient)
     func roomClient(_ room: RoomClient, didReceiveMessage message: Event)
     func roomClient(_ room: RoomClient, failedToConnect error: RoomClient.Error)
-    func roomClient(_ room: RoomClient, didReceiveState state: RoomState)
+    func roomClient(_ room: RoomClient, didReceiveState state: RoomState, andRole role: RoomState.RoomMember.Role)
 }
 
 final class RoomClient {
@@ -190,7 +190,7 @@ extension RoomClient: SignalingClientDelegate {
                 return
             }
 
-            self.delegate?.roomClient(self, didReceiveState: join.room)
+            self.delegate?.roomClient(self, didReceiveState: join.room, andRole: join.role)
         })
     }
 
