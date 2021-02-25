@@ -114,12 +114,6 @@ class RoomView: UIView {
 
     private let room: Room
 
-    private let userJoinFeedback: UINotificationFeedbackGenerator = {
-        let generator = UINotificationFeedbackGenerator()
-        generator.prepare()
-        return generator
-    }()
-
     private let reactFeedback: UIImpactFeedbackGenerator = {
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.prepare()
@@ -622,9 +616,9 @@ extension RoomView: RoomDelegate {
     func userDidJoinRoom(user _: Int64) {
         DispatchQueue.main.async {
             self.members.reloadData()
-            self.userJoinFeedback.notificationOccurred(.success)
-            self.userJoinFeedback.prepare()
         }
+
+        Sounds.blop()
     }
 
     func roomWasRenamed(_ name: String) {
