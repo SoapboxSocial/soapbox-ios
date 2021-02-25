@@ -81,11 +81,9 @@ extension UserListViewController: UserListPresenterOutput {
             return
         }
 
-        guard let cell = collection.cellForItem(at: IndexPath(item: users.count - 1, section: 0)) as? ViewMoreCellCollectionViewCell else {
-            return
+        DispatchQueue.main.async {
+            self.collection.reloadItems(at: [IndexPath(item: self.users.count - 1, section: 0)])
         }
-
-        cell.stop()
     }
 }
 
