@@ -1,3 +1,4 @@
+import AlamofireImage
 import UIKit
 
 class MinisDirectoryView: UIView {
@@ -105,6 +106,11 @@ extension MinisDirectoryView: UICollectionViewDataSource {
 
         cell.titleLabel.text = data.name
         cell.descriptionLabel.text = data.description
+
+        if data.image != "" {
+            cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/minis/" + data.image))
+        }
+
         return cell
     }
 }
