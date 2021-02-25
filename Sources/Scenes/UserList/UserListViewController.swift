@@ -38,10 +38,7 @@ class UserListViewController: ViewController {
 
     private func makeLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { (_: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-            let hasBackground = self.users.count > 0
-//            let section = NSCollectionLayoutSection.fullWidthSection(hasFooter: true, hasBackground: hasBackground)
-//            section.boundarySupplementaryItems = [self.collection.footer()]
-            return self.collection.section(hasFooter: true, hasBackground: self.users.count > 0)
+            self.collection.section(hasFooter: true, hasBackground: self.users.count > 0)
         }
 
         layout.register(CollectionBackgroundView.self, forDecorationViewOfKind: "background")
@@ -82,7 +79,7 @@ extension UserListViewController: UserListPresenterOutput {
         }
 
         DispatchQueue.main.async {
-            self.collection.reloadItems(at: [IndexPath(item: self.users.count - 1, section: 0)])
+            self.collection.reloadItems(at: [IndexPath(item: self.users.count, section: 0)])
         }
     }
 }
@@ -116,6 +113,14 @@ extension UserListViewController: UICollectionViewDataSource {
         }
 
         return cell
+    }
+
+    func collectionView(_: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionFooter {
+            return collection.dequeueReusableSupplementaryView(ofKind: kind, withClass: EmptyCollectionFooterView.self, for: indexPath)
+        }
+
+        fatalError("unknown kind: \(kind)")
     }
 }
 
