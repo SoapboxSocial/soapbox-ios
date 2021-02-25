@@ -69,7 +69,7 @@ class TextField: UITextField {
             return ThemeColors(text: .black, background: .white, placeholder: .lightGray)
         }
 
-        return ThemeColors(text: .white, background: .systemGray6, placeholder: .secondaryLabel)
+        return ThemeColors(text: .white, background: .foreground, placeholder: .secondaryLabel)
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
