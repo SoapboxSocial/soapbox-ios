@@ -60,14 +60,32 @@ extension UserListViewController: UserListPresenterOutput {
         )
 
         banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+
+        stopLoader()
     }
 
     func display(users: [APIClient.User]) {
+        if users.isEmpty {
+            return stopLoader()
+        }
+
         self.users.append(contentsOf: users)
 
         DispatchQueue.main.async {
             self.collection.reloadData()
         }
+    }
+
+    private func stopLoader() {
+        if users.count == 0 {
+            return
+        }
+
+        guard let cell = collection.cellForItem(at: IndexPath(item: users.count - 1, section: 0)) as? ViewMoreCellCollectionViewCell else {
+            return
+        }
+
+        cell.stop()
     }
 }
 

@@ -6,6 +6,7 @@
  - When leaving a room as an admin, you now rejoin as one. (For Toya)
  - We've decided to re-enable a notification sound when a user joins the room. This is still a bit experimental (Ozan :P).
  - Fixed the search inputs background on the light theme.
+ - Fixes issue where loading indicator didn't disappear.
 
 ## [2.11.0] - 2021-02-22
 

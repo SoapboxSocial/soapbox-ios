@@ -186,7 +186,7 @@ extension SearchViewController: SearchPresenterOutput {
 
     func displayMore(users: [APIClient.User]) {
         if users.isEmpty {
-            return
+            return stopLoader(for: .userList)
         }
 
         presenter.append(users: users)
@@ -202,7 +202,7 @@ extension SearchViewController: SearchPresenterOutput {
 
     func displayMore(groups: [APIClient.Group]) {
         if groups.isEmpty {
-            return
+            return stopLoader(for: .groupList)
         }
 
         presenter.append(groups: groups)
@@ -218,6 +218,23 @@ extension SearchViewController: SearchPresenterOutput {
 
     func displaySearchError() {
         collection.refreshControl?.endRefreshing()
+        stopLoader(for: .userList)
+        stopLoader(for: .groupList)
+    }
+
+    private func stopLoader(for section: SearchCollectionPresenter.SectionType) {
+        guard let index = presenter.index(of: section) else {
+            return
+        }
+
+        let items = presenter.numberOfItems(for: index)
+        if items == 0 {
+            return
+        }
+
+        DispatchQueue.main.async {
+            self.collection.reloadItems(at: [IndexPath(item: items - 1, section: index)])
+        }
     }
 }
 
