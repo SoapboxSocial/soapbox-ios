@@ -356,16 +356,16 @@ class RoomView: UIView {
 
         visibilityUpdated(visibility: room.state.visibility)
 
+        if room.state.mini != "" {
+            open(mini: room.state.mini, isAppOpener: false)
+        }
+
         if room.state.link != "" {
             guard let url = URL(string: room.state.link) else {
                 return
             }
 
             linkView.pinned(link: url)
-        }
-
-        if room.state.mini != "" {
-            open(mini: room.state.mini, isAppOpener: false)
         }
     }
 
@@ -766,12 +766,19 @@ extension RoomView: RoomDelegate {
                 return
             }
 
+            self.miniView?.isHidden = true
+
             self.miniView?.close()
 
             self.leftButtonBar.show(button: .minis)
             self.rightButtonBar.show(button: .paste)
 
-            self.miniView?.removeFromSuperview()
+            let mini = self.miniView
+            // @TODO this is ugly.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                mini?.removeFromSuperview()
+            }
+
             self.miniView = nil
         }
     }
