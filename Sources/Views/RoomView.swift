@@ -445,7 +445,6 @@ class RoomView: UIView {
 
     private func exitRoom() {
         room.close()
-        miniView?.close()
         delegate?.roomDidExit()
     }
 
@@ -760,7 +759,7 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func closedMini() {
+    func closedMini(source: Bool) {
         DispatchQueue.main.async {
             if self.miniView == nil {
                 return
@@ -768,14 +767,21 @@ extension RoomView: RoomDelegate {
 
             self.miniView?.isHidden = true
 
-            self.miniView?.close()
+            let mini = self.miniView
+            self.miniView?.close {
+                if !source {
+                    return
+                }
+                
+                debugPrint("wtf")
+                
+                mini?.removeFromSuperview()
+            }
 
             self.leftButtonBar.show(button: .minis)
             self.rightButtonBar.show(button: .paste)
 
-            let mini = self.miniView
-            // @TODO this is ugly.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            if !source {
                 mini?.removeFromSuperview()
             }
 

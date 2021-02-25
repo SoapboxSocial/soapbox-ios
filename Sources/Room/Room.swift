@@ -19,7 +19,7 @@ protocol RoomDelegate {
     func linkWasPinned(link: URL)
     func pinnedLinkWasRemoved()
     func opened(mini: String, isAppOpener: Bool)
-    func closedMini()
+    func closedMini(source: Bool)
 }
 
 enum RoomError: Error {
@@ -209,7 +209,7 @@ class Room {
 
     func closeMini() {
         client.send(command: .closeMini(Command.CloseMini()))
-        delegate?.closedMini()
+        delegate?.closedMini(source: true)
     }
 
     deinit {
@@ -343,7 +343,7 @@ extension Room {
     }
 
     private func onMiniClosed() {
-        delegate?.closedMini()
+        delegate?.closedMini(source: false)
     }
 }
 

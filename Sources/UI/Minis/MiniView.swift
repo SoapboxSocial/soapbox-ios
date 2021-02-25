@@ -11,7 +11,7 @@ class MiniView: UIView {
     }
 
     enum Event: String, CaseIterable {
-        case room, user, members, close
+        case room, user, members, closed
     }
 
     struct UserData: Codable {
@@ -194,9 +194,13 @@ class MiniView: UIView {
         }
     }
 
-    private func write(_ event: Event, data: String) {
+    private func write(_ event: Event, data: String, completion: (() -> Void)? = nil) {
         let eval = String(format: "window.mitt.emit(\"%@\", %@);", event.rawValue, data)
         webView.evaluateJavaScript(eval, completionHandler: { result, error in
+            if let completion = completion {
+                completion()
+            }
+            
             if result != nil {
                 return
             }
@@ -242,8 +246,8 @@ extension MiniView: WKScriptMessageHandler {
         }
     }
 
-    func close() {
-        write(.close, data: "{}")
+    func close(callback: (() -> Void)? = nil) {
+        write(.closed, data: "{}", completion: callback)
     }
 
     @objc private func exitTapped() {
