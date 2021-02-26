@@ -72,6 +72,8 @@ class MiniView: UIView {
         config.preferences.javaScriptEnabled = true
 
         let view = WKWebView(frame: .zero, configuration: config)
+        view.isOpaque = false
+        view.backgroundColor = .clear
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 10
         view.layer.masksToBounds = true
@@ -111,7 +113,6 @@ class MiniView: UIView {
         translatesAutoresizingMaskIntoConstraints = false
 
         backgroundColor = .clear
-        webView.backgroundColor = .clear
 
         addSubview(loadingIndicator)
         addSubview(content)

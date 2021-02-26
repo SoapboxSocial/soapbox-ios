@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fix flashing when opening a mini app.
+
 ## [2.13.0] - 2021-02-25
 
  - Presenting Minis: Launch Polls, games and more right inside the room!
