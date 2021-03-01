@@ -6,7 +6,7 @@ protocol StoryPlayerDelegate {
 }
 
 class StoryPlayer {
-    private let player = AVQueuePlayer()
+    let player = AVQueuePlayer()
 
     private var currentIndex = 0
 
