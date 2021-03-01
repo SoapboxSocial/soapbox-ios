@@ -6,14 +6,7 @@ class StoriesViewController: UIViewController {
 
     private let feed: APIClient.StoryFeed
 
-    private let progress: ProgressView = {
-        let progress = ProgressView()
-        progress.progressTintColor = .white
-        progress.trackTintColor = UIColor.white.withAlphaComponent(0.2)
-        progress.translatesAutoresizingMaskIntoConstraints = false
-        progress.progress = 0.0
-        return progress
-    }()
+    private var segmentedProgress: StoriesProgressBar!
 
     private let menuButton: UIButton = {
         let button = UIButton()
@@ -34,7 +27,6 @@ class StoriesViewController: UIViewController {
     }()
 
     private let player: StoryPlayer
-    private var timer: Timer?
     private var playTime = Float(0.0)
 
     private let thumbsUp = StoryReactionButton(reaction: "👍")
@@ -55,20 +47,12 @@ class StoriesViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .black
 
-        do {
-            try AVAudioSession.sharedInstance().setActive(false)
-            try AVAudioSession.sharedInstance().setCategory(.playback, options: [.defaultToSpeaker, .mixWithOthers])
-            try AVAudioSession.sharedInstance().setActive(true)
-        } catch {
-            print("AVAudioSession error: \(error)")
-        }
-
-        player.play()
-
-        let duration = player.duration()
-        timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
-            self.progress.setProgress(self.player.playTime() / duration, animated: true)
-        })
+        segmentedProgress = StoriesProgressBar(numberOfSegments: player.player.items().count)
+        segmentedProgress.translatesAutoresizingMaskIntoConstraints = false
+        segmentedProgress.topColor = UIColor.white
+        segmentedProgress.padding = 5.0
+        segmentedProgress.bottomColor = UIColor.white.withAlphaComponent(0.25)
+        segmentedProgress.dataSource = self
 
         let background = UIView()
         background.translatesAutoresizingMaskIntoConstraints = false
@@ -82,7 +66,7 @@ class StoriesViewController: UIViewController {
         content.backgroundColor = .brandColor
         background.addSubview(content)
 
-        content.addSubview(progress)
+        content.addSubview(segmentedProgress)
 
         let buttonStack = UIStackView()
         buttonStack.translatesAutoresizingMaskIntoConstraints = false
@@ -171,10 +155,10 @@ class StoriesViewController: UIViewController {
         ])
 
         NSLayoutConstraint.activate([
-            progress.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
-            progress.rightAnchor.constraint(equalTo: buttonStack.leftAnchor, constant: -20),
-            progress.heightAnchor.constraint(equalToConstant: 5),
-            progress.centerYAnchor.constraint(equalTo: buttonStack.centerYAnchor),
+            segmentedProgress.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
+            segmentedProgress.rightAnchor.constraint(equalTo: buttonStack.leftAnchor, constant: -20),
+            segmentedProgress.heightAnchor.constraint(equalToConstant: 4),
+            segmentedProgress.centerYAnchor.constraint(equalTo: buttonStack.centerYAnchor),
         ])
 
         NSLayoutConstraint.activate([
@@ -195,6 +179,21 @@ class StoriesViewController: UIViewController {
             posted.rightAnchor.constraint(equalTo: content.rightAnchor, constant: -20),
             posted.topAnchor.constraint(equalTo: name.bottomAnchor),
         ])
+    }
+
+    override func viewDidAppear(_: Bool) {
+        super.viewDidAppear(true)
+
+        do {
+            try AVAudioSession.sharedInstance().setActive(false)
+            try AVAudioSession.sharedInstance().setCategory(.playback, options: [.defaultToSpeaker, .mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("AVAudioSession error: \(error)")
+        }
+
+        player.play()
+        segmentedProgress.startAnimation()
     }
 
     // @TODO allow deselecting reaction?
@@ -229,17 +228,12 @@ class StoriesViewController: UIViewController {
         let item = player.currentItem()
 
         player.pause()
-        timer?.invalidate()
+        segmentedProgress.isPaused = true
 
         let menu = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         menu.willDismissHandler = {
             self.player.unpause()
-            let duration = self.player.duration()
-            self.timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
-                self.progress.setProgress(self.player.playTime() / duration, animated: true)
-            })
-
-            self.timer?.fire()
+            self.segmentedProgress.startAnimation()
         }
 
         let delete = UIAlertAction(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in
@@ -258,7 +252,6 @@ class StoriesViewController: UIViewController {
 extension StoriesViewController: StoryPlayerDelegate {
     func didReachEnd() {
         player.stop()
-        timer?.invalidate()
         dismiss(animated: true)
     }
 
@@ -281,5 +274,11 @@ extension StoriesViewController: StoryPlayerDelegate {
                 return
             }
         }
+    }
+}
+
+extension StoriesViewController: StoriesProgressBarDataSource {
+    func storiesProgressBar(progressBar _: StoriesProgressBar, durationForItemAt index: Int) -> TimeInterval {
+        return TimeInterval(Float(CMTimeGetSeconds(player.playerItems[index].asset.duration)))
     }
 }

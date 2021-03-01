@@ -15,6 +15,17 @@ class CreateStoryCell: UICollectionViewCell {
     private var image: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .brandColor
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 64 / 2
+        view.layer.masksToBounds = true
+
+        return view
+    }()
+
+    private var plus: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .background
         view.clipsToBounds = true
         view.layer.cornerRadius = 26 / 2
@@ -57,8 +68,15 @@ class CreateStoryCell: UICollectionViewCell {
 
         contentView.translatesAutoresizingMaskIntoConstraints = false
 
-        contentView.addSubview(profileImage)
+        image.addSubview(profileImage)
+
+        NSLayoutConstraint.activate([
+            profileImage.heightAnchor.constraint(equalTo: image.heightAnchor),
+            profileImage.widthAnchor.constraint(equalTo: image.widthAnchor),
+        ])
+
         contentView.addSubview(image)
+        contentView.addSubview(plus)
 
         NSLayoutConstraint.activate([
             contentView.leftAnchor.constraint(equalTo: leftAnchor),
@@ -66,19 +84,19 @@ class CreateStoryCell: UICollectionViewCell {
         ])
 
         NSLayoutConstraint.activate([
-            profileImage.topAnchor.constraint(equalTo: contentView.topAnchor),
-            profileImage.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            profileImage.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            profileImage.heightAnchor.constraint(equalTo: profileImage.widthAnchor),
-            profileImage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            contentView.bottomAnchor.constraint(equalTo: profileImage.bottomAnchor),
+            image.topAnchor.constraint(equalTo: contentView.topAnchor),
+            image.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            image.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            image.heightAnchor.constraint(equalTo: image.widthAnchor),
+            image.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            contentView.bottomAnchor.constraint(equalTo: image.bottomAnchor),
         ])
 
         NSLayoutConstraint.activate([
-            image.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 3),
-            image.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            image.widthAnchor.constraint(equalToConstant: 26),
-            image.heightAnchor.constraint(equalToConstant: 26),
+            plus.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 3),
+            plus.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            plus.widthAnchor.constraint(equalToConstant: 26),
+            plus.heightAnchor.constraint(equalToConstant: 26),
         ])
     }
 

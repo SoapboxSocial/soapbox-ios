@@ -3,6 +3,8 @@
 ## [Unreleased]
 
  - Showing more results on the search page.
+ - Fixed story creation button issue on home screen.
+ - Made it clearer how many stories there are.
  - Fix flashing when opening a mini app.
 
 ## [2.13.0] - 2021-02-25
