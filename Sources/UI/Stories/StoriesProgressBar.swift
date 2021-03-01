@@ -155,5 +155,4 @@ class StoriesProgressBar: UIView {
 private class Segment {
     let bottomSegmentView = UIView()
     let topSegmentView = UIView()
-    init() {}
 }
