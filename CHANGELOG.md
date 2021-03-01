@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Showing more results on the search page.
  - Fix flashing when opening a mini app.
 
 ## [2.13.0] - 2021-02-25
