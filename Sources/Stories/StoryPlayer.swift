@@ -6,12 +6,12 @@ protocol StoryPlayerDelegate {
 }
 
 class StoryPlayer {
-    private let player = AVQueuePlayer()
+    let player = AVQueuePlayer()
 
     private var currentIndex = 0
 
     private let items: [APIClient.Story]
-    private var playerItems = [AVPlayerItem]()
+    private(set) var playerItems = [AVPlayerItem]()
 
     var delegate: StoryPlayerDelegate?
 
@@ -21,7 +21,8 @@ class StoryPlayer {
 
         for item in self.items {
             let url = Configuration.cdn.appendingPathComponent("/stories/" + item.id + ".aac")
-            let item = AVPlayerItem(asset: AVURLAsset(url: url))
+            let item = AVPlayerItem(asset: AVURLAsset(url: url), automaticallyLoadedAssetKeys: ["playable", "duration"])
+
             player.insert(item, after: nil)
             playerItems.append(item)
         }
@@ -48,24 +49,6 @@ class StoryPlayer {
 
     func unpause() {
         player.play()
-    }
-
-    func duration() -> Float {
-        return player.duration()
-    }
-
-    func playTime() -> Float {
-        var totalElapsed = Float(0.0)
-
-        for i in 0 ..< currentIndex {
-            totalElapsed += Float(CMTimeGetSeconds(playerItems[i].asset.duration))
-        }
-
-        if let item = player.currentItem {
-            totalElapsed += Float(CMTimeGetSeconds(item.currentTime()))
-        }
-
-        return totalElapsed
     }
 
     @objc private func itemDidPlayToEnd() {
