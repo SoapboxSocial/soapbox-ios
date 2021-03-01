@@ -21,6 +21,7 @@ target 'Soapbox' do
   pod 'EasyTipView'
   pod 'Siren'
   pod 'KDCircularProgress'
+  pod 'ColorThiefSwift'
 
   target 'SoapboxTests' do
     inherit! :search_paths

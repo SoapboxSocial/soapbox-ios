@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Made the stories background a bit nicer.
  - Fix flashing when opening a mini app.
 
 ## [2.13.0] - 2021-02-25

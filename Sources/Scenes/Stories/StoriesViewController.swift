@@ -1,5 +1,6 @@
 import AVFoundation
 import UIKit
+import ColorThiefSwift
 
 class StoriesViewController: UIViewController {
     private static let iconConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
@@ -114,7 +115,19 @@ class StoriesViewController: UIViewController {
         content.addSubview(image)
 
         if let url = feed.user.image, url != "" {
-            image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + url))
+            image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + url), completion: { data in
+                guard let image = data.value else {
+                    return
+                }
+                
+                guard let dominantColor = ColorThief.getColor(from: image) else {
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    content.backgroundColor = dominantColor.makeUIColor()
+                }
+            })
         }
 
         let name = UILabel()
