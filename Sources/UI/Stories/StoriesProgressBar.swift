@@ -3,18 +3,11 @@ import UIKit
 
 // Based off of: https://github.com/D-32/SegmentedProgressBar
 
-protocol StoriesProgressBarDelegate: AnyObject {
-    func segmentedProgressBarChangedIndex(index: Int)
-    func segmentedProgressBarFinished()
-}
-
 protocol StoriesProgressBarDataSource: AnyObject {
     func storiesProgressBar(progressBar: StoriesProgressBar, durationForItemAt index: Int) -> TimeInterval
 }
 
 class StoriesProgressBar: UIView {
-    weak var delegate: StoriesProgressBarDelegate?
-
     weak var dataSource: StoriesProgressBarDataSource?
 
     var topColor = UIColor.gray {
@@ -127,9 +120,6 @@ class StoriesProgressBar: UIView {
         let newIndex = currentAnimationIndex + 1
         if newIndex < segments.count {
             animate(animationIndex: newIndex)
-            delegate?.segmentedProgressBarChangedIndex(index: newIndex)
-        } else {
-            delegate?.segmentedProgressBarFinished()
         }
     }
 
@@ -148,7 +138,6 @@ class StoriesProgressBar: UIView {
         let prevSegment = segments[newIndex]
         prevSegment.topSegmentView.frame.size.width = 0
         animate(animationIndex: newIndex)
-        delegate?.segmentedProgressBarChangedIndex(index: newIndex)
     }
 }
 
