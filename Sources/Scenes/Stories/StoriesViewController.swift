@@ -27,7 +27,6 @@ class StoriesViewController: UIViewController {
     }()
 
     private let player: StoryPlayer
-    private var timer: Timer?
     private var playTime = Float(0.0)
 
     private let thumbsUp = StoryReactionButton(reaction: "👍")
@@ -229,17 +228,12 @@ class StoriesViewController: UIViewController {
         let item = player.currentItem()
 
         player.pause()
-        timer?.invalidate()
+        segmentedProgress.isPaused = true
 
         let menu = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         menu.willDismissHandler = {
             self.player.unpause()
-//            let duration = self.player.duration()
-            self.timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
-//                self.progress.setProgress(self.player.playTime() / duration, animated: true)
-            })
-
-            self.timer?.fire()
+            self.segmentedProgress.startAnimation()
         }
 
         let delete = UIAlertAction(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in
@@ -258,7 +252,6 @@ class StoriesViewController: UIViewController {
 extension StoriesViewController: StoryPlayerDelegate {
     func didReachEnd() {
         player.stop()
-        timer?.invalidate()
         dismiss(animated: true)
     }
 
@@ -286,7 +279,6 @@ extension StoriesViewController: StoryPlayerDelegate {
 
 extension StoriesViewController: StoriesProgressBarDataSource {
     func storiesProgressBar(progressBar _: StoriesProgressBar, durationForItemAt index: Int) -> TimeInterval {
-        // @TODO THERE SEEMS TO BE AN ISSUE WITH THE AVQUEUEPLAYER NOT RETAINING ITEMS
-        return TimeInterval(Float(CMTimeGetSeconds(player.player.items()[index].asset.duration)))
+        return TimeInterval(Float(CMTimeGetSeconds(player.playerItems[index].asset.duration)))
     }
 }
