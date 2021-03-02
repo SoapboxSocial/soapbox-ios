@@ -70,6 +70,7 @@ class MiniView: UIView {
 //        @TODO
 //        config.limitsNavigationsToAppBoundDomains = true
         config.preferences.javaScriptEnabled = true
+        config.suppressesIncrementalRendering = true
 
         let view = WKWebView(frame: .zero, configuration: config)
         view.isOpaque = false
