@@ -33,6 +33,10 @@ class StoriesViewController: UIViewController {
     private let fire = StoryReactionButton(reaction: "🔥")
     private let heart = StoryReactionButton(reaction: "❤️")
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+
     init(feed: APIClient.StoryFeed) {
         self.feed = feed // @TODO MAY ONLY NEED TO BE USER
         player = StoryPlayer(items: feed.stories)

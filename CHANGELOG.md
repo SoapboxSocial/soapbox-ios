@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fixed the status bar for stories.
+
 ## [2.14.0] - 2021-03-02
 
  - Showing more results on the search page.
