@@ -56,7 +56,7 @@ class NotificationBanner {
 
     func show() {
         if let banner = banner as? FloatingNotificationBanner {
-            return banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+            return banner.show(cornerRadius: 15, shadowColor: UIColor.clear, shadowBlurRadius: 0)
         }
 
         banner.show()
