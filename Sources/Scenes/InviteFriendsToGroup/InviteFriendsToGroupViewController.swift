@@ -1,5 +1,4 @@
 import AlamofireImage
-import NotificationBannerSwift
 import UIKit
 
 protocol InviteFriendsToGroupViewControllerOutput {
@@ -88,11 +87,12 @@ extension InviteFriendsToGroupViewController: InviteFriendsToGroupPresenterOutpu
     }
 
     func presentError() {
-        let banner = FloatingNotificationBanner(
+        let banner = NotificationBanner(
             title: NSLocalizedString("something_went_wrong", comment: ""),
             subtitle: NSLocalizedString("please_try_again_later", comment: ""),
-            style: .danger
+            style: .danger,
+            type: .floating
         )
-        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+        banner.show()
     }
 }

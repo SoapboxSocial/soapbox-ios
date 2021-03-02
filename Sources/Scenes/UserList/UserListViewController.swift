@@ -1,4 +1,3 @@
-import NotificationBannerSwift
 import UIKit
 
 protocol UserListViewControllerOutput {
@@ -50,13 +49,14 @@ class UserListViewController: ViewController {
 
 extension UserListViewController: UserListPresenterOutput {
     func displayError(title: String, description: String?) {
-        let banner = FloatingNotificationBanner(
+        let banner = NotificationBanner(
             title: title,
             subtitle: description,
-            style: .danger
+            style: .danger,
+            type: .floating
         )
 
-        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+        banner.show()
 
         stopLoader()
     }
