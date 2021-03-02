@@ -5,6 +5,7 @@
  - Fixed issue where link and game are both open.
  - Made it clear when user was invited to room.
  - Fixed the status bar for stories.
+ - Fixed issue with long group names.
 
 ## [2.14.0] - 2021-03-02
 
