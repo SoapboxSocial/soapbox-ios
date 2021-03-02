@@ -67,7 +67,7 @@ extension InviteFriendsListViewController: InviteFriendsListPresenterOutput {
         let banner = NotificationBanner(title: String(format: fmt, success), style: .success, type: .floating)
         banner.show()
     }
-    
+
     func present(users: [APIClient.User]) {
         list.set(users: users)
     }

@@ -683,6 +683,11 @@ extension RoomView: RoomDelegate {
     }
 
     func didReceiveLink(from: Int64, link: URL) {
+        if miniView != nil {
+            linkView.isHidden = true
+            return
+        }
+
         var name = "you"
         if from != 0 {
             guard let user = room.state.members.first(where: { $0.id == from }) else {
