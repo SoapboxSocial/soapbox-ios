@@ -6,6 +6,7 @@
  - Fixed story creation button issue on home screen.
  - Made it clearer how many stories there are.
  - Fix flashing when opening a mini app.
+ - Added a cancel button to the theme selection setting.
 
 ## [2.13.0] - 2021-02-25
 

@@ -94,6 +94,8 @@ class SettingsViewController: UIViewController {
                     themeToggle(theme: .light)
                 }))
 
+                sheet.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+
                 DispatchQueue.main.async {
                     self.present(sheet, animated: true)
                 }
