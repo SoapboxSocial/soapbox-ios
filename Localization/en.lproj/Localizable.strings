@@ -236,3 +236,5 @@
 "system" = "System";
 
 "minis" = "Minis";
+
+"user_invited" = "%@ was invited!";

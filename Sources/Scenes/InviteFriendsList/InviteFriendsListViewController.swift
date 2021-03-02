@@ -62,6 +62,12 @@ class InviteFriendsListViewController: UIViewController {
 }
 
 extension InviteFriendsListViewController: InviteFriendsListPresenterOutput {
+    func present(success: String) {
+        let fmt = NSLocalizedString("user_invited", comment: "")
+        let banner = NotificationBanner(title: String(format: fmt, success), style: .success, type: .floating)
+        banner.show()
+    }
+    
     func present(users: [APIClient.User]) {
         list.set(users: users)
     }
