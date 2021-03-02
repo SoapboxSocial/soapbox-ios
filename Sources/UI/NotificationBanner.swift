@@ -24,10 +24,17 @@ class NotificationBanner {
 
     private var banner: NotificationBannerSwift.BaseNotificationBanner
 
+    /// Closure that will be executed if the notification banner is tapped
+    public var onTap: (() -> Void)? {
+        didSet {
+            banner.onTap = onTap
+        }
+    }
+
     init(title: String? = nil, subtitle: String? = nil, style: BannerStyle = .info, type: BannerType = .normal) {
         switch type {
         case .normal:
-            banner = NotificationBannerSwift.NotificationBanner(
+            banner = GrowingNotificationBanner(
                 title: title,
                 subtitle: subtitle,
                 leftView: nil,
@@ -36,7 +43,7 @@ class NotificationBanner {
                 colors: NotificationBannerColors()
             )
         case .floating:
-            banner = NotificationBannerSwift.FloatingNotificationBanner(
+            banner = FloatingNotificationBanner(
                 title: title,
                 subtitle: subtitle,
                 leftView: nil,

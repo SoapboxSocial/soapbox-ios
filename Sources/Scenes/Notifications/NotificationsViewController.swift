@@ -1,4 +1,3 @@
-import NotificationBannerSwift
 import UIKit
 
 protocol NotificationsViewControllerOutput {
@@ -113,12 +112,13 @@ extension NotificationsViewController: NotificationsPresenterOutput {
     }
 
     func displayError() {
-        let banner = FloatingNotificationBanner(
+        let banner = NotificationBanner(
             title: NSLocalizedString("something_went_wrong", comment: ""),
             subtitle: NSLocalizedString("please_try_again_later", comment: ""),
-            style: .danger
+            style: .danger,
+            type: .floating
         )
-        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+        banner.show()
     }
 }
 

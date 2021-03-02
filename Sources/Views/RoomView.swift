@@ -1,6 +1,5 @@
 import DrawerView
 import LinkPresentation
-import NotificationBannerSwift
 import UIKit
 
 protocol RoomViewDelegate {
@@ -706,9 +705,10 @@ extension RoomView: RoomDelegate {
         let message = NSLocalizedString("user_started_recording_screen", comment: "")
 
         DispatchQueue.main.async {
-            let banner = GrowingNotificationBanner(
+            let banner = NotificationBanner(
                 title: String(format: message, user.displayName.firstName()),
-                style: .info
+                style: .info,
+                type: .normal
             )
 
             banner.show()

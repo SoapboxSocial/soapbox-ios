@@ -1,6 +1,5 @@
 import AVFoundation
 import DrawerView
-import NotificationBannerSwift
 import StoreKit
 import UIKit
 
@@ -129,41 +128,45 @@ class NavigationViewController: UINavigationController {
     }
 
     private func showClosedError() {
-        let banner = FloatingNotificationBanner(
+        let banner = NotificationBanner(
             title: NSLocalizedString("room_was_closed", comment: ""),
             subtitle: NSLocalizedString("why_not_create_a_new_room", comment: ""),
-            style: .success
+            style: .success,
+            type: .floating
         )
-        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+        banner.show()
     }
 
     private func showNetworkError() {
-        let banner = FloatingNotificationBanner(
+        let banner = NotificationBanner(
             title: NSLocalizedString("something_went_wrong", comment: ""),
             subtitle: NSLocalizedString("please_try_again_later", comment: ""),
-            style: .danger
+            style: .danger,
+            type: .floating
         )
-        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+        banner.show()
     }
 
     private func showFullRoomError() {
-        let banner = FloatingNotificationBanner(
+        let banner = NotificationBanner(
             title: NSLocalizedString("room_is_full", comment: ""),
             subtitle: NSLocalizedString("why_not_create_a_new_room", comment: ""),
-            style: .success
+            style: .success,
+            type: .floating
         )
-        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+        banner.show()
     }
 }
 
 extension NavigationViewController: RoomViewDelegate {
     func roomWasClosedDueToError() {
         DispatchQueue.main.async {
-            let banner = FloatingNotificationBanner(
+            let banner = NotificationBanner(
                 title: NSLocalizedString("something_went_wrong", comment: ""),
-                style: .danger
+                style: .danger,
+                type: .floating
             )
-            banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+            banner.show()
 
             self.shutdownRoom()
         }

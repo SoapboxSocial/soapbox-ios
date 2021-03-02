@@ -1,5 +1,4 @@
 import AlamofireImage
-import NotificationBannerSwift
 import UIKit
 
 protocol SearchViewControllerOutput {

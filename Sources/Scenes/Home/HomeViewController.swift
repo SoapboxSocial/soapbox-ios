@@ -1,6 +1,5 @@
 import AlamofireImage
 import DrawerView
-import NotificationBannerSwift
 import UIKit
 
 protocol HomeViewControllerOutput {
@@ -244,12 +243,13 @@ extension HomeViewController: HomePresenterOutput {
     }
 
     func displayError(title: String, description: String?) {
-        let banner = FloatingNotificationBanner(
+        let banner = NotificationBanner(
             title: title,
             subtitle: description,
-            style: .danger
+            style: .danger,
+            type: .floating
         )
-        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+        banner.show()
     }
 
     func displayCurrentRoom(_ id: String) {
@@ -312,7 +312,11 @@ extension HomeViewController: UICollectionViewDelegate {
         switch presenter.sectionType(for: indexPath.section) {
         case .storiesList:
             if presenter.currentRoom != nil {
-                let banner = FloatingNotificationBanner(title: NSLocalizedString("cant_listen_in_room", comment: ""), style: .info)
+                let banner = NotificationBanner(
+                    title: NSLocalizedString("cant_listen_in_room", comment: ""),
+                    style: .info,
+                    type: .floating
+                )
                 banner.show()
                 return
             }
