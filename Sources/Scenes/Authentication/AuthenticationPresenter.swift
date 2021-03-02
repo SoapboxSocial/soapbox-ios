@@ -1,12 +1,8 @@
 import Foundation
 import UIWindowTransitions
 
-enum ErrorStyle {
-    case normal, floating
-}
-
 protocol AuthenticationPresenterOutput {
-    func displayError(_ style: ErrorStyle, title: String, description: String?)
+    func displayError(_ style: NotificationBanner.BannerType, title: String, description: String?)
     func transitionTo(state: AuthenticationInteractor.AuthenticationState)
 }
 
