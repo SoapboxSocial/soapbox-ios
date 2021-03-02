@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.14.0] - 2021-03-02
+
  - Showing more results on the search page.
  - Fixed story creation button issue on home screen.
  - Made it clearer how many stories there are.
