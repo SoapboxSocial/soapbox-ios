@@ -18,7 +18,7 @@ class TextField: UITextField {
             return .light
         }
 
-        return UIScreen.main.traitCollection.userInterfaceStyle
+        return UITraitCollection.current.userInterfaceStyle
     }
 
     override var placeholder: String? {
