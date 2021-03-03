@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.15.0] - 2021-03-03
+
  - Fixed color issue.
  - Fixed issue where link and game are both open.
  - Made it clear when user was invited to room.
