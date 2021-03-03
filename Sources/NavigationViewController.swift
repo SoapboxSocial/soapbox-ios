@@ -70,29 +70,32 @@ class NavigationViewController: UINavigationController {
     }
 
     @objc func didTapCreateRoom() {
-        RecordPermissions.request(context: self) {
-            let creationView = RoomCreationView()
-            creationView.delegate = self
+        RecordPermissions.request(
+            failure: { self.showMicrophoneWarning() },
+            success: {
+                let creationView = RoomCreationView()
+                creationView.delegate = self
 
-            self.creationDrawer = DrawerView(withView: creationView)
-            self.creationDrawer!.cornerRadius = 25.0
-            self.creationDrawer!.attachTo(view: self.view)
-            self.creationDrawer!.backgroundEffect = nil
-            self.creationDrawer!.snapPositions = [.closed, .open]
-            self.creationDrawer!.backgroundColor = .brandColor
-            self.creationDrawer!.delegate = self
-            self.creationDrawer!.childScrollViewsPanningCanDismissDrawer = false
+                self.creationDrawer = DrawerView(withView: creationView)
+                self.creationDrawer!.cornerRadius = 25.0
+                self.creationDrawer!.attachTo(view: self.view)
+                self.creationDrawer!.backgroundEffect = nil
+                self.creationDrawer!.snapPositions = [.closed, .open]
+                self.creationDrawer!.backgroundColor = .brandColor
+                self.creationDrawer!.delegate = self
+                self.creationDrawer!.childScrollViewsPanningCanDismissDrawer = false
 
-            self.view.addSubview(self.creationDrawer!)
+                self.view.addSubview(self.creationDrawer!)
 
-            creationView.autoPinEdgesToSuperview()
+                creationView.autoPinEdgesToSuperview()
 
-            self.creationDrawer!.setPosition(.closed, animated: false)
-            self.creationDrawer!.setPosition(.open, animated: true) { _ in
-                self.createRoomButton.isHidden = true
-                UIApplication.shared.isIdleTimerDisabled = true
+                self.creationDrawer!.setPosition(.closed, animated: false)
+                self.creationDrawer!.setPosition(.open, animated: true) { _ in
+                    self.createRoomButton.isHidden = true
+                    UIApplication.shared.isIdleTimerDisabled = true
+                }
             }
-        }
+        )
     }
 
     func presentCurrentRoom() {
@@ -155,6 +158,22 @@ class NavigationViewController: UINavigationController {
             type: .floating
         )
         banner.show()
+    }
+
+    private func showMicrophoneWarning() {
+        let alert = UIAlertController(
+            title: NSLocalizedString("microphone_permission_denied", comment: ""),
+            message: nil, preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("ok", comment: ""), style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("to_settings", comment: ""), style: .default, handler: { _ in
+            DispatchQueue.main.async {
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+            }
+        }))
+
+        present(alert, animated: true)
     }
 }
 
@@ -259,15 +278,18 @@ extension NavigationViewController: RoomController {
             })
         }
 
-        RecordPermissions.request(context: self) {
-            if self.room != nil {
-                return self.shutdownRoom {
-                    openRoom()
+        RecordPermissions.request(
+            failure: { self.showMicrophoneWarning() },
+            success: {
+                if self.room != nil {
+                    return self.shutdownRoom {
+                        openRoom()
+                    }
                 }
-            }
 
-            openRoom()
-        }
+                openRoom()
+            }
+        )
     }
 }
 
