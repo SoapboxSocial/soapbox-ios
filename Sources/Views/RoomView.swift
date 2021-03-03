@@ -742,6 +742,11 @@ extension RoomView: RoomDelegate {
     }
 
     func linkWasPinned(link: URL) {
+        if miniView != nil {
+            linkView.isHidden = true
+            return
+        }
+        
         DispatchQueue.main.async {
             self.rightButtonBar.hide(button: .paste)
         }
