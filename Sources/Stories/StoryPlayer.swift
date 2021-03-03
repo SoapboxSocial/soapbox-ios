@@ -47,6 +47,11 @@ class StoryPlayer {
         player.pause()
     }
 
+    func next() {
+        player.advanceToNextItem()
+        itemDidPlayToEnd()
+    }
+
     func unpause() {
         player.play()
     }

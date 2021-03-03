@@ -123,6 +123,19 @@ class StoriesViewController: UIViewController {
         fire.addTarget(self, action: #selector(didReact), for: .touchUpInside)
         heart.addTarget(self, action: #selector(didReact), for: .touchUpInside)
 
+        let rightTapView = UIView()
+        rightTapView.translatesAutoresizingMaskIntoConstraints = false
+        rightTapView.isUserInteractionEnabled = true
+        rightTapView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(skip)))
+        content.addSubview(rightTapView)
+
+        NSLayoutConstraint.activate([
+            rightTapView.rightAnchor.constraint(equalTo: content.rightAnchor),
+            rightTapView.topAnchor.constraint(equalTo: buttonStack.bottomAnchor),
+            rightTapView.bottomAnchor.constraint(equalTo: content.bottomAnchor),
+            rightTapView.widthAnchor.constraint(equalTo: content.widthAnchor, multiplier: 0.33),
+        ])
+
         NSLayoutConstraint.activate([
             thumbsUp.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -10),
             thumbsUp.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -250,6 +263,11 @@ class StoriesViewController: UIViewController {
         menu.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
 
         present(menu, animated: true)
+    }
+
+    @objc private func skip() {
+        segmentedProgress.skip()
+        player.next()
     }
 }
 
