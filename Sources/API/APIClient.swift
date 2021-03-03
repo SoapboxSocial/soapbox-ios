@@ -129,6 +129,10 @@ class APIClient: Client {
             })
         }
     }
+
+    func completeRegistration(callback: @escaping (Result<Void, Error>) -> Void) {
+        post(path: "/v1/login/register/completed", callback: callback)
+    }
 }
 
 extension APIClient {
