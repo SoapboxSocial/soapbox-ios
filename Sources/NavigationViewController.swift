@@ -173,7 +173,9 @@ class NavigationViewController: UINavigationController {
             }
         }))
 
-        present(alert, animated: true)
+        DispatchQueue.main.async {
+            self.present(alert, animated: true)
+        }
     }
 }
 
