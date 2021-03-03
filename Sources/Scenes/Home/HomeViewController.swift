@@ -369,10 +369,15 @@ extension HomeViewController: UICollectionViewDataSource {
             if indexPath.item == 0 {
                 let cell = collectionView.dequeueReusableCell(withClass: CreateStoryCell.self, for: indexPath)
                 if presenter.hasOwnStory {
-                    cell.profileImage.image = UIImage(systemName: "waveform", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .bold))
+                    cell.profileImage.image = UIImage(
+                        systemName: "waveform",
+                        withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .bold)
+                    )
                     cell.profileImage.tintColor = .white
+                    cell.profileImage.contentMode = .center
                 } else {
                     cell.profileImage.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!))
+                    cell.profileImage.contentMode = .scaleToFill
                 }
 
                 return cell

@@ -4,7 +4,6 @@ import UIKit
 class CreateStoryCell: UICollectionViewCell {
     var profileImage: UIImageView = {
         let view = UIImageView()
-        view.layer.cornerRadius = 64 / 2
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.masksToBounds = true
         view.clipsToBounds = true
@@ -17,7 +16,6 @@ class CreateStoryCell: UICollectionViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .brandColor
         view.clipsToBounds = true
-        view.layer.cornerRadius = 64 / 2
         view.layer.masksToBounds = true
 
         return view
@@ -70,13 +68,13 @@ class CreateStoryCell: UICollectionViewCell {
 
         image.addSubview(profileImage)
 
-        NSLayoutConstraint.activate([
-            profileImage.heightAnchor.constraint(equalTo: image.heightAnchor),
-            profileImage.widthAnchor.constraint(equalTo: image.widthAnchor),
-        ])
-
         contentView.addSubview(image)
         contentView.addSubview(plus)
+
+        NSLayoutConstraint.activate([
+            profileImage.heightAnchor.constraint(equalTo: widthAnchor),
+            profileImage.widthAnchor.constraint(equalTo: widthAnchor),
+        ])
 
         NSLayoutConstraint.activate([
             contentView.leftAnchor.constraint(equalTo: leftAnchor),
@@ -87,7 +85,8 @@ class CreateStoryCell: UICollectionViewCell {
             image.topAnchor.constraint(equalTo: contentView.topAnchor),
             image.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             image.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            image.heightAnchor.constraint(equalTo: image.widthAnchor),
+            image.heightAnchor.constraint(equalTo: widthAnchor),
+            image.widthAnchor.constraint(equalTo: widthAnchor),
             image.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             contentView.bottomAnchor.constraint(equalTo: image.bottomAnchor),
         ])
@@ -98,6 +97,11 @@ class CreateStoryCell: UICollectionViewCell {
             plus.widthAnchor.constraint(equalToConstant: 26),
             plus.heightAnchor.constraint(equalToConstant: 26),
         ])
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        image.layer.cornerRadius = frame.size.width / 2
     }
 
     required init?(coder _: NSCoder) {
