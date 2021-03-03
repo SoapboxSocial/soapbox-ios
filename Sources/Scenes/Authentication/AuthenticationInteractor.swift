@@ -138,14 +138,22 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
         }
 
         api.multifollow(users: users, callback: { result in
-            switch result {
-            case .failure:
+            if case .failure = result {
                 self.output.present(error: .general)
-                self.output.present(state: .success)
-            case .success:
-                self.output.present(state: .success)
+            }
+
+            self.registrationCompleted()
+        })
+    }
+
+    private func registrationCompleted() {
+        api.completeRegistration(callback: { result in
+            if case let .failure(error) = result {
+                debugPrint("completeRegistration failure - \(error)")
             }
         })
+
+        output.present(state: .success)
     }
 
     private func isValidUsername(_ username: String) -> Bool {
