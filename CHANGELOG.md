@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Allowed skipping in stories.
  - Fixed group invite issue.
 
 ## [2.15.0] - 2021-03-03
