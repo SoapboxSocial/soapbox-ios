@@ -234,7 +234,7 @@ extension RoomClient: WebRTCClientDelegate {
         case .connected:
             rtc.speakerOn()
             delegate?.roomClientDidConnect(self)
-        case .failed, .closed:
+        case .closed:
             delegate?.roomClientDidDisconnect(self)
         default:
             return // @TODO
