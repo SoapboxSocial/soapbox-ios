@@ -70,7 +70,7 @@ class NavigationViewController: UINavigationController {
     }
 
     @objc func didTapCreateRoom() {
-        requestMicrophone {
+        RecordPermissions.request(context: self) {
             let creationView = RoomCreationView()
             creationView.delegate = self
 
@@ -259,47 +259,14 @@ extension NavigationViewController: RoomController {
             })
         }
 
-        if room != nil {
-            return shutdownRoom {
-                openRoom()
-            }
-        }
-
-        openRoom()
-    }
-
-    private func requestMicrophone(callback: @escaping () -> Void) {
-        func showMicrophoneWarning() {
-            let alert = UIAlertController(
-                title: NSLocalizedString("microphone_permission_denied", comment: ""),
-                message: nil, preferredStyle: .alert
-            )
-
-            alert.addAction(UIAlertAction(title: NSLocalizedString("ok", comment: ""), style: .default, handler: nil))
-            alert.addAction(UIAlertAction(title: NSLocalizedString("to_settings", comment: ""), style: .default, handler: { _ in
-                DispatchQueue.main.async {
-                    UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-                }
-            }))
-
-            present(alert, animated: true)
-        }
-
-        switch AVAudioSession.sharedInstance().recordPermission {
-        case .granted:
-            callback()
-        case .denied:
-            return showMicrophoneWarning()
-        case .undetermined:
-            AVAudioSession.sharedInstance().requestRecordPermission { granted in
-                DispatchQueue.main.async {
-                    if granted {
-                        callback()
-                    } else {
-                        showMicrophoneWarning()
-                    }
+        RecordPermissions.request(context: self) {
+            if self.room != nil {
+                return self.shutdownRoom {
+                    openRoom()
                 }
             }
+
+            openRoom()
         }
     }
 }
