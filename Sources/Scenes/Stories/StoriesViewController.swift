@@ -6,7 +6,7 @@ class StoriesViewController: UIViewController {
 
     private let feed: APIClient.StoryFeed
 
-    private var segmentedProgress: StoriesProgressBar!
+    private var progress: StoriesProgressBar!
 
     private let menuButton: UIButton = {
         let button = UIButton()
@@ -51,12 +51,12 @@ class StoriesViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .black
 
-        segmentedProgress = StoriesProgressBar(numberOfSegments: feed.stories.count)
-        segmentedProgress.translatesAutoresizingMaskIntoConstraints = false
-        segmentedProgress.topColor = UIColor.white
-        segmentedProgress.padding = 5.0
-        segmentedProgress.bottomColor = UIColor.white.withAlphaComponent(0.25)
-        segmentedProgress.dataSource = self
+        progress = StoriesProgressBar(numberOfSegments: feed.stories.count)
+        progress.translatesAutoresizingMaskIntoConstraints = false
+        progress.topColor = UIColor.white
+        progress.padding = 5.0
+        progress.bottomColor = UIColor.white.withAlphaComponent(0.25)
+        progress.dataSource = self
 
         let background = UIView()
         background.translatesAutoresizingMaskIntoConstraints = false
@@ -70,7 +70,7 @@ class StoriesViewController: UIViewController {
         content.backgroundColor = .brandColor
         background.addSubview(content)
 
-        content.addSubview(segmentedProgress)
+        content.addSubview(progress)
 
         let buttonStack = UIStackView()
         buttonStack.translatesAutoresizingMaskIntoConstraints = false
@@ -159,10 +159,10 @@ class StoriesViewController: UIViewController {
         ])
 
         NSLayoutConstraint.activate([
-            segmentedProgress.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
-            segmentedProgress.rightAnchor.constraint(equalTo: buttonStack.leftAnchor, constant: -20),
-            segmentedProgress.heightAnchor.constraint(equalToConstant: 4),
-            segmentedProgress.centerYAnchor.constraint(equalTo: buttonStack.centerYAnchor),
+            progress.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
+            progress.rightAnchor.constraint(equalTo: buttonStack.leftAnchor, constant: -20),
+            progress.heightAnchor.constraint(equalToConstant: 4),
+            progress.centerYAnchor.constraint(equalTo: buttonStack.centerYAnchor),
         ])
 
         NSLayoutConstraint.activate([
@@ -197,7 +197,8 @@ class StoriesViewController: UIViewController {
         }
 
         player.playTrack()
-        segmentedProgress.startAnimation()
+        progress.startAnimation()
+        progress.isPaused = true
     }
 
     // @TODO allow deselecting reaction?
@@ -232,12 +233,12 @@ class StoriesViewController: UIViewController {
         let item = feed.stories[player.currentTrack]
 
         player.pause()
-        segmentedProgress.isPaused = true
+        progress.isPaused = true
 
         let menu = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         menu.willDismissHandler = {
             self.player.unpause()
-            self.segmentedProgress.isPaused = false
+            self.progress.isPaused = false
         }
 
         let delete = UIAlertAction(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in
@@ -254,8 +255,24 @@ class StoriesViewController: UIViewController {
 }
 
 extension StoriesViewController: StoryPlayerDelegate {
+    func didStartBuffering(_: StoryPlayer) {
+        progress.isPaused = true
+    }
+
+    func didEndBuffering(_: StoryPlayer) {
+        if !progress.isPaused {
+            return
+        }
+
+        progress.isPaused = false
+    }
+
     func didStartPlaying(_: StoryPlayer, itemAt index: Int) {
         let story = feed.stories[index]
+
+        if index != 0, progress.currentIndex != index {
+            progress.skip()
+        }
 
         posted.text = Date(timeIntervalSince1970: TimeInterval(story.deviceTimestamp)).timeAgoDisplay()
 
