@@ -250,7 +250,7 @@ class StoriesViewController: UIViewController {
         let menu = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         menu.willDismissHandler = {
             self.player.unpause()
-            self.segmentedProgress.startAnimation()
+            self.segmentedProgress.isPaused = false
         }
 
         let delete = UIAlertAction(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in

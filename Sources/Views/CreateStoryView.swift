@@ -184,11 +184,10 @@ class CreateStoryView: UIView {
             cancelButton.topAnchor.constraint(equalTo: topAnchor, constant: 20),
         ])
 
-        AVAudioSession.sharedInstance().requestRecordPermission { granted in
-            if !granted {
-                self.delegate?.didFailToRequestPermission()
-            }
-        }
+        RecordPermissions.request(
+            failure: { self.delegate?.didFailToRequestPermission() },
+            success: {}
+        )
     }
 
     required init?(coder _: NSCoder) {
