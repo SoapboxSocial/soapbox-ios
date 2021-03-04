@@ -201,26 +201,26 @@ class StoriesViewController: UIViewController {
     }
 
     // @TODO allow deselecting reaction?
-    @objc private func didReact(_: UIButton) {
-//        let item = player.currentItem()
-//
-//        if feed.user.id == UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
-//            return
-//        }
-//
-//        guard let button = sender as? StoryReactionButton else {
-//            return
-//        }
-//
-//        guard let reaction = button.reaction.text else {
-//            return
-//        }
-//
-//        APIClient().react(story: item.id, reaction: reaction, callback: { result in
-//            if case .success = result {
-//                button.count += 1
-//            }
-//        })
+    @objc private func didReact(_ sender: UIButton) {
+        let item = feed.stories[player.currentTrack]
+
+        if feed.user.id == UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
+            return
+        }
+
+        guard let button = sender as? StoryReactionButton else {
+            return
+        }
+
+        guard let reaction = button.reaction.text else {
+            return
+        }
+
+        APIClient().react(story: item.id, reaction: reaction, callback: { result in
+            if case .success = result {
+                button.count += 1
+            }
+        })
     }
 
     @objc private func exitTapped() {
@@ -257,34 +257,6 @@ extension StoriesViewController: StoryPlayerDelegate {
     func didStartPlaying(_: StoryPlayer, itemAt index: Int) {
         let story = feed.stories[index]
 
-        posted.text = Date(timeIntervalSince1970: TimeInterval(story.deviceTimestamp)).timeAgoDisplay()
-
-        thumbsUp.count = 0
-        fire.count = 0
-        heart.count = 0
-
-        story.reactions.forEach { reaction in
-            switch reaction.emoji {
-            case "👍":
-                self.thumbsUp.count = reaction.count
-            case "🔥":
-                self.fire.count = reaction.count
-            case "❤️":
-                self.heart.count = reaction.count
-            default:
-                return
-            }
-        }
-    }
-}
-
-extension StoriesViewController: StoryPlayerDelegate {
-    func didReachEnd() {
-        player.pause()
-        dismiss(animated: true)
-    }
-
-    func startedPlaying(story: APIClient.Story) {
         posted.text = Date(timeIntervalSince1970: TimeInterval(story.deviceTimestamp)).timeAgoDisplay()
 
         thumbsUp.count = 0
