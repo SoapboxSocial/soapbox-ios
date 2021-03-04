@@ -270,7 +270,7 @@ extension StoriesViewController: StoryPlayerDelegate {
     func didStartPlaying(_: StoryPlayer, itemAt index: Int) {
         let story = feed.stories[index]
 
-        if index != 0, progress.currentIndex != index {
+        if index != 0, progress.currentIndex < index {
             progress.skip()
         }
 
