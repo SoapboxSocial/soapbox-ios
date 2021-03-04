@@ -26,7 +26,7 @@ class StoriesViewController: UIViewController {
         return label
     }()
 
-    private let player: StoryPlayer
+    private let player: StoryPlayerV2
     private var playTime = Float(0.0)
 
     private let thumbsUp = StoryReactionButton(reaction: "👍")
@@ -39,9 +39,9 @@ class StoriesViewController: UIViewController {
 
     init(feed: APIClient.StoryFeed) {
         self.feed = feed // @TODO MAY ONLY NEED TO BE USER
-        player = StoryPlayer(items: feed.stories)
+        player = StoryPlayerV2(items: feed.stories)
         super.init(nibName: nil, bundle: nil)
-        player.delegate = self
+//        player.delegate = self
     }
 
     required init?(coder _: NSCoder) {
@@ -51,12 +51,12 @@ class StoriesViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .black
 
-        segmentedProgress = StoriesProgressBar(numberOfSegments: player.player.items().count)
-        segmentedProgress.translatesAutoresizingMaskIntoConstraints = false
-        segmentedProgress.topColor = UIColor.white
-        segmentedProgress.padding = 5.0
-        segmentedProgress.bottomColor = UIColor.white.withAlphaComponent(0.25)
-        segmentedProgress.dataSource = self
+//        segmentedProgress = StoriesProgressBar(numberOfSegments: player.player.items().count)
+//        segmentedProgress.translatesAutoresizingMaskIntoConstraints = false
+//        segmentedProgress.topColor = UIColor.white
+//        segmentedProgress.padding = 5.0
+//        segmentedProgress.bottomColor = UIColor.white.withAlphaComponent(0.25)
+//        segmentedProgress.dataSource = self
 
         let background = UIView()
         background.translatesAutoresizingMaskIntoConstraints = false
@@ -70,7 +70,7 @@ class StoriesViewController: UIViewController {
         content.backgroundColor = .brandColor
         background.addSubview(content)
 
-        content.addSubview(segmentedProgress)
+//        content.addSubview(segmentedProgress)
 
         let buttonStack = UIStackView()
         buttonStack.translatesAutoresizingMaskIntoConstraints = false
@@ -158,12 +158,12 @@ class StoriesViewController: UIViewController {
             buttonStack.heightAnchor.constraint(equalToConstant: 32),
         ])
 
-        NSLayoutConstraint.activate([
-            segmentedProgress.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
-            segmentedProgress.rightAnchor.constraint(equalTo: buttonStack.leftAnchor, constant: -20),
-            segmentedProgress.heightAnchor.constraint(equalToConstant: 4),
-            segmentedProgress.centerYAnchor.constraint(equalTo: buttonStack.centerYAnchor),
-        ])
+//        NSLayoutConstraint.activate([
+//            segmentedProgress.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
+//            segmentedProgress.rightAnchor.constraint(equalTo: buttonStack.leftAnchor, constant: -20),
+//            segmentedProgress.heightAnchor.constraint(equalToConstant: 4),
+//            segmentedProgress.centerYAnchor.constraint(equalTo: buttonStack.centerYAnchor),
+//        ])
 
         NSLayoutConstraint.activate([
             image.centerYAnchor.constraint(equalTo: content.centerYAnchor),
@@ -196,66 +196,66 @@ class StoriesViewController: UIViewController {
             print("AVAudioSession error: \(error)")
         }
 
-        player.play()
-        segmentedProgress.startAnimation()
+        player.playTrack()
+//        segmentedProgress.startAnimation()
     }
 
     // @TODO allow deselecting reaction?
     @objc private func didReact(_ sender: UIButton) {
-        let item = player.currentItem()
-
-        if feed.user.id == UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
-            return
-        }
-
-        guard let button = sender as? StoryReactionButton else {
-            return
-        }
-
-        guard let reaction = button.reaction.text else {
-            return
-        }
-
-        APIClient().react(story: item.id, reaction: reaction, callback: { result in
-            if case .success = result {
-                button.count += 1
-            }
-        })
+//        let item = player.currentItem()
+//
+//        if feed.user.id == UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
+//            return
+//        }
+//
+//        guard let button = sender as? StoryReactionButton else {
+//            return
+//        }
+//
+//        guard let reaction = button.reaction.text else {
+//            return
+//        }
+//
+//        APIClient().react(story: item.id, reaction: reaction, callback: { result in
+//            if case .success = result {
+//                button.count += 1
+//            }
+//        })
     }
 
     @objc private func exitTapped() {
-        player.stop()
+//        player.stop()
         dismiss(animated: true)
     }
 
     @objc private func menuTapped() {
-        let item = player.currentItem()
-
-        player.pause()
-        segmentedProgress.isPaused = true
-
-        let menu = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        menu.willDismissHandler = {
-            self.player.unpause()
-            self.segmentedProgress.startAnimation()
-        }
-
-        let delete = UIAlertAction(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in
-            APIClient().deleteStory(id: item.id, callback: { _ in
-                menu.dismiss(animated: true)
-            })
-        })
-        menu.addAction(delete)
-
-        menu.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-
-        present(menu, animated: true)
+//        let item = player.currentItem()
+//
+//        player.pause()
+//        segmentedProgress.isPaused = true
+//
+//        let menu = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+//        menu.willDismissHandler = {
+//            self.player.unpause()
+//            self.segmentedProgress.startAnimation()
+//        }
+//
+//        let delete = UIAlertAction(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in
+//            APIClient().deleteStory(id: item.id, callback: { _ in
+//                menu.dismiss(animated: true)
+//            })
+//        })
+//        menu.addAction(delete)
+//
+//        menu.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+//
+//        present(menu, animated: true)
     }
 }
 
 extension StoriesViewController: StoryPlayerDelegate {
     func didReachEnd() {
-        player.stop()
+//        player.stop()
         dismiss(animated: true)
     }
 
@@ -283,6 +283,7 @@ extension StoriesViewController: StoryPlayerDelegate {
 
 extension StoriesViewController: StoriesProgressBarDataSource {
     func storiesProgressBar(progressBar _: StoriesProgressBar, durationForItemAt index: Int) -> TimeInterval {
-        return TimeInterval(Float(CMTimeGetSeconds(player.playerItems[index].asset.duration)))
+        return 0
+//        return TimeInterval(Float(CMTimeGetSeconds(player.playerItems[index].asset.duration)))
     }
 }
