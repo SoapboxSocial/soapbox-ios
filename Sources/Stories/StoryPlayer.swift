@@ -1,46 +1,30 @@
 import AVFoundation
 
-protocol StoryPlayerDelegate {
-    func startedPlaying(story: APIClient.Story)
-    func didReachEnd()
+protocol StoryPlayerDelegate: AnyObject {
+    func didStartPlaying(_ player: StoryPlayer, itemAt index: Int)
 }
 
 class StoryPlayer {
-    let player = AVQueuePlayer()
+    private let player = AVPlayer()
 
-    private var currentIndex = 0
+    private(set) var queue = [AVPlayerItem]()
+    private(set) var currentTrack = 0
 
-    private let items: [APIClient.Story]
-    private(set) var playerItems = [AVPlayerItem]()
-
-    var delegate: StoryPlayerDelegate?
+    weak var delegate: StoryPlayerDelegate?
 
     init(items: [APIClient.Story]) {
-        self.items = items.sorted(by: { $0.deviceTimestamp < $1.deviceTimestamp })
-        currentIndex = 0
+        let sorted = items.sorted(by: { $0.deviceTimestamp < $1.deviceTimestamp })
 
-        for item in self.items {
+        for item in sorted {
             let url = Configuration.cdn.appendingPathComponent("/stories/" + item.id + ".aac")
             let item = AVPlayerItem(asset: AVURLAsset(url: url), automaticallyLoadedAssetKeys: ["playable", "duration"])
-
-            player.insert(item, after: nil)
-            playerItems.append(item)
+            queue.append(item)
+//
+//            player.insert(item, after: nil)
+//            playerItems.append(item)
         }
-    }
 
-    func currentItem() -> APIClient.Story {
-        return items[currentIndex]
-    }
-
-    func play() {
-        NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlayToEnd), name: .AVPlayerItemDidPlayToEndTime, object: nil)
-        player.play()
-        delegate?.startedPlaying(story: items[currentIndex])
-    }
-
-    func stop() {
-        NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: nil)
-        player.pause()
+        setupObservers()
     }
 
     func pause() {
@@ -51,14 +35,46 @@ class StoryPlayer {
         player.play()
     }
 
-    @objc private func itemDidPlayToEnd() {
-        currentIndex += 1
+    func previous() {
+        currentTrack = (currentTrack - 1 + queue.count) % queue.count
+        playTrack()
+    }
 
-        if currentIndex == items.count {
-            delegate?.didReachEnd()
+    func next() {
+        if currentTrack == queue.count - 1 {
+            return // @TODO
+        }
+
+        currentTrack = (currentTrack + 1) % queue.count
+        playTrack()
+    }
+
+    func playTrack() {
+        if queue.count == 0 {
             return
         }
 
-        delegate?.startedPlaying(story: items[currentIndex])
+        // @TOOD check item exists
+
+        player.replaceCurrentItem(with: queue[currentTrack])
+        player.play()
+
+        delegate?.didStartPlaying(self, itemAt: currentTrack)
+    }
+
+    func duration(for track: Int) -> TimeInterval {
+        return TimeInterval(Float(CMTimeGetSeconds(queue[track].asset.duration)))
+    }
+
+    private func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(itemFinished), name: .AVPlayerItemDidPlayToEndTime, object: nil)
+    }
+
+    @objc private func itemFinished() {
+        next()
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: nil)
     }
 }

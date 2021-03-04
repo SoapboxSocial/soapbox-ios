@@ -26,7 +26,7 @@ class StoriesViewController: UIViewController {
         return label
     }()
 
-    private let player: StoryPlayerV2
+    private let player: StoryPlayer
     private var playTime = Float(0.0)
 
     private let thumbsUp = StoryReactionButton(reaction: "👍")
@@ -39,7 +39,7 @@ class StoriesViewController: UIViewController {
 
     init(feed: APIClient.StoryFeed) {
         self.feed = feed // @TODO MAY ONLY NEED TO BE USER
-        player = StoryPlayerV2(items: feed.stories)
+        player = StoryPlayer(items: feed.stories)
         super.init(nibName: nil, bundle: nil)
         player.delegate = self
     }
@@ -253,8 +253,8 @@ class StoriesViewController: UIViewController {
     }
 }
 
-extension StoriesViewController: StoryPlayerV2Delegate {
-    func didStartPlaying(_: StoryPlayerV2, itemAt index: Int) {
+extension StoriesViewController: StoryPlayerDelegate {
+    func didStartPlaying(_: StoryPlayer, itemAt index: Int) {
         let story = feed.stories[index]
 
         posted.text = Date(timeIntervalSince1970: TimeInterval(story.deviceTimestamp)).timeAgoDisplay()
