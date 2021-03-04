@@ -276,7 +276,7 @@ extension StoriesViewController: StoryPlayerDelegate {
             }
         }
     }
-    
+
     func didReachEnd(_ player: StoryPlayer) {
         player.pause()
         dismiss(animated: true)
