@@ -13,9 +13,7 @@ class StoryPlayer {
     private(set) var queue = [AVPlayerItem]()
     private(set) var currentTrack = 0
 
-    private var playbackBufferEmptyObserver: NSKeyValueObservation?
-    private var playbackLikelyToKeepUpObserver: NSKeyValueObservation?
-    private var playbackBufferFullObserver: NSKeyValueObservation?
+    private var timeControlStatusObserver: NSKeyValueObservation?
 
     weak var delegate: StoryPlayerDelegate?
 
@@ -59,26 +57,20 @@ class StoryPlayer {
         }
 
         // @TOOD check item exists
-
-        playbackBufferEmptyObserver?.invalidate()
-        playbackBufferFullObserver?.invalidate()
-        playbackLikelyToKeepUpObserver?.invalidate()
-
         player.replaceCurrentItem(with: queue[currentTrack])
 
+        timeControlStatusObserver = player.observe(\.timeControlStatus, options: [.new]) { playerItem, _ in
+            switch playerItem.timeControlStatus {
+            case .paused, .waitingToPlayAtSpecifiedRate:
+                self.delegate?.didStartBuffering(self)
+            case AVPlayerTimeControlStatus.playing:
+                self.delegate?.didEndBuffering(self)
+            default:
+                break
+            }
+        }
+
         player.play()
-
-        playbackBufferEmptyObserver = player.currentItem?.observe(\.isPlaybackBufferEmpty, options: [.new]) { _, _ in
-            self.delegate?.didStartBuffering(self)
-        }
-
-        playbackLikelyToKeepUpObserver = player.currentItem?.observe(\.isPlaybackLikelyToKeepUp, options: [.new]) { _, _ in
-            self.delegate?.didEndBuffering(self)
-        }
-
-        playbackBufferFullObserver = player.currentItem?.observe(\.isPlaybackBufferFull, options: [.new]) { _, _ in
-            self.delegate?.didEndBuffering(self)
-        }
 
         delegate?.didStartPlaying(self, itemAt: currentTrack)
     }
@@ -97,8 +89,6 @@ class StoryPlayer {
 
     deinit {
         NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: nil)
-        playbackBufferEmptyObserver?.invalidate()
-        playbackBufferFullObserver?.invalidate()
-        playbackLikelyToKeepUpObserver?.invalidate()
+        timeControlStatusObserver?.invalidate()
     }
 }
