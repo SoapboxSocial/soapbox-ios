@@ -267,7 +267,7 @@ class StoriesViewController: UIViewController {
     }
 
     @objc private func skip() {
-        segmentedProgress.skip()
+        progress.skip()
         player.next()
     }
 }
