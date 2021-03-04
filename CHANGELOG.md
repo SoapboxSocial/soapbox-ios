@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.15.1] - 2021-03-04
+
  - Fixed stories bar issue.
  - Fixed group invite issue.
  - Fixed microphone issue for new users.
