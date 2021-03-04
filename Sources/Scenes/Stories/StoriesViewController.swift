@@ -41,7 +41,7 @@ class StoriesViewController: UIViewController {
         self.feed = feed // @TODO MAY ONLY NEED TO BE USER
         player = StoryPlayerV2(items: feed.stories)
         super.init(nibName: nil, bundle: nil)
-//        player.delegate = self
+        player.delegate = self
     }
 
     required init?(coder _: NSCoder) {
@@ -51,12 +51,12 @@ class StoriesViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .black
 
-//        segmentedProgress = StoriesProgressBar(numberOfSegments: player.player.items().count)
-//        segmentedProgress.translatesAutoresizingMaskIntoConstraints = false
-//        segmentedProgress.topColor = UIColor.white
-//        segmentedProgress.padding = 5.0
-//        segmentedProgress.bottomColor = UIColor.white.withAlphaComponent(0.25)
-//        segmentedProgress.dataSource = self
+        segmentedProgress = StoriesProgressBar(numberOfSegments: feed.stories.count)
+        segmentedProgress.translatesAutoresizingMaskIntoConstraints = false
+        segmentedProgress.topColor = UIColor.white
+        segmentedProgress.padding = 5.0
+        segmentedProgress.bottomColor = UIColor.white.withAlphaComponent(0.25)
+        segmentedProgress.dataSource = self
 
         let background = UIView()
         background.translatesAutoresizingMaskIntoConstraints = false
@@ -70,7 +70,7 @@ class StoriesViewController: UIViewController {
         content.backgroundColor = .brandColor
         background.addSubview(content)
 
-//        content.addSubview(segmentedProgress)
+        content.addSubview(segmentedProgress)
 
         let buttonStack = UIStackView()
         buttonStack.translatesAutoresizingMaskIntoConstraints = false
@@ -158,12 +158,12 @@ class StoriesViewController: UIViewController {
             buttonStack.heightAnchor.constraint(equalToConstant: 32),
         ])
 
-//        NSLayoutConstraint.activate([
-//            segmentedProgress.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
-//            segmentedProgress.rightAnchor.constraint(equalTo: buttonStack.leftAnchor, constant: -20),
-//            segmentedProgress.heightAnchor.constraint(equalToConstant: 4),
-//            segmentedProgress.centerYAnchor.constraint(equalTo: buttonStack.centerYAnchor),
-//        ])
+        NSLayoutConstraint.activate([
+            segmentedProgress.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
+            segmentedProgress.rightAnchor.constraint(equalTo: buttonStack.leftAnchor, constant: -20),
+            segmentedProgress.heightAnchor.constraint(equalToConstant: 4),
+            segmentedProgress.centerYAnchor.constraint(equalTo: buttonStack.centerYAnchor),
+        ])
 
         NSLayoutConstraint.activate([
             image.centerYAnchor.constraint(equalTo: content.centerYAnchor),
@@ -197,11 +197,11 @@ class StoriesViewController: UIViewController {
         }
 
         player.playTrack()
-//        segmentedProgress.startAnimation()
+        segmentedProgress.startAnimation()
     }
 
     // @TODO allow deselecting reaction?
-    @objc private func didReact(_ sender: UIButton) {
+    @objc private func didReact(_: UIButton) {
 //        let item = player.currentItem()
 //
 //        if feed.user.id == UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
@@ -229,27 +229,52 @@ class StoriesViewController: UIViewController {
     }
 
     @objc private func menuTapped() {
-//        let item = player.currentItem()
-//
-//        player.pause()
-//        segmentedProgress.isPaused = true
-//
-//        let menu = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-//        menu.willDismissHandler = {
-//            self.player.unpause()
-//            self.segmentedProgress.startAnimation()
-//        }
-//
-//        let delete = UIAlertAction(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in
-//            APIClient().deleteStory(id: item.id, callback: { _ in
-//                menu.dismiss(animated: true)
-//            })
-//        })
-//        menu.addAction(delete)
-//
-//        menu.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-//
-//        present(menu, animated: true)
+        let item = feed.stories[player.currentTrack]
+
+        player.pause()
+        segmentedProgress.isPaused = true
+
+        let menu = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        menu.willDismissHandler = {
+            self.player.unpause()
+            self.segmentedProgress.startAnimation()
+        }
+
+        let delete = UIAlertAction(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in
+            APIClient().deleteStory(id: item.id, callback: { _ in
+                menu.dismiss(animated: true)
+            })
+        })
+        menu.addAction(delete)
+
+        menu.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+
+        present(menu, animated: true)
+    }
+}
+
+extension StoriesViewController: StoryPlayerV2Delegate {
+    func didStartPlaying(_: StoryPlayerV2, itemAt index: Int) {
+        let story = feed.stories[index]
+
+        posted.text = Date(timeIntervalSince1970: TimeInterval(story.deviceTimestamp)).timeAgoDisplay()
+
+        thumbsUp.count = 0
+        fire.count = 0
+        heart.count = 0
+
+        story.reactions.forEach { reaction in
+            switch reaction.emoji {
+            case "👍":
+                self.thumbsUp.count = reaction.count
+            case "🔥":
+                self.fire.count = reaction.count
+            case "❤️":
+                self.heart.count = reaction.count
+            default:
+                return
+            }
+        }
     }
 }
 
@@ -283,7 +308,6 @@ extension StoriesViewController: StoryPlayerDelegate {
 
 extension StoriesViewController: StoriesProgressBarDataSource {
     func storiesProgressBar(progressBar _: StoriesProgressBar, durationForItemAt index: Int) -> TimeInterval {
-        return 0
-//        return TimeInterval(Float(CMTimeGetSeconds(player.playerItems[index].asset.duration)))
+        return player.duration(for: index)
     }
 }
