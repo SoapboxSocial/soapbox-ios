@@ -224,7 +224,7 @@ class StoriesViewController: UIViewController {
     }
 
     @objc private func exitTapped() {
-//        player.stop()
+        player.pause()
         dismiss(animated: true)
     }
 
@@ -280,7 +280,7 @@ extension StoriesViewController: StoryPlayerV2Delegate {
 
 extension StoriesViewController: StoryPlayerDelegate {
     func didReachEnd() {
-//        player.stop()
+        player.pause()
         dismiss(animated: true)
     }
 
