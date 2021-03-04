@@ -1,6 +1,7 @@
 import AVFoundation
 
 protocol StoryPlayerDelegate: AnyObject {
+    func didReachEnd(_ player: StoryPlayer)
     func didStartPlaying(_ player: StoryPlayer, itemAt index: Int)
 }
 
@@ -17,11 +18,7 @@ class StoryPlayer {
 
         for item in sorted {
             let url = Configuration.cdn.appendingPathComponent("/stories/" + item.id + ".aac")
-            let item = AVPlayerItem(asset: AVURLAsset(url: url), automaticallyLoadedAssetKeys: ["playable", "duration"])
-            queue.append(item)
-//
-//            player.insert(item, after: nil)
-//            playerItems.append(item)
+            queue.append(AVPlayerItem(asset: AVURLAsset(url: url), automaticallyLoadedAssetKeys: ["playable", "duration"]))
         }
 
         setupObservers()
@@ -42,7 +39,8 @@ class StoryPlayer {
 
     func next() {
         if currentTrack == queue.count - 1 {
-            return // @TODO
+            delegate?.didReachEnd(self)
+            return
         }
 
         currentTrack = (currentTrack + 1) % queue.count
