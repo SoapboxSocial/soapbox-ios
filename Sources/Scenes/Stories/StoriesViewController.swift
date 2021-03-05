@@ -112,8 +112,11 @@ class StoriesViewController: UIViewController {
                     return
                 }
                 
+                let color = dominantColor.makeUIColor()
+                
+                
                 DispatchQueue.main.async {
-                    content.backgroundColor = dominantColor.makeUIColor()
+                    content.backgroundColor = color
                 }
             })
         }
