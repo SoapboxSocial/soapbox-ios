@@ -2,10 +2,7 @@
 
 ## [Unreleased]
 
- - Made the stories background a bit nicer.
- - Made stories a bit more visually fun.
- - Allowed skipping and rewinding stories.
- - When stories are buffering, the progress bar now pauses so the story and progress do not look out of sync.
+ - We gave stories some necessary TLC. You can now skip as well as rewind, various issues were fixed and the visuals were improved drastically. We hope you enjoy!
 
 ## [2.15.1] - 2021-03-04
 
