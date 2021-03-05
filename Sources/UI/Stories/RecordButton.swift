@@ -14,7 +14,7 @@ class RecordButton: UIButton {
         backgroundColor = .white
         translatesAutoresizingMaskIntoConstraints = false
 
-        v layer.shadowOffset = CGSize(width: 0, height: 12)
+        layer.shadowOffset = CGSize(width: 0, height: 12)
         layer.shadowColor = UIColor.black.withAlphaComponent(0.24).cgColor
         layer.shadowOpacity = 1
         layer.shadowRadius = 24
