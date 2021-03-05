@@ -1,9 +1,7 @@
-import UIKit
 import AVFoundation
+import UIKit
 
 class CircularAudioVisualizerView: UIView {
-
-
     // Configuration Settings
     private let updateInterval = 0.05
     private let animatioтDuration = 0.05
@@ -20,7 +18,7 @@ class CircularAudioVisualizerView: UIView {
     func start() {
         timer = Timer.scheduledTimer(timeInterval: updateInterval,
                                      target: self,
-                                     selector: #selector(self.updateMeters),
+                                     selector: #selector(updateMeters),
                                      userInfo: nil,
                                      repeats: true)
     }
@@ -43,7 +41,7 @@ class CircularAudioVisualizerView: UIView {
 
         UIView.animate(withDuration: animatioтDuration, animations: {
             self.animate(to: power)
-        }) { (_) in
+        }) { _ in
             if !self.player.isPlaying {
                 self.stop()
             }
@@ -53,7 +51,7 @@ class CircularAudioVisualizerView: UIView {
     // Calculate average power from all channels
     private func averagePowerFromAllChannels() -> CGFloat {
         var power: CGFloat = 0.0
-        (0..<player.numberOfChannels).forEach { (index) in
+        (0 ..< player.numberOfChannels).forEach { index in
             power = power + CGFloat(player.averagePower(forChannel: index))
         }
         return power / CGFloat(player.numberOfChannels)
@@ -64,6 +62,6 @@ class CircularAudioVisualizerView: UIView {
         let powerDelta = (maxPowerDelta + power) * 2 / 100
         let compute: CGFloat = minScale + powerDelta
         let scale: CGFloat = CGFloat.maximum(compute, minScale)
-        self.transform = CGAffineTransform(scaleX: scale, y: scale)
+        transform = CGAffineTransform(scaleX: scale, y: scale)
     }
 }
