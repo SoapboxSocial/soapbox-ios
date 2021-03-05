@@ -1,6 +1,6 @@
 import AVFoundation
-import UIKit
 import ColorThiefSwift
+import UIKit
 
 class StoriesViewController: UIViewController {
     private static let iconConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
@@ -23,6 +23,15 @@ class StoriesViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .rounded(forTextStyle: .body, weight: .semibold)
         label.textColor = UIColor.white.withAlphaComponent(0.5)
+        label.textAlignment = .center
+        return label
+    }()
+
+    private let name: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .rounded(forTextStyle: .title1, weight: .bold)
+        label.textColor = UIColor.white
         label.textAlignment = .center
         return label
     }()
@@ -107,26 +116,27 @@ class StoriesViewController: UIViewController {
                 guard let image = data.value else {
                     return
                 }
-                
+
                 guard let dominantColor = ColorThief.getColor(from: image) else {
                     return
                 }
-                
+
                 let color = dominantColor.makeUIColor()
-                
-                
                 DispatchQueue.main.async {
                     content.backgroundColor = color
+
+                    if color.isLight() {
+                        self.name.textColor = .black
+                        self.posted.textColor = UIColor.black.withAlphaComponent(0.5)
+                    } else {
+                        self.name.textColor = .white
+                        self.posted.textColor = UIColor.white.withAlphaComponent(0.5)
+                    }
                 }
             })
         }
 
-        let name = UILabel()
-        name.font = .rounded(forTextStyle: .title1, weight: .bold)
         name.text = feed.user.displayName
-        name.textColor = .white
-        name.textAlignment = .center
-        name.translatesAutoresizingMaskIntoConstraints = false
         content.addSubview(name)
 
         content.addSubview(posted)
