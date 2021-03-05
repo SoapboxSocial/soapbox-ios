@@ -1,4 +1,5 @@
 PODS:
+  - ACBAVPlayer (2.1)
   - Alamofire (5.4.1)
   - AlamofireImage (4.1.0):
     - Alamofire (~> 5.1)
@@ -21,6 +22,7 @@ PODS:
   - UIWindowTransitions (1.0.0)
 
 DEPENDENCIES:
+  - ACBAVPlayer
   - Alamofire
   - AlamofireImage
   - BetterSegmentedControl (~> 2.0)
@@ -39,6 +41,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - ACBAVPlayer
     - Alamofire
     - AlamofireImage
     - BetterSegmentedControl
@@ -71,6 +74,7 @@ CHECKOUT OPTIONS:
     :git: "git@github.com:mattdonnelly/Swifter.git"
 
 SPEC CHECKSUMS:
+  ACBAVPlayer: 7ef1a2a6045552dc35d1b8b303908d90a3d7845e
   Alamofire: 2291f7d21ca607c491dd17642e5d40fdcda0e65c
   AlamofireImage: c4a2ba349885fb3064feb74d2e547bd42ce9be10
   BetterSegmentedControl: 09607b27861d49cbce48b7673b74f9150a3d371a
@@ -89,6 +93,6 @@ SPEC CHECKSUMS:
   SwiftProtobuf: 3320217e9d8fb75f36b40282e78c482640fd75dd
   UIWindowTransitions: 2237083382e11f100db7de934041bba0c4669c86
 
-PODFILE CHECKSUM: ea6447bc21286065f75b973c8d82170398b1ed87
+PODFILE CHECKSUM: fb8455cb211ab7db93882b1da26ddb9af1d7d6e5
 
 COCOAPODS: 1.10.1

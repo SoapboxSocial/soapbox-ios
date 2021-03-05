@@ -1,14 +1,19 @@
-import AVFoundation
+import ACBAVPlayer
 
 protocol StoryPlayerDelegate: AnyObject {
     func didReachEnd(_ player: StoryPlayer)
     func didStartPlaying(_ player: StoryPlayer, itemAt index: Int)
     func didStartBuffering(_ player: StoryPlayer)
     func didEndBuffering(_ player: StoryPlayer)
+    func didUpdatePower(_ player: StoryPlayer, power: Double)
 }
 
 class StoryPlayer {
-    private let player = AVPlayer()
+    private let player: AVPlayer = {
+        let player = AVPlayer()
+        player.isMeteringEnabled = true
+        return player
+    }()
 
     private(set) var queue = [AVPlayerItem]()
     private(set) var currentTrack = 0
@@ -62,7 +67,7 @@ class StoryPlayer {
         }
 
         queue[currentTrack].seek(to: .zero, completionHandler: { _ in
-            self.player.replaceCurrentItem(with: self.queue[self.currentTrack])
+            self.player.replaceCurrentItemAndUpdateMetering(for: self.queue[self.currentTrack])
             self.player.play()
             self.delegate?.didStartPlaying(self, itemAt: self.currentTrack)
         })
@@ -85,14 +90,33 @@ class StoryPlayer {
                 break
             }
         }
+
+        player.averagePowerListInLinearForm(callbackBlock: { powers, _ in
+            guard let powers = powers else {
+                return
+            }
+
+            if powers.count > 0 {
+                guard var power = powers[0] as? Double else {
+                    return
+                }
+
+                if powers.count > 1, let secondPower = powers[1] as? Double {
+                    power = (power + secondPower) / 2
+                }
+
+                self.delegate?.didUpdatePower(self, power: power * 100)
+            }
+        })
     }
 
     @objc private func itemFinished() {
         next()
     }
 
-    deinit {
+    func shutdown() {
         NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: nil)
         timeControlStatusObserver?.invalidate()
+        player.stop()
     }
 }
