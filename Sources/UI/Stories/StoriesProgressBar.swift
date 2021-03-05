@@ -7,8 +7,13 @@ protocol StoriesProgressBarDataSource: AnyObject {
     func storiesProgressBar(progressBar: StoriesProgressBar, durationForItemAt index: Int) -> TimeInterval
 }
 
+protocol StoriesProgressBarDelegate: AnyObject {
+    func storiesProgressBar(progressBar: StoriesProgressBar, didFinish index: Int)
+}
+
 class StoriesProgressBar: UIView {
     weak var dataSource: StoriesProgressBarDataSource?
+    weak var delegate: StoriesProgressBarDelegate?
 
     var topColor = UIColor.gray {
         didSet {
@@ -106,6 +111,7 @@ class StoriesProgressBar: UIView {
             }
 
             self.next()
+            self.delegate?.storiesProgressBar(progressBar: self, didFinish: animationIndex) // @TODO
         }
     }
 

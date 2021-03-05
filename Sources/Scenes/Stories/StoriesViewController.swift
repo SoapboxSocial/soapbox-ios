@@ -73,6 +73,7 @@ class StoriesViewController: UIViewController {
         progress.padding = 5.0
         progress.bottomColor = UIColor.white.withAlphaComponent(0.25)
         progress.dataSource = self
+        progress.delegate = self
 
         let content = UIView()
         content.translatesAutoresizingMaskIntoConstraints = false
@@ -321,6 +322,10 @@ class StoriesViewController: UIViewController {
 
 extension StoriesViewController: StoryPlayerDelegate {
     func didStartBuffering(_: StoryPlayer) {
+        if progress.isPaused {
+            return
+        }
+
         progress.isPaused = true
     }
 
@@ -337,6 +342,10 @@ extension StoriesViewController: StoryPlayerDelegate {
 
         if index != 0, progress.currentIndex < index {
             progress.skip()
+        }
+
+        if progress.isPaused {
+            progress.isPaused = false
         }
 
         posted.text = Date(timeIntervalSince1970: TimeInterval(story.deviceTimestamp)).timeAgoDisplay()
@@ -369,8 +378,14 @@ extension StoriesViewController: StoryPlayerDelegate {
     }
 }
 
-extension StoriesViewController: StoriesProgressBarDataSource {
+extension StoriesViewController: StoriesProgressBarDataSource, StoriesProgressBarDelegate {
     func storiesProgressBar(progressBar _: StoriesProgressBar, durationForItemAt index: Int) -> TimeInterval {
         return player.duration(for: index)
+    }
+
+    func storiesProgressBar(progressBar: StoriesProgressBar, didFinish index: Int) {
+        if player.currentTrack == index, !progress.isPaused {
+            progressBar.isPaused = true
+        }
     }
 }
