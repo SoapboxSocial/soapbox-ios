@@ -1,5 +1,4 @@
 import KeychainAccess
-import NotificationBannerSwift
 import Siren
 import Swifter
 import UIKit
@@ -222,18 +221,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func setTheme() {
-        guard let theme = Theme(rawValue: UserDefaults.standard.integer(forKey: UserDefaultsKeys.theme)) else {
-            window?.overrideUserInterfaceStyle = .unspecified
-            return
-        }
+        UIApplication.shared.windows.forEach { window in
+            guard let theme = Theme(rawValue: UserDefaults.standard.integer(forKey: UserDefaultsKeys.theme)) else {
+                window.overrideUserInterfaceStyle = .unspecified
+                return
+            }
 
-        switch theme {
-        case .dark:
-            window?.overrideUserInterfaceStyle = .dark
-        case .light:
-            window?.overrideUserInterfaceStyle = .light
-        case .system:
-            window?.overrideUserInterfaceStyle = .unspecified
+            switch theme {
+            case .dark:
+                window.overrideUserInterfaceStyle = .dark
+            case .light:
+                window.overrideUserInterfaceStyle = .light
+            case .system:
+                window.overrideUserInterfaceStyle = .unspecified
+            }
         }
     }
 }
@@ -282,7 +283,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             return
         }
 
-        let notification = GrowingNotificationBanner(title: notification.request.content.body, style: .success)
+        let notification = NotificationBanner(title: notification.request.content.body, style: .success)
 
         notification.onTap = {
             self.handleNotificationAction(for: category, args: arguments)

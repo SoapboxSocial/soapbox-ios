@@ -1,7 +1,7 @@
 import Foundation
 
 protocol GroupCreationPresenterOutput {
-    func displayError(_ style: ErrorStyle, title: String, description: String?)
+    func displayError(_ style: NotificationBanner.BannerType, title: String, description: String?)
     func transitionTo(state: GroupCreationInteractor.State, id: Int?)
     func display(friends: [APIClient.User])
 }

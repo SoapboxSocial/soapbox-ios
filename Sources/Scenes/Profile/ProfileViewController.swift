@@ -1,6 +1,5 @@
 import AlamofireImage
 import GSImageViewerController
-import NotificationBannerSwift
 import UIKit
 
 protocol ProfileViewControllerOutput {
@@ -259,7 +258,7 @@ class ProfileViewController: ViewController {
             }
 
             if nav.room != nil {
-                let banner = FloatingNotificationBanner(title: NSLocalizedString("cant_listen_in_room", comment: ""), style: .info)
+                let banner = NotificationBanner(title: NSLocalizedString("cant_listen_in_room", comment: ""), style: .info, type: .floating)
                 banner.show()
                 return
             }
@@ -423,13 +422,14 @@ class ProfileViewController: ViewController {
 
 extension ProfileViewController: ProfilePresenterOutput {
     func displayError(title: String, description: String?) {
-        let banner = FloatingNotificationBanner(
+        let banner = NotificationBanner(
             title: title,
             subtitle: description,
-            style: .danger
+            style: .danger,
+            type: .floating
         )
 
-        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+        banner.show()
     }
 
     func display(profile: APIClient.Profile) {

@@ -63,11 +63,12 @@ class GroupInviteView: UIView {
             label.topAnchor.constraint(equalTo: image.topAnchor),
             label.leftAnchor.constraint(equalTo: image.rightAnchor, constant: 10),
             label.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            label.bottomAnchor.constraint(greaterThanOrEqualTo: image.bottomAnchor),
         ])
 
         NSLayoutConstraint.activate([
             declineButton.widthAnchor.constraint(greaterThanOrEqualTo: widthAnchor, multiplier: 0.5, constant: -30),
-            declineButton.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 20),
+            declineButton.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 20),
             declineButton.leftAnchor.constraint(equalTo: image.leftAnchor),
         ])
 

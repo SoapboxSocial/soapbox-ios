@@ -3,7 +3,30 @@
 ## [Unreleased]
 
  - Made the stories background a bit nicer.
+ - Allowed skipping and rewinding stories.
+ - When stories are buffering, the progress bar now pauses so the story and progress do not look out of sync.
+
+## [2.15.1] - 2021-03-04
+
+ - Fixed stories bar issue.
+ - Fixed group invite issue.
+ - Fixed microphone issue for new users.
+
+## [2.15.0] - 2021-03-03
+
+ - Fixed color issue.
+ - Fixed issue where link and game are both open.
+ - Made it clear when user was invited to room.
+ - Fixed the status bar for stories.
+ - Fixed issue with long group names.
+
+## [2.14.0] - 2021-03-02
+
+ - Showing more results on the search page.
+ - Fixed story creation button issue on home screen.
+ - Made it clearer how many stories there are.
  - Fix flashing when opening a mini app.
+ - Added a cancel button to the theme selection setting.
 
 ## [2.13.0] - 2021-02-25
 

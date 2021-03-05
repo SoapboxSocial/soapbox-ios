@@ -1,4 +1,3 @@
-import NotificationBannerSwift
 import UIKit
 
 protocol GroupCreationViewControllerOutput {
@@ -329,15 +328,9 @@ extension GroupCreationViewController {
 }
 
 extension GroupCreationViewController: GroupCreationPresenterOutput {
-    func displayError(_ style: ErrorStyle, title: String, description: String?) {
-        switch style {
-        case .normal:
-            let banner = NotificationBanner(title: title, subtitle: description, style: .danger)
-            banner.show()
-        case .floating:
-            let banner = FloatingNotificationBanner(title: title, subtitle: description, style: .danger)
-            banner.show(cornerRadius: 10, shadowBlurRadius: 15)
-        }
+    func displayError(_ style: NotificationBanner.BannerType, title: String, description: String?) {
+        let banner = NotificationBanner(title: title, subtitle: description, style: .danger, type: style)
+        banner.show()
     }
 
     func transitionTo(state: GroupCreationInteractor.State, id: Int?) {

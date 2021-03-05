@@ -1,5 +1,4 @@
 import GSImageViewerController
-import NotificationBannerSwift
 import UIKit
 
 protocol GroupViewControllerOutput {
@@ -219,12 +218,13 @@ extension GroupViewController: GroupPresenterOutput {
     }
 
     func displayError() {
-        let banner = FloatingNotificationBanner(
+        let banner = NotificationBanner(
             title: NSLocalizedString("something_went_wrong", comment: ""),
             subtitle: NSLocalizedString("please_try_again_later", comment: ""),
-            style: .danger
+            style: .danger,
+            type: .floating
         )
-        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+        banner.show()
     }
 
     private func showJoinedBadge() {

@@ -1,6 +1,5 @@
 import AVFoundation
 import DrawerView
-import NotificationBannerSwift
 import StoreKit
 import UIKit
 
@@ -71,29 +70,32 @@ class NavigationViewController: UINavigationController {
     }
 
     @objc func didTapCreateRoom() {
-        requestMicrophone {
-            let creationView = RoomCreationView()
-            creationView.delegate = self
+        RecordPermissions.request(
+            failure: { self.showMicrophoneWarning() },
+            success: {
+                let creationView = RoomCreationView()
+                creationView.delegate = self
 
-            self.creationDrawer = DrawerView(withView: creationView)
-            self.creationDrawer!.cornerRadius = 25.0
-            self.creationDrawer!.attachTo(view: self.view)
-            self.creationDrawer!.backgroundEffect = nil
-            self.creationDrawer!.snapPositions = [.closed, .open]
-            self.creationDrawer!.backgroundColor = .brandColor
-            self.creationDrawer!.delegate = self
-            self.creationDrawer!.childScrollViewsPanningCanDismissDrawer = false
+                self.creationDrawer = DrawerView(withView: creationView)
+                self.creationDrawer!.cornerRadius = 25.0
+                self.creationDrawer!.attachTo(view: self.view)
+                self.creationDrawer!.backgroundEffect = nil
+                self.creationDrawer!.snapPositions = [.closed, .open]
+                self.creationDrawer!.backgroundColor = .brandColor
+                self.creationDrawer!.delegate = self
+                self.creationDrawer!.childScrollViewsPanningCanDismissDrawer = false
 
-            self.view.addSubview(self.creationDrawer!)
+                self.view.addSubview(self.creationDrawer!)
 
-            creationView.autoPinEdgesToSuperview()
+                creationView.autoPinEdgesToSuperview()
 
-            self.creationDrawer!.setPosition(.closed, animated: false)
-            self.creationDrawer!.setPosition(.open, animated: true) { _ in
-                self.createRoomButton.isHidden = true
-                UIApplication.shared.isIdleTimerDisabled = true
+                self.creationDrawer!.setPosition(.closed, animated: false)
+                self.creationDrawer!.setPosition(.open, animated: true) { _ in
+                    self.createRoomButton.isHidden = true
+                    UIApplication.shared.isIdleTimerDisabled = true
+                }
             }
-        }
+        )
     }
 
     func presentCurrentRoom() {
@@ -129,41 +131,63 @@ class NavigationViewController: UINavigationController {
     }
 
     private func showClosedError() {
-        let banner = FloatingNotificationBanner(
+        let banner = NotificationBanner(
             title: NSLocalizedString("room_was_closed", comment: ""),
             subtitle: NSLocalizedString("why_not_create_a_new_room", comment: ""),
-            style: .success
+            style: .success,
+            type: .floating
         )
-        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+        banner.show()
     }
 
     private func showNetworkError() {
-        let banner = FloatingNotificationBanner(
+        let banner = NotificationBanner(
             title: NSLocalizedString("something_went_wrong", comment: ""),
             subtitle: NSLocalizedString("please_try_again_later", comment: ""),
-            style: .danger
+            style: .danger,
+            type: .floating
         )
-        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+        banner.show()
     }
 
     private func showFullRoomError() {
-        let banner = FloatingNotificationBanner(
+        let banner = NotificationBanner(
             title: NSLocalizedString("room_is_full", comment: ""),
             subtitle: NSLocalizedString("why_not_create_a_new_room", comment: ""),
-            style: .success
+            style: .success,
+            type: .floating
         )
-        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+        banner.show()
+    }
+
+    private func showMicrophoneWarning() {
+        let alert = UIAlertController(
+            title: NSLocalizedString("microphone_permission_denied", comment: ""),
+            message: nil, preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("ok", comment: ""), style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("to_settings", comment: ""), style: .default, handler: { _ in
+            DispatchQueue.main.async {
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+            }
+        }))
+
+        DispatchQueue.main.async {
+            self.present(alert, animated: true)
+        }
     }
 }
 
 extension NavigationViewController: RoomViewDelegate {
     func roomWasClosedDueToError() {
         DispatchQueue.main.async {
-            let banner = FloatingNotificationBanner(
+            let banner = NotificationBanner(
                 title: NSLocalizedString("something_went_wrong", comment: ""),
-                style: .danger
+                style: .danger,
+                type: .floating
             )
-            banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+            banner.show()
 
             self.shutdownRoom()
         }
@@ -256,48 +280,18 @@ extension NavigationViewController: RoomController {
             })
         }
 
-        if room != nil {
-            return shutdownRoom {
-                openRoom()
-            }
-        }
-
-        openRoom()
-    }
-
-    private func requestMicrophone(callback: @escaping () -> Void) {
-        func showMicrophoneWarning() {
-            let alert = UIAlertController(
-                title: NSLocalizedString("microphone_permission_denied", comment: ""),
-                message: nil, preferredStyle: .alert
-            )
-
-            alert.addAction(UIAlertAction(title: NSLocalizedString("ok", comment: ""), style: .default, handler: nil))
-            alert.addAction(UIAlertAction(title: NSLocalizedString("to_settings", comment: ""), style: .default, handler: { _ in
-                DispatchQueue.main.async {
-                    UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-                }
-            }))
-
-            present(alert, animated: true)
-        }
-
-        switch AVAudioSession.sharedInstance().recordPermission {
-        case .granted:
-            callback()
-        case .denied:
-            return showMicrophoneWarning()
-        case .undetermined:
-            AVAudioSession.sharedInstance().requestRecordPermission { granted in
-                DispatchQueue.main.async {
-                    if granted {
-                        callback()
-                    } else {
-                        showMicrophoneWarning()
+        RecordPermissions.request(
+            failure: { self.showMicrophoneWarning() },
+            success: {
+                if self.room != nil {
+                    return self.shutdownRoom {
+                        openRoom()
                     }
                 }
+
+                openRoom()
             }
-        }
+        )
     }
 }
 

@@ -12,7 +12,7 @@ class SearchInteractor {
     private let output: SearchInteractorOutput
     private let api: APIClient
 
-    private let initialLimit = 3
+    private let initialLimit = 6
 
     private let limit = 10
     private var offsets = [APIClient.SearchIndex: Int]()

@@ -170,6 +170,7 @@
 "hold_to_record" = "Hold to record";
 "recording" = "Recording";
 "paused" = "Paused";
+"playing" = "Playing";
 "post" = "Post";
 
 "add" = "Add";
@@ -236,3 +237,5 @@
 "system" = "System";
 
 "minis" = "Minis";
+
+"user_invited" = "%@ was invited!";

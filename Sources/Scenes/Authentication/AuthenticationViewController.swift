@@ -1,4 +1,3 @@
-import NotificationBannerSwift
 import UIKit
 
 protocol AuthenticationViewControllerWithInput {
@@ -71,19 +70,13 @@ class AuthenticationViewController: UIPageViewController {
 }
 
 extension AuthenticationViewController: AuthenticationPresenterOutput {
-    func displayError(_ style: ErrorStyle, title: String, description: String?) {
+    func displayError(_ style: NotificationBanner.BannerType, title: String, description: String?) {
         if let controller = orderedViewControllers[state.rawValue] as? AuthenticationViewControllerWithInput {
             controller.enableSubmit()
         }
 
-        switch style {
-        case .normal:
-            let banner = NotificationBanner(title: title, subtitle: description, style: .danger)
-            banner.show()
-        case .floating:
-            let banner = FloatingNotificationBanner(title: title, subtitle: description, style: .danger)
-            banner.show(cornerRadius: 10, shadowBlurRadius: 15)
-        }
+        let banner = NotificationBanner(title: title, subtitle: description, style: .danger, type: style)
+        banner.show()
     }
 
     func transitionTo(state: AuthenticationInteractor.AuthenticationState) {

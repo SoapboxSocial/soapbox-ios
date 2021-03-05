@@ -1,6 +1,5 @@
 import AlamofireImage
 import DrawerView
-import NotificationBannerSwift
 import UIKit
 
 protocol HomeViewControllerOutput {
@@ -244,12 +243,13 @@ extension HomeViewController: HomePresenterOutput {
     }
 
     func displayError(title: String, description: String?) {
-        let banner = FloatingNotificationBanner(
+        let banner = NotificationBanner(
             title: title,
             subtitle: description,
-            style: .danger
+            style: .danger,
+            type: .floating
         )
-        banner.show(cornerRadius: 10, shadowBlurRadius: 15)
+        banner.show()
     }
 
     func displayCurrentRoom(_ id: String) {
@@ -312,7 +312,11 @@ extension HomeViewController: UICollectionViewDelegate {
         switch presenter.sectionType(for: indexPath.section) {
         case .storiesList:
             if presenter.currentRoom != nil {
-                let banner = FloatingNotificationBanner(title: NSLocalizedString("cant_listen_in_room", comment: ""), style: .info)
+                let banner = NotificationBanner(
+                    title: NSLocalizedString("cant_listen_in_room", comment: ""),
+                    style: .info,
+                    type: .floating
+                )
                 banner.show()
                 return
             }
@@ -365,10 +369,15 @@ extension HomeViewController: UICollectionViewDataSource {
             if indexPath.item == 0 {
                 let cell = collectionView.dequeueReusableCell(withClass: CreateStoryCell.self, for: indexPath)
                 if presenter.hasOwnStory {
-                    cell.profileImage.image = UIImage(systemName: "waveform", withConfiguration: UIImage.SymbolConfiguration(weight: .bold))
+                    cell.profileImage.image = UIImage(
+                        systemName: "waveform",
+                        withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .bold)
+                    )
                     cell.profileImage.tintColor = .white
+                    cell.profileImage.contentMode = .center
                 } else {
                     cell.profileImage.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!))
+                    cell.profileImage.contentMode = .scaleToFill
                 }
 
                 return cell

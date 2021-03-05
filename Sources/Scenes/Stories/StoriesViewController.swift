@@ -7,14 +7,7 @@ class StoriesViewController: UIViewController {
 
     private let feed: APIClient.StoryFeed
 
-    private let progress: ProgressView = {
-        let progress = ProgressView()
-        progress.progressTintColor = .white
-        progress.trackTintColor = UIColor.white.withAlphaComponent(0.2)
-        progress.translatesAutoresizingMaskIntoConstraints = false
-        progress.progress = 0.0
-        return progress
-    }()
+    private var progress: StoriesProgressBar!
 
     private let menuButton: UIButton = {
         let button = UIButton()
@@ -35,12 +28,15 @@ class StoriesViewController: UIViewController {
     }()
 
     private let player: StoryPlayer
-    private var timer: Timer?
     private var playTime = Float(0.0)
 
     private let thumbsUp = StoryReactionButton(reaction: "👍")
     private let fire = StoryReactionButton(reaction: "🔥")
     private let heart = StoryReactionButton(reaction: "❤️")
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
 
     init(feed: APIClient.StoryFeed) {
         self.feed = feed // @TODO MAY ONLY NEED TO BE USER
@@ -56,20 +52,12 @@ class StoriesViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .black
 
-        do {
-            try AVAudioSession.sharedInstance().setActive(false)
-            try AVAudioSession.sharedInstance().setCategory(.playback, options: [.defaultToSpeaker, .mixWithOthers])
-            try AVAudioSession.sharedInstance().setActive(true)
-        } catch {
-            print("AVAudioSession error: \(error)")
-        }
-
-        player.play()
-
-        let duration = player.duration()
-        timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
-            self.progress.setProgress(self.player.playTime() / duration, animated: true)
-        })
+        progress = StoriesProgressBar(numberOfSegments: feed.stories.count)
+        progress.translatesAutoresizingMaskIntoConstraints = false
+        progress.topColor = UIColor.white
+        progress.padding = 5.0
+        progress.bottomColor = UIColor.white.withAlphaComponent(0.25)
+        progress.dataSource = self
 
         let background = UIView()
         background.translatesAutoresizingMaskIntoConstraints = false
@@ -148,6 +136,32 @@ class StoriesViewController: UIViewController {
         fire.addTarget(self, action: #selector(didReact), for: .touchUpInside)
         heart.addTarget(self, action: #selector(didReact), for: .touchUpInside)
 
+        let rightTapView = UIView()
+        rightTapView.translatesAutoresizingMaskIntoConstraints = false
+        rightTapView.isUserInteractionEnabled = true
+        rightTapView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(skip)))
+        content.addSubview(rightTapView)
+
+        let leftTapView = UIView()
+        leftTapView.translatesAutoresizingMaskIntoConstraints = false
+        leftTapView.isUserInteractionEnabled = true
+        leftTapView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(previous)))
+        content.addSubview(leftTapView)
+
+        NSLayoutConstraint.activate([
+            rightTapView.rightAnchor.constraint(equalTo: content.rightAnchor),
+            rightTapView.topAnchor.constraint(equalTo: buttonStack.bottomAnchor),
+            rightTapView.bottomAnchor.constraint(equalTo: content.bottomAnchor),
+            rightTapView.widthAnchor.constraint(equalTo: content.widthAnchor, multiplier: 0.33),
+        ])
+
+        NSLayoutConstraint.activate([
+            leftTapView.leftAnchor.constraint(equalTo: content.leftAnchor),
+            leftTapView.topAnchor.constraint(equalTo: buttonStack.bottomAnchor),
+            leftTapView.bottomAnchor.constraint(equalTo: content.bottomAnchor),
+            leftTapView.widthAnchor.constraint(equalTo: content.widthAnchor, multiplier: 0.33),
+        ])
+
         NSLayoutConstraint.activate([
             thumbsUp.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -10),
             thumbsUp.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -186,7 +200,7 @@ class StoriesViewController: UIViewController {
         NSLayoutConstraint.activate([
             progress.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
             progress.rightAnchor.constraint(equalTo: buttonStack.leftAnchor, constant: -20),
-            progress.heightAnchor.constraint(equalToConstant: 5),
+            progress.heightAnchor.constraint(equalToConstant: 4),
             progress.centerYAnchor.constraint(equalTo: buttonStack.centerYAnchor),
         ])
 
@@ -210,9 +224,25 @@ class StoriesViewController: UIViewController {
         ])
     }
 
+    override func viewDidAppear(_: Bool) {
+        super.viewDidAppear(true)
+
+        do {
+            try AVAudioSession.sharedInstance().setActive(false)
+            try AVAudioSession.sharedInstance().setCategory(.playback, options: [.defaultToSpeaker, .mixWithOthers])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("AVAudioSession error: \(error)")
+        }
+
+        player.playTrack()
+        progress.startAnimation()
+        progress.isPaused = true
+    }
+
     // @TODO allow deselecting reaction?
     @objc private func didReact(_ sender: UIButton) {
-        let item = player.currentItem()
+        let item = feed.stories[player.currentTrack]
 
         if feed.user.id == UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
             return
@@ -234,25 +264,20 @@ class StoriesViewController: UIViewController {
     }
 
     @objc private func exitTapped() {
-        player.stop()
+        player.pause()
         dismiss(animated: true)
     }
 
     @objc private func menuTapped() {
-        let item = player.currentItem()
+        let item = feed.stories[player.currentTrack]
 
         player.pause()
-        timer?.invalidate()
+        progress.isPaused = true
 
         let menu = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         menu.willDismissHandler = {
             self.player.unpause()
-            let duration = self.player.duration()
-            self.timer = Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true, block: { _ in
-                self.progress.setProgress(self.player.playTime() / duration, animated: true)
-            })
-
-            self.timer?.fire()
+            self.progress.isPaused = false
         }
 
         let delete = UIAlertAction(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in
@@ -266,16 +291,38 @@ class StoriesViewController: UIViewController {
 
         present(menu, animated: true)
     }
+
+    @objc private func skip() {
+        progress.skip()
+        player.next()
+    }
+
+    @objc private func previous() {
+        progress.rewind()
+        player.previous()
+    }
 }
 
 extension StoriesViewController: StoryPlayerDelegate {
-    func didReachEnd() {
-        player.stop()
-        timer?.invalidate()
-        dismiss(animated: true)
+    func didStartBuffering(_: StoryPlayer) {
+        progress.isPaused = true
     }
 
-    func startedPlaying(story: APIClient.Story) {
+    func didEndBuffering(_: StoryPlayer) {
+        if !progress.isPaused {
+            return
+        }
+
+        progress.isPaused = false
+    }
+
+    func didStartPlaying(_: StoryPlayer, itemAt index: Int) {
+        let story = feed.stories[index]
+
+        if index != 0, progress.currentIndex < index {
+            progress.skip()
+        }
+
         posted.text = Date(timeIntervalSince1970: TimeInterval(story.deviceTimestamp)).timeAgoDisplay()
 
         thumbsUp.count = 0
@@ -294,5 +341,16 @@ extension StoriesViewController: StoryPlayerDelegate {
                 return
             }
         }
+    }
+
+    func didReachEnd(_ player: StoryPlayer) {
+        player.pause()
+        dismiss(animated: true)
+    }
+}
+
+extension StoriesViewController: StoriesProgressBarDataSource {
+    func storiesProgressBar(progressBar _: StoriesProgressBar, durationForItemAt index: Int) -> TimeInterval {
+        return player.duration(for: index)
     }
 }

@@ -1,6 +1,5 @@
 import DrawerView
 import LinkPresentation
-import NotificationBannerSwift
 import UIKit
 
 protocol RoomViewDelegate {
@@ -684,6 +683,11 @@ extension RoomView: RoomDelegate {
     }
 
     func didReceiveLink(from: Int64, link: URL) {
+        if miniView != nil {
+            linkView.isHidden = true
+            return
+        }
+
         var name = "you"
         if from != 0 {
             guard let user = room.state.members.first(where: { $0.id == from }) else {
@@ -706,9 +710,10 @@ extension RoomView: RoomDelegate {
         let message = NSLocalizedString("user_started_recording_screen", comment: "")
 
         DispatchQueue.main.async {
-            let banner = GrowingNotificationBanner(
+            let banner = NotificationBanner(
                 title: String(format: message, user.displayName.firstName()),
-                style: .info
+                style: .info,
+                type: .normal
             )
 
             banner.show()
@@ -737,6 +742,11 @@ extension RoomView: RoomDelegate {
     }
 
     func linkWasPinned(link: URL) {
+        if miniView != nil {
+            linkView.isHidden = true
+            return
+        }
+
         DispatchQueue.main.async {
             self.rightButtonBar.hide(button: .paste)
         }

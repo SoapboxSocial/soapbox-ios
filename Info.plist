@@ -21,7 +21,7 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.13.0</string>
+	<string>2.15.1</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -50,11 +50,13 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>We don&apos;t use this, must investigate further</string>
+	<string>We don't use this, must investigate further</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone is required</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app wants to use your photos.</string>
+	<key>ROOM_API_URL</key>
+	<string>$(ROOM_API_URL)</string>
 	<key>ROOM_SERVICE_PORT</key>
 	<string>$(ROOM_SERVICE_PORT)</string>
 	<key>ROOM_SERVICE_URL</key>
@@ -89,8 +91,6 @@
 	<string>LaunchScreen</string>
 	<key>UIRequiresFullScreen</key>
 	<true/>
-	<key>ROOM_API_URL</key>
-	<string>$(ROOM_API_URL)</string>
 	<key>UIStatusBarHidden</key>
 	<false/>
 	<key>UIStatusBarStyle</key>

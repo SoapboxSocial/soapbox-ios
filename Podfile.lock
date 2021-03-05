@@ -9,7 +9,7 @@ PODS:
   - GoogleWebRTC (1.1.31999)
   - GSImageViewerController (1.6.3)
   - KDCircularProgress (1.5.4)
-  - KeychainAccess (4.2.1)
+  - KeychainAccess (4.2.2)
   - MarqueeLabel (4.0.5)
   - NotificationBannerSwift (3.0.6):
     - MarqueeLabel (~> 4.0.5)
@@ -83,7 +83,7 @@ SPEC CHECKSUMS:
   GoogleWebRTC: b39a78c4f5cc6b0323415b9233db03a2faa7b0f0
   GSImageViewerController: 20a257d7e3dd9ee171c2dfea659992eba2761839
   KDCircularProgress: 98200c6b8e85d22bc04eb644721d3b1e12b0686b
-  KeychainAccess: 9b07f665298d13c3a85881bd3171f6f49b8151c1
+  KeychainAccess: c0c4f7f38f6fc7bbe58f5702e25f7bd2f65abf51
   MarqueeLabel: 00cc0bcd087111dca575878b3531af980559707d
   NotificationBannerSwift: 7021be2338f8f29cf424b0aca43da462bf9e2a1a
   Siren: de768099aff1f1c9acda4247064788a4940b4bf3
