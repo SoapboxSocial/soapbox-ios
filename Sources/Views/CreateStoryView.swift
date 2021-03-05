@@ -234,9 +234,6 @@ class CreateStoryView: UIView {
         button.isSelected.toggle()
         timer.invalidate()
 
-        let paused = NSLocalizedString("paused", comment: "")
-        label.text = "● " + paused
-
         UIView.animate(withDuration: 0.3, animations: {
             self.playButton.isHidden = false
             self.button.isHidden = true
@@ -291,9 +288,14 @@ class CreateStoryView: UIView {
         if playButton.isSelected {
             timer.invalidate()
             recorder.pause()
+
+            label.text = "● " + NSLocalizedString("paused", comment: "")
+
         } else {
             recorder.loadPlayer()
             recorder.play()
+
+            label.text = "● " + NSLocalizedString("playing", comment: "")
 
             let duration = recorder.duration()
 
