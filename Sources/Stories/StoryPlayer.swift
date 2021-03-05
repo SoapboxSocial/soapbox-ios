@@ -37,6 +37,11 @@ class StoryPlayer {
     }
 
     func previous() {
+        if currentTrack == 0 {
+            player.seek(to: .zero)
+            return
+        }
+
         currentTrack = (currentTrack - 1 + queue.count) % queue.count
         playTrack()
     }
@@ -56,8 +61,19 @@ class StoryPlayer {
             return
         }
 
-        // @TOOD check item exists
-        player.replaceCurrentItem(with: queue[currentTrack])
+        queue[currentTrack].seek(to: .zero, completionHandler: { _ in
+            self.player.replaceCurrentItem(with: self.queue[self.currentTrack])
+            self.player.play()
+            self.delegate?.didStartPlaying(self, itemAt: self.currentTrack)
+        })
+    }
+
+    func duration(for track: Int) -> TimeInterval {
+        return TimeInterval(Float(CMTimeGetSeconds(queue[track].asset.duration)))
+    }
+
+    private func setupObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(itemFinished), name: .AVPlayerItemDidPlayToEndTime, object: nil)
 
         timeControlStatusObserver = player.observe(\.timeControlStatus, options: [.new]) { playerItem, _ in
             switch playerItem.timeControlStatus {
@@ -69,18 +85,6 @@ class StoryPlayer {
                 break
             }
         }
-
-        player.play()
-
-        delegate?.didStartPlaying(self, itemAt: currentTrack)
-    }
-
-    func duration(for track: Int) -> TimeInterval {
-        return TimeInterval(Float(CMTimeGetSeconds(queue[track].asset.duration)))
-    }
-
-    private func setupObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(itemFinished), name: .AVPlayerItemDidPlayToEndTime, object: nil)
     }
 
     @objc private func itemFinished() {
