@@ -270,6 +270,11 @@ class StoriesViewController: UIViewController {
         progress.skip()
         player.next()
     }
+    
+    @objc private func previous() {
+        progress.rewind()
+        player.previous()
+    }
 }
 
 extension StoriesViewController: StoryPlayerDelegate {
