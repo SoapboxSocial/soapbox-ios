@@ -36,9 +36,15 @@ class StoriesViewController: UIViewController {
         return label
     }()
 
-    private let player: StoryPlayer
-    private var playTime = Float(0.0)
+    private let visualizer: CircularAudioVisualizerView = {
+        let visualizer = CircularAudioVisualizerView()
+        visualizer.translatesAutoresizingMaskIntoConstraints = false
+        visualizer.backgroundColor = UIColor.white.withAlphaComponent(0.2)
+        return visualizer
+    }()
 
+    private let player: StoryPlayer
+    
     private let thumbsUp = StoryReactionButton(reaction: "👍")
     private let fire = StoryReactionButton(reaction: "🔥")
     private let heart = StoryReactionButton(reaction: "❤️")
@@ -98,6 +104,8 @@ class StoriesViewController: UIViewController {
         exit.tintColor = .white
         exit.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         buttonStack.addArrangedSubview(exit)
+
+        content.addSubview(visualizer)
 
         if feed.user.id != UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
             menuButton.isHidden = true
@@ -218,6 +226,13 @@ class StoriesViewController: UIViewController {
         ])
 
         NSLayoutConstraint.activate([
+            visualizer.centerYAnchor.constraint(equalTo: content.centerYAnchor),
+            visualizer.centerXAnchor.constraint(equalTo: content.centerXAnchor),
+            visualizer.heightAnchor.constraint(equalToConstant: 140),
+            visualizer.widthAnchor.constraint(equalToConstant: 140),
+        ])
+
+        NSLayoutConstraint.activate([
             image.centerYAnchor.constraint(equalTo: content.centerYAnchor),
             image.centerXAnchor.constraint(equalTo: content.centerXAnchor),
             image.heightAnchor.constraint(equalToConstant: 140),
@@ -278,6 +293,7 @@ class StoriesViewController: UIViewController {
 
     @objc private func exitTapped() {
         player.pause()
+        player.shutdown()
         dismiss(animated: true)
     }
 
@@ -359,6 +375,10 @@ extension StoriesViewController: StoryPlayerDelegate {
     func didReachEnd(_ player: StoryPlayer) {
         player.pause()
         dismiss(animated: true)
+    }
+
+    func didUpdatePower(_: StoryPlayer, power: Double) {
+        visualizer.update(power: power)
     }
 }
 

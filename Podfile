@@ -22,6 +22,7 @@ target 'Soapbox' do
   pod 'Siren'
   pod 'KDCircularProgress'
   pod 'ColorThiefSwift'
+  pod 'ACBAVPlayer'
 
   target 'SoapboxTests' do
     inherit! :search_paths

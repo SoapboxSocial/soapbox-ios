@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - Made the stories background a bit nicer.
+ - Made stories a bit more visually fun.
  - Allowed skipping and rewinding stories.
  - When stories are buffering, the progress bar now pauses so the story and progress do not look out of sync.
 
