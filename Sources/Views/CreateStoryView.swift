@@ -11,16 +11,8 @@ protocol CreateStoryViewDelegate {
 }
 
 class CreateStoryView: UIView {
-    private static let configuration = UIImage.SymbolConfiguration(pointSize: 30, weight: .heavy)
-
-    private let button: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(systemName: "mic.fill", withConfiguration: CreateStoryView.configuration), for: .normal)
-        button.setImage(UIImage(systemName: "stop.fill", withConfiguration: CreateStoryView.configuration), for: [.highlighted, .selected])
-        button.tintColor = .black
-        button.backgroundColor = .white
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 70 / 2
+    private let button: RecordButton = {
+        let button = RecordButton()
         return button
     }()
 
