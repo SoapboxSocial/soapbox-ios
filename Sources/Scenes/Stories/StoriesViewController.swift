@@ -44,7 +44,7 @@ class StoriesViewController: UIViewController {
     }()
 
     private let player: StoryPlayer
-    
+
     private let thumbsUp = StoryReactionButton(reaction: "👍")
     private let fire = StoryReactionButton(reaction: "🔥")
     private let heart = StoryReactionButton(reaction: "❤️")

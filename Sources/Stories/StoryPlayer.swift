@@ -66,6 +66,8 @@ class StoryPlayer {
             return
         }
 
+        delegate?.didStartBuffering(self)
+
         queue[currentTrack].seek(to: .zero, completionHandler: { _ in
             self.player.replaceCurrentItemAndUpdateMetering(for: self.queue[self.currentTrack])
             self.player.play()
