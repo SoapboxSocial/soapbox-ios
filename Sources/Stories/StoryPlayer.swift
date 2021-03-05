@@ -63,20 +63,7 @@ class StoryPlayer {
 
         queue[currentTrack].seek(to: .zero, completionHandler: { _ in
             self.player.replaceCurrentItem(with: self.queue[self.currentTrack])
-
-            self.timeControlStatusObserver = self.player.observe(\.timeControlStatus, options: [.new]) { playerItem, _ in
-                switch playerItem.timeControlStatus {
-                case .paused, .waitingToPlayAtSpecifiedRate:
-                    self.delegate?.didStartBuffering(self)
-                case AVPlayerTimeControlStatus.playing:
-                    self.delegate?.didEndBuffering(self)
-                default:
-                    break
-                }
-            }
-
             self.player.play()
-
             self.delegate?.didStartPlaying(self, itemAt: self.currentTrack)
         })
     }
@@ -87,6 +74,17 @@ class StoryPlayer {
 
     private func setupObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(itemFinished), name: .AVPlayerItemDidPlayToEndTime, object: nil)
+
+        timeControlStatusObserver = player.observe(\.timeControlStatus, options: [.new]) { playerItem, _ in
+            switch playerItem.timeControlStatus {
+            case .paused, .waitingToPlayAtSpecifiedRate:
+                self.delegate?.didStartBuffering(self)
+            case AVPlayerTimeControlStatus.playing:
+                self.delegate?.didEndBuffering(self)
+            default:
+                break
+            }
+        }
     }
 
     @objc private func itemFinished() {
