@@ -65,17 +65,11 @@ class StoriesViewController: UIViewController {
         progress.bottomColor = UIColor.white.withAlphaComponent(0.25)
         progress.dataSource = self
 
-        let background = UIView()
-        background.translatesAutoresizingMaskIntoConstraints = false
-        background.backgroundColor = .reactionsBackground
-        background.layer.cornerRadius = 30
-        view.addSubview(background)
-
         let content = UIView()
         content.translatesAutoresizingMaskIntoConstraints = false
         content.layer.cornerRadius = 30
         content.backgroundColor = .brandColor
-        background.addSubview(content)
+        view.addSubview(content)
 
         content.addSubview(progress)
 
@@ -124,9 +118,9 @@ class StoriesViewController: UIViewController {
 
         content.addSubview(posted)
 
-        background.addSubview(thumbsUp)
-        background.addSubview(fire)
-        background.addSubview(heart)
+        content.addSubview(thumbsUp)
+        content.addSubview(fire)
+        content.addSubview(heart)
 
         thumbsUp.addTarget(self, action: #selector(didReact), for: .touchUpInside)
         fire.addTarget(self, action: #selector(didReact), for: .touchUpInside)
@@ -159,17 +153,17 @@ class StoriesViewController: UIViewController {
         ])
 
         NSLayoutConstraint.activate([
-            thumbsUp.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -10),
+            thumbsUp.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             thumbsUp.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
 
         NSLayoutConstraint.activate([
-            fire.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -10),
+            fire.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             fire.leftAnchor.constraint(equalTo: thumbsUp.rightAnchor, constant: 20),
         ])
 
         NSLayoutConstraint.activate([
-            heart.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -10),
+            heart.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             heart.rightAnchor.constraint(equalTo: thumbsUp.leftAnchor, constant: -20),
         ])
 
@@ -178,13 +172,6 @@ class StoriesViewController: UIViewController {
             content.bottomAnchor.constraint(equalTo: thumbsUp.topAnchor, constant: -10),
             content.leftAnchor.constraint(equalTo: view.leftAnchor),
             content.rightAnchor.constraint(equalTo: view.rightAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
-            background.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            background.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            background.leftAnchor.constraint(equalTo: view.leftAnchor),
-            background.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
 
         NSLayoutConstraint.activate([

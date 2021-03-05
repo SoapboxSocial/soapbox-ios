@@ -76,8 +76,4 @@ extension UIColor {
             }
         }
     }
-
-    static var reactionsBackground: UIColor {
-        return UIColor(red: 28 / 255, green: 28 / 255, blue: 30 / 255, alpha: 1.0)
-    }
 }
