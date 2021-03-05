@@ -129,11 +129,24 @@ class StoriesViewController: UIViewController {
         rightTapView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(skip)))
         content.addSubview(rightTapView)
 
+        let leftTapView = UIView()
+        leftTapView.translatesAutoresizingMaskIntoConstraints = false
+        leftTapView.isUserInteractionEnabled = true
+        leftTapView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(previous)))
+        content.addSubview(leftTapView)
+
         NSLayoutConstraint.activate([
             rightTapView.rightAnchor.constraint(equalTo: content.rightAnchor),
             rightTapView.topAnchor.constraint(equalTo: buttonStack.bottomAnchor),
             rightTapView.bottomAnchor.constraint(equalTo: content.bottomAnchor),
             rightTapView.widthAnchor.constraint(equalTo: content.widthAnchor, multiplier: 0.33),
+        ])
+
+        NSLayoutConstraint.activate([
+            leftTapView.leftAnchor.constraint(equalTo: content.leftAnchor),
+            leftTapView.topAnchor.constraint(equalTo: buttonStack.bottomAnchor),
+            leftTapView.bottomAnchor.constraint(equalTo: content.bottomAnchor),
+            leftTapView.widthAnchor.constraint(equalTo: content.widthAnchor, multiplier: 0.33),
         ])
 
         NSLayoutConstraint.activate([
@@ -270,7 +283,7 @@ class StoriesViewController: UIViewController {
         progress.skip()
         player.next()
     }
-    
+
     @objc private func previous() {
         progress.rewind()
         player.previous()

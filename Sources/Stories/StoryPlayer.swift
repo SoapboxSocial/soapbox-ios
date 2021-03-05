@@ -37,6 +37,11 @@ class StoryPlayer {
     }
 
     func previous() {
+        if currentTrack == 0 {
+            player.seek(to: .zero)
+            return
+        }
+
         currentTrack = (currentTrack - 1 + queue.count) % queue.count
         playTrack()
     }
@@ -56,23 +61,24 @@ class StoryPlayer {
             return
         }
 
-        // @TOOD check item exists
-        player.replaceCurrentItem(with: queue[currentTrack])
+        queue[currentTrack].seek(to: .zero, completionHandler: { _ in
+            self.player.replaceCurrentItem(with: self.queue[self.currentTrack])
 
-        timeControlStatusObserver = player.observe(\.timeControlStatus, options: [.new]) { playerItem, _ in
-            switch playerItem.timeControlStatus {
-            case .paused, .waitingToPlayAtSpecifiedRate:
-                self.delegate?.didStartBuffering(self)
-            case AVPlayerTimeControlStatus.playing:
-                self.delegate?.didEndBuffering(self)
-            default:
-                break
+            self.timeControlStatusObserver = self.player.observe(\.timeControlStatus, options: [.new]) { playerItem, _ in
+                switch playerItem.timeControlStatus {
+                case .paused, .waitingToPlayAtSpecifiedRate:
+                    self.delegate?.didStartBuffering(self)
+                case AVPlayerTimeControlStatus.playing:
+                    self.delegate?.didEndBuffering(self)
+                default:
+                    break
+                }
             }
-        }
 
-        player.play()
+            self.player.play()
 
-        delegate?.didStartPlaying(self, itemAt: currentTrack)
+            self.delegate?.didStartPlaying(self, itemAt: self.currentTrack)
+        })
     }
 
     func duration(for track: Int) -> TimeInterval {
