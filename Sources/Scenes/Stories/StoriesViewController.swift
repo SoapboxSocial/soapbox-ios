@@ -1,4 +1,5 @@
 import AVFoundation
+import ColorThiefSwift
 import UIKit
 
 class StoriesViewController: UIViewController {
@@ -26,6 +27,15 @@ class StoriesViewController: UIViewController {
         return label
     }()
 
+    private let name: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .rounded(forTextStyle: .title1, weight: .bold)
+        label.textColor = UIColor.white
+        label.textAlignment = .center
+        return label
+    }()
+
     private let visualizer: CircularAudioVisualizerView = {
         let visualizer = CircularAudioVisualizerView()
         visualizer.translatesAutoresizingMaskIntoConstraints = false
@@ -33,9 +43,8 @@ class StoriesViewController: UIViewController {
         return visualizer
     }()
 
-    private var player: StoryPlayer!
-    private var playTime = Float(0.0)
-
+    private let player: StoryPlayer
+    
     private let thumbsUp = StoryReactionButton(reaction: "👍")
     private let fire = StoryReactionButton(reaction: "🔥")
     private let heart = StoryReactionButton(reaction: "❤️")
@@ -105,15 +114,31 @@ class StoriesViewController: UIViewController {
         content.addSubview(image)
 
         if let url = feed.user.image, url != "" {
-            image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + url))
+            image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + url), completion: { data in
+                guard let image = data.value else {
+                    return
+                }
+
+                guard let dominantColor = ColorThief.getColor(from: image) else {
+                    return
+                }
+
+                let color = dominantColor.makeUIColor()
+                DispatchQueue.main.async {
+                    content.backgroundColor = color
+
+                    if color.isLight() {
+                        self.name.textColor = .black
+                        self.posted.textColor = UIColor.black.withAlphaComponent(0.5)
+                    } else {
+                        self.name.textColor = .white
+                        self.posted.textColor = UIColor.white.withAlphaComponent(0.5)
+                    }
+                }
+            })
         }
 
-        let name = UILabel()
-        name.font = .rounded(forTextStyle: .title1, weight: .bold)
         name.text = feed.user.displayName
-        name.textColor = .white
-        name.textAlignment = .center
-        name.translatesAutoresizingMaskIntoConstraints = false
         content.addSubview(name)
 
         content.addSubview(posted)

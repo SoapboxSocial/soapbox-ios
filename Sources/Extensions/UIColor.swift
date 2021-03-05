@@ -76,4 +76,20 @@ extension UIColor {
             }
         }
     }
+
+    func isLight() -> Bool {
+        // algorithm from: http://www.w3.org/WAI/ER/WD-AERT/#color-contrast
+
+        guard let components = cgColor.components else {
+            return false
+        }
+
+        let red = components[0] * 299
+        let blue = components[1] * 587
+        let green = components[2] * 114
+
+        let brightness = (red + blue + green) / 1000
+
+        return brightness >= 0.5
+    }
 }
