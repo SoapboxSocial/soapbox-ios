@@ -11,16 +11,8 @@ protocol CreateStoryViewDelegate {
 }
 
 class CreateStoryView: UIView {
-    private static let configuration = UIImage.SymbolConfiguration(pointSize: 30, weight: .heavy)
-
-    private let button: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(systemName: "mic.fill", withConfiguration: CreateStoryView.configuration), for: .normal)
-        button.setImage(UIImage(systemName: "stop.fill", withConfiguration: CreateStoryView.configuration), for: [.highlighted, .selected])
-        button.tintColor = .black
-        button.backgroundColor = .white
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 70 / 2
+    private let button: RecordButton = {
+        let button = RecordButton()
         return button
     }()
 
@@ -234,9 +226,6 @@ class CreateStoryView: UIView {
         button.isSelected.toggle()
         timer.invalidate()
 
-        let paused = NSLocalizedString("paused", comment: "")
-        label.text = "● " + paused
-
         UIView.animate(withDuration: 0.3, animations: {
             self.playButton.isHidden = false
             self.button.isHidden = true
@@ -291,9 +280,14 @@ class CreateStoryView: UIView {
         if playButton.isSelected {
             timer.invalidate()
             recorder.pause()
+
+            label.text = "● " + NSLocalizedString("paused", comment: "")
+
         } else {
             recorder.loadPlayer()
             recorder.play()
+
+            label.text = "● " + NSLocalizedString("playing", comment: "")
 
             let duration = recorder.duration()
 

@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+ - Allowed skipping and rewinding stories.
+ - When stories are buffering, the progress bar now pauses so the story and progress do not look out of sync.
+
 ## [2.15.1] - 2021-03-04
 
  - Fixed stories bar issue.

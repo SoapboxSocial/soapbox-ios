@@ -33,7 +33,7 @@ class StoriesProgressBar: UIView {
                     layer.timeOffset = pausedTime
                 }
             } else {
-                let segment = segments[currentAnimationIndex]
+                let segment = segments[currentIndex]
                 let layer = segment.topSegmentView.layer
                 let pausedTime = layer.timeOffset
                 layer.speed = 1.0
@@ -47,7 +47,7 @@ class StoriesProgressBar: UIView {
 
     private var segments = [Segment]()
     private var hasDoneLayout = false // hacky way to prevent layouting again
-    private var currentAnimationIndex = 0
+    private(set) var currentIndex = 0
 
     init(numberOfSegments: Int) {
         super.init(frame: CGRect.zero)
@@ -90,7 +90,7 @@ class StoriesProgressBar: UIView {
 
     private func animate(animationIndex: Int = 0) {
         let nextSegment = segments[animationIndex]
-        currentAnimationIndex = animationIndex
+        currentIndex = animationIndex
         isPaused = false // no idea why we have to do this here, but it fixes everything :D
 
         var duration = 10.0
@@ -117,24 +117,24 @@ class StoriesProgressBar: UIView {
     }
 
     private func next() {
-        let newIndex = currentAnimationIndex + 1
+        let newIndex = currentIndex + 1
         if newIndex < segments.count {
             animate(animationIndex: newIndex)
         }
     }
 
     func skip() {
-        let currentSegment = segments[currentAnimationIndex]
+        let currentSegment = segments[currentIndex]
         currentSegment.topSegmentView.frame.size.width = currentSegment.bottomSegmentView.frame.width
         currentSegment.topSegmentView.layer.removeAllAnimations()
         next()
     }
 
     func rewind() {
-        let currentSegment = segments[currentAnimationIndex]
+        let currentSegment = segments[currentIndex]
         currentSegment.topSegmentView.layer.removeAllAnimations()
         currentSegment.topSegmentView.frame.size.width = 0
-        let newIndex = max(currentAnimationIndex - 1, 0)
+        let newIndex = max(currentIndex - 1, 0)
         let prevSegment = segments[newIndex]
         prevSegment.topSegmentView.frame.size.width = 0
         animate(animationIndex: newIndex)
