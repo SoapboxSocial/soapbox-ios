@@ -4,8 +4,8 @@ import UIKit
 class CircularAudioVisualizerView: UIView {
    
     private let animationDuration = 0.02
-    private let maxPowerDelta: CGFloat = 30
-    private let minScale: CGFloat = 0.6
+    private let maxPowerDelta = CGFloat(30)
+    private let minScale = CGFloat(0.6)
 
     func update(power: Double) {
         UIView.animate(withDuration: animationDuration, animations: {
