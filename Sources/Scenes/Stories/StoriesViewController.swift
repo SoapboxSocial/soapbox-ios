@@ -53,6 +53,8 @@ class StoriesViewController: UIViewController {
         return .lightContent
     }
 
+    private var transition: DragToDismissTransition!
+
     init(feed: APIClient.StoryFeed) {
         self.feed = feed // @TODO MAY ONLY NEED TO BE USER
         player = StoryPlayer(items: feed.stories)
@@ -66,6 +68,8 @@ class StoriesViewController: UIViewController {
 
     override func viewDidLoad() {
         view.backgroundColor = .black
+
+        transition = DragToDismissTransition(transitioningController: self)
 
         progress = StoriesProgressBar(numberOfSegments: feed.stories.count)
         progress.translatesAutoresizingMaskIntoConstraints = false
@@ -240,8 +244,8 @@ class StoriesViewController: UIViewController {
         ])
     }
 
-    override func viewDidAppear(_: Bool) {
-        super.viewDidAppear(true)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
 
         do {
             try AVAudioSession.sharedInstance().setActive(false)
@@ -256,6 +260,12 @@ class StoriesViewController: UIViewController {
         progress.isPaused = true
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        player.pause()
+        player.shutdown()
+    }
+    
     // @TODO allow deselecting reaction?
     @objc private func didReact(_ sender: UIButton) {
         let item = feed.stories[player.currentTrack]
@@ -280,8 +290,6 @@ class StoriesViewController: UIViewController {
     }
 
     @objc private func exitTapped() {
-        player.pause()
-        player.shutdown()
         dismiss(animated: true)
     }
 
