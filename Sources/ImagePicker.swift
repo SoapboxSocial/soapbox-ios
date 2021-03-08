@@ -45,10 +45,10 @@ extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDe
 
         let newSize = { () -> CGSize in
             if widthRatio > heightRatio {
-                return CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
+                return CGSize(width: round(size.width * heightRatio), height: round(size.height * heightRatio))
             }
 
-            return CGSize(width: size.width * widthRatio, height: size.height * widthRatio)
+            return CGSize(width: round(size.width * widthRatio), height: round(size.height * widthRatio))
         }()
 
         let renderer = UIGraphicsImageRenderer(size: newSize)

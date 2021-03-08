@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fixed issue causing weird borders when uploading profile images.
+
 ## [2.16.0] - 2021-03-08
 
  - We gave stories some necessary TLC. You can now skip as well as rewind, various issues were fixed and the visuals were improved drastically. We hope you enjoy!
