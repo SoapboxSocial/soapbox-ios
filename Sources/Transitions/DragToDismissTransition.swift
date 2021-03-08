@@ -1,7 +1,6 @@
 import UIKit
 
 class DragToDismissTransition: UIPercentDrivenInteractiveTransition {
-    private(set) var usingGestures = false
 
     unowned var transitioningController: UIViewController
 
@@ -15,21 +14,15 @@ class DragToDismissTransition: UIPercentDrivenInteractiveTransition {
 
     @objc func didPan(_ gesture: UIPanGestureRecognizer) {
         let translation = gesture.translation(in: transitioningController.view)
-        let verticalMovement = translation.y / transitioningController.view.bounds.height
-        let downwardMovement = fmaxf(Float(verticalMovement), 0.0)
-        let downwardMovementPercent = fminf(downwardMovement, 1.0)
-        let progress = CGFloat(downwardMovementPercent)
+        let percent = (translation.x / transitioningController.view.bounds.size.width) * 0.5
 
         switch gesture.state {
         case .began:
-            usingGestures = true
             transitioningController.dismiss(animated: true)
         case .changed:
-            update(progress)
+            update(percent)
         case .ended, .cancelled:
-            usingGestures = false
-
-            if progress >= 0.3 {
+            if percent >= 0.5 {
                 finish()
             } else {
                 cancel()

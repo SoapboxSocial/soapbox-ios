@@ -259,9 +259,9 @@ class StoriesViewController: UIViewController {
         progress.startAnimation()
         progress.isPaused = true
     }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         player.pause()
         player.shutdown()
     }
