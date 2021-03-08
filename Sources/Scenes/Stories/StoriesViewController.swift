@@ -78,7 +78,6 @@ class StoriesViewController: UIViewController {
         let content = UIView()
         content.translatesAutoresizingMaskIntoConstraints = false
         content.layer.cornerRadius = 30
-        content.backgroundColor = .brandColor
         view.addSubview(content)
 
         content.addSubview(progress)
@@ -144,9 +143,9 @@ class StoriesViewController: UIViewController {
 
         content.addSubview(posted)
 
-        content.addSubview(thumbsUp)
-        content.addSubview(fire)
-        content.addSubview(heart)
+        view.addSubview(thumbsUp)
+        view.addSubview(fire)
+        view.addSubview(heart)
 
         thumbsUp.addTarget(self, action: #selector(didReact), for: .touchUpInside)
         fire.addTarget(self, action: #selector(didReact), for: .touchUpInside)
