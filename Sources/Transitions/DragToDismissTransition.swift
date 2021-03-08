@@ -1,7 +1,6 @@
 import UIKit
 
 class DragToDismissTransition: UIPercentDrivenInteractiveTransition {
-
     unowned var transitioningController: UIViewController
 
     init(transitioningController: UIViewController) {

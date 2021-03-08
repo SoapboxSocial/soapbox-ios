@@ -259,13 +259,13 @@ class StoriesViewController: UIViewController {
         progress.startAnimation()
         progress.isPaused = true
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         player.pause()
         player.shutdown()
     }
-    
+
     // @TODO allow deselecting reaction?
     @objc private func didReact(_ sender: UIButton) {
         let item = feed.stories[player.currentTrack]
