@@ -34,6 +34,24 @@ class NavigationViewController: UINavigationController {
 
         delegate = self
 
+        let gradient = GradientView(color: .background)
+        view.addSubview(gradient)
+
+        createRoomButton.addTarget(self, action: #selector(didTapCreateRoom), for: .touchUpInside)
+        view.addSubview(createRoomButton)
+
+        NSLayoutConstraint.activate([
+            gradient.leftAnchor.constraint(equalTo: view.leftAnchor),
+            gradient.rightAnchor.constraint(equalTo: view.rightAnchor),
+            gradient.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            gradient.topAnchor.constraint(equalTo: createRoomButton.centerYAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            createRoomButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            createRoomButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+        ])
+
         edgeSwipeGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handleSwipe))
         edgeSwipeGestureRecognizer!.edges = .left
         view.addGestureRecognizer(edgeSwipeGestureRecognizer!)
@@ -48,9 +66,6 @@ class NavigationViewController: UINavigationController {
 
         view.backgroundColor = .background
 
-        createRoomButton.addTarget(self, action: #selector(didTapCreateRoom), for: .touchUpInside)
-        view.addSubview(createRoomButton)
-
         activityIndicator.isHidden = true
         activityIndicator.hidesWhenStopped = true
 
@@ -62,11 +77,6 @@ class NavigationViewController: UINavigationController {
         navigationBar.isTranslucent = false
         navigationBar.barTintColor = .background
         navigationBar.tintColor = .brandColor
-
-        NSLayoutConstraint.activate([
-            createRoomButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            createRoomButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
-        ])
     }
 
     @objc func didTapCreateRoom() {
