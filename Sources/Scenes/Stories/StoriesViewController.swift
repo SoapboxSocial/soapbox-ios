@@ -53,8 +53,6 @@ class StoriesViewController: UIViewController {
         return .lightContent
     }
 
-    private var transition: DragToDismissTransition!
-
     init(feed: APIClient.StoryFeed) {
         self.feed = feed // @TODO MAY ONLY NEED TO BE USER
         player = StoryPlayer(items: feed.stories)
@@ -68,8 +66,6 @@ class StoriesViewController: UIViewController {
 
     override func viewDidLoad() {
         view.backgroundColor = .black
-
-        transition = DragToDismissTransition(transitioningController: self)
 
         progress = StoriesProgressBar(numberOfSegments: feed.stories.count)
         progress.translatesAutoresizingMaskIntoConstraints = false
