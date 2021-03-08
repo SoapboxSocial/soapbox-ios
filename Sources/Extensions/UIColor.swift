@@ -77,7 +77,19 @@ extension UIColor {
         }
     }
 
-    static var reactionsBackground: UIColor {
-        return UIColor(red: 28 / 255, green: 28 / 255, blue: 30 / 255, alpha: 1.0)
+    func isLight() -> Bool {
+        // algorithm from: http://www.w3.org/WAI/ER/WD-AERT/#color-contrast
+
+        guard let components = cgColor.components else {
+            return false
+        }
+
+        let red = components[0] * 299
+        let blue = components[1] * 587
+        let green = components[2] * 114
+
+        let brightness = (red + blue + green) / 1000
+
+        return brightness >= 0.5
     }
 }

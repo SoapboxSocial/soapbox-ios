@@ -170,6 +170,7 @@
 "hold_to_record" = "Hold to record";
 "recording" = "Recording";
 "paused" = "Paused";
+"playing" = "Playing";
 "post" = "Post";
 
 "add" = "Add";

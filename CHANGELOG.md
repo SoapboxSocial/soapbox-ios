@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - We gave stories some necessary TLC. You can now skip as well as rewind, various issues were fixed and the visuals were improved drastically. We hope you enjoy!
+
 ## [2.15.1] - 2021-03-04
 
  - Fixed stories bar issue.
