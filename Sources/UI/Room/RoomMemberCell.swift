@@ -8,35 +8,23 @@ class RoomMemberCell: UICollectionViewCell {
 
     private var nameLabel: UILabel!
 
-    private var muteView: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
-        view.layer.cornerRadius = 24 / 2
-        view.layer.masksToBounds = true
-        view.clipsToBounds = true
-        view.backgroundColor = UIColor(red: 28 / 255, green: 28 / 255, blue: 30 / 255, alpha: 1.0)
-
+    private var muteView: RoomMemberAccessoryView = {
         let conf = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
-        let imageView = UIImageView(image: UIImage(systemName: "mic.slash.fill", withConfiguration: conf))
-        imageView.center = view.center
-        imageView.tintColor = .white
-
-        view.addSubview(imageView)
+        let view = RoomMemberAccessoryView(
+            image: UIImage(systemName: "mic.slash.fill", withConfiguration: conf)!,
+            frame: CGRect(x: 0, y: 0, width: 24, height: 24)
+        )
+        view.backgroundColor = UIColor(red: 28 / 255, green: 28 / 255, blue: 30 / 255, alpha: 1.0)
 
         return view
     }()
 
-    private var speakingView: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: 24, height: 24))
-        view.layer.cornerRadius = 24 / 2
-        view.layer.masksToBounds = true
-        view.clipsToBounds = true
-
+    private var speakingView: RoomMemberAccessoryView = {
         let conf = UIImage.SymbolConfiguration(pointSize: 14, weight: .heavy)
-        let imageView = UIImageView(image: UIImage(systemName: "waveform", withConfiguration: conf))
-        imageView.center = view.center
-        imageView.tintColor = .white
-
-        view.addSubview(imageView)
+        let view = RoomMemberAccessoryView(
+            image: UIImage(systemName: "waveform", withConfiguration: conf)!,
+            frame: CGRect(x: 0, y: 0, width: 24, height: 24)
+        )
 
         let gradient = CAGradientLayer()
 
@@ -52,6 +40,26 @@ class RoomMemberCell: UICollectionViewCell {
         gradient.transform = CATransform3DMakeAffineTransform(CGAffineTransform(a: 1, b: 1, c: -1, d: 1, tx: 0.5, ty: -0.5))
 
         view.layer.insertSublayer(gradient, at: 0)
+
+        return view
+    }()
+
+    private var adminView: UIView = {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: 32, height: 32))
+        view.backgroundColor = .foreground
+        view.layer.cornerRadius = 32 / 2
+
+        let label = UILabel()
+        label.text = "👑"
+        label.sizeToFit()
+
+        view.addSubview(label)
+        label.center = view.center
+
+        view.layer.shadowOffset = CGSize(width: 0, height: 12)
+        view.layer.shadowColor = UIColor.black.withAlphaComponent(0.12).cgColor
+        view.layer.shadowOpacity = 1
+        view.layer.shadowRadius = 10
 
         return view
     }()
@@ -92,6 +100,9 @@ class RoomMemberCell: UICollectionViewCell {
 
         speakingView.frame.origin = CGPoint(x: frame.size.width - 24, y: 0)
         contentView.addSubview(speakingView)
+
+        adminView.frame.origin = CGPoint(x: 0, y: frame.size.width - 32)
+        contentView.addSubview(adminView)
     }
 
     required init?(coder _: NSCoder) {
@@ -104,11 +115,9 @@ class RoomMemberCell: UICollectionViewCell {
         speakingView.isHidden = true
 
         if role == .admin {
-            profileImage.layer.borderColor = UIColor.brandColor.cgColor
-            profileImage.layer.borderWidth = 4
+            adminView.isHidden = false
         } else {
-            profileImage.layer.borderColor = .none
-            profileImage.layer.borderWidth = 0
+            adminView.isHidden = true
         }
 
         nameLabel.text = name.firstName()
