@@ -303,6 +303,7 @@ class StoriesViewController: UIViewController {
         let delete = UIAlertAction(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in
             APIClient().deleteStory(id: item.id, callback: { _ in
                 menu.dismiss(animated: true)
+                self.player.next()
             })
         })
         menu.addAction(delete)
