@@ -21,7 +21,7 @@ class LinkSharingView: UIView {
 
     private var links = [Link]()
 
-    private let max_length = Double(15)
+    private let displayLength = Double(15)
 
     private let nameLabel: UILabel = {
         let label = UILabel()
@@ -232,7 +232,7 @@ class LinkSharingView: UIView {
         progress.progress = 1.0
 
         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true, block: { timer in
-            self.progress.progress -= interval / self.max_length
+            self.progress.progress -= interval / self.displayLength
 
             if self.progress.progress <= 0 {
                 timer.invalidate()
