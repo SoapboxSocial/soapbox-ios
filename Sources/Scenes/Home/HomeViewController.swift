@@ -377,7 +377,6 @@ extension HomeViewController: UICollectionViewDataSource {
                     cell.profileImage.contentMode = .center
                 } else {
                     cell.profileImage.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!))
-                    cell.profileImage.contentMode = .scaleToFill
                 }
 
                 return cell
