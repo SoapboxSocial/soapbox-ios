@@ -1,30 +1,29 @@
 import UIKit
 
 class RoomSettingsSheet {
-    static func show(forRoom room: Room, on view: UIViewController) {
-        let sheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+    static func show(forRoom room: Room) {
+        let sheet = ActionSheet()
 
-        sheet.addAction(UIAlertAction(title: NSLocalizedString("change_name", comment: ""), style: .default, handler: { _ in
-            self.editRoomNameButtonTapped(room: room, view: view)
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("change_name", comment: ""), style: .default, handler: { _ in
+            self.editRoomNameButtonTapped(room: room)
         }))
 
         if !room.state.hasGroup {
-            sheet.addAction(createVisibilityToggle(room: room))
+            sheet.add(action: createVisibilityToggle(room: room))
         }
 
-        sheet.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-
-        view.present(sheet, animated: true)
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+        sheet.present()
     }
 
-    private static func createVisibilityToggle(room: Room) -> UIAlertAction {
+    private static func createVisibilityToggle(room: Room) -> ActionSheet.Action {
         let visibility = room.state.visibility
         var label = NSLocalizedString("make_private", comment: "")
         if visibility == .private {
             label = NSLocalizedString("make_public", comment: "")
         }
 
-        return UIAlertAction(title: label, style: .destructive, handler: { _ in
+        return ActionSheet.Action(title: label, style: .destructive, handler: { _ in
             switch visibility {
             case .private:
                 room.updateVisibility(.public)
@@ -36,7 +35,7 @@ class RoomSettingsSheet {
         })
     }
 
-    private static func editRoomNameButtonTapped(room: Room, view: UIViewController) {
+    private static func editRoomNameButtonTapped(room: Room) {
         let alert = UIAlertController(title: NSLocalizedString("enter_name", comment: ""), message: nil, preferredStyle: .alert)
         alert.addTextField()
 
@@ -53,7 +52,11 @@ class RoomSettingsSheet {
 
         let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
         alert.addAction(cancel)
-
-        view.present(alert, animated: true)
+        
+        guard let window = UIApplication.shared.windows.filter { $0.isKeyWindow }.first else {
+            return
+        }
+        
+        window.rootViewController!.present(alert, animated: true)
     }
 }
