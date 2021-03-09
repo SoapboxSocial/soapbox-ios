@@ -32,7 +32,18 @@ class SettingsViewController: UIViewController {
             SettingsPresenter.Link(name: NSLocalizedString("privacy", comment: ""), link: URL(string: "https://soapbox.social/privacy")!),
         ])
 
-        presenter.set(deleteAccount: SettingsPresenter.Destructive(name: NSLocalizedString("delete_account", comment: ""), handler: {}))
+        presenter.set(deleteAccount: SettingsPresenter.Destructive(name: NSLocalizedString("delete_account", comment: ""), handler: {
+            APIClient().deleteAccount(callback: { result in
+                switch result {
+                case .failure:
+                    break
+                case .success:
+                    self.dismiss(animated: true, completion: {
+                        (UIApplication.shared.delegate as! AppDelegate).transitionToLoginView()
+                    })
+                }
+            })
+        }))
 
         view.backgroundColor = .background
 
