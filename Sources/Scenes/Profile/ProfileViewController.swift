@@ -240,19 +240,15 @@ class ProfileViewController: ViewController {
             return presentImage()
         }
 
-        let alert = UIAlertController(
-            title: nil,
-            message: nil,
-            preferredStyle: .actionSheet
-        )
+        let sheet = ActionSheet()
 
         // @TODO only show action when not in room
 
-        alert.addAction(UIAlertAction(title: NSLocalizedString("view_image", comment: ""), style: .default, handler: { _ in
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("view_image", comment: ""), style: .default, handler: { _ in
             presentImage()
         }))
 
-        alert.addAction(UIAlertAction(title: NSLocalizedString("listen_to_story", comment: ""), style: .default, handler: { _ in
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("listen_to_story", comment: ""), style: .default, handler: { _ in
             guard let nav = UIApplication.shared.keyWindow?.rootViewController as? NavigationViewController else {
                 return
             }
@@ -281,9 +277,8 @@ class ProfileViewController: ViewController {
             self.present(vc, animated: true)
         }))
 
-        alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-
-        present(alert, animated: true)
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+        sheet.present()
     }
 
     @objc private func openTwitterProfile() {
