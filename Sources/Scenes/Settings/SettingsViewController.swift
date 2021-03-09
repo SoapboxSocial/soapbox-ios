@@ -8,6 +8,7 @@ class SettingsViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.register(cellWithClass: SettingsLinkTableViewCell.self)
         view.register(cellWithClass: SettingsSelectionTableViewCell.self)
+        view.register(cellWithClass: SettingsDestructiveTableViewCell.self)
         view.backgroundColor = .background
         return view
     }()
@@ -30,6 +31,8 @@ class SettingsViewController: UIViewController {
             SettingsPresenter.Link(name: NSLocalizedString("terms", comment: ""), link: URL(string: "https://soapbox.social/terms")!),
             SettingsPresenter.Link(name: NSLocalizedString("privacy", comment: ""), link: URL(string: "https://soapbox.social/privacy")!),
         ])
+
+        presenter.set(deleteAccount: SettingsPresenter.Destructive(name: NSLocalizedString("delete_account", comment: ""), handler: {}))
 
         view.backgroundColor = .background
 
@@ -129,6 +132,8 @@ extension SettingsViewController: UITableViewDelegate {
             tableView.deselectRow(at: indexPath, animated: true)
             let link = presenter.item(for: indexPath, ofType: SettingsPresenter.Link.self)
             UIApplication.shared.open(link.link)
+        case .deleteAccount:
+            break
         }
     }
 }
@@ -150,6 +155,10 @@ extension SettingsViewController: UITableViewDataSource {
             return cell
         case .links:
             let cell = tableView.dequeueReusableCell(withClass: SettingsLinkTableViewCell.self, for: indexPath)
+            presenter.configure(item: cell, for: indexPath)
+            return cell
+        case .deleteAccount:
+            let cell = tableView.dequeueReusableCell(withClass: SettingsDestructiveTableViewCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
         }
