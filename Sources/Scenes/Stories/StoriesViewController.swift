@@ -290,27 +290,25 @@ class StoriesViewController: UIViewController {
 
     @objc private func menuTapped() {
         let item = feed.stories[player.currentTrack]
-
+        
         player.pause()
         progress.isPaused = true
 
-        let menu = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let menu = ActionSheet()
         menu.willDismissHandler = {
             self.player.unpause()
             self.progress.isPaused = false
         }
 
-        let delete = UIAlertAction(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in
+        let delete = ActionSheet.Action(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in
             APIClient().deleteStory(id: item.id, callback: { _ in
-                menu.dismiss(animated: true)
                 self.player.next()
             })
         })
-        menu.addAction(delete)
+        menu.add(action: delete)
 
-        menu.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-
-        present(menu, animated: true)
+        menu.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+        menu.present()
     }
 
     @objc private func skip() {

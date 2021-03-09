@@ -20,6 +20,10 @@ class ActionSheet {
 
     private var actions = [Action]()
 
+    /// A closure called before the alert is dismissed but only if done by own method and not manually
+    @objc
+    public var willDismissHandler: (() -> Void)?
+
     func add(action: Action) {
         actions.append(action)
     }
@@ -33,7 +37,9 @@ class ActionSheet {
         let view = ActionSheetView(actions: actions)
 
         let drawer = DrawerView(withView: view)
-        drawer.delegate = self
+        drawer.setPosition(.closed, animated: false, completion: { _ in
+            drawer.delegate = self
+        })
         drawer.cornerRadius = 30.0
         drawer.backgroundEffect = nil
         drawer.snapPositions = [.closed, .open]
@@ -46,7 +52,6 @@ class ActionSheet {
 
         view.autoPinEdgesToSuperview()
 
-        drawer.setPosition(.closed, animated: false)
         drawer.setPosition(.open, animated: true)
     }
 }
@@ -55,6 +60,12 @@ extension ActionSheet: DrawerViewDelegate {
     func drawer(_ drawerView: DrawerView, didTransitionTo position: DrawerPosition) {
         if position == .closed {
             drawerView.removeFromSuperview()
+        }
+    }
+    
+    func drawer(_ drawerView: DrawerView, willTransitionFrom startPosition: DrawerPosition, to targetPosition: DrawerPosition) {
+        if targetPosition == .closed {
+            willDismissHandler?()
         }
     }
 }
@@ -85,7 +96,7 @@ private class ActionSheetView: UIView {
             topAnchor.constraint(equalTo: stack.topAnchor, constant: -30),
             stack.leftAnchor.constraint(equalTo: leftAnchor),
             stack.rightAnchor.constraint(equalTo: rightAnchor),
-            stack.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            stack.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -10),
         ])
     }
 
