@@ -351,13 +351,12 @@ class ProfileViewController: ViewController {
     }
 
     @objc private func menuButtonPressed() {
-        
         let sheet = ActionSheet()
         sheet.add(action: ActionSheetActionView(title: "Default Action", style: .default))
-//        sheet.add(action: ActionSheetActionView(title: "Destructive Action", style: .destructive))
-//        sheet.add(action: ActionSheetActionView(title: "Cancel", style: .cancel))
+        sheet.add(action: ActionSheetActionView(title: "Destructive Action", style: .destructive))
+        sheet.add(action: ActionSheetActionView(title: "Cancel", style: .cancel))
         sheet.present((navigationController?.view)!)
-        
+
 //        let alert = UIAlertController(
 //            title: nil,
 //            message: nil,

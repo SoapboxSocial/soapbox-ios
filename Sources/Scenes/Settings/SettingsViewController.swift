@@ -74,16 +74,15 @@ class SettingsViewController: UIViewController {
         return SettingsPresenter.Appearance(
             name: NSLocalizedString("theme", comment: ""),
             handler: {
-                
                 let sheet = ActionSheet()
                 sheet.add(action: ActionSheetActionView(title: "Default Action", style: .default))
                 sheet.add(action: ActionSheetActionView(title: "Destructive Action", style: .destructive))
                 sheet.add(action: ActionSheetActionView(title: "Cancel", style: .cancel))
-                
+
                 DispatchQueue.main.async {
                     sheet.present(self.view)
                 }
-                
+
 //                let sheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 //
 //                func themeToggle(theme: Theme) {

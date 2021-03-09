@@ -19,7 +19,7 @@ class ActionSheetActionView: UIView {
         label.font = .rounded(forTextStyle: .title3, weight: .bold)
         return label
     }()
-    
+
     private let handler: ((ActionSheetActionView) -> Void)?
 
     init(title: String, style: Style, handler: ((ActionSheetActionView) -> Void)? = nil) {
@@ -54,13 +54,21 @@ class ActionSheetActionView: UIView {
             label.leftAnchor.constraint(equalTo: leftAnchor),
             label.rightAnchor.constraint(equalTo: rightAnchor),
             label.topAnchor.constraint(equalTo: seperator.bottomAnchor, constant: 15),
-            bottomAnchor.constraint(equalTo: label.bottomAnchor, constant: 15)
+            bottomAnchor.constraint(equalTo: label.bottomAnchor, constant: 15),
         ])
-        
-        backgroundColor = .green
+
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTap)))
     }
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    @objc private func didTap() {
+        guard let handler = handler else {
+            return
+        }
+
+        handler(self)
     }
 }
