@@ -75,39 +75,30 @@ class SettingsViewController: UIViewController {
             name: NSLocalizedString("theme", comment: ""),
             handler: {
                 let sheet = ActionSheet()
-                sheet.add(action: ActionSheet.Action(title: "Default Action", style: .default))
-                sheet.add(action: ActionSheet.Action(title: "Destructive Action", style: .destructive))
-                sheet.add(action: ActionSheet.Action(title: "Cancel", style: .cancel))
 
-                DispatchQueue.main.async {
-                    sheet.present(self.view)
+                func themeToggle(theme: Theme) {
+                    UserDefaults.standard.set(theme.rawValue, forKey: UserDefaultsKeys.theme)
+                    self.tableView.reloadData()
+                    (UIApplication.shared.delegate as! AppDelegate).setTheme()
                 }
 
-//                let sheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-//
-//                func themeToggle(theme: Theme) {
-//                    UserDefaults.standard.set(theme.rawValue, forKey: UserDefaultsKeys.theme)
-//                    self.tableView.reloadData()
-//                    (UIApplication.shared.delegate as! AppDelegate).setTheme()
-//                }
-//
-//                sheet.addAction(UIAlertAction(title: NSLocalizedString("system", comment: ""), style: .default, handler: { _ in
-//                    themeToggle(theme: .system)
-//                }))
-//
-//                sheet.addAction(UIAlertAction(title: NSLocalizedString("dark", comment: ""), style: .default, handler: { _ in
-//                    themeToggle(theme: .dark)
-//                }))
-//
-//                sheet.addAction(UIAlertAction(title: NSLocalizedString("light", comment: ""), style: .default, handler: { _ in
-//                    themeToggle(theme: .light)
-//                }))
-//
-//                sheet.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-//
-//                DispatchQueue.main.async {
-//                    self.present(sheet, animated: true)
-//                }
+                sheet.add(action: ActionSheet.Action(title: NSLocalizedString("system", comment: ""), style: .default, handler: { _ in
+                    themeToggle(theme: .system)
+                }))
+
+                sheet.add(action: ActionSheet.Action(title: NSLocalizedString("dark", comment: ""), style: .default, handler: { _ in
+                    themeToggle(theme: .dark)
+                }))
+
+                sheet.add(action: ActionSheet.Action(title: NSLocalizedString("light", comment: ""), style: .default, handler: { _ in
+                    themeToggle(theme: .light)
+                }))
+
+                sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+
+                DispatchQueue.main.async {
+                    sheet.present()
+                }
             },
             value: {
                 guard let setting = Theme(rawValue: UserDefaults.standard.integer(forKey: UserDefaultsKeys.theme)) else {

@@ -24,7 +24,12 @@ class ActionSheet {
         actions.append(action)
     }
 
-    func present(_ context: UIView) {
+    func present(_ context: UIView? = nil) {
+        var presenter = context
+        if presenter == nil {
+            presenter = UIApplication.shared.windows.filter { $0.isKeyWindow }.first
+        }
+
         let view = ActionSheetView(actions: actions)
 
         let drawer = DrawerView(withView: view)
@@ -37,7 +42,7 @@ class ActionSheet {
         drawer.openHeightBehavior = .fitting
         drawer.insetAdjustmentBehavior = .never
         drawer.contentVisibilityBehavior = .allowPartial
-        drawer.attachTo(view: context)
+        drawer.attachTo(view: presenter!)
 
         view.autoPinEdgesToSuperview()
 
