@@ -352,77 +352,66 @@ class ProfileViewController: ViewController {
 
     @objc private func menuButtonPressed() {
         let sheet = ActionSheet()
-        sheet.add(action: ActionSheetActionView(title: "Default Action", style: .default))
-        sheet.add(action: ActionSheetActionView(title: "Destructive Action", style: .destructive))
-        sheet.add(action: ActionSheetActionView(title: "Cancel", style: .cancel))
-        sheet.present((navigationController?.view)!)
 
-//        let alert = UIAlertController(
-//            title: nil,
-//            message: nil,
-//            preferredStyle: .actionSheet
-//        )
-//
-//        alert.addAction(UIAlertAction(title: NSLocalizedString("share_profile", comment: ""), style: .default, handler: { _ in
-//            let items: [Any] = [
-//                URL(string: "https://soapbox.social/user/" + self.user.username)!,
-//            ]
-//
-//            let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
-//            ac.excludedActivityTypes = [.markupAsPDF, .openInIBooks, .addToReadingList, .assignToContact]
-//
-//            DispatchQueue.main.async {
-//                self.present(ac, animated: true)
-//            }
-//        }))
-//
-//        if user.id == UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
-//            alert.addAction(UIAlertAction(title: NSLocalizedString("settings", comment: ""), style: .default, handler: { _ in
-//                self.present(SceneFactory.createSettingsViewController(), animated: true)
-//            }))
-//        }
-//
-//        if user.id != UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
-//            alert.addAction(UIAlertAction(title: NSLocalizedString("report_incident", comment: ""), style: .destructive, handler: { _ in
-//                let view = ReportPageViewController(
-//                    userId: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId),
-//                    reportedUserId: self.user.id
-//                )
-//
-//                DispatchQueue.main.async {
-//                    self.present(view, animated: true)
-//                }
-//            }))
-//
-//            var blockedLabel = NSLocalizedString("block", comment: "")
-//            var blockedDescription = NSLocalizedString("block_description", comment: "")
-//            if user.isBlocked ?? false {
-//                blockedLabel = NSLocalizedString("unblock", comment: "")
-//                blockedDescription = ""
-//            }
-//
-//            alert.addAction(UIAlertAction(title: blockedLabel, style: .destructive, handler: { _ in
-//                let confirmation = UIAlertController.confirmation(
-//                    onAccepted: {
-//                        if self.user.isBlocked ?? false {
-//                            self.output.unblock()
-//                            return
-//                        }
-//
-//                        self.output.block()
-//                    },
-//                    message: blockedDescription
-//                )
-//
-//                DispatchQueue.main.async {
-//                    self.present(confirmation, animated: true)
-//                }
-//            }))
-//        }
-//
-//        alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-//
-//        present(alert, animated: true)
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("share_profile", comment: ""), style: .default, handler: { _ in
+            let items: [Any] = [
+                URL(string: "https://soapbox.social/user/" + self.user.username)!,
+            ]
+
+            let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
+            ac.excludedActivityTypes = [.markupAsPDF, .openInIBooks, .addToReadingList, .assignToContact]
+
+            DispatchQueue.main.async {
+                self.present(ac, animated: true)
+            }
+        }))
+
+        let id = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
+
+        if user.id == id {
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("settings", comment: ""), style: .default, handler: { _ in
+                self.present(SceneFactory.createSettingsViewController(), animated: true)
+            }))
+        } else {
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("report_incident", comment: ""), style: .destructive, handler: { _ in
+                let view = ReportPageViewController(
+                    userId: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId),
+                    reportedUserId: self.user.id
+                )
+
+                DispatchQueue.main.async {
+                    self.present(view, animated: true)
+                }
+            }))
+
+            var blockedLabel = NSLocalizedString("block", comment: "")
+            var blockedDescription = NSLocalizedString("block_description", comment: "")
+            if user.isBlocked ?? false {
+                blockedLabel = NSLocalizedString("unblock", comment: "")
+                blockedDescription = ""
+            }
+
+            sheet.add(action: ActionSheet.Action(title: blockedLabel, style: .destructive, handler: { _ in
+                let confirmation = UIAlertController.confirmation(
+                    onAccepted: {
+                        if self.user.isBlocked ?? false {
+                            self.output.unblock()
+                            return
+                        }
+
+                        self.output.block()
+                    },
+                    message: blockedDescription
+                )
+
+                DispatchQueue.main.async {
+                    self.present(confirmation, animated: true)
+                }
+            }))
+        }
+
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+        sheet.present((navigationController?.view)!)
     }
 }
 

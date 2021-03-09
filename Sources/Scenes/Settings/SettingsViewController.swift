@@ -75,9 +75,9 @@ class SettingsViewController: UIViewController {
             name: NSLocalizedString("theme", comment: ""),
             handler: {
                 let sheet = ActionSheet()
-                sheet.add(action: ActionSheetActionView(title: "Default Action", style: .default))
-                sheet.add(action: ActionSheetActionView(title: "Destructive Action", style: .destructive))
-                sheet.add(action: ActionSheetActionView(title: "Cancel", style: .cancel))
+                sheet.add(action: ActionSheet.Action(title: "Default Action", style: .default))
+                sheet.add(action: ActionSheet.Action(title: "Destructive Action", style: .destructive))
+                sheet.add(action: ActionSheet.Action(title: "Cancel", style: .cancel))
 
                 DispatchQueue.main.async {
                     sheet.present(self.view)
