@@ -29,28 +29,30 @@ class ActionSheet {
     }
 
     func present(_ context: UIView? = nil) {
-        var presenter = context
-        if presenter == nil {
-            presenter = UIApplication.shared.windows.filter { $0.isKeyWindow }.first
+        var presenter: UIView
+        if let view = context {
+            presenter = view
+        } else {
+            presenter = UIApplication.shared.keyWindow!
         }
 
         let view = ActionSheetView(actions: actions)
 
         let drawer = DrawerView(withView: view)
-        drawer.setPosition(.closed, animated: false, completion: { _ in
-            drawer.delegate = self
-        })
+        drawer.position = .closed
+        drawer.delegate = self
         drawer.cornerRadius = 30.0
         drawer.backgroundEffect = nil
         drawer.snapPositions = [.closed, .open]
         drawer.enabled = false
         drawer.backgroundColor = .foreground
         drawer.openHeightBehavior = .fitting
-        drawer.insetAdjustmentBehavior = .never
         drawer.contentVisibilityBehavior = .allowPartial
-        drawer.attachTo(view: presenter!)
+
+//        presenter?.addSubview(drawer)
 
         view.autoPinEdgesToSuperview()
+        drawer.attachTo(view: presenter)
 
         drawer.setPosition(.open, animated: true)
     }
@@ -62,8 +64,8 @@ extension ActionSheet: DrawerViewDelegate {
             drawerView.removeFromSuperview()
         }
     }
-    
-    func drawer(_ drawerView: DrawerView, willTransitionFrom startPosition: DrawerPosition, to targetPosition: DrawerPosition) {
+
+    func drawer(_: DrawerView, willTransitionFrom _: DrawerPosition, to targetPosition: DrawerPosition) {
         if targetPosition == .closed {
             willDismissHandler?()
         }

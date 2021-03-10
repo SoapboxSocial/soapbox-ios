@@ -52,11 +52,11 @@ class RoomSettingsSheet {
 
         let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
         alert.addAction(cancel)
-        
+
         guard let window = UIApplication.shared.windows.filter { $0.isKeyWindow }.first else {
             return
         }
-        
+
         window.rootViewController!.present(alert, animated: true)
     }
 }

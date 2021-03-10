@@ -290,7 +290,7 @@ class StoriesViewController: UIViewController {
 
     @objc private func menuTapped() {
         let item = feed.stories[player.currentTrack]
-        
+
         player.pause()
         progress.isPaused = true
 
