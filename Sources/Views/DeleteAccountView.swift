@@ -1,3 +1,4 @@
+import DrawerView
 import UIKit
 
 class DeleteAccountView: UIView {
@@ -25,7 +26,7 @@ class DeleteAccountView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
         button.setTitleColor(.label, for: .normal)
-//        button.addTarget(self, action: #selector(cancelPressed), for: .touchUpInside)
+        button.addTarget(self, action: #selector(cancelPressed), for: .touchUpInside)
         return button
     }()
 
@@ -81,6 +82,16 @@ class DeleteAccountView: UIView {
             button.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
             button.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
         ])
+    }
+
+    @objc private func deletePressed() {}
+
+    @objc private func cancelPressed() {
+        guard let drawer = superview as? DrawerView else {
+            return
+        }
+
+        drawer.removeFromSuperview(animated: true)
     }
 
     required init?(coder _: NSCoder) {
