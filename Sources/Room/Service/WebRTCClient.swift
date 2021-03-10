@@ -79,8 +79,13 @@ final class WebRTCClient: NSObject {
         }
     }
 
-    func offer(completion: @escaping (_ sdp: RTCSessionDescription) -> Void) {
-        let constrains = RTCMediaConstraints(mandatoryConstraints: mediaConstrains, optionalConstraints: nil)
+    func offer(constraints: [String: String]? = nil, completion: @escaping (_ sdp: RTCSessionDescription) -> Void) {
+        var mandatoryConstraints = mediaConstrains
+        if let constraints = constraints {
+            constraints.forEach { key, value in mandatoryConstraints[key] = value }
+        }
+
+        let constrains = RTCMediaConstraints(mandatoryConstraints: mandatoryConstraints, optionalConstraints: nil)
         peerConnection.offer(for: constrains) { sdp, _ in
             guard let sdp = sdp else {
                 return

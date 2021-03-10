@@ -236,6 +236,10 @@ extension RoomClient: WebRTCClientDelegate {
             delegate?.roomClientDidConnect(self)
         case .closed:
             delegate?.roomClientDidDisconnect(self)
+        case .disconnected:
+            rtc.offer(constraints: [kRTCMediaConstraintsIceRestart: kRTCMediaConstraintsValueTrue], completion: { result in
+                self.signalClient.offer(description: result)
+            })
         default:
             return // @TODO
         }
