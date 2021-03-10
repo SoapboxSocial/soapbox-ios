@@ -1,5 +1,4 @@
 import AVFoundation
-import ColorThiefSwift
 import UIKit
 
 class StoriesViewController: UIViewController {
@@ -118,12 +117,11 @@ class StoriesViewController: UIViewController {
                 guard let image = data.value else {
                     return
                 }
-
-                guard let dominantColor = ColorThief.getColor(from: image) else {
+                
+                guard let color = image.averageColor() else {
                     return
                 }
 
-                let color = dominantColor.makeUIColor()
                 DispatchQueue.main.async {
                     content.backgroundColor = color
 
