@@ -26,6 +26,7 @@ class RoomMemberAccessoryView: UIView {
     }
 
     override func layoutSubviews() {
+        super.layoutSubviews()
         layer.cornerRadius = frame.size.width / 2
     }
 }
