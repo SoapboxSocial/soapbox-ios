@@ -1,3 +1,4 @@
+import DrawerView
 import UIKit
 
 class SettingsViewController: UIViewController {
@@ -33,16 +34,21 @@ class SettingsViewController: UIViewController {
         ])
 
         presenter.set(deleteAccount: SettingsPresenter.Destructive(name: NSLocalizedString("delete_account", comment: ""), handler: {
-            APIClient().deleteAccount(callback: { result in
-                switch result {
-                case .failure:
-                    break
-                case .success:
-                    self.dismiss(animated: true, completion: {
-                        (UIApplication.shared.delegate as! AppDelegate).transitionToLoginView()
-                    })
-                }
-            })
+            let view = DeleteAccountView()
+
+            let drawer = DrawerView(withView: view)
+            drawer.cornerRadius = 25.0
+            drawer.attachTo(view: UIApplication.shared.keyWindow!)
+            drawer.backgroundEffect = nil
+            drawer.position = .closed
+            drawer.snapPositions = [.closed, .open]
+            drawer.backgroundColor = .background
+
+            UIApplication.shared.keyWindow!.addSubview(drawer)
+
+            view.autoPinEdgesToSuperview()
+
+            drawer.setPosition(.open, animated: true)
         }))
 
         view.backgroundColor = .background
@@ -134,17 +140,18 @@ class SettingsViewController: UIViewController {
 
 extension SettingsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+
         switch presenter.sectionType(for: indexPath.section) {
         case .appearance:
-            tableView.deselectRow(at: indexPath, animated: true)
             let selection = presenter.item(for: indexPath, ofType: SettingsPresenter.Appearance.self)
             selection.handler()
         case .links:
-            tableView.deselectRow(at: indexPath, animated: true)
             let link = presenter.item(for: indexPath, ofType: SettingsPresenter.Link.self)
             UIApplication.shared.open(link.link)
         case .deleteAccount:
-            break
+            let selection = presenter.item(for: indexPath, ofType: SettingsPresenter.Destructive.self)
+            selection.handler()
         }
     }
 }
