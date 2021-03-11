@@ -19,6 +19,7 @@ class ButtonWithLoadingIndicator: Button {
         let indicator = UIActivityIndicatorView(style: .medium)
         indicator.translatesAutoresizingMaskIntoConstraints = false
         indicator.hidesWhenStopped = true
+        indicator.color = .white
         return indicator
     }()
 
