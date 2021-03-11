@@ -1,6 +1,8 @@
 import DrawerView
 import UIKit
 
+// @TODO USE VIEW CONTROLLER
+
 class DeleteAccountView: UIView {
     private let textField: TextField = {
         let field = TextField(frame: .zero, theme: .normal)
