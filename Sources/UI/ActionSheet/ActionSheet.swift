@@ -185,9 +185,7 @@ private class ActionView: UIView {
 }
 
 extension ActionSheet: DrawerPresentationDelegate {
-    func drawerPresentationnDidEnd(_ completed: Bool) {
-        if completed {
-            feedbackGenerator.impactOccurred()
-        }
+    func drawerPresentationWillBegin() {
+        feedbackGenerator.impactOccurred()
     }
 }
