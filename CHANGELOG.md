@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - Gave some of the UI a facelift.
+ - Made some fixes for users with slower internet connections, now a bit more obvious when things are loading.
 
 ## [2.16.0] - 2021-03-08
 
