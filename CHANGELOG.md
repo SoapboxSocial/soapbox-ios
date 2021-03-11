@@ -5,6 +5,7 @@
  - Gave some of the UI a facelift.
  - Made some fixes for users with slower internet connections, now a bit more obvious when things are loading.
  - Added pull to refresh to profile pages.
+ - Added ability to delete account.
 
 ## [2.16.0] - 2021-03-08
 
