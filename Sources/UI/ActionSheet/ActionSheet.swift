@@ -30,7 +30,14 @@ class ActionSheet: UIViewController {
         manager.drawer.backgroundColor = .foreground
         manager.drawer.backgroundEffect = nil
         manager.drawer.cornerRadius = 30
+        manager.presentationDelegate = self
         return manager
+    }()
+
+    private let feedbackGenerator: UIImpactFeedbackGenerator = {
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.prepare()
+        return generator
     }()
 
     init() {
@@ -174,5 +181,13 @@ private class ActionView: UIView {
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension ActionSheet: DrawerPresentationDelegate {
+    func drawerPresentationnDidEnd(_ completed: Bool) {
+        if completed {
+            feedbackGenerator.impactOccurred()
+        }
     }
 }
