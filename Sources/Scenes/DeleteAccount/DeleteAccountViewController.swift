@@ -16,7 +16,8 @@ class DeleteAccountViewController: UIViewController {
         let button = ButtonWithLoadingIndicator(size: .large)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .systemRed
-        button.setTitle("Delete Account", for: .normal)
+        button.setTitle(NSLocalizedString("delete_account", comment: ""), for: .normal)
+        button.addTarget(self, action: #selector(deletePressed), for: .touchUpInside)
         return button
     }()
 
@@ -45,12 +46,16 @@ class DeleteAccountViewController: UIViewController {
         modalPresentationStyle = .custom
     }
 
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         let title = UILabel()
         title.translatesAutoresizingMaskIntoConstraints = false
-        title.text = "Deleting your account is an irreversible action, your account will be deleted immediately!"
+        title.text = NSLocalizedString("deleting_is_permanent", comment: "")
         title.font = .rounded(forTextStyle: .title2, weight: .bold)
         title.textAlignment = .center
         title.numberOfLines = 0
@@ -58,7 +63,7 @@ class DeleteAccountViewController: UIViewController {
 
         let type = UILabel()
         type.translatesAutoresizingMaskIntoConstraints = false
-        type.text = "Type \"DELETE\""
+        type.text = NSLocalizedString("type_delete", comment: "")
         type.font = .rounded(forTextStyle: .title3, weight: .regular)
         type.textAlignment = .center
         type.textColor = .secondaryLabel
@@ -100,17 +105,53 @@ class DeleteAccountViewController: UIViewController {
     }
 
     @objc private func deletePressed() {
+        let warning = NotificationBanner(
+            title: NSLocalizedString("type_delete_confirmation", comment: ""),
+            style: .warning
+        )
+
         guard let text = textField.text else {
-            // @TODO WARNING?
+            warning.show()
             return
+        }
+
+        if text != NSLocalizedString("delete_caps", comment: "") {
+            warning.show()
+            return
+        }
+
+        button.isLoading = true
+
+        APIClient().deleteAccount { result in
+            DispatchQueue.main.async {
+                self.button.isLoading = false
+            }
+
+            switch result {
+            case .failure:
+                let banner = NotificationBanner(
+                    title: NSLocalizedString("something_went_wrong", comment: ""),
+                    subtitle: NSLocalizedString("please_try_again_later", comment: ""),
+                    style: .danger,
+                    type: .floating
+                )
+
+                DispatchQueue.main.async {
+                    banner.show()
+                }
+            case .success:
+                DispatchQueue.main.async {
+                    self.dismiss(animated: true, completion: {
+                        DispatchQueue.main.async {
+                            (UIApplication.shared.delegate as! AppDelegate).transitionToLoginView()
+                        }
+                    })
+                }
+            }
         }
     }
 
     @objc private func cancelPressed() {
         dismiss(animated: true)
-    }
-
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

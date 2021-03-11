@@ -81,6 +81,7 @@ class Client {
         )
         .validate()
         .response { result in
+            debugPrint(result)
             if let err = self.validate(result) {
                 return callback(.failure(err))
             }

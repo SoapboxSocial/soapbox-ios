@@ -514,7 +514,7 @@ extension APIClient {
 
 extension APIClient {
     func deleteAccount(callback: @escaping (Result<Void, Error>) -> Void) {
-        void(path: "/v1/accounts", method: .delete, callback: callback)
+        void(path: "/v1/account", method: .delete, callback: callback)
     }
 }
 
