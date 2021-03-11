@@ -85,7 +85,7 @@ class ActionSheet: UIViewController {
             last = actionView
         }
 
-        view.bottomAnchor.constraint(equalTo: UIApplication.shared.keyWindow?.bottomAnchor).isActive = true
+        view.bottomAnchor.constraint(equalTo: last!.bottomAnchor).isActive = true
     }
 
     @objc private func tap(_ sender: UITapGestureRecognizer) {
