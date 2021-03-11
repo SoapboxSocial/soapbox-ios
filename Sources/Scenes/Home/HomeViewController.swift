@@ -18,7 +18,6 @@ class HomeViewController: ViewController {
 
     private var updateQueue = [Update]()
 
-    private var storyDrawer: DrawerView!
     private var creationView: StoryCreationViewController?
 
     private var ownStories = [APIClient.Story]()
