@@ -56,7 +56,7 @@ class GroupViewController: ViewControllerWithRemoteContent<APIClient.Group> {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         stack.addSubview(scrollView)
 
-        scrollView.addSubview(stack)
+        contentView.addSubview(stack)
 
         stack.addArrangedSubview(headerView)
         stack.addArrangedSubview(membersCountView)
