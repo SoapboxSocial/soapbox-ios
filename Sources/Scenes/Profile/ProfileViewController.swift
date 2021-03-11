@@ -428,8 +428,8 @@ extension ProfileViewController: ProfilePresenterOutput {
     func display(profile: APIClient.Profile) {
         setBasicInfo(profile)
 
-        if let following = profile.isFollowing, following == true {
-            headerView.button.isSelected.toggle()
+        if let following = profile.isFollowing {
+            headerView.button.isSelected = following
         }
 
         followsYouBadge.isHidden = true
