@@ -447,10 +447,6 @@ extension HomeViewController: CreateStoryViewDelegate, DrawerViewDelegate {
         }
 
         creationView?.stop()
-        creationView = nil
-
-        storyDrawer.removeFromSuperview()
-        storyDrawer = nil
     }
 
     private func closeStoryDrawer() {
