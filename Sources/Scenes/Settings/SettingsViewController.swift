@@ -34,21 +34,11 @@ class SettingsViewController: UIViewController {
         ])
 
         presenter.set(deleteAccount: SettingsPresenter.Destructive(name: NSLocalizedString("delete_account", comment: ""), handler: {
-            let view = DeleteAccountView()
+            let view = DeleteAccountViewController()
 
-            let drawer = DrawerView(withView: view)
-            drawer.cornerRadius = 25.0
-            drawer.attachTo(view: UIApplication.shared.keyWindow!)
-            drawer.backgroundEffect = nil
-            drawer.position = .closed
-            drawer.snapPositions = [.closed, .open]
-            drawer.backgroundColor = .background
-
-            UIApplication.shared.keyWindow!.addSubview(drawer)
-
-            view.autoPinEdgesToSuperview()
-
-            drawer.setPosition(.open, animated: true)
+            DispatchQueue.main.async {
+                self.present(view, animated: true)
+            }
         }))
 
         view.backgroundColor = .background
