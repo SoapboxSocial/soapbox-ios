@@ -33,11 +33,18 @@ class ActionSheet: UIViewController {
         return manager
     }()
 
+    private let feedbackGenerator: UIImpactFeedbackGenerator = {
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.prepare()
+        return generator
+    }()
+
     init() {
         super.init(nibName: nil, bundle: nil)
 
         transitioningDelegate = manager
         modalPresentationStyle = .custom
+        manager.presentationDelegate = self
     }
 
     required init?(coder _: NSCoder) {
@@ -174,5 +181,11 @@ private class ActionView: UIView {
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension ActionSheet: DrawerPresentationDelegate {
+    func drawerPresentationWillBegin() {
+        feedbackGenerator.impactOccurred()
     }
 }
