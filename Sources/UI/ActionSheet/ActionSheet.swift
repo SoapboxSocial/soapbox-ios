@@ -99,6 +99,11 @@ class ActionSheet: UIViewController {
         ])
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        willDismissHandler?()
+    }
+
     @objc private func tap(_ sender: UITapGestureRecognizer) {
         guard let view = sender.view as? ActionView else {
             return
