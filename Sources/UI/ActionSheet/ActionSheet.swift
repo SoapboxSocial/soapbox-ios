@@ -85,7 +85,18 @@ class ActionSheet: UIViewController {
             last = actionView
         }
 
-        view.bottomAnchor.constraint(equalTo: last!.bottomAnchor).isActive = true
+        if last == nil {
+            return
+        }
+
+        let spacer = UIView()
+        spacer.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(spacer)
+
+        NSLayoutConstraint.activate([
+            spacer.topAnchor.constraint(equalTo: last!.bottomAnchor),
+            spacer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        ])
     }
 
     @objc private func tap(_ sender: UITapGestureRecognizer) {
