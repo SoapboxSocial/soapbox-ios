@@ -4,8 +4,6 @@ import DrawerView
 import UIKit
 
 protocol CreateStoryViewDelegate {
-    func didStartRecording()
-    func didEndRecording()
     func didFailToRequestPermission()
     func didFinishUploading(_ storyView: StoryCreationViewController)
 }
@@ -201,7 +199,7 @@ class StoryCreationViewController: UIViewController {
     }
 
     @objc private func startRecording() {
-        delegate?.didStartRecording()
+        manager.drawer.enabled = false
 
         button.isSelected.toggle()
         reset()
@@ -235,7 +233,7 @@ class StoryCreationViewController: UIViewController {
     }
 
     @objc private func endRecording() {
-        delegate?.didEndRecording()
+        manager.drawer.enabled = true
 
         button.isSelected.toggle()
         timer.invalidate()

@@ -436,16 +436,6 @@ extension HomeViewController: CreateStoryViewDelegate, DrawerViewDelegate {
         present(creationView!, animated: true)
     }
 
-    // This removes the pan functionality to close the drawer temporarily.
-    // We do this because if the user drags their thumb while recording things go weird.
-    func didStartRecording() {
-        storyDrawer.enabled = false
-    }
-
-    func didEndRecording() {
-        storyDrawer.enabled = true
-    }
-
     func didFailToRequestPermission() {}
 
     func didFinishUploading(_: StoryCreationViewController) {
