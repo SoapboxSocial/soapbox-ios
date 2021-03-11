@@ -30,7 +30,6 @@ class ActionSheet: UIViewController {
         manager.drawer.backgroundColor = .foreground
         manager.drawer.backgroundEffect = nil
         manager.drawer.cornerRadius = 30
-        manager.presentationDelegate = self
         return manager
     }()
 
@@ -45,6 +44,7 @@ class ActionSheet: UIViewController {
 
         transitioningDelegate = manager
         modalPresentationStyle = .custom
+        manager.presentationDelegate = self
     }
 
     required init?(coder _: NSCoder) {
