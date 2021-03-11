@@ -13,8 +13,10 @@ class ViewControllerWithRemoteContent<T: Decodable>: ViewController {
         return view
     }()
 
-    let contentView: UIView = {
-        let view = UIView()
+    let contentView: UIScrollView = {
+        let view = UIScrollView()
+        view.refreshControl = UIRefreshControl()
+        view.refreshControl!.addTarget(self, action: #selector(loadData), for: .valueChanged)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -43,8 +45,13 @@ class ViewControllerWithRemoteContent<T: Decodable>: ViewController {
     }
 
     func didLoad(content: T) {
+        contentView.refreshControl?.endRefreshing()
         self.content = content
         loadingIndicator.stopAnimating()
         contentView.isHidden = false
+    }
+
+    @objc func loadData() {
+        contentView.refreshControl?.beginRefreshing()
     }
 }

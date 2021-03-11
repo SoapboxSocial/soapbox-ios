@@ -105,11 +105,7 @@ class ProfileViewController: ViewControllerWithRemoteContent<APIClient.Profile> 
 
         view.backgroundColor = .background
 
-        let scrollView = UIScrollView()
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(scrollView)
-
-        scrollView.addSubview(stack)
+        contentView.addSubview(stack)
 
         headerView.button.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
         headerView.button.setTitle(NSLocalizedString("unfollow", comment: ""), for: .selected)
@@ -141,16 +137,9 @@ class ProfileViewController: ViewControllerWithRemoteContent<APIClient.Profile> 
         ])
 
         NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: view.topAnchor),
-            stack.leftAnchor.constraint(equalTo: view.leftAnchor),
-            stack.rightAnchor.constraint(equalTo: view.rightAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            scrollView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            scrollView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            stack.topAnchor.constraint(equalTo: contentView.topAnchor),
+            stack.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            stack.rightAnchor.constraint(equalTo: contentView.rightAnchor),
         ])
 
         NSLayoutConstraint.activate([
@@ -219,6 +208,11 @@ class ProfileViewController: ViewControllerWithRemoteContent<APIClient.Profile> 
             groups.rightAnchor.constraint(equalTo: groupsContainer.rightAnchor),
         ])
 
+        output.loadData()
+    }
+
+    @objc override func loadData() {
+        super.loadData()
         output.loadData()
     }
 
