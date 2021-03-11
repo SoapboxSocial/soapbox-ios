@@ -330,16 +330,19 @@ class ProfileViewController: ViewController {
         }
 
         if user.isFollowing ?? false {
-            let alert = UIAlertController.confirmation(
-                onAccepted: {
-                    self.output.unfollow()
-                },
-                onDeclined: {
-                    self.headerView.button.isUserInteractionEnabled = true
-                }
-            )
+            let sheet = ActionSheet()
 
-            present(alert, animated: true)
+            let fmt = NSLocalizedString("unfollow_user", comment: "")
+
+            sheet.add(action: ActionSheet.Action(title: String(format: fmt, "@" + user.username), style: .destructive, handler: { _ in
+                self.output.unfollow()
+            }))
+
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel, handler: { _ in
+                self.headerView.button.isUserInteractionEnabled = true
+            }))
+
+            present(sheet, animated: true)
         } else {
             output.follow()
         }

@@ -132,6 +132,7 @@ private class ActionView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
         label.font = .rounded(forTextStyle: .title3, weight: .bold)
+        label.numberOfLines = 0
         return label
     }()
 

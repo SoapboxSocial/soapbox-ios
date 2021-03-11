@@ -239,3 +239,4 @@
 "minis" = "Minis";
 
 "user_invited" = "%@ was invited!";
+"unfollow_user" = "Unfollow %@";
