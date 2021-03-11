@@ -8,10 +8,10 @@ protocol GroupViewControllerOutput {
     func join()
 }
 
-class GroupViewController: ViewController {
+class GroupViewController: ViewControllerWithRemoteContent<APIClient.Group> {
     var output: GroupViewControllerOutput!
 
-    private let content: UIStackView = {
+    private let stack: UIStackView = {
         let view = UIStackView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.spacing = 20
@@ -47,22 +47,16 @@ class GroupViewController: ViewController {
 
     private var id: Int!
 
-    private var group: APIClient.Group!
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .background
 
-        let scrollView = UIScrollView()
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(scrollView)
+        contentView.addSubview(stack)
 
-        scrollView.addSubview(content)
-
-        content.addArrangedSubview(headerView)
-        content.addArrangedSubview(membersCountView)
-        content.addArrangedSubview(inviteView)
+        stack.addArrangedSubview(headerView)
+        stack.addArrangedSubview(membersCountView)
+        stack.addArrangedSubview(inviteView)
 
         membersCountView.descriptionLabel.text = NSLocalizedString("members", comment: "")
         membersCountView.handleTap(target: self, action: #selector(didTapMembers))
@@ -100,18 +94,16 @@ class GroupViewController: ViewController {
         ])
 
         NSLayoutConstraint.activate([
-            content.topAnchor.constraint(equalTo: view.topAnchor),
-            content.leftAnchor.constraint(equalTo: view.leftAnchor),
-            content.rightAnchor.constraint(equalTo: view.rightAnchor),
+            stack.topAnchor.constraint(equalTo: contentView.topAnchor),
+            stack.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            stack.rightAnchor.constraint(equalTo: contentView.rightAnchor),
         ])
 
-        NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            scrollView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            scrollView.rightAnchor.constraint(equalTo: view.rightAnchor),
-        ])
+        output.loadData()
+    }
 
+    @objc override func loadData() {
+        super.loadData()
         output.loadData()
     }
 
@@ -129,7 +121,7 @@ class GroupViewController: ViewController {
         sheet.add(action: ActionSheet.Action(title: NSLocalizedString("report_incident", comment: ""), style: .destructive, handler: { _ in
             let view = ReportPageViewController(
                 userId: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId),
-                reportedGroupId: self.group.id
+                reportedGroupId: self.content.id
             )
 
             DispatchQueue.main.async {
@@ -144,7 +136,7 @@ class GroupViewController: ViewController {
 
 extension GroupViewController: GroupPresenterOutput {
     func display(group: APIClient.Group) {
-        self.group = group
+        didLoad(content: group)
         title = group.name
         headerView.titleLabel.text = group.name
         headerView.descriptionLabel.text = group.description
@@ -235,7 +227,7 @@ extension GroupViewController: GroupPresenterOutput {
         UIView.animate(
             withDuration: 0.2,
             animations: { self.inviteView.isHidden = true },
-            completion: { _ in self.content.removeArrangedSubview(self.inviteView) }
+            completion: { _ in self.stack.removeArrangedSubview(self.inviteView) }
         )
     }
 
@@ -258,7 +250,7 @@ extension GroupViewController: GroupPresenterOutput {
     }
 
     @objc private func editPressed() {
-        let view = EditGroupViewController(group: group, parent: self)
+        let view = EditGroupViewController(group: content, parent: self)
         present(view, animated: true)
     }
 
