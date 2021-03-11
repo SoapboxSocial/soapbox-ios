@@ -457,6 +457,8 @@ extension ProfileViewController: ProfilePresenterOutput {
     }
 
     func display(groups: [APIClient.Group]) {
+        self.groups.clear()
+
         if groups.isEmpty {
             if content != nil, content.id != UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
                 groupsContainer.isHidden = true
