@@ -471,7 +471,7 @@ extension RoomView: UICollectionViewDelegate {
             }))
 
             sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-            sheet.present()
+            window!.rootViewController!.present(sheet, animated: true)
             return
         }
 
@@ -518,7 +518,7 @@ extension RoomView: UICollectionViewDelegate {
         }
 
         sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-        sheet.present()
+        window!.rootViewController!.present(sheet, animated: true)
     }
 }
 
@@ -860,7 +860,7 @@ extension RoomView: ButtonBarDelegate {
     }
 
     private func settingsTapped() {
-        RoomSettingsSheet.show(forRoom: room)
+        RoomSettingsSheet.show(forRoom: room, on: window!.rootViewController!)
     }
 
     private func inviteTapped() {

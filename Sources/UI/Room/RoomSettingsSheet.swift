@@ -1,7 +1,7 @@
 import UIKit
 
 class RoomSettingsSheet {
-    static func show(forRoom room: Room) {
+    static func show(forRoom room: Room, on view: UIViewController) {
         let sheet = ActionSheet()
 
         sheet.add(action: ActionSheet.Action(title: NSLocalizedString("change_name", comment: ""), style: .default, handler: { _ in
@@ -13,7 +13,7 @@ class RoomSettingsSheet {
         }
 
         sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-        sheet.present()
+        view.present(sheet, animated: true)
     }
 
     private static func createVisibilityToggle(room: Room) -> ActionSheet.Action {

@@ -138,7 +138,7 @@ class GroupViewController: ViewController {
         }))
 
         sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-        sheet.present()
+        present(sheet, animated: true)
     }
 }
 

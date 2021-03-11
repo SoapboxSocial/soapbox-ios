@@ -278,7 +278,7 @@ class ProfileViewController: ViewController {
         }))
 
         sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-        sheet.present()
+        present(sheet, animated: true)
     }
 
     @objc private func openTwitterProfile() {
@@ -406,7 +406,7 @@ class ProfileViewController: ViewController {
         }
 
         sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-        sheet.present((navigationController?.view)!)
+        present(sheet, animated: true)
     }
 }
 

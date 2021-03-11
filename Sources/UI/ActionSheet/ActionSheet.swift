@@ -1,7 +1,7 @@
 import DrawerView
 import UIKit
 
-class ActionSheet {
+class ActionSheet: UIViewController {
     class Action {
         enum Style {
             case `default`, cancel, destructive
@@ -18,88 +18,74 @@ class ActionSheet {
         }
     }
 
-    private var actions = [Action]()
-
     /// A closure called before the alert is dismissed but only if done by own method and not manually
     @objc
     public var willDismissHandler: (() -> Void)?
+
+    private var actions = [Action]()
+
+    private let manager: DrawerPresentationManager = {
+        let manager = DrawerPresentationManager()
+        manager.drawer.openHeightBehavior = .fitting
+        manager.drawer.backgroundColor = .foreground
+        manager.drawer.backgroundEffect = nil
+        manager.drawer.cornerRadius = 30
+        return manager
+    }()
 
     func add(action: Action) {
         actions.append(action)
     }
 
-    func present(_ context: UIView? = nil) {
-        var presenter: UIView
-        if let view = context {
-            presenter = view
-        } else {
-            presenter = UIApplication.shared.keyWindow!
-        }
+    init() {
+        super.init(nibName: nil, bundle: nil)
 
-        let view = ActionSheetView(actions: actions)
-
-        let drawer = DrawerView(withView: view)
-        drawer.position = .closed
-        drawer.delegate = self
-        drawer.cornerRadius = 30.0
-        drawer.backgroundEffect = nil
-        drawer.snapPositions = [.closed, .open]
-        drawer.enabled = false
-        drawer.backgroundColor = .foreground
-        drawer.openHeightBehavior = .fitting
-        drawer.contentVisibilityBehavior = .allowPartial
-
-//        presenter?.addSubview(drawer)
-
-        view.autoPinEdgesToSuperview()
-        drawer.attachTo(view: presenter)
-
-        drawer.setPosition(.open, animated: true)
-    }
-}
-
-extension ActionSheet: DrawerViewDelegate {
-    func drawer(_ drawerView: DrawerView, didTransitionTo position: DrawerPosition) {
-        if position == .closed {
-            drawerView.removeFromSuperview()
-        }
+        transitioningDelegate = manager
+        modalPresentationStyle = .custom
     }
 
-    func drawer(_: DrawerView, willTransitionFrom _: DrawerPosition, to targetPosition: DrawerPosition) {
-        if targetPosition == .closed {
-            willDismissHandler?()
-        }
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
-}
 
-private class ActionSheetView: UIView {
-    private var stack: UIStackView = {
-        let stack = UIStackView()
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.spacing = 0
-        stack.distribution = .equalSpacing
-        stack.alignment = .fill
-        stack.axis = .vertical
-        return stack
-    }()
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-    init(actions: [ActionSheet.Action]) {
-        super.init(frame: .zero)
+        var last: ActionView?
 
-        addSubview(stack)
+        let handle = UIView()
+        handle.translatesAutoresizingMaskIntoConstraints = false
+        handle.backgroundColor = UIColor.black.withAlphaComponent(0.2)
+        handle.layer.cornerRadius = 2.5
+        view.addSubview(handle)
+
+        NSLayoutConstraint.activate([
+            handle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            handle.heightAnchor.constraint(equalToConstant: 5),
+            handle.widthAnchor.constraint(equalToConstant: 36),
+            handle.topAnchor.constraint(equalTo: view.topAnchor, constant: 5),
+        ])
 
         for action in actions {
             let actionView = ActionView(action: action)
             actionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tap)))
-            stack.addArrangedSubview(actionView)
+            view.addSubview(actionView)
+
+            NSLayoutConstraint.activate([
+                actionView.leftAnchor.constraint(equalTo: view.leftAnchor),
+                actionView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            ])
+
+            if last == nil {
+                actionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 30).isActive = true
+            } else {
+                actionView.topAnchor.constraint(equalTo: last!.bottomAnchor).isActive = true
+            }
+
+            last = actionView
         }
 
-        NSLayoutConstraint.activate([
-            topAnchor.constraint(equalTo: stack.topAnchor, constant: -30),
-            stack.leftAnchor.constraint(equalTo: leftAnchor),
-            stack.rightAnchor.constraint(equalTo: rightAnchor),
-            stack.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -10),
-        ])
+        view.bottomAnchor.constraint(equalTo: UIApplication.shared.keyWindow?.bottomAnchor).isActive = true
     }
 
     @objc private func tap(_ sender: UITapGestureRecognizer) {
@@ -107,19 +93,11 @@ private class ActionSheetView: UIView {
             return
         }
 
-        guard let drawer = self.superview as? DrawerView else {
-            fatalError("not in drawer")
-        }
-
-        drawer.setPosition(.closed, animated: true)
+        dismiss(animated: true)
 
         if let handler = view.action.handler {
             handler(view.action)
         }
-    }
-
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 

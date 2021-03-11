@@ -308,7 +308,7 @@ class StoriesViewController: UIViewController {
         menu.add(action: delete)
 
         menu.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-        menu.present()
+        present(menu, animated: true)
     }
 
     @objc private func skip() {

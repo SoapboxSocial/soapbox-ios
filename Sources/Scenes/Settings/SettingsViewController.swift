@@ -97,7 +97,7 @@ class SettingsViewController: UIViewController {
                 sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
 
                 DispatchQueue.main.async {
-                    sheet.present()
+                    self.present(sheet, animated: true)
                 }
             },
             value: {
