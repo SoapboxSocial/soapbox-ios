@@ -313,7 +313,7 @@ class ProfileViewController: ViewController {
     }
 
     @objc private func followPressed() {
-        headerView.button.isUserInteractionEnabled = false
+        headerView.button.isLoading = true
 
         if user.isBlocked ?? false {
             let sheet = ActionSheet()
@@ -321,11 +321,11 @@ class ProfileViewController: ViewController {
             let fmt = NSLocalizedString("unblock_user", comment: "")
 
             sheet.add(action: ActionSheet.Action(title: String(format: fmt, "@" + user.username), style: .destructive, handler: { _ in
-                self.output.unfollow()
+                self.output.unblock()
             }))
 
             sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel, handler: { _ in
-                self.headerView.button.isUserInteractionEnabled = true
+                self.headerView.button.isLoading = false
             }))
 
             present(sheet, animated: true)
@@ -339,11 +339,16 @@ class ProfileViewController: ViewController {
 
             sheet.add(action: ActionSheet.Action(title: String(format: fmt, "@" + user.username), style: .destructive, handler: { _ in
                 self.output.unfollow()
+                DispatchQueue.main.async {
+                    self.headerView.button.isLoading = true
+                }
             }))
 
-            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel, handler: { _ in
-                self.headerView.button.isUserInteractionEnabled = true
-            }))
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+
+            sheet.willDismissHandler = {
+                self.headerView.button.isLoading = false
+            }
 
             present(sheet, animated: true)
         } else {
@@ -516,7 +521,7 @@ extension ProfileViewController: ProfilePresenterOutput {
     }
 
     func didFollow() {
-        headerView.button.isUserInteractionEnabled = true
+        headerView.button.isLoading = false
         headerView.button.isSelected.toggle()
         user.isFollowing = true
         user.followers += 1
@@ -524,7 +529,7 @@ extension ProfileViewController: ProfilePresenterOutput {
     }
 
     func didUnfollow() {
-        headerView.button.isUserInteractionEnabled = true
+        headerView.button.isLoading = false
         headerView.button.isSelected.toggle()
         user.isFollowing = false
         user.followers -= 1
@@ -532,7 +537,7 @@ extension ProfileViewController: ProfilePresenterOutput {
     }
 
     func didBlock() {
-        headerView.button.isUserInteractionEnabled = true
+        headerView.button.isLoading = false
         user.isBlocked = true
         user.isFollowing = false
 
@@ -550,7 +555,7 @@ extension ProfileViewController: ProfilePresenterOutput {
     }
 
     func didUnblock() {
-        headerView.button.isUserInteractionEnabled = true
+        headerView.button.isLoading = false
         user.isBlocked = false
         user.isFollowing = false
 
