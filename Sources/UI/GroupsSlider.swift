@@ -79,6 +79,14 @@ class GroupsSlider: UIView {
         }
     }
 
+    func clear() {
+        data = []
+
+        DispatchQueue.main.async {
+            self.collection.reloadData()
+        }
+    }
+
     private static func makeLayout() -> UICollectionViewCompositionalLayout {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)

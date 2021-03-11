@@ -26,8 +26,8 @@ class ProfileHeaderView: UIView {
         return label
     }()
 
-    var button: Button = {
-        let button = Button(size: .small)
+    var button: ButtonWithLoadingIndicator = {
+        let button = ButtonWithLoadingIndicator(size: .small)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.isHidden = true
         return button

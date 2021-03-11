@@ -21,7 +21,6 @@ target 'Soapbox' do
   pod 'EasyTipView'
   pod 'Siren'
   pod 'KDCircularProgress'
-  pod 'ColorThiefSwift'
   pod 'ACBAVPlayer'
 
   target 'SoapboxTests' do

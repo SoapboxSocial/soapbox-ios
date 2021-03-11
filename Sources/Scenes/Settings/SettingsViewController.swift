@@ -94,7 +94,7 @@ class SettingsViewController: UIViewController {
         return SettingsPresenter.Appearance(
             name: NSLocalizedString("theme", comment: ""),
             handler: {
-                let sheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+                let sheet = ActionSheet()
 
                 func themeToggle(theme: Theme) {
                     UserDefaults.standard.set(theme.rawValue, forKey: UserDefaultsKeys.theme)
@@ -102,19 +102,19 @@ class SettingsViewController: UIViewController {
                     (UIApplication.shared.delegate as! AppDelegate).setTheme()
                 }
 
-                sheet.addAction(UIAlertAction(title: NSLocalizedString("system", comment: ""), style: .default, handler: { _ in
+                sheet.add(action: ActionSheet.Action(title: NSLocalizedString("system", comment: ""), style: .default, handler: { _ in
                     themeToggle(theme: .system)
                 }))
 
-                sheet.addAction(UIAlertAction(title: NSLocalizedString("dark", comment: ""), style: .default, handler: { _ in
+                sheet.add(action: ActionSheet.Action(title: NSLocalizedString("dark", comment: ""), style: .default, handler: { _ in
                     themeToggle(theme: .dark)
                 }))
 
-                sheet.addAction(UIAlertAction(title: NSLocalizedString("light", comment: ""), style: .default, handler: { _ in
+                sheet.add(action: ActionSheet.Action(title: NSLocalizedString("light", comment: ""), style: .default, handler: { _ in
                     themeToggle(theme: .light)
                 }))
 
-                sheet.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+                sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
 
                 DispatchQueue.main.async {
                     self.present(sheet, animated: true)

@@ -1,5 +1,4 @@
 import AVFoundation
-import ColorThiefSwift
 import UIKit
 
 class StoriesViewController: UIViewController {
@@ -119,11 +118,10 @@ class StoriesViewController: UIViewController {
                     return
                 }
 
-                guard let dominantColor = ColorThief.getColor(from: image) else {
+                guard let color = image.averageColor() else {
                     return
                 }
 
-                let color = dominantColor.makeUIColor()
                 DispatchQueue.main.async {
                     content.backgroundColor = color
 
@@ -294,22 +292,20 @@ class StoriesViewController: UIViewController {
         player.pause()
         progress.isPaused = true
 
-        let menu = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let menu = ActionSheet()
         menu.willDismissHandler = {
             self.player.unpause()
             self.progress.isPaused = false
         }
 
-        let delete = UIAlertAction(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in
+        let delete = ActionSheet.Action(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in
             APIClient().deleteStory(id: item.id, callback: { _ in
-                menu.dismiss(animated: true)
                 self.player.next()
             })
         })
-        menu.addAction(delete)
+        menu.add(action: delete)
 
-        menu.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-
+        menu.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
         present(menu, animated: true)
     }
 
