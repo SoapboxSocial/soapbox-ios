@@ -240,19 +240,15 @@ class ProfileViewController: ViewController {
             return presentImage()
         }
 
-        let alert = UIAlertController(
-            title: nil,
-            message: nil,
-            preferredStyle: .actionSheet
-        )
+        let sheet = ActionSheet()
 
         // @TODO only show action when not in room
 
-        alert.addAction(UIAlertAction(title: NSLocalizedString("view_image", comment: ""), style: .default, handler: { _ in
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("view_image", comment: ""), style: .default, handler: { _ in
             presentImage()
         }))
 
-        alert.addAction(UIAlertAction(title: NSLocalizedString("listen_to_story", comment: ""), style: .default, handler: { _ in
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("listen_to_story", comment: ""), style: .default, handler: { _ in
             guard let nav = UIApplication.shared.keyWindow?.rootViewController as? NavigationViewController else {
                 return
             }
@@ -281,9 +277,8 @@ class ProfileViewController: ViewController {
             self.present(vc, animated: true)
         }))
 
-        alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-
-        present(alert, animated: true)
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+        present(sheet, animated: true)
     }
 
     @objc private func openTwitterProfile() {
@@ -321,43 +316,45 @@ class ProfileViewController: ViewController {
         headerView.button.isUserInteractionEnabled = false
 
         if user.isBlocked ?? false {
-            let alert = UIAlertController.confirmation(
-                onAccepted: {
-                    self.output.unblock()
-                },
-                onDeclined: {
-                    self.headerView.button.isUserInteractionEnabled = true
-                }
-            )
+            let sheet = ActionSheet()
 
-            present(alert, animated: true)
+            let fmt = NSLocalizedString("unblock_user", comment: "")
+
+            sheet.add(action: ActionSheet.Action(title: String(format: fmt, "@" + user.username), style: .destructive, handler: { _ in
+                self.output.unfollow()
+            }))
+
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel, handler: { _ in
+                self.headerView.button.isUserInteractionEnabled = true
+            }))
+
+            present(sheet, animated: true)
             return
         }
 
         if user.isFollowing ?? false {
-            let alert = UIAlertController.confirmation(
-                onAccepted: {
-                    self.output.unfollow()
-                },
-                onDeclined: {
-                    self.headerView.button.isUserInteractionEnabled = true
-                }
-            )
+            let sheet = ActionSheet()
 
-            present(alert, animated: true)
+            let fmt = NSLocalizedString("unfollow_user", comment: "")
+
+            sheet.add(action: ActionSheet.Action(title: String(format: fmt, "@" + user.username), style: .destructive, handler: { _ in
+                self.output.unfollow()
+            }))
+
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel, handler: { _ in
+                self.headerView.button.isUserInteractionEnabled = true
+            }))
+
+            present(sheet, animated: true)
         } else {
             output.follow()
         }
     }
 
     @objc private func menuButtonPressed() {
-        let alert = UIAlertController(
-            title: nil,
-            message: nil,
-            preferredStyle: .actionSheet
-        )
+        let sheet = ActionSheet()
 
-        alert.addAction(UIAlertAction(title: NSLocalizedString("share_profile", comment: ""), style: .default, handler: { _ in
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("share_profile", comment: ""), style: .default, handler: { _ in
             let items: [Any] = [
                 URL(string: "https://soapbox.social/user/" + self.user.username)!,
             ]
@@ -370,14 +367,14 @@ class ProfileViewController: ViewController {
             }
         }))
 
-        if user.id == UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
-            alert.addAction(UIAlertAction(title: NSLocalizedString("settings", comment: ""), style: .default, handler: { _ in
+        let id = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
+
+        if user.id == id {
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("settings", comment: ""), style: .default, handler: { _ in
                 self.present(SceneFactory.createSettingsViewController(), animated: true)
             }))
-        }
-
-        if user.id != UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
-            alert.addAction(UIAlertAction(title: NSLocalizedString("report_incident", comment: ""), style: .destructive, handler: { _ in
+        } else {
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("report_incident", comment: ""), style: .destructive, handler: { _ in
                 let view = ReportPageViewController(
                     userId: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId),
                     reportedUserId: self.user.id
@@ -395,7 +392,7 @@ class ProfileViewController: ViewController {
                 blockedDescription = ""
             }
 
-            alert.addAction(UIAlertAction(title: blockedLabel, style: .destructive, handler: { _ in
+            sheet.add(action: ActionSheet.Action(title: blockedLabel, style: .destructive, handler: { _ in
                 let confirmation = UIAlertController.confirmation(
                     onAccepted: {
                         if self.user.isBlocked ?? false {
@@ -414,9 +411,8 @@ class ProfileViewController: ViewController {
             }))
         }
 
-        alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-
-        present(alert, animated: true)
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+        present(sheet, animated: true)
     }
 }
 

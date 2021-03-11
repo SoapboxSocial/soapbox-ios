@@ -124,9 +124,9 @@ class GroupViewController: ViewController {
     }
 
     @objc private func menuButtonPressed() {
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let sheet = ActionSheet()
 
-        alert.addAction(UIAlertAction(title: NSLocalizedString("report_incident", comment: ""), style: .destructive, handler: { _ in
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("report_incident", comment: ""), style: .destructive, handler: { _ in
             let view = ReportPageViewController(
                 userId: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId),
                 reportedGroupId: self.group.id
@@ -137,9 +137,8 @@ class GroupViewController: ViewController {
             }
         }))
 
-        alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-
-        present(alert, animated: true)
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+        present(sheet, animated: true)
     }
 }
 
