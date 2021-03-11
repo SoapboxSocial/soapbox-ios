@@ -33,10 +33,6 @@ class ActionSheet: UIViewController {
         return manager
     }()
 
-    func add(action: Action) {
-        actions.append(action)
-    }
-
     init() {
         super.init(nibName: nil, bundle: nil)
 
@@ -46,6 +42,10 @@ class ActionSheet: UIViewController {
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func add(action: Action) {
+        actions.append(action)
     }
 
     override func viewDidLoad() {
