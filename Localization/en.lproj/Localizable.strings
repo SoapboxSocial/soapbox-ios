@@ -239,5 +239,12 @@
 "minis" = "Minis";
 
 "user_invited" = "%@ was invited!";
+
 "unfollow_user" = "Unfollow %@";
 "unblock_user" = "Unblock %@";
+
+"delete_account" = "Delete Account";
+"type_delete_confirmation" = "Please confirm deletion by typing \"DELETE\"";
+"deleting_is_permanent" = "Deleting your account is an irreversible action, your account will be deleted immediately!";
+"delete_caps" = "DELETE";
+"type_delete" = "Type \"DELETE\"";
