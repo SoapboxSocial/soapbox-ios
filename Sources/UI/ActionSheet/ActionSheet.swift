@@ -165,8 +165,8 @@ private class ActionView: UIView {
         label.text = action.title
 
         NSLayoutConstraint.activate([
-            label.leftAnchor.constraint(equalTo: leftAnchor),
-            label.rightAnchor.constraint(equalTo: rightAnchor),
+            label.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            label.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
             label.topAnchor.constraint(equalTo: seperator.bottomAnchor, constant: 15),
             bottomAnchor.constraint(equalTo: label.bottomAnchor, constant: 15),
         ])

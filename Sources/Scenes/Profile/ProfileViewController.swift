@@ -316,16 +316,19 @@ class ProfileViewController: ViewController {
         headerView.button.isUserInteractionEnabled = false
 
         if user.isBlocked ?? false {
-            let alert = UIAlertController.confirmation(
-                onAccepted: {
-                    self.output.unblock()
-                },
-                onDeclined: {
-                    self.headerView.button.isUserInteractionEnabled = true
-                }
-            )
+            let sheet = ActionSheet()
 
-            present(alert, animated: true)
+            let fmt = NSLocalizedString("unblock_user", comment: "")
+
+            sheet.add(action: ActionSheet.Action(title: String(format: fmt, "@" + user.username), style: .destructive, handler: { _ in
+                self.output.unfollow()
+            }))
+
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel, handler: { _ in
+                self.headerView.button.isUserInteractionEnabled = true
+            }))
+
+            present(sheet, animated: true)
             return
         }
 

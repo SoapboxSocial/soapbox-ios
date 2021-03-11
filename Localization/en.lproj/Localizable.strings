@@ -240,3 +240,4 @@
 
 "user_invited" = "%@ was invited!";
 "unfollow_user" = "Unfollow %@";
+"unblock_user" = "Unblock %@";
