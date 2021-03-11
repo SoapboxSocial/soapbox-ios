@@ -1,7 +1,6 @@
 import UIKit
 
 extension UIImage {
-    
     func averageColor() -> UIColor? {
         // https://stackoverflow.com/questions/26330924
         guard let ciImage = ciImage ?? CIImage(image: self) else { return nil }

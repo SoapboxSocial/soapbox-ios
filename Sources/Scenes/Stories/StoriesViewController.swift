@@ -117,7 +117,7 @@ class StoriesViewController: UIViewController {
                 guard let image = data.value else {
                     return
                 }
-                
+
                 guard let color = image.averageColor() else {
                     return
                 }
