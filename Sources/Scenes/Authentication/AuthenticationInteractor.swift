@@ -134,7 +134,7 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
 
     func follow(users: [Int]) {
         if users.count == 0 {
-            return self.registrationCompleted()
+            return registrationCompleted()
         }
 
         api.multifollow(users: users, callback: { result in

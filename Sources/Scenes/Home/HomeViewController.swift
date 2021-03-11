@@ -19,7 +19,7 @@ class HomeViewController: ViewController {
     private var updateQueue = [Update]()
 
     private var storyDrawer: DrawerView!
-    private var creationView: CreateStoryView?
+    private var creationView: StoryCreationViewController?
 
     private var ownStories = [APIClient.Story]()
 
@@ -430,26 +430,10 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
 
 extension HomeViewController: CreateStoryViewDelegate, DrawerViewDelegate {
     func openCreateStory() {
-        creationView = CreateStoryView()
+        creationView = StoryCreationViewController()
         creationView!.delegate = self
 
-        storyDrawer = DrawerView(withView: creationView!)
-        storyDrawer!.cornerRadius = 25.0
-        storyDrawer!.delegate = self
-        storyDrawer!.attachTo(view: (navigationController?.view)!)
-        storyDrawer!.backgroundEffect = nil
-        storyDrawer!.snapPositions = [.closed, .open]
-        storyDrawer!.backgroundColor = .brandColor
-        storyDrawer!.childScrollViewsPanningCanDismissDrawer = false
-
-        navigationController?.view.addSubview(storyDrawer)
-
-        creationView!.autoPinEdgesToSuperview()
-
-        storyDrawer!.setPosition(.closed, animated: false)
-        storyDrawer!.setPosition(.open, animated: true) { _ in
-            UIApplication.shared.isIdleTimerDisabled = true
-        }
+        present(creationView!, animated: true)
     }
 
     // This removes the pan functionality to close the drawer temporarily.
@@ -464,11 +448,7 @@ extension HomeViewController: CreateStoryViewDelegate, DrawerViewDelegate {
 
     func didFailToRequestPermission() {}
 
-    func didFinishUploading(_: CreateStoryView) {
-        closeStoryDrawer()
-    }
-
-    func didCancel() {
+    func didFinishUploading(_: StoryCreationViewController) {
         closeStoryDrawer()
     }
 
@@ -485,7 +465,7 @@ extension HomeViewController: CreateStoryViewDelegate, DrawerViewDelegate {
     }
 
     private func closeStoryDrawer() {
-        storyDrawer.setPosition(.closed, animated: true, completion: { _ in
+        creationView?.dismiss(animated: true, completion: {
             self.output.fetchData()
         })
     }
