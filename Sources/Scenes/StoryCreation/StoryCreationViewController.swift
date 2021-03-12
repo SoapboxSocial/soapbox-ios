@@ -3,11 +3,6 @@ import AVFoundation
 import DrawerView
 import UIKit
 
-protocol CreateStoryViewDelegate {
-    func didFailToRequestPermission()
-    func didFinishUploading(_ storyView: StoryCreationViewController)
-}
-
 class StoryCreationViewController: UIViewController {
     private let button: RecordButton = {
         let button = RecordButton()
@@ -57,8 +52,6 @@ class StoryCreationViewController: UIViewController {
     private var timer: Timer!
 
     private var playTime = Float(0.0)
-
-    var delegate: CreateStoryViewDelegate?
 
     private var activity: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: .large)
@@ -189,7 +182,7 @@ class StoryCreationViewController: UIViewController {
         ])
 
         RecordPermissions.request(
-            failure: { self.delegate?.didFailToRequestPermission() },
+            failure: { self.showMicrophoneWarning() },
             success: {}
         )
     }
@@ -284,7 +277,10 @@ class StoryCreationViewController: UIViewController {
             }
 
             self.stop()
-            self.delegate?.didFinishUploading(self)
+
+            DispatchQueue.main.async {
+                self.dismiss(animated: true)
+            }
         }
     }
 
@@ -353,6 +349,24 @@ class StoryCreationViewController: UIViewController {
         playButton.isHidden = true
         playButton.isSelected = false
         recorder.clear()
+    }
+
+    private func showMicrophoneWarning() {
+        let alert = UIAlertController(
+            title: NSLocalizedString("microphone_permission_denied", comment: ""),
+            message: nil, preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("ok", comment: ""), style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("to_settings", comment: ""), style: .default, handler: { _ in
+            DispatchQueue.main.async {
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+            }
+        }))
+
+        DispatchQueue.main.async {
+            self.present(alert, animated: true)
+        }
     }
 }
 

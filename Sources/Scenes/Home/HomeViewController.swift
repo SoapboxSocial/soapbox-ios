@@ -18,8 +18,6 @@ class HomeViewController: ViewController {
 
     private var updateQueue = [Update]()
 
-    private var creationView: StoryCreationViewController?
-
     private var ownStories = [APIClient.Story]()
 
     private let feedbackGenerator: UIImpactFeedbackGenerator = {
@@ -127,6 +125,11 @@ class HomeViewController: ViewController {
     @objc private func loadData() {
         refresh.beginRefreshing()
         output.fetchData()
+    }
+
+    func openCreateStory() {
+        let creationView = StoryCreationViewController()
+        present(creationView, animated: true)
     }
 
     private func makeLayout() -> UICollectionViewLayout {
@@ -424,34 +427,5 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
             withHorizontalFittingPriority: .required,
             verticalFittingPriority: .fittingSizeLevel
         )
-    }
-}
-
-extension HomeViewController: CreateStoryViewDelegate, DrawerViewDelegate {
-    func openCreateStory() {
-        creationView = StoryCreationViewController()
-        creationView!.delegate = self
-
-        present(creationView!, animated: true)
-    }
-
-    func didFailToRequestPermission() {}
-
-    func didFinishUploading(_: StoryCreationViewController) {
-        closeStoryDrawer()
-    }
-
-    func drawer(_: DrawerView, didTransitionTo position: DrawerPosition) {
-        if position != .closed {
-            return
-        }
-
-        creationView?.stop()
-    }
-
-    private func closeStoryDrawer() {
-        creationView?.dismiss(animated: true, completion: {
-            self.output.fetchData()
-        })
     }
 }
