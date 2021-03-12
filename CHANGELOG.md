@@ -4,6 +4,7 @@
 
  - Fixed some visual issues with the room drawer.
  - Fixed some issues with the action sheet.
+ - Fixed some issues with shortcut launching.
  
 ## [2.17.0] - 2021-03-11
 
