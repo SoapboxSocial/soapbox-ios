@@ -139,7 +139,7 @@ class ActionSheet: DrawerViewController {
             ])
 
             if last == nil {
-                actionView.topAnchor.constraint(equalTo: actionsView.topAnchor, constant: 20).isActive = true
+                actionView.topAnchor.constraint(equalTo: actionsView.topAnchor).isActive = true
             } else {
                 actionView.topAnchor.constraint(equalTo: last!.bottomAnchor).isActive = true
             }
