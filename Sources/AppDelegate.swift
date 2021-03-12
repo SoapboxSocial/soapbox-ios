@@ -9,6 +9,8 @@ import UserNotifications
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
+    private var launchedShortcutItem: UIApplicationShortcutItem?
+
     func application(
         _: UIApplication,
         didFinishLaunchingWithOptions options: [UIApplication.LaunchOptionsKey: Any]?
@@ -41,6 +43,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         if let notification = options?[.remoteNotification] as? [String: AnyObject] {
             launchWith(notification: notification)
+        }
+
+        if let shortcutItem = options?[UIApplication.LaunchOptionsKey.shortcutItem] as? UIApplicationShortcutItem {
+            launchedShortcutItem = shortcutItem
+            return false
         }
 
         return true
@@ -204,8 +211,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+        completionHandler(handle(shortcutItem: shortcutItem))
+    }
+
+    func applicationDidBecomeActive(_: UIApplication) {
+        guard let shortcut = launchedShortcutItem else { return }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            _ = self.handle(shortcutItem: shortcut)
+        }
+
+        launchedShortcutItem = nil
+    }
+
+    private func handle(shortcutItem: UIApplicationShortcutItem) -> Bool {
         guard let nav = self.window?.rootViewController as? NavigationViewController else {
-            return completionHandler(true)
+            return false
         }
 
         switch shortcutItem.type {
@@ -217,7 +238,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             break
         }
 
-        completionHandler(true)
+        return true
     }
 
     func setTheme() {
