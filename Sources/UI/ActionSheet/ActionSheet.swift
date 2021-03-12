@@ -1,7 +1,7 @@
 import DrawerView
 import UIKit
 
-class ActionSheet: UIViewController {
+class ActionSheet: DrawerViewController {
     class Action {
         enum Style {
             case `default`, cancel, destructive
@@ -24,26 +24,17 @@ class ActionSheet: UIViewController {
 
     private var actions = [Action]()
 
-    private let manager: DrawerPresentationManager = {
-        let manager = DrawerPresentationManager()
-        manager.drawer.openHeightBehavior = .fitting
-        manager.drawer.backgroundColor = .foreground
-        manager.drawer.backgroundEffect = nil
-        manager.drawer.cornerRadius = 30
-        return manager
-    }()
-
     private let feedbackGenerator: UIImpactFeedbackGenerator = {
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.prepare()
         return generator
     }()
 
-    init() {
-        super.init(nibName: nil, bundle: nil)
+    override init() {
+        super.init()
 
-        transitioningDelegate = manager
-        modalPresentationStyle = .custom
+        manager.drawer.openHeightBehavior = .fitting
+        manager.drawer.backgroundColor = .foreground
         manager.presentationDelegate = self
     }
 
