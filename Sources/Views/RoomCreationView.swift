@@ -1,11 +1,10 @@
 import UIKit
 
 protocol RoomCreationDelegate {
-    func didCancelRoomCreation()
     func didEnterWithName(_ name: String?, isPrivate: Bool, group: Int?, users: [Int]?)
 }
 
-class RoomCreationView: UIView, UITextFieldDelegate {
+class RoomCreationView: DrawerViewController, UITextFieldDelegate {
     var delegate: RoomCreationDelegate?
 
     private enum State: Int {
@@ -54,7 +53,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         return button
     }()
 
-    private let title: UILabel = {
+    private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
         label.text = NSLocalizedString("create_a_room", comment: "")
@@ -96,36 +95,35 @@ class RoomCreationView: UIView, UITextFieldDelegate {
 
     private let api = APIClient()
 
-    init() {
-        super.init(frame: CGRect.zero)
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-        translatesAutoresizingMaskIntoConstraints = false
+        manager.drawer.backgroundColor = .brandColor
 
-        backgroundColor = .brandColor
-
-        addSubview(cancelButton)
-        addSubview(title)
+        view.addSubview(cancelButton)
+        view.addSubview(titleLabel)
 
         NSLayoutConstraint.activate([
-            cancelButton.topAnchor.constraint(equalTo: topAnchor, constant: 20),
-            cancelButton.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            cancelButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            cancelButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
         ])
 
         NSLayoutConstraint.activate([
-            title.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 20),
-            title.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            titleLabel.topAnchor.constraint(equalTo: cancelButton.bottomAnchor, constant: 20),
+            titleLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
         ])
 
-        addSubview(button)
+        view.addSubview(button)
 
         NSLayoutConstraint.activate([
-            button.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            button.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            button.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            button.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             button.heightAnchor.constraint(equalToConstant: 56),
-            button.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            // This is a hack, its necessary because view.safeAreaInsets do not seem to be accurate.
+            button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(UIApplication.shared.keyWindow!.safeAreaInsets.bottom + 10)),
         ])
 
-        addSubview(scrollView)
+        view.addSubview(scrollView)
 
         let creationView = createRoomView()
         scrollView.addSubview(creationView)
@@ -136,29 +134,25 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         scrollView.addSubview(userList)
 
         NSLayoutConstraint.activate([
-            scrollView.leftAnchor.constraint(equalTo: leftAnchor),
-            scrollView.rightAnchor.constraint(equalTo: rightAnchor),
-            scrollView.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 30),
+            scrollView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            scrollView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            scrollView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 30),
             scrollView.bottomAnchor.constraint(equalTo: button.topAnchor),
         ])
 
         NSLayoutConstraint.activate([
             creationView.leftAnchor.constraint(equalTo: scrollView.leftAnchor),
-            creationView.widthAnchor.constraint(equalTo: widthAnchor),
+            creationView.widthAnchor.constraint(equalTo: view.widthAnchor),
             creationView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             creationView.bottomAnchor.constraint(equalTo: button.topAnchor),
         ])
 
         NSLayoutConstraint.activate([
             userList.leftAnchor.constraint(equalTo: creationView.rightAnchor),
-            userList.widthAnchor.constraint(equalTo: widthAnchor),
+            userList.widthAnchor.constraint(equalTo: view.widthAnchor),
             userList.topAnchor.constraint(equalTo: scrollView.topAnchor),
             userList.bottomAnchor.constraint(equalTo: button.topAnchor),
         ])
-    }
-
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     private func createRoomView() -> UIView {
@@ -308,7 +302,9 @@ class RoomCreationView: UIView, UITextFieldDelegate {
             users = userList.selected
         }
 
-        delegate?.didEnterWithName(textField.text, isPrivate: isPrivate, group: group, users: users)
+        dismiss(animated: true, completion: {
+            self.delegate?.didEnterWithName(self.textField.text, isPrivate: isPrivate, group: group, users: users)
+        })
     }
 
     @objc private func cancelPressed() {
@@ -317,7 +313,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
             return
         }
 
-        delegate?.didCancelRoomCreation()
+        dismiss(animated: true)
     }
 
     @objc private func segmentedControlUpdated() {
@@ -358,7 +354,7 @@ class RoomCreationView: UIView, UITextFieldDelegate {
 
     private func transitionTo(state: State) {
         self.state = state
-        scrollView.setContentOffset(CGPoint(x: frame.size.width * CGFloat(state.rawValue), y: 0), animated: true)
+        scrollView.setContentOffset(CGPoint(x: view.frame.size.width * CGFloat(state.rawValue), y: 0), animated: true)
 
         // @TODO CANCEL LABEL
 
@@ -366,11 +362,11 @@ class RoomCreationView: UIView, UITextFieldDelegate {
         case .invite:
             button.isEnabled = false
             button.setTitle(NSLocalizedString("start_room", comment: ""), for: .normal)
-            title.text = NSLocalizedString("invite_your_friends", comment: "")
+            titleLabel.text = NSLocalizedString("invite_your_friends", comment: "")
             cancelButton.setTitle(NSLocalizedString("back", comment: ""), for: .normal)
         case .start:
             button.isEnabled = true
-            title.text = NSLocalizedString("create_a_room", comment: "")
+            titleLabel.text = NSLocalizedString("create_a_room", comment: "")
             button.setTitle(NSLocalizedString("choose_people", comment: ""), for: .normal)
             cancelButton.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
         }
