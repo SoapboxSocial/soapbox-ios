@@ -14,7 +14,6 @@ class NavigationViewController: UINavigationController {
 
     private var roomDrawer: DrawerView?
     private var roomView: RoomView?
-    private var creationDrawer: DrawerView?
 
     private var interactionController: PanTransition?
     private var edgeSwipeGestureRecognizer: UIScreenEdgePanGestureRecognizer?
@@ -87,24 +86,7 @@ class NavigationViewController: UINavigationController {
                 let creationView = RoomCreationView()
                 creationView.delegate = self
 
-                self.creationDrawer = DrawerView(withView: creationView)
-                self.creationDrawer!.cornerRadius = 25.0
-                self.creationDrawer!.attachTo(view: self.view)
-                self.creationDrawer!.backgroundEffect = .none
-                self.creationDrawer!.snapPositions = [.closed, .open]
-                self.creationDrawer!.backgroundColor = .brandColor
-                self.creationDrawer!.delegate = self
-                self.creationDrawer!.childScrollViewsPanningCanDismissDrawer = false
-
-                self.view.addSubview(self.creationDrawer!)
-
-                creationView.autoPinEdgesToSuperview()
-
-                self.creationDrawer!.setPosition(.closed, animated: false)
-                self.creationDrawer!.setPosition(.open, animated: true) { _ in
-                    self.createRoomButton.isHidden = true
-                    UIApplication.shared.isIdleTimerDisabled = true
-                }
+                self.present(creationView, animated: true)
             }
         )
     }
@@ -307,17 +289,9 @@ extension NavigationViewController: RoomController {
 }
 
 extension NavigationViewController: RoomCreationDelegate {
-    func didCancelRoomCreation() {
-        creationDrawer?.setPosition(.closed, animated: true) { _ in
-            self.creationDrawer = nil
-        }
-    }
-
     func didEnterWithName(_ name: String?, isPrivate: Bool, group: Int?, users: [Int]?) {
         DispatchQueue.main.async {
-            self.creationDrawer?.setPosition(.closed, animated: true) { _ in
-                self.createRoom(name: name, isPrivate: isPrivate, group: group, users: users)
-            }
+            self.createRoom(name: name, isPrivate: isPrivate, group: group, users: users)
         }
     }
 
