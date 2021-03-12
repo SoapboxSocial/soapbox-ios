@@ -1,4 +1,3 @@
-import DrawerView
 import UIKit
 
 class SettingsViewController: UIViewController {
