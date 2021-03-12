@@ -30,8 +30,29 @@ class ActionSheet: DrawerViewController {
         return generator
     }()
 
-    override init() {
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .rounded(forTextStyle: .title2, weight: .bold)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        return label
+    }()
+
+    private let stack: UIStackView = {
+        let view = UIStackView()
+        view.alignment = .fill
+        view.distribution = .fill
+        view.axis = .vertical
+        view.spacing = 30
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
+    init(title: String? = nil) {
         super.init()
+
+        titleLabel.text = title
 
         manager.drawer.openHeightBehavior = .fitting
         manager.drawer.backgroundColor = .foreground
@@ -64,24 +85,44 @@ class ActionSheet: DrawerViewController {
             handle.topAnchor.constraint(equalTo: view.topAnchor, constant: 5),
         ])
 
+        view.addSubview(stack)
+
+        stack.addArrangedSubview(titleLabel)
+
+        NSLayoutConstraint.activate([
+            titleLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            titleLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+        ])
+
+        let actionsView = UIView()
+        actionsView.translatesAutoresizingMaskIntoConstraints = false
+
         for action in actions {
             let actionView = ActionView(action: action)
             actionView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tap)))
-            view.addSubview(actionView)
+            actionsView.addSubview(actionView)
 
             NSLayoutConstraint.activate([
-                actionView.leftAnchor.constraint(equalTo: view.leftAnchor),
-                actionView.rightAnchor.constraint(equalTo: view.rightAnchor),
+                actionView.leftAnchor.constraint(equalTo: actionsView.leftAnchor),
+                actionView.rightAnchor.constraint(equalTo: actionsView.rightAnchor),
             ])
 
             if last == nil {
-                actionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 30).isActive = true
+                actionView.topAnchor.constraint(equalTo: actionsView.topAnchor).isActive = true
             } else {
                 actionView.topAnchor.constraint(equalTo: last!.bottomAnchor).isActive = true
             }
 
             last = actionView
         }
+
+        stack.addArrangedSubview(actionsView)
+
+        NSLayoutConstraint.activate([
+            actionsView.bottomAnchor.constraint(equalTo: last!.bottomAnchor),
+            actionsView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            actionsView.rightAnchor.constraint(equalTo: view.rightAnchor),
+        ])
 
         if last == nil {
             return
@@ -92,7 +133,11 @@ class ActionSheet: DrawerViewController {
         view.addSubview(spacer)
 
         NSLayoutConstraint.activate([
-            spacer.topAnchor.constraint(equalTo: last!.bottomAnchor),
+            stack.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
+            stack.bottomAnchor.constraint(equalTo: spacer.topAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
             spacer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
         ])
     }
