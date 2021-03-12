@@ -1,5 +1,4 @@
 import AlamofireImage
-import DrawerView
 import UIKit
 
 protocol HomeViewControllerOutput {
