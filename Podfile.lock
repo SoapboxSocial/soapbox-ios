@@ -1,0 +1,98 @@
+PODS:
+  - ACBAVPlayer (2.1)
+  - Alamofire (5.4.1)
+  - AlamofireImage (4.1.0):
+    - Alamofire (~> 5.1)
+  - BetterSegmentedControl (2.0.1)
+  - DrawerView (1.3.2)
+  - EasyTipView (2.1.0)
+  - GoogleWebRTC (1.1.31999)
+  - GSImageViewerController (1.6.3)
+  - KDCircularProgress (1.5.4)
+  - KeychainAccess (4.2.2)
+  - MarqueeLabel (4.0.5)
+  - NotificationBannerSwift (3.0.6):
+    - MarqueeLabel (~> 4.0.5)
+    - SnapKit (~> 5.0.1)
+  - Siren (5.8.1)
+  - SnapKit (5.0.1)
+  - SwiftConfettiView (0.1.0)
+  - Swifter (2.5.0)
+  - SwiftProtobuf (1.15.0)
+  - UIWindowTransitions (1.0.0)
+
+DEPENDENCIES:
+  - ACBAVPlayer
+  - Alamofire
+  - AlamofireImage
+  - BetterSegmentedControl (~> 2.0)
+  - "DrawerView (from `git@github.com:SoapboxSocial/DrawerView.git`, commit `27f03afaf2b5c590c18614485a3b9d8f82711bfe`)"
+  - EasyTipView
+  - GoogleWebRTC
+  - GSImageViewerController
+  - KDCircularProgress
+  - KeychainAccess
+  - NotificationBannerSwift
+  - Siren
+  - SwiftConfettiView
+  - "Swifter (from `git@github.com:mattdonnelly/Swifter.git`)"
+  - SwiftProtobuf
+  - UIWindowTransitions
+
+SPEC REPOS:
+  trunk:
+    - ACBAVPlayer
+    - Alamofire
+    - AlamofireImage
+    - BetterSegmentedControl
+    - EasyTipView
+    - GoogleWebRTC
+    - GSImageViewerController
+    - KDCircularProgress
+    - KeychainAccess
+    - MarqueeLabel
+    - NotificationBannerSwift
+    - Siren
+    - SnapKit
+    - SwiftConfettiView
+    - SwiftProtobuf
+    - UIWindowTransitions
+
+EXTERNAL SOURCES:
+  DrawerView:
+    :commit: 27f03afaf2b5c590c18614485a3b9d8f82711bfe
+    :git: "git@github.com:SoapboxSocial/DrawerView.git"
+  Swifter:
+    :git: "git@github.com:mattdonnelly/Swifter.git"
+
+CHECKOUT OPTIONS:
+  DrawerView:
+    :commit: 27f03afaf2b5c590c18614485a3b9d8f82711bfe
+    :git: "git@github.com:SoapboxSocial/DrawerView.git"
+  Swifter:
+    :commit: 50682ebe64e4c08f18957ccfd16888f035c20755
+    :git: "git@github.com:mattdonnelly/Swifter.git"
+
+SPEC CHECKSUMS:
+  ACBAVPlayer: 7ef1a2a6045552dc35d1b8b303908d90a3d7845e
+  Alamofire: 2291f7d21ca607c491dd17642e5d40fdcda0e65c
+  AlamofireImage: c4a2ba349885fb3064feb74d2e547bd42ce9be10
+  BetterSegmentedControl: 09607b27861d49cbce48b7673b74f9150a3d371a
+  DrawerView: e4ceb9ddbd71548143c66565f4f3258d7b4d7821
+  EasyTipView: a92b6edc377b81c5ac18e9fd35d5ee78e9409488
+  GoogleWebRTC: b39a78c4f5cc6b0323415b9233db03a2faa7b0f0
+  GSImageViewerController: 20a257d7e3dd9ee171c2dfea659992eba2761839
+  KDCircularProgress: 98200c6b8e85d22bc04eb644721d3b1e12b0686b
+  KeychainAccess: c0c4f7f38f6fc7bbe58f5702e25f7bd2f65abf51
+  MarqueeLabel: 00cc0bcd087111dca575878b3531af980559707d
+  NotificationBannerSwift: 7021be2338f8f29cf424b0aca43da462bf9e2a1a
+  Siren: de768099aff1f1c9acda4247064788a4940b4bf3
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
+  SwiftConfettiView: 1bdbc2e6913b6b1c76d8070802b212508ad5c352
+  Swifter: 4c2f8cf320c2f751c10128f841d8e9bd8609d988
+  SwiftProtobuf: 3320217e9d8fb75f36b40282e78c482640fd75dd
+  UIWindowTransitions: 2237083382e11f100db7de934041bba0c4669c86
+
+PODFILE CHECKSUM: b34a20a1c63b9cbc2bc296647511b84373049619
+
+COCOAPODS: 1.10.1
