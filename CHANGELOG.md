@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fixed some visual issues with the room drawer.
+ 
 ## [2.17.0] - 2021-03-11
 
  - Gave some of the UI a facelift.

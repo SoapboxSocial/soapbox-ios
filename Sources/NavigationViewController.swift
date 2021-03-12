@@ -89,7 +89,7 @@ class NavigationViewController: UINavigationController {
                 self.creationDrawer = DrawerView(withView: creationView)
                 self.creationDrawer!.cornerRadius = 25.0
                 self.creationDrawer!.attachTo(view: self.view)
-                self.creationDrawer!.backgroundEffect = nil
+                self.creationDrawer!.backgroundEffect = .none
                 self.creationDrawer!.snapPositions = [.closed, .open]
                 self.creationDrawer!.backgroundColor = .brandColor
                 self.creationDrawer!.delegate = self
@@ -118,9 +118,9 @@ class NavigationViewController: UINavigationController {
         roomView!.delegate = self
 
         roomDrawer = DrawerView(withView: roomView!)
-        roomDrawer!.cornerRadius = 25.0
+        roomDrawer!.cornerRadius = 30.0
         roomDrawer!.attachTo(view: view)
-        roomDrawer!.backgroundEffect = nil
+        roomDrawer!.backgroundEffect = .none
         roomDrawer!.snapPositions = [.collapsed, .open]
         roomDrawer!.backgroundColor = .roomBackground
         roomDrawer!.delegate = self

@@ -844,7 +844,7 @@ extension RoomView: ButtonBarDelegate {
         drawer.delegate = self
         drawer.attachTo(view: window!)
         drawer.snapPositions = [.closed, .open]
-        drawer.backgroundEffect = nil
+        drawer.backgroundEffect = .none
         drawer.backgroundColor = .foreground
         drawer.cornerRadius = 30
         drawer.openHeightBehavior = .fixed(height: frame.size.height / 2)

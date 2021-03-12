@@ -4,7 +4,7 @@ import UIKit
 class DrawerViewController: UIViewController {
     let manager: DrawerPresentationManager = {
         let manager = DrawerPresentationManager()
-        manager.drawer.backgroundEffect = nil
+        manager.drawer.backgroundEffect = .none
         manager.drawer.cornerRadius = 30
         return manager
     }()

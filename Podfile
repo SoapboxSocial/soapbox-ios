@@ -9,7 +9,7 @@ target 'Soapbox' do
   pod 'GoogleWebRTC'
   pod 'Alamofire'
   pod 'SwiftProtobuf'
-  pod 'DrawerView', git: 'git@github.com:mkko/DrawerView.git', commit: '9130a17176cca935ee95f86f0486a2e4dfa44396'
+  pod 'DrawerView', git: 'git@github.com:SoapboxSocial/DrawerView.git', commit: '27f03afaf2b5c590c18614485a3b9d8f82711bfe'
   pod 'NotificationBannerSwift'
   pod 'KeychainAccess'
   pod 'SwiftConfettiView'
