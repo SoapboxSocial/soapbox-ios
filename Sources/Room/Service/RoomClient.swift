@@ -7,7 +7,6 @@ import WebRTC
 protocol RoomClientDelegate: AnyObject {
     func room(id: String)
     func room(speakers: [Int])
-    func roomClientDidConnect(_ room: RoomClient)
     func roomClientDidDisconnect(_ room: RoomClient)
     func roomClient(_ room: RoomClient, didReceiveMessage message: Event)
     func roomClient(_ room: RoomClient, failedToConnect error: RoomClient.Error)
@@ -233,7 +232,6 @@ extension RoomClient: WebRTCClientDelegate {
         switch state {
         case .connected:
             rtc.speakerOn()
-            delegate?.roomClientDidConnect(self)
         case .failed, .closed:
             delegate?.roomClientDidDisconnect(self)
         default:

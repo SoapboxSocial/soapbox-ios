@@ -379,23 +379,12 @@ extension Room: RoomClientDelegate {
     func room(id: String) {
         state.id = id
         addMeToState(role: .admin)
+
+        complete()
     }
 
     func room(speakers: [Int]) {
         delegate?.usersSpeaking(users: speakers)
-    }
-
-    func roomClientDidConnect(_: RoomClient) {
-        guard let completion = self.completion else {
-            return
-        }
-
-        self.completion = nil
-
-        completion(.success(()))
-        startPreventing()
-
-        client.mute()
     }
 
     // @TODO
@@ -444,6 +433,20 @@ extension Room: RoomClientDelegate {
         addMeToState(role: role)
 
         self.state.name = state.name
+
+        complete()
+    }
+
+    private func complete() {
+        guard let completion = self.completion else {
+            return
+        }
+
+        self.completion = nil
+
+        completion(.success(()))
+        startPreventing()
+        client.mute()
     }
 
     private func addMeToState(role: RoomState.RoomMember.Role) {
