@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - Fixed some visual issues with the room drawer.
+ - Fixed some issues that caused rooms to crash on start-up.
  
 ## [2.17.0] - 2021-03-11
 
