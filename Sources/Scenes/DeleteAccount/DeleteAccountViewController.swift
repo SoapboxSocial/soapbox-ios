@@ -1,7 +1,6 @@
-import DrawerView
 import UIKit
 
-class DeleteAccountViewController: UIViewController {
+class DeleteAccountViewController: DrawerViewController {
     private let textField: TextField = {
         let field = TextField(frame: .zero, theme: .normal)
         field.textColor = .systemRed
@@ -31,27 +30,10 @@ class DeleteAccountViewController: UIViewController {
         return button
     }()
 
-    private let manager: DrawerPresentationManager = {
-        let manager = DrawerPresentationManager()
-        manager.drawer.backgroundColor = .background
-        manager.drawer.backgroundEffect = nil
-        manager.drawer.cornerRadius = 30
-        return manager
-    }()
-
-    init() {
-        super.init(nibName: nil, bundle: nil)
-
-        transitioningDelegate = manager
-        modalPresentationStyle = .custom
-    }
-
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        manager.drawer.backgroundColor = .background
 
         let title = UILabel()
         title.translatesAutoresizingMaskIntoConstraints = false

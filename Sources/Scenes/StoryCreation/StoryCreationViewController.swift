@@ -3,7 +3,7 @@ import AVFoundation
 import DrawerView
 import UIKit
 
-class StoryCreationViewController: UIViewController {
+class StoryCreationViewController: DrawerViewController {
     private let button: RecordButton = {
         let button = RecordButton()
         return button
@@ -59,26 +59,10 @@ class StoryCreationViewController: UIViewController {
         return spinner
     }()
 
-    private let manager: DrawerPresentationManager = {
-        let manager = DrawerPresentationManager()
-        manager.drawer.backgroundColor = .brandColor
-        manager.drawer.backgroundEffect = nil
-        manager.drawer.cornerRadius = 30
-        return manager
-    }()
-
-    init() {
-        super.init(nibName: nil, bundle: nil)
-
-        manager.presentationDelegate = self
-        transitioningDelegate = manager
-        modalPresentationStyle = .custom
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .brandColor
+        manager.drawer.backgroundColor = .brandColor
 
         let handle = UIView()
         handle.translatesAutoresizingMaskIntoConstraints = false
@@ -185,10 +169,6 @@ class StoryCreationViewController: UIViewController {
             failure: { self.showMicrophoneWarning() },
             success: {}
         )
-    }
-
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     @objc private func startRecording() {
