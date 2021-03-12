@@ -68,6 +68,7 @@ class NavigationViewController: UINavigationController {
 
         activityIndicator.isHidden = true
         activityIndicator.hidesWhenStopped = true
+        activityIndicator.color = .label
 
         activityIndicator.center = view.center
         view.addSubview(activityIndicator)
