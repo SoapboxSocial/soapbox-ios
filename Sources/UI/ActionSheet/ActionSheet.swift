@@ -107,11 +107,11 @@ class ActionSheet: DrawerViewController {
             return
         }
 
-        dismiss(animated: true)
-
-        if let handler = view.action.handler {
-            handler(view.action)
-        }
+        dismiss(animated: true, completion: {
+            if let handler = view.action.handler {
+                handler(view.action)
+            }
+        })
     }
 }
 
