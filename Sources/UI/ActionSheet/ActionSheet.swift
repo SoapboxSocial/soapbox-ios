@@ -164,7 +164,7 @@ class ActionSheet: DrawerViewController {
         view.addSubview(spacer)
 
         NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: view.topAnchor, constant: 30),
+            stack.topAnchor.constraint(equalTo: handle.bottomAnchor, constant: 32),
             stack.bottomAnchor.constraint(equalTo: spacer.topAnchor),
         ])
 
