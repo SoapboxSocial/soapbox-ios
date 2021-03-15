@@ -19,49 +19,20 @@ class RoomMemberCell: UICollectionViewCell {
         return view
     }()
 
-    private var speakingView: RoomMemberAccessoryView = {
+    private var speakingView: RoomMemberAccessoryViewWithGradient = {
         let conf = UIImage.SymbolConfiguration(pointSize: 14, weight: .heavy)
-        let view = RoomMemberAccessoryView(
+        return RoomMemberAccessoryViewWithGradient(
             image: UIImage(systemName: "waveform", withConfiguration: conf)!,
             frame: CGRect(x: 0, y: 0, width: 24, height: 24)
         )
-
-        let gradient = CAGradientLayer()
-
-        gradient.colors = [
-            UIColor(red: 0.514, green: 0.349, blue: 0.996, alpha: 1).cgColor,
-            UIColor(red: 0.263, green: 0.031, blue: 0.765, alpha: 1).cgColor,
-        ]
-
-        gradient.locations = [0, 1]
-        gradient.startPoint = CGPoint(x: 0.25, y: 0.5)
-        gradient.endPoint = CGPoint(x: 0.75, y: 0.5)
-        gradient.frame = CGRect(x: 0.0, y: 0.0, width: 24, height: 24)
-        gradient.transform = CATransform3DMakeAffineTransform(CGAffineTransform(a: 1, b: 1, c: -1, d: 1, tx: 0.5, ty: -0.5))
-
-        view.layer.insertSublayer(gradient, at: 0)
-
-        return view
     }()
 
-    private var adminView: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: 32, height: 32))
-        view.backgroundColor = .foreground
-        view.layer.cornerRadius = 32 / 2
-
-        let label = UILabel()
-        label.text = "👑"
-        label.sizeToFit()
-
-        view.addSubview(label)
-        label.center = view.center
-
-        view.layer.shadowOffset = CGSize(width: 0, height: 12)
-        view.layer.shadowColor = UIColor.black.withAlphaComponent(0.12).cgColor
-        view.layer.shadowOpacity = 1
-        view.layer.shadowRadius = 10
-
-        return view
+    private var adminView: RoomMemberAccessoryView = {
+        let conf = UIImage.SymbolConfiguration(pointSize: 13, weight: .semibold)
+        return RoomMemberAccessoryViewWithGradient(
+            image: UIImage(systemName: "star.fill", withConfiguration: conf)!,
+            frame: CGRect(x: 0, y: 0, width: 24, height: 24)
+        )
     }()
 
     private var profileImage: UIImageView!
@@ -101,7 +72,7 @@ class RoomMemberCell: UICollectionViewCell {
         speakingView.frame.origin = CGPoint(x: frame.size.width - 24, y: 0)
         contentView.addSubview(speakingView)
 
-        adminView.frame.origin = CGPoint(x: 0, y: frame.size.width - 32)
+        adminView.frame.origin = CGPoint(x: 0, y: frame.size.width - 24)
         contentView.addSubview(adminView)
     }
 
