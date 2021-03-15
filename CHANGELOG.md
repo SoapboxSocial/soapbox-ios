@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.18.0] - 2021-03-15
+
  - We heard you and decided to change the admin icon from the crown.
  - Fixed some visual issues with the room drawer.
  - Fixed some issues that caused rooms to crash on start-up.
