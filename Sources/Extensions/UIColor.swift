@@ -29,16 +29,6 @@ extension UIColor {
         }
     }
 
-    static var handle: UIColor {
-        return UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
-            if UITraitCollection.userInterfaceStyle == .dark {
-                return .systemGray6
-            } else {
-                return .systemGray5
-            }
-        }
-    }
-
     static var roomForeground: UIColor {
         return UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
             if UITraitCollection.userInterfaceStyle == .dark {
