@@ -83,7 +83,7 @@ class ActionSheet: DrawerViewController {
 
         let handle = UIView()
         handle.translatesAutoresizingMaskIntoConstraints = false
-        handle.backgroundColor = UIColor.black.withAlphaComponent(0.2)
+        handle.backgroundColor = .quaternaryLabel
         handle.layer.cornerRadius = 2.5
         view.addSubview(handle)
 
@@ -241,8 +241,8 @@ private class ActionView: UIView {
         NSLayoutConstraint.activate([
             label.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
             label.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
-            label.topAnchor.constraint(equalTo: seperator.bottomAnchor, constant: 15),
-            bottomAnchor.constraint(equalTo: label.bottomAnchor, constant: 15),
+            label.centerYAnchor.constraint(equalTo: centerYAnchor),
+            heightAnchor.constraint(equalToConstant: 64),
         ])
     }
 
