@@ -30,6 +30,14 @@ class ActionSheet: DrawerViewController {
         return generator
     }()
 
+    private let image: UIImageView = {
+        let image = UIImageView()
+        image.translatesAutoresizingMaskIntoConstraints = false
+        image.layer.cornerRadius = 20
+        image.tintColor = .brandColor
+        return image
+    }()
+
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .rounded(forTextStyle: .title2, weight: .bold)
@@ -44,15 +52,16 @@ class ActionSheet: DrawerViewController {
         view.alignment = .fill
         view.distribution = .fill
         view.axis = .vertical
-        view.spacing = 30
+        view.spacing = 10
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 
-    init(title: String? = nil) {
+    init(title: String? = nil, image: UIImage? = nil) {
         super.init()
 
         titleLabel.text = title
+        self.image.image = image
 
         manager.drawer.openHeightBehavior = .fitting
         manager.drawer.backgroundColor = .foreground
@@ -86,6 +95,28 @@ class ActionSheet: DrawerViewController {
         ])
 
         view.addSubview(stack)
+
+        let imageContainer = UIView()
+        imageContainer.translatesAutoresizingMaskIntoConstraints = false
+        imageContainer.addSubview(image)
+
+        stack.addArrangedSubview(imageContainer)
+
+        if image.image == nil {
+            imageContainer.isHidden = true
+        }
+
+        NSLayoutConstraint.activate([
+            image.heightAnchor.constraint(equalToConstant: 40),
+            image.widthAnchor.constraint(equalToConstant: 40),
+            image.centerXAnchor.constraint(equalTo: imageContainer.centerXAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            imageContainer.leftAnchor.constraint(equalTo: stack.leftAnchor),
+            imageContainer.rightAnchor.constraint(equalTo: stack.rightAnchor),
+            imageContainer.heightAnchor.constraint(equalToConstant: 40),
+        ])
 
         stack.addArrangedSubview(titleLabel)
 
