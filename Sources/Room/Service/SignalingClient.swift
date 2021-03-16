@@ -2,10 +2,10 @@ import Foundation
 import WebRTC
 
 protocol SignalingClientDelegate: AnyObject {
-    func signalClient(_ signalClient: SignalingClient, didReceiveTrickle trickle: Trickle)
-    func signalClient(_ signalClient: SignalingClient, didReceiveDescription description: SessionDescription)
-    func signalClient(_ signalClient: SignalingClient, didReceiveJoinReply join: JoinReply)
-    func signalClient(_ signalClient: SignalingClient, didReceiveCreateReply create: CreateReply)
+    func signalClient(_ signalClient: SignalingClient, didReceiveTrickle trickle: Soapbox_V1_Trickle)
+    func signalClient(_ signalClient: SignalingClient, didReceiveDescription description: Soapbox_V1_SessionDescription)
+    func signalClient(_ signalClient: SignalingClient, didReceiveJoinReply join: Soapbox_V1_JoinReply)
+    func signalClient(_ signalClient: SignalingClient, didReceiveCreateReply create: Soapbox_V1_CreateReply)
     func signalClient(_ signalClient: SignalingClient, failedWithError error: SignalingClient.Error)
 }
 
@@ -16,7 +16,7 @@ final class SignalingClient {
 
     enum Error: Swift.Error {
         case general
-        case signal(SignalReply.Error)
+        case signal(Soapbox_V1_SignalReply.Error)
     }
 
     init(transport: SignalClientTransport) {
@@ -25,9 +25,9 @@ final class SignalingClient {
         transport.connect()
     }
 
-    func create(request: CreateRequest) {
+    func create(request: Soapbox_V1_CreateRequest) {
         do {
-            try send(SignalRequest.with {
+            try send(Soapbox_V1_SignalRequest.with {
                 $0.create = request
             })
         } catch {
@@ -38,10 +38,10 @@ final class SignalingClient {
 
     func join(id: String, offer: RTCSessionDescription) {
         do {
-            try send(SignalRequest.with {
-                $0.join = JoinRequest.with {
+            try send(Soapbox_V1_SignalRequest.with {
+                $0.join = Soapbox_V1_JoinRequest.with {
                     $0.room = id
-                    $0.description_p = SessionDescription.with {
+                    $0.description_p = Soapbox_V1_SessionDescription.with {
                         $0.sdp = offer.sdp
                         $0.type = "offer"
                     }
@@ -53,21 +53,21 @@ final class SignalingClient {
         }
     }
 
-    func trickle(target: Trickle.Target, candidate: RTCIceCandidate) {
-        try? send(SignalRequest.with {
-            $0.trickle = Trickle.with {
+    func trickle(target: Soapbox_V1_Trickle.Target, candidate: RTCIceCandidate) {
+        try? send(Soapbox_V1_SignalRequest.with {
+            $0.trickle = Soapbox_V1_Trickle.with {
                 $0.target = target
-                $0.iceCandidate = ICECandidate.with {
+                $0.iceCandidate = Soapbox_V1_ICECandidate.with {
                     $0.candidate = candidate.sdp
-                    $0.sdpMlineIndex = Int64(candidate.sdpMLineIndex)
+                    $0.sdpMLineIndex = Int64(candidate.sdpMLineIndex)
                 }
             }
         })
     }
 
     func answer(description: RTCSessionDescription) {
-        try? send(SignalRequest.with {
-            $0.description_p = SessionDescription.with {
+        try? send(Soapbox_V1_SignalRequest.with {
+            $0.description_p = Soapbox_V1_SessionDescription.with {
                 $0.sdp = description.sdp
                 $0.type = "answer"
             }
@@ -75,8 +75,8 @@ final class SignalingClient {
     }
 
     func offer(description: RTCSessionDescription) {
-        try? send(SignalRequest.with {
-            $0.description_p = SessionDescription.with {
+        try? send(Soapbox_V1_SignalRequest.with {
+            $0.description_p = Soapbox_V1_SessionDescription.with {
                 $0.sdp = description.sdp
                 $0.type = "offer"
             }
@@ -87,11 +87,11 @@ final class SignalingClient {
         transport.disconnect()
     }
 
-    private func send(_ msg: SignalRequest) throws {
+    private func send(_ msg: Soapbox_V1_SignalRequest) throws {
         transport.send(data: try msg.serializedData())
     }
 
-    private func handle(_ reply: SignalReply) {
+    private func handle(_ reply: Soapbox_V1_SignalReply) {
         switch reply.payload {
         case let .join(reply):
             delegate?.signalClient(self, didReceiveJoinReply: reply)
@@ -120,7 +120,7 @@ extension SignalingClient: SignalClientTransportDelegate {
 
     func signalClientTransport(_: SignalClientTransport, didReceiveData data: Data) {
         do {
-            handle(try SignalReply(serializedData: data))
+            handle(try Soapbox_V1_SignalReply(serializedData: data))
         } catch {
             debugPrint("signal \(error)")
         }

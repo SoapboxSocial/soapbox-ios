@@ -44,7 +44,4 @@ format:
 	swiftformat .
 
 protobuf:
-	 protoc \
-	  --proto_path=$(PROTO_PATH) \
-	  --swift_out=./Sources/Protobuf \
-	  room.proto signal.proto
+	 buf generate https://github.com/soapboxsocial/protobufs.git --path soapbox/v1/room.proto --path soapbox/v1/signal.proto

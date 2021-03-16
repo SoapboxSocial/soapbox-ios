@@ -80,7 +80,7 @@ class RoomMemberCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setup(name: String, image: String, muted: Bool, role: RoomState.RoomMember.Role) {
+    func setup(name: String, image: String, muted: Bool, role: Soapbox_V1_RoomState.RoomMember.Role) {
         user = 0
         muteView.isHidden = true
         speakingView.isHidden = true
@@ -108,7 +108,7 @@ class RoomMemberCell: UICollectionViewCell {
         isMuted = muted
     }
 
-    func setup(member: RoomState.RoomMember) {
+    func setup(member: Soapbox_V1_RoomState.RoomMember) {
         setup(
             name: member.displayName,
             image: member.image,

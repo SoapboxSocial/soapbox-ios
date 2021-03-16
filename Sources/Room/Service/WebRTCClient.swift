@@ -9,7 +9,7 @@ protocol WebRTCClientDelegate: AnyObject {
 }
 
 final class WebRTCClient: NSObject {
-    let role: Trickle.Target
+    let role: Soapbox_V1_Trickle.Target
 
     // The `RTCPeerConnectionFactory` is in charge of creating new RTCPeerConnection instances.
     // A new RTCPeerConnection should be created every new call, but the factory is shared.
@@ -38,7 +38,7 @@ final class WebRTCClient: NSObject {
         fatalError("WebRTCClient:init is unavailable")
     }
 
-    required init(role: Trickle.Target, iceServers: [RTCIceServer]) {
+    required init(role: Soapbox_V1_Trickle.Target, iceServers: [RTCIceServer]) {
         self.role = role
 
         let config = RTCConfiguration()

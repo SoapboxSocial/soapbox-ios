@@ -6,7 +6,7 @@ protocol RoomDelegate {
     func userWasInvitedToBeAdmin(by: Int64)
     func userDidJoinRoom(user: Int64)
     func userDidLeaveRoom(user: Int64)
-    func didChangeUserRole(user: Int64, role: RoomState.RoomMember.Role)
+    func didChangeUserRole(user: Int64, role: Soapbox_V1_RoomState.RoomMember.Role)
     func userDidReact(user: Int64, reaction: Room.Reaction)
     func didChangeMemberMuteState(user: Int64, isMuted: Bool)
     func roomWasClosedByRemote()
@@ -14,7 +14,7 @@ protocol RoomDelegate {
     func roomWasRenamed(_ name: String)
     func userDidRecordScreen(_ user: Int64)
     func wasMutedByAdmin()
-    func visibilityUpdated(visibility: Visibility)
+    func visibilityUpdated(visibility: Soapbox_V1_Visibility)
     func usersSpeaking(users: [Int])
     func linkWasPinned(link: URL)
     func pinnedLinkWasRemoved()
@@ -40,7 +40,7 @@ class Room {
         case poop = "💩"
     }
 
-    private(set) var state = RoomState()
+    private(set) var state = Soapbox_V1_RoomState()
 
     private let userId = Int64(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))
 
@@ -73,12 +73,12 @@ class Room {
         }
 
         if isPrivate {
-            state.visibility = Visibility.private
+            state.visibility = Soapbox_V1_Visibility.private
         } else {
-            state.visibility = Visibility.public
+            state.visibility = Soapbox_V1_Visibility.public
         }
 
-        var request = CreateRequest.with {
+        var request = Soapbox_V1_CreateRequest.with {
             $0.name = name ?? ""
             $0.visibility = state.visibility
         }
@@ -116,13 +116,13 @@ class Room {
     }
 
     func add(admin: Int64) {
-        client.send(command: .inviteAdmin(Command.InviteAdmin.with {
+        client.send(command: .inviteAdmin(Soapbox_V1_Command.InviteAdmin.with {
             $0.id = admin
         }))
     }
 
     func remove(admin: Int64) {
-        client.send(command: .removeAdmin(Command.RemoveAdmin.with {
+        client.send(command: .removeAdmin(Soapbox_V1_Command.RemoveAdmin.with {
             $0.id = admin
         }))
 
@@ -130,13 +130,13 @@ class Room {
     }
 
     func invite(user: Int) {
-        client.send(command: .inviteUser(Command.InviteUser.with {
+        client.send(command: .inviteUser(Soapbox_V1_Command.InviteUser.with {
             $0.id = Int64(user)
         }))
     }
 
     func react(with reaction: Reaction) {
-        client.send(command: .reaction(Command.Reaction.with {
+        client.send(command: .reaction(Soapbox_V1_Command.Reaction.with {
             $0.emoji = Data(reaction.rawValue.utf8)
         }))
 
@@ -144,7 +144,7 @@ class Room {
     }
 
     func share(link: URL) {
-        client.send(command: .linkShare(Command.LinkShare.with {
+        client.send(command: .linkShare(Soapbox_V1_Command.LinkShare.with {
             $0.link = link.absoluteString
         }))
 
@@ -152,27 +152,27 @@ class Room {
     }
 
     func kick(user: Int64) {
-        client.send(command: .kickUser(Command.KickUser.with {
+        client.send(command: .kickUser(Soapbox_V1_Command.KickUser.with {
             $0.id = Int64(user)
         }))
     }
 
     func mute(user: Int64) {
-        client.send(command: .muteUser(Command.MuteUser.with {
+        client.send(command: .muteUser(Soapbox_V1_Command.MuteUser.with {
             $0.id = user
         }))
     }
 
     func rename(_ name: String) {
-        client.send(command: .renameRoom(Command.RenameRoom.with {
+        client.send(command: .renameRoom(Soapbox_V1_Command.RenameRoom.with {
             $0.name = name
         }))
 
         delegate?.roomWasRenamed(name)
     }
 
-    func updateVisibility(_ to: Visibility) {
-        client.send(command: .visibilityUpdate(Command.VisibilityUpdate.with {
+    func updateVisibility(_ to: Soapbox_V1_Visibility) {
+        client.send(command: .visibilityUpdate(Soapbox_V1_Command.VisibilityUpdate.with {
             $0.visibility = to
         }))
 
@@ -181,12 +181,12 @@ class Room {
     }
 
     func acceptInvite() {
-        client.send(command: .acceptAdmin(Command.AcceptAdmin()))
+        client.send(command: .acceptAdmin(Soapbox_V1_Command.AcceptAdmin()))
         updateMemberRole(user: userId, role: .admin)
     }
 
     func pin(link: URL) {
-        client.send(command: .pinLink(Command.PinLink.with {
+        client.send(command: .pinLink(Soapbox_V1_Command.PinLink.with {
             $0.link = link.absoluteString
         }))
 
@@ -194,7 +194,7 @@ class Room {
     }
 
     func unpin() {
-        client.send(command: .unpinLink(Command.UnpinLink()))
+        client.send(command: .unpinLink(Soapbox_V1_Command.UnpinLink()))
         delegate?.pinnedLinkWasRemoved()
     }
 
@@ -202,13 +202,13 @@ class Room {
         delegate?.opened(mini: mini, isAppOpener: true)
 
         // @TODO THIS SHOULD BE A CALLBACK ON THE VIEW ONCE LOADING IS DONE
-        client.send(command: .openMini(Command.OpenMini.with {
+        client.send(command: .openMini(Soapbox_V1_Command.OpenMini.with {
             $0.mini = mini
         }))
     }
 
     func closeMini() {
-        client.send(command: .closeMini(Command.CloseMini()))
+        client.send(command: .closeMini(Soapbox_V1_Command.CloseMini()))
         delegate?.closedMini(source: true)
     }
 
@@ -218,7 +218,7 @@ class Room {
 }
 
 extension Room {
-    private func on(_ event: Event) {
+    private func on(_ event: Soapbox_V1_Event) {
         switch event.payload {
         case let .addedAdmin(evt):
             on(addedAdmin: evt)
@@ -257,11 +257,11 @@ extension Room {
         }
     }
 
-    private func on(addedAdmin: Event.AddedAdmin) {
+    private func on(addedAdmin: Soapbox_V1_Event.AddedAdmin) {
         updateMemberRole(user: addedAdmin.id, role: .admin)
     }
 
-    private func on(removedAdmin: Event.RemovedAdmin) {
+    private func on(removedAdmin: Soapbox_V1_Event.RemovedAdmin) {
         updateMemberRole(user: removedAdmin.id, role: .regular)
     }
 
@@ -269,7 +269,7 @@ extension Room {
         delegate?.userWasInvitedToBeAdmin(by: from)
     }
 
-    private func on(joined: Event.Joined) {
+    private func on(joined: Soapbox_V1_Event.Joined) {
         if state.members.contains(where: { $0.id == joined.user.id }) {
             return
         }
@@ -283,7 +283,7 @@ extension Room {
         delegate?.userDidLeaveRoom(user: id)
     }
 
-    private func on(linkShare: Event.LinkShared, from: Int64) {
+    private func on(linkShare: Soapbox_V1_Event.LinkShared, from: Int64) {
         guard let url = URL(string: linkShare.link) else {
             return
         }
@@ -291,15 +291,15 @@ extension Room {
         delegate?.didReceiveLink(from: from, link: url)
     }
 
-    private func on(roomRenamed: Event.RenamedRoom) {
+    private func on(roomRenamed: Soapbox_V1_Event.RenamedRoom) {
         delegate?.roomWasRenamed(roomRenamed.name)
     }
 
-    private func on(muteUpdate: Event.MuteUpdated, from: Int64) {
+    private func on(muteUpdate: Soapbox_V1_Event.MuteUpdated, from: Int64) {
         updateMemberMuteState(user: from, isMuted: muteUpdate.isMuted)
     }
 
-    private func on(reacted: Event.Reacted, from: Int64) {
+    private func on(reacted: Soapbox_V1_Event.Reacted, from: Int64) {
         guard let value = String(bytes: reacted.emoji, encoding: .utf8) else {
             return
         }
@@ -315,7 +315,7 @@ extension Room {
         delegate?.userDidRecordScreen(id)
     }
 
-    private func on(visibilityUpdated: Event.VisibilityUpdated) {
+    private func on(visibilityUpdated: Soapbox_V1_Event.VisibilityUpdated) {
         state.visibility = visibilityUpdated.visibility
         delegate?.visibilityUpdated(visibility: visibilityUpdated.visibility)
     }
@@ -361,7 +361,7 @@ extension Room {
         delegate?.didChangeMemberMuteState(user: user, isMuted: isMuted)
     }
 
-    private func updateMemberRole(user: Int64, role: RoomState.RoomMember.Role) {
+    private func updateMemberRole(user: Int64, role: Soapbox_V1_RoomState.RoomMember.Role) {
         DispatchQueue.main.async {
             let index = self.state.members.firstIndex(where: { $0.id == user })
             guard let idx = index else {
@@ -409,11 +409,11 @@ extension Room: RoomClientDelegate {
         delegate?.roomWasClosedByRemote()
     }
 
-    func roomClient(_: RoomClient, didReceiveMessage message: Event) {
+    func roomClient(_: RoomClient, didReceiveMessage message: Soapbox_V1_Event) {
         on(message)
     }
 
-    func roomClient(_: RoomClient, didReceiveState state: RoomState, andRole role: RoomState.RoomMember.Role) {
+    func roomClient(_: RoomClient, didReceiveState state: Soapbox_V1_RoomState, andRole role: Soapbox_V1_RoomState.RoomMember.Role) {
         self.state.visibility = state.visibility
         self.state.link = state.link
         self.state.mini = state.mini
@@ -449,10 +449,10 @@ extension Room: RoomClientDelegate {
         client.mute()
     }
 
-    private func addMeToState(role: RoomState.RoomMember.Role) {
+    private func addMeToState(role: Soapbox_V1_RoomState.RoomMember.Role) {
         let user = UserStore.get()
 
-        state.members.append(RoomState.RoomMember.with {
+        state.members.append(Soapbox_V1_RoomState.RoomMember.with {
             $0.id = Int64(user.id)
             $0.image = user.image ?? ""
             $0.displayName = user.displayName
@@ -476,6 +476,6 @@ extension Room {
             return
         }
 
-        client.send(command: .recordScreen(Command.RecordScreen()))
+        client.send(command: .recordScreen(Soapbox_V1_Command.RecordScreen()))
     }
 }

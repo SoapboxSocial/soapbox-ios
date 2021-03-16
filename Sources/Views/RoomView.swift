@@ -13,7 +13,7 @@ class RoomView: UIView {
 
     private static let iconConfig = UIImage.SymbolConfiguration(weight: .semibold)
 
-    private var me: RoomState.RoomMember {
+    private var me: Soapbox_V1_RoomState.RoomMember {
         let id = Int64(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))
         guard let me = room.state.members.first(where: { $0.id == id }) else {
             fatalError("me not found!")
@@ -478,7 +478,7 @@ extension RoomView: UICollectionViewDelegate {
         showMemberAction(for: room.state.members[indexPath.item])
     }
 
-    private func showMemberAction(for member: RoomState.RoomMember) {
+    private func showMemberAction(for member: Soapbox_V1_RoomState.RoomMember) {
         let sheet = ActionSheet()
         sheet.add(action: ActionSheet.Action(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
             DispatchQueue.main.async {
@@ -634,7 +634,7 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func didChangeUserRole(user: Int64, role: RoomState.RoomMember.Role) {
+    func didChangeUserRole(user: Int64, role: Soapbox_V1_RoomState.RoomMember.Role) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
@@ -707,7 +707,7 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func visibilityUpdated(visibility: Visibility) {
+    func visibilityUpdated(visibility: Soapbox_V1_Visibility) {
         DispatchQueue.main.async {
             switch visibility {
             case .private:
