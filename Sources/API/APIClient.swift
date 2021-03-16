@@ -513,6 +513,12 @@ extension APIClient {
 }
 
 extension APIClient {
+    func deleteAccount(callback: @escaping (Result<Void, Error>) -> Void) {
+        void(path: "/v1/account", method: .delete, callback: callback)
+    }
+}
+
+extension APIClient {
     struct Mini: Decodable {
         let id: Int
         let name: String

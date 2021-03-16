@@ -11,14 +11,12 @@ protocol ProfileViewControllerOutput {
     func unblock()
 }
 
-class ProfileViewController: ViewController {
-    private var user: APIClient.Profile!
-
+class ProfileViewController: ViewControllerWithRemoteContent<APIClient.Profile> {
     private var stories: [APIClient.Story]?
 
     var output: ProfileViewControllerOutput!
 
-    private let content: UIStackView = {
+    private let stack: UIStackView = {
         let view = UIStackView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.spacing = 20
@@ -107,17 +105,13 @@ class ProfileViewController: ViewController {
 
         view.backgroundColor = .background
 
-        let scrollView = UIScrollView()
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(scrollView)
-
-        scrollView.addSubview(content)
+        contentView.addSubview(stack)
 
         headerView.button.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
         headerView.button.setTitle(NSLocalizedString("unfollow", comment: ""), for: .selected)
         headerView.button.isHidden = false
         headerView.descriptionLabel.font = .rounded(forTextStyle: .body, weight: .regular)
-        content.addArrangedSubview(headerView)
+        stack.addArrangedSubview(headerView)
 
         let imageTap = UITapGestureRecognizer(target: self, action: #selector(didTapImage))
         headerView.image.isUserInteractionEnabled = true
@@ -135,7 +129,7 @@ class ProfileViewController: ViewController {
         statistics.translatesAutoresizingMaskIntoConstraints = false
         statistics.addSubview(followersCount)
         statistics.addSubview(followingCount)
-        content.addArrangedSubview(statistics)
+        stack.addArrangedSubview(statistics)
 
         NSLayoutConstraint.activate([
             headerView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
@@ -143,16 +137,9 @@ class ProfileViewController: ViewController {
         ])
 
         NSLayoutConstraint.activate([
-            content.topAnchor.constraint(equalTo: view.topAnchor),
-            content.leftAnchor.constraint(equalTo: view.leftAnchor),
-            content.rightAnchor.constraint(equalTo: view.rightAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            scrollView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            scrollView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            stack.topAnchor.constraint(equalTo: contentView.topAnchor),
+            stack.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            stack.rightAnchor.constraint(equalTo: contentView.rightAnchor),
         ])
 
         NSLayoutConstraint.activate([
@@ -177,7 +164,7 @@ class ProfileViewController: ViewController {
         twitter.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openTwitterProfile)))
 
         badges.addSubview(twitter)
-        content.addArrangedSubview(badges)
+        stack.addArrangedSubview(badges)
 
         NSLayoutConstraint.activate([
             twitter.topAnchor.constraint(equalTo: badges.topAnchor),
@@ -200,7 +187,7 @@ class ProfileViewController: ViewController {
         groupsContainer.addSubview(groups)
         groupsContainer.isHidden = true
 
-        content.addArrangedSubview(groupsContainer)
+        stack.addArrangedSubview(groupsContainer)
 
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: groupsContainer.topAnchor),
@@ -224,6 +211,11 @@ class ProfileViewController: ViewController {
         output.loadData()
     }
 
+    @objc override func loadData() {
+        super.loadData()
+        output.loadData()
+    }
+
     @objc private func didTapImage() {
         func presentImage() {
             guard let image = headerView.image.image else {
@@ -240,19 +232,15 @@ class ProfileViewController: ViewController {
             return presentImage()
         }
 
-        let alert = UIAlertController(
-            title: nil,
-            message: nil,
-            preferredStyle: .actionSheet
-        )
+        let sheet = ActionSheet()
 
         // @TODO only show action when not in room
 
-        alert.addAction(UIAlertAction(title: NSLocalizedString("view_image", comment: ""), style: .default, handler: { _ in
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("view_image", comment: ""), style: .default, handler: { _ in
             presentImage()
         }))
 
-        alert.addAction(UIAlertAction(title: NSLocalizedString("listen_to_story", comment: ""), style: .default, handler: { _ in
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("listen_to_story", comment: ""), style: .default, handler: { _ in
             guard let nav = UIApplication.shared.keyWindow?.rootViewController as? NavigationViewController else {
                 return
             }
@@ -266,11 +254,11 @@ class ProfileViewController: ViewController {
             let vc = StoriesViewController(
                 feed: APIClient.StoryFeed(
                     user: APIClient.User(
-                        id: self.user.id,
-                        displayName: self.user.displayName,
-                        username: self.user.username,
+                        id: self.content.id,
+                        displayName: self.content.displayName,
+                        username: self.content.username,
                         email: nil,
-                        image: self.user.image
+                        image: self.content.image
                     ),
                     stories: stories
                 )
@@ -281,13 +269,12 @@ class ProfileViewController: ViewController {
             self.present(vc, animated: true)
         }))
 
-        alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-
-        present(alert, animated: true)
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+        present(sheet, animated: true)
     }
 
     @objc private func openTwitterProfile() {
-        guard let account = user.linkedAccounts.first(where: { $0.provider == "twitter" }) else {
+        guard let account = content.linkedAccounts.first(where: { $0.provider == "twitter" }) else {
             return
         }
 
@@ -303,63 +290,70 @@ class ProfileViewController: ViewController {
 
     // @TODO THIS SHOULD BE DONE THROUGH INTERACTOR FLOW
     @objc private func didTapFollowersLabel() {
-        let list = SceneFactory.createUserViewController(id: user.id, title: NSLocalizedString("followers", comment: ""), userListFunc: APIClient().followers)
+        let list = SceneFactory.createUserViewController(id: content.id, title: NSLocalizedString("followers", comment: ""), userListFunc: APIClient().followers)
         navigationController?.pushViewController(list, animated: true)
     }
 
     @objc private func didTapFollowingLabel() {
-        let list = SceneFactory.createUserViewController(id: user.id, title: NSLocalizedString("following", comment: ""), userListFunc: APIClient().following)
+        let list = SceneFactory.createUserViewController(id: content.id, title: NSLocalizedString("following", comment: ""), userListFunc: APIClient().following)
         navigationController?.pushViewController(list, animated: true)
     }
 
     @objc private func editPressed() {
-        let vc = EditProfileViewController(user: user, parent: self)
+        let vc = EditProfileViewController(user: content, parent: self)
         present(vc, animated: true)
     }
 
     @objc private func followPressed() {
-        headerView.button.isUserInteractionEnabled = false
+        headerView.button.isLoading = true
 
-        if user.isBlocked ?? false {
-            let alert = UIAlertController.confirmation(
-                onAccepted: {
-                    self.output.unblock()
-                },
-                onDeclined: {
-                    self.headerView.button.isUserInteractionEnabled = true
-                }
-            )
+        if content.isBlocked ?? false {
+            let sheet = ActionSheet()
 
-            present(alert, animated: true)
+            let fmt = NSLocalizedString("unblock_user", comment: "")
+
+            sheet.add(action: ActionSheet.Action(title: String(format: fmt, "@" + content.username), style: .destructive, handler: { _ in
+                self.output.unblock()
+            }))
+
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel, handler: { _ in
+                self.headerView.button.isLoading = false
+            }))
+
+            present(sheet, animated: true)
             return
         }
 
-        if user.isFollowing ?? false {
-            let alert = UIAlertController.confirmation(
-                onAccepted: {
-                    self.output.unfollow()
-                },
-                onDeclined: {
-                    self.headerView.button.isUserInteractionEnabled = true
-                }
-            )
+        if content.isFollowing ?? false {
+            let sheet = ActionSheet()
 
-            present(alert, animated: true)
+            let fmt = NSLocalizedString("unfollow_user", comment: "")
+
+            sheet.add(action: ActionSheet.Action(title: String(format: fmt, "@" + content.username), style: .destructive, handler: { _ in
+                self.output.unfollow()
+                DispatchQueue.main.async {
+                    self.headerView.button.isLoading = true
+                }
+            }))
+
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+
+            sheet.willDismissHandler = {
+                self.headerView.button.isLoading = false
+            }
+
+            present(sheet, animated: true)
         } else {
             output.follow()
         }
     }
 
     @objc private func menuButtonPressed() {
-        let alert = UIAlertController(
-            title: nil,
-            message: nil,
-            preferredStyle: .actionSheet
-        )
+        let sheet = ActionSheet()
 
-        alert.addAction(UIAlertAction(title: NSLocalizedString("share_profile", comment: ""), style: .default, handler: { _ in
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("share_profile", comment: ""), style: .default, handler: { _ in
             let items: [Any] = [
-                URL(string: "https://soapbox.social/user/" + self.user.username)!,
+                URL(string: "https://soapbox.social/user/" + self.content.username)!,
             ]
 
             let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
@@ -370,17 +364,17 @@ class ProfileViewController: ViewController {
             }
         }))
 
-        if user.id == UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
-            alert.addAction(UIAlertAction(title: NSLocalizedString("settings", comment: ""), style: .default, handler: { _ in
+        let id = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
+
+        if content.id == id {
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("settings", comment: ""), style: .default, handler: { _ in
                 self.present(SceneFactory.createSettingsViewController(), animated: true)
             }))
-        }
-
-        if user.id != UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
-            alert.addAction(UIAlertAction(title: NSLocalizedString("report_incident", comment: ""), style: .destructive, handler: { _ in
+        } else {
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("report_incident", comment: ""), style: .destructive, handler: { _ in
                 let view = ReportPageViewController(
                     userId: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId),
-                    reportedUserId: self.user.id
+                    reportedUserId: self.content.id
                 )
 
                 DispatchQueue.main.async {
@@ -390,15 +384,15 @@ class ProfileViewController: ViewController {
 
             var blockedLabel = NSLocalizedString("block", comment: "")
             var blockedDescription = NSLocalizedString("block_description", comment: "")
-            if user.isBlocked ?? false {
+            if content.isBlocked ?? false {
                 blockedLabel = NSLocalizedString("unblock", comment: "")
                 blockedDescription = ""
             }
 
-            alert.addAction(UIAlertAction(title: blockedLabel, style: .destructive, handler: { _ in
+            sheet.add(action: ActionSheet.Action(title: blockedLabel, style: .destructive, handler: { _ in
                 let confirmation = UIAlertController.confirmation(
                     onAccepted: {
-                        if self.user.isBlocked ?? false {
+                        if self.content.isBlocked ?? false {
                             self.output.unblock()
                             return
                         }
@@ -414,9 +408,8 @@ class ProfileViewController: ViewController {
             }))
         }
 
-        alert.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-
-        present(alert, animated: true)
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+        present(sheet, animated: true)
     }
 }
 
@@ -435,8 +428,8 @@ extension ProfileViewController: ProfilePresenterOutput {
     func display(profile: APIClient.Profile) {
         setBasicInfo(profile)
 
-        if let following = profile.isFollowing, following == true {
-            headerView.button.isSelected.toggle()
+        if let following = profile.isFollowing {
+            headerView.button.isSelected = following
         }
 
         followsYouBadge.isHidden = true
@@ -464,8 +457,10 @@ extension ProfileViewController: ProfilePresenterOutput {
     }
 
     func display(groups: [APIClient.Group]) {
+        self.groups.clear()
+
         if groups.isEmpty {
-            if user != nil, user.id != UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
+            if content != nil, content.id != UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
                 groupsContainer.isHidden = true
             }
 
@@ -520,28 +515,28 @@ extension ProfileViewController: ProfilePresenterOutput {
     }
 
     func didFollow() {
-        headerView.button.isUserInteractionEnabled = true
+        headerView.button.isLoading = false
         headerView.button.isSelected.toggle()
-        user.isFollowing = true
-        user.followers += 1
+        content.isFollowing = true
+        content.followers += 1
         updateFollowerLabels()
     }
 
     func didUnfollow() {
-        headerView.button.isUserInteractionEnabled = true
+        headerView.button.isLoading = false
         headerView.button.isSelected.toggle()
-        user.isFollowing = false
-        user.followers -= 1
+        content.isFollowing = false
+        content.followers -= 1
         updateFollowerLabels()
     }
 
     func didBlock() {
-        headerView.button.isUserInteractionEnabled = true
-        user.isBlocked = true
-        user.isFollowing = false
+        headerView.button.isLoading = false
+        content.isBlocked = true
+        content.isFollowing = false
 
-        if user.followers > 0 {
-            user.followers -= 1
+        if content.followers > 0 {
+            content.followers -= 1
         }
 
         updateFollowerLabels()
@@ -554,9 +549,9 @@ extension ProfileViewController: ProfilePresenterOutput {
     }
 
     func didUnblock() {
-        headerView.button.isUserInteractionEnabled = true
-        user.isBlocked = false
-        user.isFollowing = false
+        headerView.button.isLoading = false
+        content.isBlocked = false
+        content.isFollowing = false
 
         headerView.button.backgroundColor = .brandColor
         headerView.button.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
@@ -564,8 +559,8 @@ extension ProfileViewController: ProfilePresenterOutput {
     }
 
     private func updateFollowerLabels() {
-        followersCount.statistic.text = String(user.followers)
-        if user.followers == 1 {
+        followersCount.statistic.text = String(content.followers)
+        if content.followers == 1 {
             followersCount.descriptionLabel.text = NSLocalizedString("follower", comment: "")
         } else {
             followersCount.descriptionLabel.text = NSLocalizedString("followers", comment: "")
@@ -573,13 +568,13 @@ extension ProfileViewController: ProfilePresenterOutput {
     }
 
     private func setBasicInfo(_ profile: APIClient.Profile) {
-        user = profile
+        didLoad(content: profile)
         title = profile.username
         headerView.titleLabel.text = profile.displayName
         headerView.descriptionLabel.text = profile.bio
         followingCount.statistic.text = String(profile.following)
 
-        if user.linkedAccounts.first(where: { $0.provider == "twitter" }) != nil {
+        if content.linkedAccounts.first(where: { $0.provider == "twitter" }) != nil {
             badges.isHidden = false
         } else {
             badges.isHidden = true

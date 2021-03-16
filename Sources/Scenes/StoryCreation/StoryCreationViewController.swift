@@ -1,26 +1,11 @@
 import AlamofireImage
 import AVFoundation
+import DrawerView
 import UIKit
 
-protocol CreateStoryViewDelegate {
-    func didStartRecording()
-    func didEndRecording()
-    func didFailToRequestPermission()
-    func didFinishUploading(_ storyView: CreateStoryView)
-    func didCancel()
-}
-
-class CreateStoryView: UIView {
-    private static let configuration = UIImage.SymbolConfiguration(pointSize: 30, weight: .heavy)
-
-    private let button: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(systemName: "mic.fill", withConfiguration: CreateStoryView.configuration), for: .normal)
-        button.setImage(UIImage(systemName: "stop.fill", withConfiguration: CreateStoryView.configuration), for: [.highlighted, .selected])
-        button.tintColor = .black
-        button.backgroundColor = .white
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 70 / 2
+class StoryCreationViewController: DrawerViewController {
+    private let button: RecordButton = {
+        let button = RecordButton()
         return button
     }()
 
@@ -68,29 +53,25 @@ class CreateStoryView: UIView {
 
     private var playTime = Float(0.0)
 
-    var delegate: CreateStoryViewDelegate?
-
     private var activity: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: .large)
         spinner.translatesAutoresizingMaskIntoConstraints = false
         return spinner
     }()
 
-    init() {
-        super.init(frame: CGRect.zero)
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-        translatesAutoresizingMaskIntoConstraints = false
-
-        backgroundColor = .brandColor
+        manager.drawer.backgroundColor = .brandColor
 
         let handle = UIView()
         handle.translatesAutoresizingMaskIntoConstraints = false
         handle.backgroundColor = UIColor.white.withAlphaComponent(0.3)
         handle.layer.cornerRadius = 2.5
-        addSubview(handle)
+        view.addSubview(handle)
 
         label.text = NSLocalizedString("hold_to_record", comment: "")
-        addSubview(label)
+        view.addSubview(label)
 
         let image = UIImageView()
         image.backgroundColor = .lightBrandColor
@@ -98,21 +79,21 @@ class CreateStoryView: UIView {
         image.layer.masksToBounds = true
         image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!))
         image.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(image)
+        view.addSubview(image)
 
         button.addTarget(self, action: #selector(startRecording), for: .touchDown)
         button.addTarget(self, action: #selector(endRecording), for: [.touchUpInside, .touchUpOutside])
-        addSubview(button)
+        view.addSubview(button)
 
         shareButton.isHidden = true
         shareButton.addTarget(self, action: #selector(share), for: .touchUpInside)
-        addSubview(shareButton)
+        view.addSubview(shareButton)
 
         let cancelButton = UIButton()
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
         cancelButton.addTarget(self, action: #selector(cancel), for: .touchUpInside)
-        addSubview(cancelButton)
+        view.addSubview(cancelButton)
 
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -120,7 +101,7 @@ class CreateStoryView: UIView {
         stack.distribution = .fill
         stack.alignment = .center
         stack.axis = .horizontal
-        addSubview(stack)
+        view.addSubview(stack)
 
         stack.addArrangedSubview(playButton)
         stack.addArrangedSubview(progress)
@@ -128,74 +109,70 @@ class CreateStoryView: UIView {
         playButton.isHidden = true
         playButton.addTarget(self, action: #selector(play), for: .touchUpInside)
 
-        addSubview(activity)
+        view.addSubview(activity)
 
         NSLayoutConstraint.activate([
-            activity.centerYAnchor.constraint(equalTo: centerYAnchor),
-            activity.centerXAnchor.constraint(equalTo: centerXAnchor),
+            activity.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            activity.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
 
         NSLayoutConstraint.activate([
-            image.centerXAnchor.constraint(equalTo: centerXAnchor),
+            image.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             image.heightAnchor.constraint(equalToConstant: 140),
             image.widthAnchor.constraint(equalToConstant: 140),
             image.bottomAnchor.constraint(equalTo: label.topAnchor, constant: -40),
         ])
 
         NSLayoutConstraint.activate([
-            handle.centerXAnchor.constraint(equalTo: centerXAnchor),
+            handle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             handle.heightAnchor.constraint(equalToConstant: 5),
             handle.widthAnchor.constraint(equalToConstant: 36),
-            handle.topAnchor.constraint(equalTo: topAnchor, constant: 5),
+            handle.topAnchor.constraint(equalTo: view.topAnchor, constant: 5),
         ])
 
         NSLayoutConstraint.activate([
-            stack.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            stack.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            stack.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            stack.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             stack.bottomAnchor.constraint(equalTo: button.topAnchor, constant: -80),
             stack.heightAnchor.constraint(equalToConstant: 25),
         ])
 
         NSLayoutConstraint.activate([
-            progress.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            progress.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             progress.heightAnchor.constraint(equalToConstant: 10),
         ])
 
         NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: centerYAnchor),
+            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
 
         NSLayoutConstraint.activate([
             button.widthAnchor.constraint(equalToConstant: 70),
             button.heightAnchor.constraint(equalToConstant: 70),
-            button.centerXAnchor.constraint(equalTo: centerXAnchor),
-            button.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -40),
+            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            button.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -40),
         ])
 
         NSLayoutConstraint.activate([
             shareButton.heightAnchor.constraint(equalToConstant: 40),
-            shareButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
-            shareButton.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            shareButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            shareButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
         ])
 
         NSLayoutConstraint.activate([
-            cancelButton.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            cancelButton.topAnchor.constraint(equalTo: topAnchor, constant: 20),
+            cancelButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            cancelButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
         ])
 
         RecordPermissions.request(
-            failure: { self.delegate?.didFailToRequestPermission() },
+            failure: { self.showMicrophoneWarning() },
             success: {}
         )
     }
 
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     @objc private func startRecording() {
-        delegate?.didStartRecording()
+        manager.drawer.enabled = false
 
         button.isSelected.toggle()
         reset()
@@ -229,13 +206,10 @@ class CreateStoryView: UIView {
     }
 
     @objc private func endRecording() {
-        delegate?.didEndRecording()
+        manager.drawer.enabled = true
 
         button.isSelected.toggle()
         timer.invalidate()
-
-        let paused = NSLocalizedString("paused", comment: "")
-        label.text = "● " + paused
 
         UIView.animate(withDuration: 0.3, animations: {
             self.playButton.isHidden = false
@@ -283,7 +257,10 @@ class CreateStoryView: UIView {
             }
 
             self.stop()
-            self.delegate?.didFinishUploading(self)
+
+            DispatchQueue.main.async {
+                self.dismiss(animated: true)
+            }
         }
     }
 
@@ -291,9 +268,14 @@ class CreateStoryView: UIView {
         if playButton.isSelected {
             timer.invalidate()
             recorder.pause()
+
+            label.text = "● " + NSLocalizedString("paused", comment: "")
+
         } else {
             recorder.loadPlayer()
             recorder.play()
+
+            label.text = "● " + NSLocalizedString("playing", comment: "")
 
             let duration = recorder.duration()
 
@@ -323,7 +305,7 @@ class CreateStoryView: UIView {
 
     @objc private func cancel() {
         stop()
-        delegate?.didCancel()
+        dismiss(animated: true)
     }
 
     private func recordingText() -> NSAttributedString {
@@ -347,5 +329,19 @@ class CreateStoryView: UIView {
         playButton.isHidden = true
         playButton.isSelected = false
         recorder.clear()
+    }
+
+    private func showMicrophoneWarning() {
+        DispatchQueue.main.async {
+            self.present(ActionSheetFactory.microphoneWarningActionSheet(), animated: true)
+        }
+    }
+}
+
+extension StoryCreationViewController: DrawerPresentationDelegate {
+    func drawerDismissalDidEnd(_ completed: Bool) {
+        if completed {
+            stop()
+        }
     }
 }

@@ -13,7 +13,7 @@ class RoomView: UIView {
 
     private static let iconConfig = UIImage.SymbolConfiguration(weight: .semibold)
 
-    private var me: RoomState.RoomMember {
+    private var me: Soapbox_V1_RoomState.RoomMember {
         let id = Int64(UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId))
         guard let me = room.state.members.first(where: { $0.id == id }) else {
             fatalError("me not found!")
@@ -191,7 +191,7 @@ class RoomView: UIView {
 
         let handle = UIView()
         handle.translatesAutoresizingMaskIntoConstraints = false
-        handle.backgroundColor = .handle
+        handle.backgroundColor = .quaternaryLabel
         handle.layer.cornerRadius = 2.5
         addSubview(handle)
 
@@ -463,75 +463,62 @@ extension RoomView: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let id = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
         if room.state.members[indexPath.item].id == Int64(id) {
-            let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-            let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
+            let sheet = ActionSheet()
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
                 DispatchQueue.main.async {
                     self.delegate?.didSelectViewProfile(id: id)
                 }
-            })
-            optionMenu.addAction(profileAction)
+            }))
 
-            let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
-            optionMenu.addAction(cancel)
-
-            window!.rootViewController!.present(optionMenu, animated: true)
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+            window!.rootViewController!.present(sheet, animated: true)
             return
         }
 
         showMemberAction(for: room.state.members[indexPath.item])
     }
 
-    private func showMemberAction(for member: RoomState.RoomMember) {
-        let optionMenu = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-
-        let profileAction = UIAlertAction(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
+    private func showMemberAction(for member: Soapbox_V1_RoomState.RoomMember) {
+        let sheet = ActionSheet()
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
             DispatchQueue.main.async {
                 self.delegate?.didSelectViewProfile(id: Int(member.id))
             }
-        })
-        optionMenu.addAction(profileAction)
+        }))
 
         if me.role == .admin {
-            optionMenu.addAction(UIAlertAction(title: NSLocalizedString("mute_user", comment: ""), style: .default, handler: { _ in
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("mute_user", comment: ""), style: .default, handler: { _ in
                 self.room.mute(user: member.id)
             }))
 
             if member.role == .admin {
-                optionMenu.addAction(
-                    UIAlertAction(title: NSLocalizedString("remove_admin", comment: ""), style: .destructive, handler: { _ in
-                        self.room.remove(admin: member.id)
-                    })
-                )
+                sheet.add(action: ActionSheet.Action(title: NSLocalizedString("remove_admin", comment: ""), style: .destructive, handler: { _ in
+                    self.room.remove(admin: member.id)
+                }))
             } else {
-                optionMenu.addAction(
-                    UIAlertAction(title: NSLocalizedString("add_admin", comment: ""), style: .default, handler: { _ in
-                        self.room.add(admin: member.id)
-                    })
-                )
+                sheet.add(action: ActionSheet.Action(title: NSLocalizedString("add_admin", comment: ""), style: .default, handler: { _ in
+                    self.room.add(admin: member.id)
+                }))
             }
 
-            optionMenu.addAction(
-                UIAlertAction(title: NSLocalizedString("ban_from_room", comment: ""), style: .destructive, handler: { _ in
-                    let message = NSLocalizedString("user_will_no_longer_be_able_to_join_room", comment: "")
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("ban_from_room", comment: ""), style: .destructive, handler: { _ in
+                let message = NSLocalizedString("user_will_no_longer_be_able_to_join_room", comment: "")
 
-                    let alert = UIAlertController.confirmation(
-                        onAccepted: {
-                            self.room.kick(user: member.id)
-                        },
-                        message: String(format: message, member.displayName.firstName())
-                    )
+                let alert = UIAlertController.confirmation(
+                    onAccepted: {
+                        self.room.kick(user: member.id)
+                    },
+                    message: String(format: message, member.displayName.firstName())
+                )
 
-                    DispatchQueue.main.async {
-                        self.window!.rootViewController!.present(alert, animated: true)
-                    }
-                })
-            )
+                DispatchQueue.main.async {
+                    self.window!.rootViewController!.present(alert, animated: true)
+                }
+            }))
         }
 
-        let cancel = UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel)
-        optionMenu.addAction(cancel)
-
-        window!.rootViewController!.present(optionMenu, animated: true)
+        sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+        window!.rootViewController!.present(sheet, animated: true)
     }
 }
 
@@ -647,7 +634,7 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func didChangeUserRole(user: Int64, role: RoomState.RoomMember.Role) {
+    func didChangeUserRole(user: Int64, role: Soapbox_V1_RoomState.RoomMember.Role) {
         DispatchQueue.main.async {
             self.members.reloadData()
         }
@@ -720,7 +707,7 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func visibilityUpdated(visibility: Visibility) {
+    func visibilityUpdated(visibility: Soapbox_V1_Visibility) {
         DispatchQueue.main.async {
             switch visibility {
             case .private:
@@ -857,7 +844,7 @@ extension RoomView: ButtonBarDelegate {
         drawer.delegate = self
         drawer.attachTo(view: window!)
         drawer.snapPositions = [.closed, .open]
-        drawer.backgroundEffect = nil
+        drawer.backgroundEffect = .none
         drawer.backgroundColor = .foreground
         drawer.cornerRadius = 30
         drawer.openHeightBehavior = .fixed(height: frame.size.height / 2)

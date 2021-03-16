@@ -6,7 +6,7 @@ class StoriesViewController: UIViewController {
 
     private let feed: APIClient.StoryFeed
 
-    private var segmentedProgress: StoriesProgressBar!
+    private var progress: StoriesProgressBar!
 
     private let menuButton: UIButton = {
         let button = UIButton()
@@ -26,8 +26,23 @@ class StoriesViewController: UIViewController {
         return label
     }()
 
+    private let name: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .rounded(forTextStyle: .title1, weight: .bold)
+        label.textColor = UIColor.white
+        label.textAlignment = .center
+        return label
+    }()
+
+    private let visualizer: CircularAudioVisualizerView = {
+        let visualizer = CircularAudioVisualizerView()
+        visualizer.translatesAutoresizingMaskIntoConstraints = false
+        visualizer.backgroundColor = UIColor.white.withAlphaComponent(0.2)
+        return visualizer
+    }()
+
     private let player: StoryPlayer
-    private var playTime = Float(0.0)
 
     private let thumbsUp = StoryReactionButton(reaction: "👍")
     private let fire = StoryReactionButton(reaction: "🔥")
@@ -51,26 +66,20 @@ class StoriesViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .black
 
-        segmentedProgress = StoriesProgressBar(numberOfSegments: player.player.items().count)
-        segmentedProgress.translatesAutoresizingMaskIntoConstraints = false
-        segmentedProgress.topColor = UIColor.white
-        segmentedProgress.padding = 5.0
-        segmentedProgress.bottomColor = UIColor.white.withAlphaComponent(0.25)
-        segmentedProgress.dataSource = self
-
-        let background = UIView()
-        background.translatesAutoresizingMaskIntoConstraints = false
-        background.backgroundColor = .reactionsBackground
-        background.layer.cornerRadius = 30
-        view.addSubview(background)
+        progress = StoriesProgressBar(numberOfSegments: feed.stories.count)
+        progress.translatesAutoresizingMaskIntoConstraints = false
+        progress.topColor = UIColor.white
+        progress.padding = 5.0
+        progress.bottomColor = UIColor.white.withAlphaComponent(0.25)
+        progress.dataSource = self
+        progress.delegate = self
 
         let content = UIView()
         content.translatesAutoresizingMaskIntoConstraints = false
         content.layer.cornerRadius = 30
-        content.backgroundColor = .brandColor
-        background.addSubview(content)
+        view.addSubview(content)
 
-        content.addSubview(segmentedProgress)
+        content.addSubview(progress)
 
         let buttonStack = UIStackView()
         buttonStack.translatesAutoresizingMaskIntoConstraints = false
@@ -89,6 +98,8 @@ class StoriesViewController: UIViewController {
         exit.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
         buttonStack.addArrangedSubview(exit)
 
+        content.addSubview(visualizer)
+
         if feed.user.id != UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
             menuButton.isHidden = true
         }
@@ -102,39 +113,80 @@ class StoriesViewController: UIViewController {
         content.addSubview(image)
 
         if let url = feed.user.image, url != "" {
-            image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + url))
+            image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + url), completion: { data in
+                guard let image = data.value else {
+                    return
+                }
+
+                guard let color = image.averageColor() else {
+                    return
+                }
+
+                DispatchQueue.main.async {
+                    content.backgroundColor = color
+
+                    if color.isLight() {
+                        self.name.textColor = .black
+                        self.posted.textColor = UIColor.black.withAlphaComponent(0.5)
+                    } else {
+                        self.name.textColor = .white
+                        self.posted.textColor = UIColor.white.withAlphaComponent(0.5)
+                    }
+                }
+            })
         }
 
-        let name = UILabel()
-        name.font = .rounded(forTextStyle: .title1, weight: .bold)
         name.text = feed.user.displayName
-        name.textColor = .white
-        name.textAlignment = .center
-        name.translatesAutoresizingMaskIntoConstraints = false
         content.addSubview(name)
 
         content.addSubview(posted)
 
-        background.addSubview(thumbsUp)
-        background.addSubview(fire)
-        background.addSubview(heart)
+        view.addSubview(thumbsUp)
+        view.addSubview(fire)
+        view.addSubview(heart)
 
         thumbsUp.addTarget(self, action: #selector(didReact), for: .touchUpInside)
         fire.addTarget(self, action: #selector(didReact), for: .touchUpInside)
         heart.addTarget(self, action: #selector(didReact), for: .touchUpInside)
 
+        let rightTapView = UIView()
+        rightTapView.translatesAutoresizingMaskIntoConstraints = false
+        rightTapView.isUserInteractionEnabled = true
+        rightTapView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(skip)))
+        content.addSubview(rightTapView)
+
+        let leftTapView = UIView()
+        leftTapView.translatesAutoresizingMaskIntoConstraints = false
+        leftTapView.isUserInteractionEnabled = true
+        leftTapView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(previous)))
+        content.addSubview(leftTapView)
+
         NSLayoutConstraint.activate([
-            thumbsUp.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -10),
+            rightTapView.rightAnchor.constraint(equalTo: content.rightAnchor),
+            rightTapView.topAnchor.constraint(equalTo: buttonStack.bottomAnchor),
+            rightTapView.bottomAnchor.constraint(equalTo: content.bottomAnchor),
+            rightTapView.widthAnchor.constraint(equalTo: content.widthAnchor, multiplier: 0.33),
+        ])
+
+        NSLayoutConstraint.activate([
+            leftTapView.leftAnchor.constraint(equalTo: content.leftAnchor),
+            leftTapView.topAnchor.constraint(equalTo: buttonStack.bottomAnchor),
+            leftTapView.bottomAnchor.constraint(equalTo: content.bottomAnchor),
+            leftTapView.widthAnchor.constraint(equalTo: content.widthAnchor, multiplier: 0.33),
+        ])
+
+        NSLayoutConstraint.activate([
+            thumbsUp.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             thumbsUp.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
 
         NSLayoutConstraint.activate([
-            fire.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -10),
+            fire.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             fire.leftAnchor.constraint(equalTo: thumbsUp.rightAnchor, constant: 20),
         ])
 
         NSLayoutConstraint.activate([
-            heart.bottomAnchor.constraint(equalTo: background.bottomAnchor, constant: -10),
+            heart.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
             heart.rightAnchor.constraint(equalTo: thumbsUp.leftAnchor, constant: -20),
         ])
 
@@ -146,23 +198,23 @@ class StoriesViewController: UIViewController {
         ])
 
         NSLayoutConstraint.activate([
-            background.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            background.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            background.leftAnchor.constraint(equalTo: view.leftAnchor),
-            background.rightAnchor.constraint(equalTo: view.rightAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
             buttonStack.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             buttonStack.topAnchor.constraint(equalTo: content.topAnchor, constant: 20),
             buttonStack.heightAnchor.constraint(equalToConstant: 32),
         ])
 
         NSLayoutConstraint.activate([
-            segmentedProgress.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
-            segmentedProgress.rightAnchor.constraint(equalTo: buttonStack.leftAnchor, constant: -20),
-            segmentedProgress.heightAnchor.constraint(equalToConstant: 4),
-            segmentedProgress.centerYAnchor.constraint(equalTo: buttonStack.centerYAnchor),
+            progress.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
+            progress.rightAnchor.constraint(equalTo: buttonStack.leftAnchor, constant: -20),
+            progress.heightAnchor.constraint(equalToConstant: 4),
+            progress.centerYAnchor.constraint(equalTo: buttonStack.centerYAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            visualizer.centerYAnchor.constraint(equalTo: content.centerYAnchor),
+            visualizer.centerXAnchor.constraint(equalTo: content.centerXAnchor),
+            visualizer.heightAnchor.constraint(equalToConstant: 140),
+            visualizer.widthAnchor.constraint(equalToConstant: 140),
         ])
 
         NSLayoutConstraint.activate([
@@ -185,8 +237,8 @@ class StoriesViewController: UIViewController {
         ])
     }
 
-    override func viewDidAppear(_: Bool) {
-        super.viewDidAppear(true)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
 
         do {
             try AVAudioSession.sharedInstance().setActive(false)
@@ -196,13 +248,20 @@ class StoriesViewController: UIViewController {
             print("AVAudioSession error: \(error)")
         }
 
-        player.play()
-        segmentedProgress.startAnimation()
+        player.playTrack()
+        progress.startAnimation()
+        progress.isPaused = true
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        player.pause()
+        player.shutdown()
     }
 
     // @TODO allow deselecting reaction?
     @objc private func didReact(_ sender: UIButton) {
-        let item = player.currentItem()
+        let item = feed.stories[player.currentTrack]
 
         if feed.user.id == UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
             return
@@ -224,42 +283,71 @@ class StoriesViewController: UIViewController {
     }
 
     @objc private func exitTapped() {
-        player.stop()
         dismiss(animated: true)
     }
 
     @objc private func menuTapped() {
-        let item = player.currentItem()
+        let item = feed.stories[player.currentTrack]
 
         player.pause()
-        segmentedProgress.isPaused = true
+        progress.isPaused = true
 
-        let menu = AlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let menu = ActionSheet()
         menu.willDismissHandler = {
             self.player.unpause()
-            self.segmentedProgress.isPaused = false
+            self.progress.isPaused = false
         }
 
-        let delete = UIAlertAction(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in
+        let delete = ActionSheet.Action(title: NSLocalizedString("delete", comment: ""), style: .destructive, handler: { _ in
             APIClient().deleteStory(id: item.id, callback: { _ in
-                menu.dismiss(animated: true)
+                self.player.next()
             })
         })
-        menu.addAction(delete)
+        menu.add(action: delete)
 
-        menu.addAction(UIAlertAction(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
-
+        menu.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
         present(menu, animated: true)
+    }
+
+    @objc private func skip() {
+        progress.skip()
+        player.next()
+    }
+
+    @objc private func previous() {
+        progress.rewind()
+        player.previous()
     }
 }
 
 extension StoriesViewController: StoryPlayerDelegate {
-    func didReachEnd() {
-        player.stop()
-        dismiss(animated: true)
+    func didStartBuffering(_: StoryPlayer) {
+        if progress.isPaused {
+            return
+        }
+
+        progress.isPaused = true
     }
 
-    func startedPlaying(story: APIClient.Story) {
+    func didEndBuffering(_: StoryPlayer) {
+        if !progress.isPaused {
+            return
+        }
+
+        progress.isPaused = false
+    }
+
+    func didStartPlaying(_: StoryPlayer, itemAt index: Int) {
+        let story = feed.stories[index]
+
+        if index != 0, progress.currentIndex < index {
+            progress.skip()
+        }
+
+        if progress.isPaused {
+            progress.isPaused = false
+        }
+
         posted.text = Date(timeIntervalSince1970: TimeInterval(story.deviceTimestamp)).timeAgoDisplay()
 
         thumbsUp.count = 0
@@ -279,10 +367,25 @@ extension StoriesViewController: StoryPlayerDelegate {
             }
         }
     }
+
+    func didReachEnd(_ player: StoryPlayer) {
+        player.pause()
+        dismiss(animated: true)
+    }
+
+    func didUpdatePower(_: StoryPlayer, power: Double) {
+        visualizer.update(power: power)
+    }
 }
 
-extension StoriesViewController: StoriesProgressBarDataSource {
+extension StoriesViewController: StoriesProgressBarDataSource, StoriesProgressBarDelegate {
     func storiesProgressBar(progressBar _: StoriesProgressBar, durationForItemAt index: Int) -> TimeInterval {
-        return TimeInterval(Float(CMTimeGetSeconds(player.playerItems[index].asset.duration)))
+        return player.duration(for: index)
+    }
+
+    func storiesProgressBar(progressBar: StoriesProgressBar, didFinish index: Int) {
+        if player.currentTrack == index, !progress.isPaused {
+            progressBar.isPaused = true
+        }
     }
 }

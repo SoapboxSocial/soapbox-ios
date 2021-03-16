@@ -111,6 +111,8 @@ extension ProfileInteractor: ProfileViewControllerOutput {
             return
         }
 
+        groupOffset = 0
+
         api.groups(id: id, limit: groupLimit, offset: groupOffset, callback: { result in
             switch result {
             case .failure: break

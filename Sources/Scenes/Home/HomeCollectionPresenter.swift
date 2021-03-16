@@ -22,7 +22,7 @@ class HomeCollectionPresenter {
         return dataSource.count
     }
 
-    private(set) var hasOwnStory = true
+    private(set) var hasOwnStory = false
 
     init() {
         set(stories: [])

@@ -20,50 +20,14 @@ class RoomMemberCell: UICollectionViewCell {
         return view
     }()
 
-    private var speakingView: RoomMemberAccessoryView = {
+    private var speakingView: RoomMemberAccessoryViewWithGradient = {
         let conf = UIImage.SymbolConfiguration(pointSize: 14, weight: .heavy)
-        let view = RoomMemberAccessoryView(image: UIImage(systemName: "waveform", withConfiguration: conf)!)
-
-        let gradient = CAGradientLayer()
-
-        gradient.colors = [
-            UIColor(red: 0.514, green: 0.349, blue: 0.996, alpha: 1).cgColor,
-            UIColor(red: 0.263, green: 0.031, blue: 0.765, alpha: 1).cgColor,
-        ]
-
-        gradient.locations = [0, 1]
-        gradient.startPoint = CGPoint(x: 0.25, y: 0.5)
-        gradient.endPoint = CGPoint(x: 0.75, y: 0.5)
-        gradient.frame = CGRect(x: 0.0, y: 0.0, width: 24, height: 24)
-        gradient.transform = CATransform3DMakeAffineTransform(CGAffineTransform(a: 1, b: 1, c: -1, d: 1, tx: 0.5, ty: -0.5))
-
-        view.layer.insertSublayer(gradient, at: 0)
-
-        return view
+        return RoomMemberAccessoryViewWithGradient( image: UIImage(systemName: "waveform", withConfiguration: conf)!)
     }()
 
-    private var adminView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .foreground
-        view.layer.cornerRadius = 32 / 2
-
-        let label = UILabel()
-        label.text = "👑"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(label)
-
-        NSLayoutConstraint.activate([
-            label.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-        ])
-
-        view.layer.shadowOffset = CGSize(width: 0, height: 12)
-        view.layer.shadowColor = UIColor.black.withAlphaComponent(0.12).cgColor
-        view.layer.shadowOpacity = 1
-        view.layer.shadowRadius = 10
-
-        return view
+    private var adminView: RoomMemberAccessoryView = {
+        let conf = UIImage.SymbolConfiguration(pointSize: 13, weight: .semibold)
+        return RoomMemberAccessoryViewWithGradient(image: UIImage(systemName: "star.fill", withConfiguration: conf)!)
     }()
 
     private var profileImage: UIImageView = {
@@ -112,8 +76,8 @@ class RoomMemberCell: UICollectionViewCell {
         ])
 
         NSLayoutConstraint.activate([
-            adminView.heightAnchor.constraint(equalToConstant: 32),
-            adminView.widthAnchor.constraint(equalToConstant: 32),
+            adminView.heightAnchor.constraint(equalToConstant: 24),
+            adminView.widthAnchor.constraint(equalToConstant: 24),
             adminView.bottomAnchor.constraint(equalTo: profileImage.bottomAnchor),
         ])
 
@@ -134,7 +98,7 @@ class RoomMemberCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setup(name: String, image: String, muted: Bool, role: RoomState.RoomMember.Role) {
+    func setup(name: String, image: String, muted: Bool, role: Soapbox_V1_RoomState.RoomMember.Role) {
         user = 0
         muteView.isHidden = true
         speakingView.isHidden = true
@@ -162,7 +126,7 @@ class RoomMemberCell: UICollectionViewCell {
         isMuted = muted
     }
 
-    func setup(member: RoomState.RoomMember) {
+    func setup(member: Soapbox_V1_RoomState.RoomMember) {
         setup(
             name: member.displayName,
             image: member.image,

@@ -7,15 +7,14 @@ import WebRTC
 protocol RoomClientDelegate: AnyObject {
     func room(id: String)
     func room(speakers: [Int])
-    func roomClientDidConnect(_ room: RoomClient)
     func roomClientDidDisconnect(_ room: RoomClient)
-    func roomClient(_ room: RoomClient, didReceiveMessage message: Event)
+    func roomClient(_ room: RoomClient, didReceiveMessage message: Soapbox_V1_Event)
     func roomClient(_ room: RoomClient, failedToConnect error: RoomClient.Error)
-    func roomClient(_ room: RoomClient, didReceiveState state: RoomState, andRole role: RoomState.RoomMember.Role)
+    func roomClient(_ room: RoomClient, didReceiveState state: Soapbox_V1_RoomState, andRole role: Soapbox_V1_RoomState.RoomMember.Role)
 }
 
 final class RoomClient {
-    private var streams = [Trickle.Target: WebRTCClient]()
+    private var streams = [Soapbox_V1_Trickle.Target: WebRTCClient]()
     private let signalClient: SignalingClient
 
     private let iceServers: [RTCIceServer]
@@ -44,10 +43,10 @@ final class RoomClient {
         }
     }
 
-    func create(_ request: CreateRequest) {
+    func create(_ request: Soapbox_V1_CreateRequest) {
         initialOffer { offer in
             var create = request
-            create.description_p = SessionDescription.with {
+            create.description_p = Soapbox_V1_SessionDescription.with {
                 $0.sdp = offer.sdp
                 $0.type = "offer"
             }
@@ -66,8 +65,8 @@ final class RoomClient {
         }
     }
 
-    func send(command: Command.OneOf_Payload) {
-        let cmd = Command.with {
+    func send(command: Soapbox_V1_Command.OneOf_Payload) {
+        let cmd = Soapbox_V1_Command.with {
             $0.payload = command
         }
 
@@ -81,14 +80,14 @@ final class RoomClient {
     func mute() {
         streams[.publisher]?.muteAudio()
 
-        send(command: .muteUpdate(Command.MuteUpdate.with {
+        send(command: .muteUpdate(Soapbox_V1_Command.MuteUpdate.with {
             $0.muted = true
         }))
     }
 
     func unmute() {
         streams[.publisher]?.unmuteAudio()
-        send(command: .muteUpdate(Command.MuteUpdate.with {
+        send(command: .muteUpdate(Soapbox_V1_Command.MuteUpdate.with {
             $0.muted = false
         }))
     }
@@ -113,7 +112,7 @@ final class RoomClient {
         })
     }
 
-    private func negotiate(description: SessionDescription) {
+    private func negotiate(description: Soapbox_V1_SessionDescription) {
         set(remoteDescription: description, for: .subscriber) { err in
             if let error = err {
                 debugPrint("remoteDescription err: \(error)")
@@ -130,7 +129,7 @@ final class RoomClient {
         }
     }
 
-    private func set(remoteDescription: SessionDescription, for target: Trickle.Target, completion: @escaping (Swift.Error?) -> Void) {
+    private func set(remoteDescription: Soapbox_V1_SessionDescription, for target: Soapbox_V1_Trickle.Target, completion: @escaping (Swift.Error?) -> Void) {
         guard let rtc = streams[target] else {
             return completion(Error.targetNotFound)
         }
@@ -157,19 +156,19 @@ final class RoomClient {
 }
 
 extension RoomClient: SignalingClientDelegate {
-    func signalClient(_: SignalingClient, didReceiveTrickle trickle: Trickle) {
+    func signalClient(_: SignalingClient, didReceiveTrickle trickle: Soapbox_V1_Trickle) {
         guard let target = streams[trickle.target] else {
             return
         }
 
         target.set(remoteCandidate: RTCIceCandidate(
             sdp: trickle.iceCandidate.candidate,
-            sdpMLineIndex: Int32(trickle.iceCandidate.sdpMlineIndex),
+            sdpMLineIndex: Int32(trickle.iceCandidate.sdpMLineIndex),
             sdpMid: nil
         ))
     }
 
-    func signalClient(_: SignalingClient, didReceiveDescription description: SessionDescription) {
+    func signalClient(_: SignalingClient, didReceiveDescription description: Soapbox_V1_SessionDescription) {
         if description.type == "offer" {
             negotiate(description: description)
         }
@@ -183,7 +182,7 @@ extension RoomClient: SignalingClientDelegate {
         }
     }
 
-    func signalClient(_: SignalingClient, didReceiveJoinReply join: JoinReply) {
+    func signalClient(_: SignalingClient, didReceiveJoinReply join: Soapbox_V1_JoinReply) {
         set(remoteDescription: join.description_p, for: .publisher, completion: { err in
             if err != nil {
                 self.delegate?.roomClient(self, failedToConnect: .rtcFailure)
@@ -194,7 +193,7 @@ extension RoomClient: SignalingClientDelegate {
         })
     }
 
-    func signalClient(_: SignalingClient, didReceiveCreateReply create: CreateReply) {
+    func signalClient(_: SignalingClient, didReceiveCreateReply create: Soapbox_V1_CreateReply) {
         set(remoteDescription: create.description_p, for: .publisher, completion: { err in
             if err != nil {
                 self.delegate?.roomClient(self, failedToConnect: .rtcFailure)
@@ -233,7 +232,6 @@ extension RoomClient: WebRTCClientDelegate {
         switch state {
         case .connected:
             rtc.speakerOn()
-            delegate?.roomClientDidConnect(self)
         case .failed, .closed:
             delegate?.roomClientDidDisconnect(self)
         default:
@@ -255,7 +253,7 @@ extension RoomClient: WebRTCClientDelegate {
         switch channel {
         case "soapbox":
             do {
-                let msg = try Event(serializedData: data)
+                let msg = try Soapbox_V1_Event(serializedData: data)
                 delegate?.roomClient(self, didReceiveMessage: msg)
             } catch {
                 debugPrint("decode error \(error)")

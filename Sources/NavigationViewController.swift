@@ -14,7 +14,6 @@ class NavigationViewController: UINavigationController {
 
     private var roomDrawer: DrawerView?
     private var roomView: RoomView?
-    private var creationDrawer: DrawerView?
 
     private var interactionController: PanTransition?
     private var edgeSwipeGestureRecognizer: UIScreenEdgePanGestureRecognizer?
@@ -68,6 +67,7 @@ class NavigationViewController: UINavigationController {
 
         activityIndicator.isHidden = true
         activityIndicator.hidesWhenStopped = true
+        activityIndicator.color = .label
 
         activityIndicator.center = view.center
         view.addSubview(activityIndicator)
@@ -86,24 +86,7 @@ class NavigationViewController: UINavigationController {
                 let creationView = RoomCreationView()
                 creationView.delegate = self
 
-                self.creationDrawer = DrawerView(withView: creationView)
-                self.creationDrawer!.cornerRadius = 25.0
-                self.creationDrawer!.attachTo(view: self.view)
-                self.creationDrawer!.backgroundEffect = nil
-                self.creationDrawer!.snapPositions = [.closed, .open]
-                self.creationDrawer!.backgroundColor = .brandColor
-                self.creationDrawer!.delegate = self
-                self.creationDrawer!.childScrollViewsPanningCanDismissDrawer = false
-
-                self.view.addSubview(self.creationDrawer!)
-
-                creationView.autoPinEdgesToSuperview()
-
-                self.creationDrawer!.setPosition(.closed, animated: false)
-                self.creationDrawer!.setPosition(.open, animated: true) { _ in
-                    self.createRoomButton.isHidden = true
-                    UIApplication.shared.isIdleTimerDisabled = true
-                }
+                self.present(creationView, animated: true)
             }
         )
     }
@@ -118,9 +101,9 @@ class NavigationViewController: UINavigationController {
         roomView!.delegate = self
 
         roomDrawer = DrawerView(withView: roomView!)
-        roomDrawer!.cornerRadius = 25.0
+        roomDrawer!.cornerRadius = 30.0
         roomDrawer!.attachTo(view: view)
-        roomDrawer!.backgroundEffect = nil
+        roomDrawer!.backgroundEffect = .none
         roomDrawer!.snapPositions = [.collapsed, .open]
         roomDrawer!.backgroundColor = .roomBackground
         roomDrawer!.delegate = self
@@ -171,20 +154,8 @@ class NavigationViewController: UINavigationController {
     }
 
     private func showMicrophoneWarning() {
-        let alert = UIAlertController(
-            title: NSLocalizedString("microphone_permission_denied", comment: ""),
-            message: nil, preferredStyle: .alert
-        )
-
-        alert.addAction(UIAlertAction(title: NSLocalizedString("ok", comment: ""), style: .default, handler: nil))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("to_settings", comment: ""), style: .default, handler: { _ in
-            DispatchQueue.main.async {
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-            }
-        }))
-
         DispatchQueue.main.async {
-            self.present(alert, animated: true)
+            self.present(ActionSheetFactory.microphoneWarningActionSheet(), animated: true)
         }
     }
 }
@@ -306,17 +277,9 @@ extension NavigationViewController: RoomController {
 }
 
 extension NavigationViewController: RoomCreationDelegate {
-    func didCancelRoomCreation() {
-        creationDrawer?.setPosition(.closed, animated: true) { _ in
-            self.creationDrawer = nil
-        }
-    }
-
     func didEnterWithName(_ name: String?, isPrivate: Bool, group: Int?, users: [Int]?) {
         DispatchQueue.main.async {
-            self.creationDrawer?.setPosition(.closed, animated: true) { _ in
-                self.createRoom(name: name, isPrivate: isPrivate, group: group, users: users)
-            }
+            self.createRoom(name: name, isPrivate: isPrivate, group: group, users: users)
         }
     }
 

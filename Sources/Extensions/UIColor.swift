@@ -29,16 +29,6 @@ extension UIColor {
         }
     }
 
-    static var handle: UIColor {
-        return UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
-            if UITraitCollection.userInterfaceStyle == .dark {
-                return .systemGray6
-            } else {
-                return .systemGray5
-            }
-        }
-    }
-
     static var roomForeground: UIColor {
         return UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
             if UITraitCollection.userInterfaceStyle == .dark {
@@ -77,7 +67,29 @@ extension UIColor {
         }
     }
 
-    static var reactionsBackground: UIColor {
-        return UIColor(red: 28 / 255, green: 28 / 255, blue: 30 / 255, alpha: 1.0)
+    static var actionSheetSeperator: UIColor {
+        return UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
+            if UITraitCollection.userInterfaceStyle == .dark {
+                return UIColor(red: 235 / 255, green: 235 / 255, blue: 245 / 255, alpha: 0.08)
+            } else {
+                return UIColor(red: 60 / 255, green: 60 / 255, blue: 67 / 255, alpha: 0.09)
+            }
+        }
+    }
+
+    func isLight() -> Bool {
+        // algorithm from: http://www.w3.org/WAI/ER/WD-AERT/#color-contrast
+
+        guard let components = cgColor.components else {
+            return false
+        }
+
+        let red = components[0] * 299
+        let blue = components[1] * 587
+        let green = components[2] * 114
+
+        let brightness = (red + blue + green) / 1000
+
+        return brightness >= 0.5
     }
 }

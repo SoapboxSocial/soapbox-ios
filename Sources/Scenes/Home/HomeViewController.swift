@@ -1,5 +1,4 @@
 import AlamofireImage
-import DrawerView
 import UIKit
 
 protocol HomeViewControllerOutput {
@@ -17,9 +16,6 @@ class HomeViewController: ViewController {
     var output: HomeViewControllerOutput!
 
     private var updateQueue = [Update]()
-
-    private var storyDrawer: DrawerView!
-    private var creationView: CreateStoryView?
 
     private var ownStories = [APIClient.Story]()
 
@@ -128,6 +124,11 @@ class HomeViewController: ViewController {
     @objc private func loadData() {
         refresh.beginRefreshing()
         output.fetchData()
+    }
+
+    func openCreateStory() {
+        let creationView = StoryCreationViewController()
+        present(creationView, animated: true)
     }
 
     private func makeLayout() -> UICollectionViewLayout {
@@ -377,7 +378,6 @@ extension HomeViewController: UICollectionViewDataSource {
                     cell.profileImage.contentMode = .center
                 } else {
                     cell.profileImage.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!))
-                    cell.profileImage.contentMode = .scaleToFill
                 }
 
                 return cell
@@ -426,68 +426,5 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
             withHorizontalFittingPriority: .required,
             verticalFittingPriority: .fittingSizeLevel
         )
-    }
-}
-
-extension HomeViewController: CreateStoryViewDelegate, DrawerViewDelegate {
-    func openCreateStory() {
-        creationView = CreateStoryView()
-        creationView!.delegate = self
-
-        storyDrawer = DrawerView(withView: creationView!)
-        storyDrawer!.cornerRadius = 25.0
-        storyDrawer!.delegate = self
-        storyDrawer!.attachTo(view: (navigationController?.view)!)
-        storyDrawer!.backgroundEffect = nil
-        storyDrawer!.snapPositions = [.closed, .open]
-        storyDrawer!.backgroundColor = .brandColor
-        storyDrawer!.childScrollViewsPanningCanDismissDrawer = false
-
-        navigationController?.view.addSubview(storyDrawer)
-
-        creationView!.autoPinEdgesToSuperview()
-
-        storyDrawer!.setPosition(.closed, animated: false)
-        storyDrawer!.setPosition(.open, animated: true) { _ in
-            UIApplication.shared.isIdleTimerDisabled = true
-        }
-    }
-
-    // This removes the pan functionality to close the drawer temporarily.
-    // We do this because if the user drags their thumb while recording things go weird.
-    func didStartRecording() {
-        storyDrawer.enabled = false
-    }
-
-    func didEndRecording() {
-        storyDrawer.enabled = true
-    }
-
-    func didFailToRequestPermission() {}
-
-    func didFinishUploading(_: CreateStoryView) {
-        closeStoryDrawer()
-    }
-
-    func didCancel() {
-        closeStoryDrawer()
-    }
-
-    func drawer(_: DrawerView, didTransitionTo position: DrawerPosition) {
-        if position != .closed {
-            return
-        }
-
-        creationView?.stop()
-        creationView = nil
-
-        storyDrawer.removeFromSuperview()
-        storyDrawer = nil
-    }
-
-    private func closeStoryDrawer() {
-        storyDrawer.setPosition(.closed, animated: true, completion: { _ in
-            self.output.fetchData()
-        })
     }
 }

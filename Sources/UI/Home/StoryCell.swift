@@ -7,7 +7,7 @@ class StoryCell: UICollectionViewCell {
         view.backgroundColor = .brandColor
         view.clipsToBounds = true
         view.layer.masksToBounds = true
-        view.contentMode = .scaleAspectFill
+        view.contentMode = .scaleToFill
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.borderColor = UIColor.brandColor.cgColor
         view.layer.borderWidth = 4

@@ -6,6 +6,7 @@ class SettingsPresenter {
     enum SectionType: Int, CaseIterable {
         case appearance
         case links
+        case deleteAccount
     }
 
     struct Section {
@@ -23,6 +24,11 @@ class SettingsPresenter {
         let name: String
         let handler: () -> Void
         let value: () -> String
+    }
+
+    struct Destructive {
+        let name: String
+        let handler: () -> Void
     }
 
     var numberOfSections: Int {
@@ -62,11 +68,23 @@ class SettingsPresenter {
         item.selection.text = selection.value()
     }
 
+    func configure(item: SettingsDestructiveTableViewCell, for indexPath: IndexPath) {
+        guard let selection = dataSource[indexPath.section].data[indexPath.row] as? Destructive else {
+            return
+        }
+
+        item.textLabel?.text = selection.name
+    }
+
     func set(links: [Link]) {
         dataSource.append(Section(type: .links, title: nil, data: links))
     }
 
     func set(appearance: [Appearance]) {
         dataSource.append(Section(type: .appearance, title: NSLocalizedString("appearance", comment: ""), data: appearance))
+    }
+
+    func set(deleteAccount: Destructive) {
+        dataSource.append(Section(type: .deleteAccount, title: nil, data: [deleteAccount]))
     }
 }

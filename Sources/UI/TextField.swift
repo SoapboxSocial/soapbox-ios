@@ -31,6 +31,7 @@ class TextField: UITextField {
         }
     }
 
+    // @TODO REMOVE FRAME
     init(frame: CGRect, theme: Theme) {
         self.theme = theme
         super.init(frame: frame)

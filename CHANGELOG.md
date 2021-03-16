@@ -1,6 +1,27 @@
 # Changelog
 
 ## [Unreleased]
+ 
+ - Some updates to notifications.
+
+## [2.18.0] - 2021-03-15
+
+ - We heard you and decided to change the admin icon from the crown.
+ - Fixed some visual issues with the room drawer.
+ - Fixed some issues that caused rooms to crash on start-up.
+ - Fixed some issues with the action sheet.
+ - Fixed some issues with shortcut launching.
+ 
+## [2.17.0] - 2021-03-11
+
+ - Gave some of the UI a facelift.
+ - Made some fixes for users with slower internet connections, now a bit more obvious when things are loading.
+ - Added pull to refresh to profile pages.
+ - Added ability to delete account.
+
+## [2.16.0] - 2021-03-08
+
+ - We gave stories some necessary TLC. You can now skip as well as rewind, various issues were fixed and the visuals were improved drastically. We hope you enjoy!
 
 ## [2.15.1] - 2021-03-04
 
