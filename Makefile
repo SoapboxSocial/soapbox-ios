@@ -44,4 +44,8 @@ format:
 	swiftformat .
 
 protobuf:
-	 buf generate https://github.com/soapboxsocial/protobufs.git --path soapbox/v1/room.proto --path soapbox/v1/signal.proto
+ifdef BRANCH
+	buf generate https://github.com/soapboxsocial/protobufs.git#branch=$(BRANCH) --path soapbox/v1/room.proto --path soapbox/v1/signal.proto
+else
+	buf generate https://github.com/soapboxsocial/protobufs.git --path soapbox/v1/room.proto --path soapbox/v1/signal.proto
+endif
