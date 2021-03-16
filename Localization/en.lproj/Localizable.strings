@@ -60,6 +60,16 @@
 "group_invite_notification" = "%@ invited you to join the group \"%@\"";
 "welcome_room_notification" = "%@ just signed up, why not welcome them?";
 
+"join_room_with_1_notification" = "%@ is in a room, why not join them?";
+"join_room_with_2_notification" = "%@ and %@ are in a room, why not join them?";
+"join_room_with_3_notification" = "%@, %@ and %@ are in a room, why not join them?";
+"join_room_with_3_and_more_notification" = "%@, %@, %@ and %@ others are in a room, why not join them?";
+
+"join_room_name_with_1_notification" = "Join \"%@\" with %@";
+"join_room_name_with_2_notification" = "Join \"%@\" with %@ and %@";
+"join_room_name_with_3_notification" = "Join \"%@\" with %@, %@ and %@";
+"join_room_name_with_3_and_more_notification" = "Join \"%@\" with %@, %@, %@ and %@ others";
+
 "new_room_with_group_notification" = "%@ created a room in \"%@\", why not join them?";
 "new_room_with_group_and_name_notification" = "%@ created the room \"%@\" in \"%@\", why not join them?";
 
