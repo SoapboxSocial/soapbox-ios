@@ -191,7 +191,7 @@ class RoomView: UIView {
 
         let handle = UIView()
         handle.translatesAutoresizingMaskIntoConstraints = false
-        handle.backgroundColor = .handle
+        handle.backgroundColor = .quaternaryLabel
         handle.layer.cornerRadius = 2.5
         addSubview(handle)
 
