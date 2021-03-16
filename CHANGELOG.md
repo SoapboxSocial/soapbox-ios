@@ -1,6 +1,8 @@
 # Changelog
 
 ## [Unreleased]
+ 
+ - Some updates to notifications.
 
 ## [2.18.0] - 2021-03-15
 
