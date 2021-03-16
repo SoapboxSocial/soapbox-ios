@@ -2,4 +2,4 @@ version: v1beta1
 plugins:
   - name: swift
     out: Sources/Protobuf
-
+    opt: FileNaming=DropPath
