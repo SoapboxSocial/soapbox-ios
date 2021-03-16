@@ -53,8 +53,6 @@
 "new_room_notification" = "%@ started a room, why not join them?";
 "new_room_with_name_notification" = "%@ started the room \"%@\", why not join them?";
 "new_follower_notification" = "%@ started following you!";
-"room_joined_notification" = "%@ joined a room, why not join them?";
-"room_joined_with_name_notification" = "%@ joined the room \"%@\", why not join them?";
 "room_invite_with_name_notification" = "%@ invited you to join the room \"%@\"";
 "room_invite_notification" = "%@ invited you to join a room";
 "group_invite_notification" = "%@ invited you to join the group \"%@\"";
