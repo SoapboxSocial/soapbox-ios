@@ -240,6 +240,7 @@ extension RoomClient: WebRTCClientDelegate {
             rtc.offer(constraints: [kRTCMediaConstraintsIceRestart: kRTCMediaConstraintsValueTrue], completion: { result in
                 self.signalClient.offer(description: result)
             })
+            debugPrint("restarting")
         default:
             return // @TODO
         }
