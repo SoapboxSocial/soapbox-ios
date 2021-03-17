@@ -4,40 +4,39 @@ protocol UserListViewControllerOutput {
     func loadUsers()
 }
 
-class UserListViewController: ViewController {
+class UserListViewController: ViewControllerWithScrollableContent<UICollectionView> {
     var output: UserListViewControllerOutput!
 
-    private var collection: UICollectionView!
     private var users = [APIClient.User]()
 
     override func viewDidLoad() {
         view.backgroundColor = .background
 
-        collection = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
-        collection.translatesAutoresizingMaskIntoConstraints = false
-        collection.delegate = self
-        collection.dataSource = self
-        collection.backgroundColor = .clear
+        content = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
+        content.translatesAutoresizingMaskIntoConstraints = false
+        content.delegate = self
+        content.dataSource = self
+        content.backgroundColor = .clear
 
-        collection.register(cellWithClass: CollectionViewCell.self)
-        collection.register(cellWithClass: ViewMoreCellCollectionViewCell.self)
-        collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: EmptyCollectionFooterView.self)
+        content.register(cellWithClass: CollectionViewCell.self)
+        content.register(cellWithClass: ViewMoreCellCollectionViewCell.self)
+        content.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: EmptyCollectionFooterView.self)
 
         output.loadUsers()
 
-        view.addSubview(collection)
+        view.addSubview(content)
 
         NSLayoutConstraint.activate([
-            collection.leftAnchor.constraint(equalTo: view.leftAnchor),
-            collection.rightAnchor.constraint(equalTo: view.rightAnchor),
-            collection.topAnchor.constraint(equalTo: view.topAnchor),
-            collection.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            content.leftAnchor.constraint(equalTo: view.leftAnchor),
+            content.rightAnchor.constraint(equalTo: view.rightAnchor),
+            content.topAnchor.constraint(equalTo: view.topAnchor),
+            content.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
 
     private func makeLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { (_: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-            self.collection.section(hasFooter: true, hasBackground: self.users.count > 0)
+            self.content.section(hasFooter: true, hasBackground: self.users.count > 0)
         }
 
         layout.register(CollectionBackgroundView.self, forDecorationViewOfKind: "background")
@@ -69,7 +68,7 @@ extension UserListViewController: UserListPresenterOutput {
         self.users.append(contentsOf: users)
 
         DispatchQueue.main.async {
-            self.collection.reloadData()
+            self.content.reloadData()
         }
     }
 
@@ -79,7 +78,7 @@ extension UserListViewController: UserListPresenterOutput {
         }
 
         DispatchQueue.main.async {
-            self.collection.reloadItems(at: [IndexPath(item: self.users.count, section: 0)])
+            self.content.reloadItems(at: [IndexPath(item: self.users.count, section: 0)])
         }
     }
 }
@@ -99,7 +98,7 @@ extension UserListViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if indexPath.item == users.count {
-            return collection.dequeueReusableCell(withClass: ViewMoreCellCollectionViewCell.self, for: indexPath)
+            return collectionView.dequeueReusableCell(withClass: ViewMoreCellCollectionViewCell.self, for: indexPath)
         }
 
         let cell = collectionView.dequeueReusableCell(withClass: CollectionViewCell.self, for: indexPath)
@@ -115,9 +114,9 @@ extension UserListViewController: UICollectionViewDataSource {
         return cell
     }
 
-    func collectionView(_: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionFooter {
-            return collection.dequeueReusableSupplementaryView(ofKind: kind, withClass: EmptyCollectionFooterView.self, for: indexPath)
+            return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: EmptyCollectionFooterView.self, for: indexPath)
         }
 
         fatalError("unknown kind: \(kind)")
