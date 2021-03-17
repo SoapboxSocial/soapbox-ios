@@ -3,35 +3,16 @@ import UIKit
 class ViewControllerWithScrollableContent<T: UIScrollView>: ViewController, UIScrollViewDelegate {
     var content: T!
 
-    private let navBarBorder: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .systemGray5
-        view.isHidden = true
-        return view
-    }()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        guard let navBar = navigationController?.navigationBar else {
-            return
-        }
-
-        navBar.addSubview(navBarBorder)
-
-        NSLayoutConstraint.activate([
-            navBarBorder.heightAnchor.constraint(equalToConstant: 1),
-            navBarBorder.leftAnchor.constraint(equalTo: navBar.leftAnchor, constant: 20),
-            navBarBorder.rightAnchor.constraint(equalTo: navBar.rightAnchor, constant: -20),
-            navBarBorder.bottomAnchor.constraint(equalTo: navBar.bottomAnchor),
-        ])
-    }
-
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView != content {
             return
         }
+
+        guard let navigationBar = (navigationController as? NavigationViewController)?.navigationBar as? NavigationBar else {
+            return
+        }
+
+        let navBarBorder = navigationBar.navBarBorder
 
         if scrollView.contentOffset.y > 0 {
             if !navBarBorder.isHidden {
@@ -39,7 +20,7 @@ class ViewControllerWithScrollableContent<T: UIScrollView>: ViewController, UISc
             }
 
             UIView.animate(withDuration: 0.1, animations: {
-                self.navBarBorder.isHidden = false
+                navBarBorder.isHidden = false
             })
         } else {
             if navBarBorder.isHidden {
@@ -47,7 +28,35 @@ class ViewControllerWithScrollableContent<T: UIScrollView>: ViewController, UISc
             }
 
             UIView.animate(withDuration: 0.1, animations: {
-                self.navBarBorder.isHidden = true
+                navBarBorder.isHidden = true
+            })
+        }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
+        guard let navigationBar = (navigationController as? NavigationViewController)?.navigationBar as? NavigationBar else {
+            return
+        }
+
+        if !navigationBar.navBarBorder.isHidden {
+            UIView.animate(withDuration: 0.1, animations: {
+                navigationBar.navBarBorder.isHidden = true
+            })
+        }
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        guard let navigationBar = (navigationController as? NavigationViewController)?.navigationBar as? NavigationBar else {
+            return
+        }
+
+        if navigationBar.navBarBorder.isHidden, content.contentOffset.y > 0 {
+            UIView.animate(withDuration: 0.1, animations: {
+                navigationBar.navBarBorder.isHidden = false
             })
         }
     }

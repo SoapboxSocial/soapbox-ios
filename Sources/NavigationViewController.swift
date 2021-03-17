@@ -21,7 +21,8 @@ class NavigationViewController: UINavigationController {
     override init(rootViewController: UIViewController) {
         createRoomButton = CreateRoomButton()
 
-        super.init(rootViewController: rootViewController)
+        super.init(navigationBarClass: NavigationBar.self, toolbarClass: nil)
+        setViewControllers([rootViewController], animated: false)
     }
 
     required init?(coder _: NSCoder) {

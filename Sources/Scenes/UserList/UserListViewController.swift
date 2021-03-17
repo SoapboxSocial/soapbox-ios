@@ -10,6 +10,8 @@ class UserListViewController: ViewControllerWithScrollableContent<UICollectionVi
     private var users = [APIClient.User]()
 
     override func viewDidLoad() {
+        super.viewDidLoad()
+
         view.backgroundColor = .background
 
         content = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
