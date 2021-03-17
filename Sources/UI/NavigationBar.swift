@@ -15,7 +15,7 @@ class NavigationBar: UINavigationBar {
         addSubview(navBarBorder)
 
         NSLayoutConstraint.activate([
-            navBarBorder.heightAnchor.constraint(equalToConstant: 1),
+            navBarBorder.heightAnchor.constraint(equalToConstant: 2),
             navBarBorder.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
             navBarBorder.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
             navBarBorder.bottomAnchor.constraint(equalTo: bottomAnchor),
