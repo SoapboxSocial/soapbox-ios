@@ -32,6 +32,14 @@ class HomeViewController: ViewController {
         return BadgedButtonItem(with: image)
     }()
 
+    private let navBarBorder: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemGray5
+        view.isHidden = true
+        return view
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -79,6 +87,17 @@ class HomeViewController: ViewController {
             DispatchQueue.main.async {
                 self.openNotifications()
             }
+        }
+
+        if let nav = navigationController?.navigationBar {
+            nav.addSubview(navBarBorder)
+
+            NSLayoutConstraint.activate([
+                navBarBorder.heightAnchor.constraint(equalToConstant: 1),
+                navBarBorder.leftAnchor.constraint(equalTo: nav.leftAnchor, constant: 20),
+                navBarBorder.rightAnchor.constraint(equalTo: nav.rightAnchor, constant: -20),
+                navBarBorder.bottomAnchor.constraint(equalTo: nav.bottomAnchor),
+            ])
         }
 
         NSLayoutConstraint.activate([
@@ -308,7 +327,7 @@ extension HomeViewController {
     }
 }
 
-extension HomeViewController: UICollectionViewDelegate {
+extension HomeViewController: UICollectionViewDelegate, UIScrollViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch presenter.sectionType(for: indexPath.section) {
         case .storiesList:
@@ -351,6 +370,26 @@ extension HomeViewController: UICollectionViewDelegate {
             output.didSelectRoom(room: room.id)
         case .noRooms:
             return
+        }
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y > 0 {
+            if !navBarBorder.isHidden {
+                return
+            }
+
+            UIView.animate(withDuration: 0.1, animations: {
+                self.navBarBorder.isHidden = false
+            })
+        } else {
+            if navBarBorder.isHidden {
+                return
+            }
+
+            UIView.animate(withDuration: 0.1, animations: {
+                self.navBarBorder.isHidden = true
+            })
         }
     }
 }
