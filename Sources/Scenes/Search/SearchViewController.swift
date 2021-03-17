@@ -14,6 +14,16 @@ class SearchViewController: ViewController {
     private var searchBar: TextField!
 
     private let presenter = SearchCollectionPresenter()
+    
+    override func loadView() {
+        super.loadView()
+        
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.hidesNavigationBarDuringPresentation = false
+        searchController.dimsBackgroundDuringPresentation = false
+        
+        navigationController?.navigationItem.searchController = searchController
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,19 +61,19 @@ class SearchViewController: ViewController {
         searchBar.clearButtonMode = .whileEditing
         searchBar.returnKeyType = .done
         searchBar.placeholder = NSLocalizedString("search_placeholder", comment: "")
-        view.addSubview(searchBar)
+//        view.addSubview(searchBar)
 
-        NSLayoutConstraint.activate([
-            searchBar.topAnchor.constraint(equalTo: view.topAnchor),
-            searchBar.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            searchBar.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            searchBar.heightAnchor.constraint(equalToConstant: 48),
-        ])
+//        NSLayoutConstraint.activate([
+//            searchBar.topAnchor.constraint(equalTo: view.topAnchor),
+//            searchBar.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+//            searchBar.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+//            searchBar.heightAnchor.constraint(equalToConstant: 48),
+//        ])
 
         NSLayoutConstraint.activate([
             collection.leftAnchor.constraint(equalTo: view.leftAnchor),
             collection.rightAnchor.constraint(equalTo: view.rightAnchor),
-            collection.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 20),
+            collection.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
             collection.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
