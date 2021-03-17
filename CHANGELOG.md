@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.18.2] - 2021-03-17
+
  - Some minor UI improvements.
 
 ## [2.18.1] - 2021-03-16
