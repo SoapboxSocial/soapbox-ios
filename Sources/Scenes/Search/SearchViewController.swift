@@ -6,23 +6,49 @@ protocol SearchViewControllerOutput {
     func loadMore(type: APIClient.SearchIndex)
 }
 
-class SearchViewController: ViewController {
+class SearchViewController: ViewControllerWithScrollableContent<UICollectionView> {
     var output: SearchViewControllerOutput!
 
-    private var collection: UICollectionView!
-
-    private var searchBar: TextField!
-
     private let presenter = SearchCollectionPresenter()
-    
+
     override func loadView() {
         super.loadView()
-        
+
         let searchController = UISearchController(searchResultsController: nil)
         searchController.hidesNavigationBarDuringPresentation = false
-        searchController.dimsBackgroundDuringPresentation = false
-        
-        navigationController?.navigationItem.searchController = searchController
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.showsCancelButton = false
+        searchController.searchBar.setSearchFieldBackgroundImage(UIImage(), for: .normal)
+
+        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.searchController = searchController
+
+        setupSearchBar()
+    }
+
+    private func setupSearchBar() {
+        let searchField = navigationItem.searchController!.searchBar.value(forKey: "searchField") as? UITextField
+
+        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).defaultTextAttributes = [
+            NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .title3, weight: .bold),
+            NSAttributedString.Key.foregroundColor: UIColor.label,
+        ]
+
+        guard let field = searchField else {
+            return
+        }
+
+        field.layer.cornerRadius = 15.0
+        field.backgroundColor = .foreground
+
+        field.layer.masksToBounds = true
+        field.returnKeyType = .search
+
+        field.attributedPlaceholder = NSAttributedString(
+            string: NSLocalizedString("search_placeholder", comment: ""),
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.secondaryLabel]
+        )
     }
 
     override func viewDidLoad() {
@@ -31,62 +57,51 @@ class SearchViewController: ViewController {
         view.backgroundColor = .background
         title = NSLocalizedString("search", comment: "")
 
-        collection = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
-        collection.translatesAutoresizingMaskIntoConstraints = false
-        collection.delegate = self
-        collection.dataSource = self
-        collection.backgroundColor = .clear
-        collection.keyboardDismissMode = .onDrag
+        content = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
+        content.translatesAutoresizingMaskIntoConstraints = false
+        content.delegate = self
+        content.dataSource = self
+        content.backgroundColor = .clear
+        content.keyboardDismissMode = .onDrag
 
         presenter.appendInviteFriendsSection()
 
         let refresh = UIRefreshControl()
         refresh.addTarget(self, action: #selector(endRefresh), for: .valueChanged)
-        collection.refreshControl = refresh
+        content.refreshControl = refresh
 
-        collection.register(cellWithClass: CollectionViewCell.self)
-        collection.register(cellWithClass: InviteFriendsCell.self)
-        collection.register(cellWithClass: ViewMoreCellCollectionViewCell.self)
-        collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
-        collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: EmptyCollectionFooterView.self)
+        content.register(cellWithClass: CollectionViewCell.self)
+        content.register(cellWithClass: InviteFriendsCell.self)
+        content.register(cellWithClass: ViewMoreCellCollectionViewCell.self)
+        content.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
+        content.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: EmptyCollectionFooterView.self)
 
         output.search("*")
 
-        view.addSubview(collection)
-
-        searchBar = TextField(frame: .zero, theme: .normal)
-        searchBar.delegate = self
-        searchBar.translatesAutoresizingMaskIntoConstraints = false
-        searchBar.addTarget(self, action: #selector(updateSearchResults), for: .editingChanged)
-        searchBar.clearButtonMode = .whileEditing
-        searchBar.returnKeyType = .done
-        searchBar.placeholder = NSLocalizedString("search_placeholder", comment: "")
-//        view.addSubview(searchBar)
-
-//        NSLayoutConstraint.activate([
-//            searchBar.topAnchor.constraint(equalTo: view.topAnchor),
-//            searchBar.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-//            searchBar.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-//            searchBar.heightAnchor.constraint(equalToConstant: 48),
-//        ])
+        view.addSubview(content)
 
         NSLayoutConstraint.activate([
-            collection.leftAnchor.constraint(equalTo: view.leftAnchor),
-            collection.rightAnchor.constraint(equalTo: view.rightAnchor),
-            collection.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
-            collection.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            content.leftAnchor.constraint(equalTo: view.leftAnchor),
+            content.rightAnchor.constraint(equalTo: view.rightAnchor),
+            content.topAnchor.constraint(equalTo: view.topAnchor),
+            content.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        setupSearchBar()
     }
 
     private func makeLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             switch self.presenter.sectionType(for: sectionIndex) {
             case .groupList:
-                return self.collection.section(hasHeader: true, hasFooter: true)
+                return self.content.section(hasHeader: true, hasFooter: true)
             case .userList:
-                return self.collection.section(hasHeader: true, hasFooter: self.presenter.index(of: .groupList) == nil)
+                return self.content.section(hasHeader: true, hasFooter: self.presenter.index(of: .groupList) == nil)
             case .inviteFriends:
-                return self.collection.section(height: 182, hasBackground: false)
+                return self.content.section(height: 182, hasBackground: false)
             }
         }
 
@@ -97,7 +112,7 @@ class SearchViewController: ViewController {
     }
 
     @objc private func endRefresh() {
-        collection.refreshControl?.endRefreshing()
+        content.refreshControl?.endRefreshing()
     }
 }
 
@@ -162,9 +177,9 @@ extension SearchViewController: UICollectionViewDataSource {
     func collectionView(_: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         switch kind {
         case UICollectionView.elementKindSectionFooter:
-            return collection.dequeueReusableSupplementaryView(ofKind: kind, withClass: EmptyCollectionFooterView.self, for: indexPath)
+            return content.dequeueReusableSupplementaryView(ofKind: kind, withClass: EmptyCollectionFooterView.self, for: indexPath)
         case UICollectionView.elementKindSectionHeader:
-            let cell = collection.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
+            let cell = content.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
             cell.label.font = .rounded(forTextStyle: .title2, weight: .bold)
             cell.label.text = presenter.sectionTitle(for: indexPath.section)
             return cell
@@ -179,8 +194,8 @@ extension SearchViewController: SearchPresenterOutput {
         presenter.set(users: users)
 
         DispatchQueue.main.async {
-            self.collection.refreshControl?.endRefreshing()
-            self.collection.reloadData()
+            self.content.refreshControl?.endRefreshing()
+            self.content.reloadData()
         }
     }
 
@@ -188,8 +203,8 @@ extension SearchViewController: SearchPresenterOutput {
         presenter.set(groups: groups)
 
         DispatchQueue.main.async {
-            self.collection.refreshControl?.endRefreshing()
-            self.collection.reloadData()
+            self.content.refreshControl?.endRefreshing()
+            self.content.reloadData()
         }
     }
 
@@ -205,7 +220,7 @@ extension SearchViewController: SearchPresenterOutput {
         }
 
         DispatchQueue.main.async {
-            self.collection.reloadSections(IndexSet(integer: index))
+            self.content.reloadSections(IndexSet(integer: index))
         }
     }
 
@@ -221,12 +236,12 @@ extension SearchViewController: SearchPresenterOutput {
         }
 
         DispatchQueue.main.async {
-            self.collection.reloadSections(IndexSet(integer: index))
+            self.content.reloadSections(IndexSet(integer: index))
         }
     }
 
     func displaySearchError() {
-        collection.refreshControl?.endRefreshing()
+        content.refreshControl?.endRefreshing()
         stopLoader(for: .userList)
         stopLoader(for: .groupList)
     }
@@ -242,25 +257,20 @@ extension SearchViewController: SearchPresenterOutput {
         }
 
         DispatchQueue.main.async {
-            self.collection.reloadItems(at: [IndexPath(item: items - 1, section: index)])
+            self.content.reloadItems(at: [IndexPath(item: items - 1, section: index)])
         }
     }
 }
 
-extension SearchViewController: UITextFieldDelegate {
-    @objc private func updateSearchResults() {
+extension SearchViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
         var text = "*"
-        if let input = searchBar.text, input != "" {
+        if let input = searchController.searchBar.text, input != "" {
             text = input
             presenter.removeInviteFriendsSection()
         }
 
-        collection.refreshControl?.beginRefreshing()
+        content.refreshControl?.beginRefreshing()
         output.search(text)
-    }
-
-    func textFieldShouldReturn(_: UITextField) -> Bool {
-        view.endEditing(true)
-        return true
     }
 }
