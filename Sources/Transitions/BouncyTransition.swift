@@ -25,6 +25,8 @@ class BouncyTransition: NSObject, UIViewControllerAnimatedTransitioning {
         let start = final.offsetBy(dx: final.width, dy: 0)
         to.view.frame = start
 
+        from.view.isHidden = true
+
         transitionContext.containerView.insertSubview(to.view, aboveSubview: from.view)
 
         UIView.animate(
@@ -44,6 +46,8 @@ class BouncyTransition: NSObject, UIViewControllerAnimatedTransitioning {
     func animatePop(using transitionContext: UIViewControllerContextTransitioning) {
         let from = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)!
         let to = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)!
+
+        to.view.isHidden = false
 
         let initial = transitionContext.initialFrame(for: from)
         let fromFinal = initial.offsetBy(dx: initial.width, dy: 0)
