@@ -7,10 +7,9 @@ protocol HomeViewControllerOutput {
     func fetchMe()
 }
 
-class HomeViewController: ViewController {
+class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> {
     private let refresh = UIRefreshControl()
 
-    private var collection: UICollectionView!
     private let presenter = HomeCollectionPresenter()
 
     var output: HomeViewControllerOutput!
@@ -37,23 +36,23 @@ class HomeViewController: ViewController {
 
         view.backgroundColor = .background
 
-        collection = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
-        collection.delegate = self
-        collection.dataSource = self
-        collection.translatesAutoresizingMaskIntoConstraints = false
-        collection.backgroundColor = .clear
+        content = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
+        content.delegate = self
+        content.dataSource = self
+        content.translatesAutoresizingMaskIntoConstraints = false
+        content.backgroundColor = .clear
 
-        collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
-        collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: EmptyCollectionFooterView.self)
-        collection.register(cellWithClass: EmptyRoomCollectionViewCell.self)
-        collection.register(cellWithClass: RoomCell.self)
-        collection.register(cellWithClass: StoryCell.self)
-        collection.register(cellWithClass: CreateStoryCell.self)
+        content.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
+        content.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: EmptyCollectionFooterView.self)
+        content.register(cellWithClass: EmptyRoomCollectionViewCell.self)
+        content.register(cellWithClass: RoomCell.self)
+        content.register(cellWithClass: StoryCell.self)
+        content.register(cellWithClass: CreateStoryCell.self)
 
-        collection.refreshControl = refresh
+        content.refreshControl = refresh
         refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
 
-        view.addSubview(collection)
+        view.addSubview(content)
 
         let iconConfig = UIImage.SymbolConfiguration(weight: .bold)
 
@@ -82,10 +81,10 @@ class HomeViewController: ViewController {
         }
 
         NSLayoutConstraint.activate([
-            collection.leftAnchor.constraint(equalTo: view.leftAnchor),
-            collection.rightAnchor.constraint(equalTo: view.rightAnchor),
-            collection.topAnchor.constraint(equalTo: view.topAnchor),
-            collection.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            content.leftAnchor.constraint(equalTo: view.leftAnchor),
+            content.rightAnchor.constraint(equalTo: view.rightAnchor),
+            content.topAnchor.constraint(equalTo: view.topAnchor),
+            content.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
 
@@ -257,7 +256,7 @@ extension HomeViewController: HomePresenterOutput {
         presenter.currentRoom = id
 
         DispatchQueue.main.async {
-            self.collection.reloadData()
+            self.content.reloadData()
         }
     }
 
@@ -265,7 +264,7 @@ extension HomeViewController: HomePresenterOutput {
         presenter.currentRoom = nil
 
         DispatchQueue.main.async {
-            self.collection.reloadData()
+            self.content.reloadData()
         }
     }
 }
@@ -294,13 +293,13 @@ extension HomeViewController {
         switch data {
         case let .rooms(rooms):
             presenter.set(rooms: rooms)
-            collection.reloadSections(IndexSet(integer: presenter.numberOfSections - 1))
+            content.reloadSections(IndexSet(integer: presenter.numberOfSections - 1))
         case let .feed(feed):
             presenter.set(stories: feed)
-            collection.reloadSections(IndexSet(integer: 0))
+            content.reloadSections(IndexSet(integer: 0))
         case let .ownStory(has):
             presenter.set(hasOwnStory: has)
-            collection.reloadSections(IndexSet(integer: 0))
+            content.reloadSections(IndexSet(integer: 0))
         }
 
         updateQueue.removeFirst()
@@ -404,7 +403,7 @@ extension HomeViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         switch kind {
         case UICollectionView.elementKindSectionFooter:
-            return collection.dequeueReusableSupplementaryView(ofKind: kind, withClass: EmptyCollectionFooterView.self, for: indexPath)
+            return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: EmptyCollectionFooterView.self, for: indexPath)
         case UICollectionView.elementKindSectionHeader:
             let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
             cell.label.text = presenter.title(for: indexPath.section)

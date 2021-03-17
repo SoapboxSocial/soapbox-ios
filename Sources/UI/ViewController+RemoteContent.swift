@@ -1,7 +1,5 @@
 import UIKit
 
-// @TODO SCROLL VIEW SO WE HAVE PTR
-
 class ViewControllerWithRemoteContent<T: Decodable>: ViewController {
     var content: T!
 
