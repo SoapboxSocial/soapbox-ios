@@ -4,7 +4,7 @@ protocol NotificationsViewControllerOutput {
     func loadNotifications()
 }
 
-class NotificationsViewController: ViewController {
+class NotificationsViewController: ViewControllerWithScrollableContent<UICollectionView> {
     var output: NotificationsViewControllerOutput!
 
     enum TimeFrame {
@@ -18,8 +18,6 @@ class NotificationsViewController: ViewController {
 
     private var notifications = [Section]()
 
-    private var collection: UICollectionView!
-
     private let refresh = UIRefreshControl()
 
     override func viewDidLoad() {
@@ -29,24 +27,24 @@ class NotificationsViewController: ViewController {
 
         title = NSLocalizedString("activity", comment: "")
 
-        collection = UICollectionView(frame: .zero, collectionViewLayout: layout())
-        collection.dataSource = self
-        collection.delegate = self
-        collection.translatesAutoresizingMaskIntoConstraints = false
-        collection.register(cellWithClass: NotificationCell.self)
-        collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
-        collection.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: EmptyCollectionFooterView.self)
-        collection.backgroundColor = .clear
-        view.addSubview(collection)
+        content = UICollectionView(frame: .zero, collectionViewLayout: layout())
+        content.dataSource = self
+        content.delegate = self
+        content.translatesAutoresizingMaskIntoConstraints = false
+        content.register(cellWithClass: NotificationCell.self)
+        content.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
+        content.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: EmptyCollectionFooterView.self)
+        content.backgroundColor = .clear
+        view.addSubview(content)
 
-        collection.refreshControl = refresh
+        content.refreshControl = refresh
         refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
 
         NSLayoutConstraint.activate([
-            collection.topAnchor.constraint(equalTo: view.topAnchor),
-            collection.leftAnchor.constraint(equalTo: view.leftAnchor),
-            collection.rightAnchor.constraint(equalTo: view.rightAnchor),
-            collection.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            content.topAnchor.constraint(equalTo: view.topAnchor),
+            content.leftAnchor.constraint(equalTo: view.leftAnchor),
+            content.rightAnchor.constraint(equalTo: view.rightAnchor),
+            content.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
 
         loadData()
@@ -58,7 +56,7 @@ class NotificationsViewController: ViewController {
 
     private func layout() -> UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-            self.collection.section(hasHeader: true, hasFooter: sectionIndex + 1 == self.notifications.count)
+            self.content.section(hasHeader: true, hasFooter: sectionIndex + 1 == self.notifications.count)
         }
 
         layout.register(CollectionBackgroundView.self, forDecorationViewOfKind: "background")
@@ -107,7 +105,7 @@ extension NotificationsViewController: NotificationsPresenterOutput {
 
         DispatchQueue.main.async {
             self.refresh.endRefreshing()
-            self.collection.reloadData()
+            self.content.reloadData()
         }
     }
 
@@ -160,10 +158,10 @@ extension NotificationsViewController: UICollectionViewDataSource {
 
     func collectionView(_: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionFooter {
-            return collection.dequeueReusableSupplementaryView(ofKind: kind, withClass: EmptyCollectionFooterView.self, for: indexPath)
+            return content.dequeueReusableSupplementaryView(ofKind: kind, withClass: EmptyCollectionFooterView.self, for: indexPath)
         }
 
-        let cell = collection.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
+        let cell = content.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
         cell.label.font = .rounded(forTextStyle: .title3, weight: .bold)
 
         switch notifications[indexPath.section].time {
