@@ -345,18 +345,18 @@ class RoomView: UIView {
         linkView.adminRoleChanged(isAdmin: me.role == .admin)
 
         if me.role != .admin {
-            leftButtonBar.hide(button: .settings)
-            leftButtonBar.hide(button: .minis)
+            leftButtonBar.hide(button: .settings, animated: false)
+            leftButtonBar.hide(button: .minis, animated: false)
 
             if room.state.visibility == .private {
-                leftButtonBar.hide(button: .invite)
+                leftButtonBar.hide(button: .invite, animated: false)
             }
         }
 
         visibilityUpdated(visibility: room.state.visibility)
 
         if room.state.mini != "" {
-            leftButtonBar.hide(button: .minis)
+            leftButtonBar.hide(button: .minis, animated: false)
             open(mini: room.state.mini, isAppOpener: false)
         }
 
@@ -646,20 +646,20 @@ extension RoomView: RoomDelegate {
         DispatchQueue.main.async {
             if role == .admin {
                 self.linkView.adminRoleChanged(isAdmin: true)
-                self.leftButtonBar.show(button: .settings)
-                self.leftButtonBar.show(button: .minis)
-                self.leftButtonBar.show(button: .invite)
+                self.leftButtonBar.show(button: .settings, animated: true)
+                self.leftButtonBar.show(button: .minis, animated: true)
+                self.leftButtonBar.show(button: .invite, animated: true)
 
                 if let mini = self.miniView {
                     mini.adminRoleChanged(isAdmin: true)
                 }
             } else {
                 self.linkView.adminRoleChanged(isAdmin: false)
-                self.leftButtonBar.hide(button: .settings)
-                self.leftButtonBar.hide(button: .minis)
+                self.leftButtonBar.hide(button: .settings, animated: true)
+                self.leftButtonBar.hide(button: .minis, animated: true)
 
                 if self.room.state.visibility == .private {
-                    self.leftButtonBar.hide(button: .invite)
+                    self.leftButtonBar.hide(button: .invite, animated: true)
                 }
 
                 if let mini = self.miniView {
@@ -712,16 +712,16 @@ extension RoomView: RoomDelegate {
             switch visibility {
             case .private:
                 self.lock.isHidden = false
-                self.rightButtonBar.hide(button: .share)
+                self.rightButtonBar.hide(button: .share, animated: true)
 
                 if self.me.role != .admin {
-                    self.leftButtonBar.hide(button: .invite)
+                    self.leftButtonBar.hide(button: .invite, animated: true)
                 }
 
             case .public:
                 self.lock.isHidden = true
-                self.rightButtonBar.show(button: .share)
-                self.leftButtonBar.show(button: .invite)
+                self.rightButtonBar.show(button: .share, animated: true)
+                self.leftButtonBar.show(button: .invite, animated: true)
             default:
                 return
             }
@@ -735,7 +735,7 @@ extension RoomView: RoomDelegate {
         }
 
         DispatchQueue.main.async {
-            self.rightButtonBar.hide(button: .paste)
+            self.rightButtonBar.hide(button: .paste, animated: true)
         }
 
         linkView.pinned(link: link)
@@ -743,7 +743,7 @@ extension RoomView: RoomDelegate {
 
     func pinnedLinkWasRemoved() {
         DispatchQueue.main.async {
-            self.rightButtonBar.show(button: .paste)
+            self.rightButtonBar.show(button: .paste, animated: true)
         }
 
         linkView.removePinnedLink()
@@ -751,8 +751,8 @@ extension RoomView: RoomDelegate {
 
     func opened(mini: String, isAppOpener opener: Bool) {
         DispatchQueue.main.async {
-            self.leftButtonBar.hide(button: .minis)
-            self.rightButtonBar.hide(button: .paste)
+            self.leftButtonBar.hide(button: .minis, animated: true)
+            self.rightButtonBar.hide(button: .paste, animated: true)
             self.open(mini: mini, isAppOpener: opener)
         }
     }
@@ -775,10 +775,10 @@ extension RoomView: RoomDelegate {
             }
 
             if self.me.role == .admin {
-                self.leftButtonBar.show(button: .minis)
+                self.leftButtonBar.show(button: .minis, animated: true)
             }
 
-            self.rightButtonBar.show(button: .paste)
+            self.rightButtonBar.show(button: .paste, animated: true)
 
             if !source {
                 mini?.removeFromSuperview()
@@ -800,12 +800,12 @@ extension RoomView: EmojiBarDelegate {
 extension RoomView: LinkSharingViewDelegate {
     func didPin(link: URL) {
         room.pin(link: link)
-        rightButtonBar.hide(button: .paste)
+        rightButtonBar.hide(button: .paste, animated: true)
     }
 
     func didUnpin() {
         room.unpin()
-        rightButtonBar.show(button: .paste)
+        rightButtonBar.show(button: .paste, animated: true)
     }
 }
 
