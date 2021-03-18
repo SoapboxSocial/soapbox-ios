@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fix some UI animations.
+
 ## [2.18.2] - 2021-03-17
 
  - Some minor UI improvements.
