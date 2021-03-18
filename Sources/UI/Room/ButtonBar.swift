@@ -64,20 +64,40 @@ class ButtonBar<E: Item>: UIView where E.RawValue == String {
         ])
     }
 
-    func hide(button name: E) {
+    func hide(button name: E, animated: Bool) {
         guard let button = buttons[name] else {
             return
         }
 
-        button.isHidden = true
+        if button.isHidden {
+            return
+        }
+
+        if animated {
+            UIView.animate(withDuration: 0.2, animations: {
+                button.isHidden = true
+            })
+        } else {
+            button.isHidden = true
+        }
     }
 
-    func show(button name: E) {
+    func show(button name: E, animated: Bool) {
         guard let button = buttons[name] else {
             return
         }
 
-        button.isHidden = false
+        if !button.isHidden {
+            return
+        }
+
+        if animated {
+            UIView.animate(withDuration: 0.2, animations: {
+                button.isHidden = false
+            })
+        } else {
+            button.isHidden = false
+        }
     }
 
     required init?(coder _: NSCoder) {
