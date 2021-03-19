@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - Fix some UI animations.
+ - When clicking on a notification you no longer immediately join the room!
 
 ## [2.18.2] - 2021-03-17
 
