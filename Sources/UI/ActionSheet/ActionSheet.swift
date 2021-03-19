@@ -81,19 +81,6 @@ class ActionSheet: DrawerViewController {
 
         var last: ActionView?
 
-        let handle = UIView()
-        handle.translatesAutoresizingMaskIntoConstraints = false
-        handle.backgroundColor = .quaternaryLabel
-        handle.layer.cornerRadius = 2.5
-        view.addSubview(handle)
-
-        NSLayoutConstraint.activate([
-            handle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            handle.heightAnchor.constraint(equalToConstant: 5),
-            handle.widthAnchor.constraint(equalToConstant: 36),
-            handle.topAnchor.constraint(equalTo: view.topAnchor, constant: 5),
-        ])
-
         view.addSubview(stack)
 
         let imageContainer = UIView()
