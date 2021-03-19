@@ -839,24 +839,8 @@ extension RoomView: ButtonBarDelegate {
 
     private func minisTapped() {
         let directory = MinisDirectoryView()
-
-        let drawer = DrawerView(withView: directory)
-        drawer.delegate = self
-        drawer.attachTo(view: window!)
-        drawer.snapPositions = [.closed, .open]
-        drawer.backgroundEffect = .none
-        drawer.backgroundColor = .foreground
-        drawer.cornerRadius = 30
-        drawer.openHeightBehavior = .fixed(height: frame.size.height / 2)
-
-        directory.onSelected = { app in
-            drawer.setPosition(.closed, animated: true, completion: { _ in
-                self.room.open(mini: app.slug)
-            })
-        }
-
-        drawer.setPosition(.closed, animated: false)
-        drawer.setPosition(.open, animated: true)
+        directory.manager.drawer.openHeightBehavior = .fixed(height: frame.size.height / 2)
+        window!.rootViewController!.present(directory, animated: true)
     }
 
     private func settingsTapped() {

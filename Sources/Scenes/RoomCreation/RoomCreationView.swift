@@ -98,6 +98,8 @@ class RoomCreationView: DrawerViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        handle.backgroundColor = UIColor.white.withAlphaComponent(0.3)
+
         manager.drawer.backgroundColor = .brandColor
 
         view.addSubview(cancelButton)
