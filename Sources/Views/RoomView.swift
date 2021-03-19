@@ -203,13 +203,14 @@ class RoomView: UIView {
         stack.axis = .horizontal
         stack.spacing = 10
         stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.distribution = .fill
+        stack.alignment = .center
         topBar.addSubview(stack)
 
         stack.addArrangedSubview(lock)
         stack.addArrangedSubview(name)
 
         NSLayoutConstraint.activate([
-            lock.topAnchor.constraint(equalTo: name.topAnchor),
             lock.heightAnchor.constraint(equalToConstant: 20),
             lock.widthAnchor.constraint(equalToConstant: 20),
         ])

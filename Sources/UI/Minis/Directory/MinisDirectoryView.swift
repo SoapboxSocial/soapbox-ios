@@ -33,7 +33,7 @@ class MinisDirectoryView: DrawerViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         manager.drawer.backgroundColor = .foreground
 
         let label = UILabel()
