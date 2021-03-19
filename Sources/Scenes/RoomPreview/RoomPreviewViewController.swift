@@ -34,6 +34,7 @@ class RoomPreviewViewController: DrawerViewController {
         groupLabel.isHidden = true
 
         NSLayoutConstraint.activate([
+            stack.topAnchor.constraint(equalTo: handle.topAnchor, constant: 10),
             stack.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             stack.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
