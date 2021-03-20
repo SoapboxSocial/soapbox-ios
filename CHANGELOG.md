@@ -4,6 +4,7 @@
 
  - Fix some UI animations.
  - Made some improvements to minis.
+ - Fixed a bug that made a user appear twice in a room.
 
 ## [2.18.2] - 2021-03-17
 
