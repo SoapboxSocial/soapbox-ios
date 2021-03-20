@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - Fix some UI animations.
+ - Made some improvements to minis.
 
 ## [2.18.2] - 2021-03-17
 
