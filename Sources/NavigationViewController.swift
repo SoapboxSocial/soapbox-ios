@@ -59,6 +59,10 @@ class NavigationViewController: UINavigationController {
         navigationBar.titleTextAttributes = [
             NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .headline, weight: .semibold),
         ]
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            self.openPreviewDrawerFor(room: "poop")
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -122,6 +126,11 @@ class NavigationViewController: UINavigationController {
             self.createRoomButton.isHidden = true
             UIApplication.shared.isIdleTimerDisabled = true
         }
+    }
+
+    func openPreviewDrawerFor(room _: String) {
+        let preview = RoomPreviewViewController()
+        present(preview, animated: true)
     }
 
     private func showClosedError() {
