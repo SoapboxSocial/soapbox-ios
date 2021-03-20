@@ -288,9 +288,9 @@ class RoomCell: UICollectionViewCell {
             ])
 
             if i == 0 {
-                NSLayoutConstraint.activate([view.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20)])
+                view.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20).isActive = true
             } else {
-                NSLayoutConstraint.activate([view.leftAnchor.constraint(equalTo: previousView.rightAnchor, constant: -8)])
+                view.leftAnchor.constraint(equalTo: previousView.rightAnchor, constant: -8).isActive = true
             }
 
             imageViews.append(view)
