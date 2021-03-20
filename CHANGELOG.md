@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
- _ Presenting our latest Mini: Soapbox Trivia, play trivia with your friends!
+ - Presenting our latest Mini: Soapbox Trivia, play trivia with your friends!
  - Fix some UI animations.
  - Made some improvements to minis.
 
