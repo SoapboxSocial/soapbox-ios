@@ -128,8 +128,8 @@ class NavigationViewController: UINavigationController {
         }
     }
 
-    func openPreviewDrawerFor(room _: String) {
-        let preview = RoomPreviewViewController()
+    func openPreviewDrawerFor(room: String) {
+        let preview = RoomPreviewViewController(id: room)
         present(preview, animated: true)
     }
 

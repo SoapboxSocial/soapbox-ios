@@ -1,5 +1,9 @@
 import UIKit
 
+protocol RoomPreviewViewControllerDelegate: AnyObject {
+    func roomPreviewViewController(view _: RoomPreviewViewController, shouldJoin: String)
+}
+
 class RoomPreviewViewController: DrawerViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -15,6 +19,19 @@ class RoomPreviewViewController: DrawerViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+
+    private let id: String
+
+    weak var delegate: RoomPreviewViewControllerDelegate?
+
+    init(id: String) {
+        self.id = id
+        super.init()
+    }
+
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,6 +74,7 @@ class RoomPreviewViewController: DrawerViewController {
         let button = Button(size: .regular)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(NSLocalizedString("join_in", comment: ""), for: .normal)
+        button.addTarget(self, action: #selector(didTapJoin), for: .touchUpInside)
         view.addSubview(button)
 
         NSLayoutConstraint.activate([
@@ -102,5 +120,9 @@ class RoomPreviewViewController: DrawerViewController {
         ])
 
         activity.startAnimating()
+    }
+
+    @objc private func didTapJoin() {
+        delegate?.roomPreviewViewController(view: self, shouldJoin: id)
     }
 }
