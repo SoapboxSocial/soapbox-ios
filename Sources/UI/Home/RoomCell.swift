@@ -49,24 +49,11 @@ class RoomCell: UICollectionViewCell {
     }
 
     private var lockImage: UIView = {
-//        let view = UIView()
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//        view.backgroundColor = .red
-
         let lock = UIImageView(image: UIImage(systemName: "lock", withConfiguration: UIImage.SymbolConfiguration(weight: .medium)))
         lock.tintColor = .label
         lock.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
         lock.translatesAutoresizingMaskIntoConstraints = false
         return lock
-//
-//        NSLayoutConstraint.activate([
-//            view.leftAnchor.constraint(equalTo: lock.leftAnchor),
-//            view.rightAnchor.constraint(equalTo: lock.rightAnchor),
-//            lock.topAnchor.constraint(equalTo: view.topAnchor),
-//            lock.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-//        ])
-//
-//        return view
     }()
 
     private var lock: UIView = {
