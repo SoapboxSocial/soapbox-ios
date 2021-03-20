@@ -29,11 +29,19 @@ class MinisDirectoryView: DrawerViewController {
         return view
     }()
 
+    private let activityIndicator: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .large)
+        view.color = .label
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.hidesWhenStopped = true
+        return view
+    }()
+
     var onSelected: ((APIClient.Mini) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         manager.drawer.backgroundColor = .foreground
 
         let label = UILabel()
@@ -46,7 +54,17 @@ class MinisDirectoryView: DrawerViewController {
         collection.dataSource = self
         view.addSubview(collection)
 
+        view.addSubview(activityIndicator)
+
+        NSLayoutConstraint.activate([
+            activityIndicator.centerYAnchor.constraint(equalTo: collection.centerYAnchor),
+            activityIndicator.centerXAnchor.constraint(equalTo: collection.centerXAnchor),
+        ])
+
+        activityIndicator.startAnimating()
+
         APIClient().minis(callback: { result in
+            self.activityIndicator.stopAnimating()
             switch result {
             case .failure:
                 return // @TODO
