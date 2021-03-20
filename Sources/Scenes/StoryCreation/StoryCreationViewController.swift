@@ -64,11 +64,7 @@ class StoryCreationViewController: DrawerViewController {
 
         manager.drawer.backgroundColor = .brandColor
 
-        let handle = UIView()
-        handle.translatesAutoresizingMaskIntoConstraints = false
         handle.backgroundColor = UIColor.white.withAlphaComponent(0.3)
-        handle.layer.cornerRadius = 2.5
-        view.addSubview(handle)
 
         label.text = NSLocalizedString("hold_to_record", comment: "")
         view.addSubview(label)

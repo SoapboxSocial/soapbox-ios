@@ -1,7 +1,7 @@
 import AlamofireImage
 import UIKit
 
-class MinisDirectoryView: UIView {
+class MinisDirectoryView: DrawerViewController {
     struct App {
         let name: String
         let description: String
@@ -29,28 +29,42 @@ class MinisDirectoryView: UIView {
         return view
     }()
 
+    private let activityIndicator: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .large)
+        view.color = .label
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.hidesWhenStopped = true
+        return view
+    }()
+
     var onSelected: ((APIClient.Mini) -> Void)?
 
-    init() {
-        super.init(frame: .zero)
+    override func viewDidLoad() {
+        super.viewDidLoad()
 
-        let handle = UIView()
-        handle.translatesAutoresizingMaskIntoConstraints = false
-        handle.backgroundColor = .quaternaryLabel
-        handle.layer.cornerRadius = 2.5
-        addSubview(handle)
+        manager.drawer.backgroundColor = .foreground
 
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = NSLocalizedString("minis", comment: "")
         label.font = .rounded(forTextStyle: .title2, weight: .bold)
-        addSubview(label)
+        view.addSubview(label)
 
         collection.delegate = self
         collection.dataSource = self
-        addSubview(collection)
+        view.addSubview(collection)
+
+        view.addSubview(activityIndicator)
+
+        NSLayoutConstraint.activate([
+            activityIndicator.centerYAnchor.constraint(equalTo: collection.centerYAnchor),
+            activityIndicator.centerXAnchor.constraint(equalTo: collection.centerXAnchor),
+        ])
+
+        activityIndicator.startAnimating()
 
         APIClient().minis(callback: { result in
+            self.activityIndicator.stopAnimating()
             switch result {
             case .failure:
                 return // @TODO
@@ -63,27 +77,16 @@ class MinisDirectoryView: UIView {
         })
 
         NSLayoutConstraint.activate([
-            handle.centerXAnchor.constraint(equalTo: centerXAnchor),
-            handle.heightAnchor.constraint(equalToConstant: 5),
-            handle.widthAnchor.constraint(equalToConstant: 36),
-            handle.topAnchor.constraint(equalTo: topAnchor, constant: 5),
-        ])
-
-        NSLayoutConstraint.activate([
-            label.topAnchor.constraint(equalTo: topAnchor, constant: 20),
-            label.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            label.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
         ])
 
         NSLayoutConstraint.activate([
             collection.topAnchor.constraint(equalTo: label.bottomAnchor),
-            collection.leftAnchor.constraint(equalTo: leftAnchor),
-            collection.rightAnchor.constraint(equalTo: rightAnchor),
-            collection.bottomAnchor.constraint(equalTo: bottomAnchor),
+            collection.leftAnchor.constraint(equalTo: view.leftAnchor),
+            collection.rightAnchor.constraint(equalTo: view.rightAnchor),
+            collection.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
-    }
-
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 
