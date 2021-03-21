@@ -73,11 +73,7 @@ class NavigationViewController: UINavigationController {
         activityIndicator.center = view.center
         view.addSubview(activityIndicator)
 
-        navigationBar.shadowImage = UIImage()
         navigationBar.isHidden = false
-        navigationBar.isTranslucent = false
-        navigationBar.barTintColor = .background
-        navigationBar.tintColor = .brandColor
     }
 
     @objc func didTapCreateRoom() {
