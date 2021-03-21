@@ -163,11 +163,11 @@ extension RoomPreviewViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withClass: SelectableImageTextCell.self, for: indexPath)
 
         let user = room!.members[indexPath.item]
-        cell.image.backgroundColor = .lightBrandColor
         if user.image != "" {
             cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + user.image))
         }
 
+        cell.selectedView.isHidden = true
         cell.title.text = user.displayName.firstName()
 
         return cell
