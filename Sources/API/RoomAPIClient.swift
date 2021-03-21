@@ -9,7 +9,7 @@ class RoomAPIClient: Client {
         let image: String
 
         private enum CodingKeys: String, CodingKey {
-            case id, displayName = "display_name", image // @TODO
+            case id, displayName = "display_name", image
         }
     }
 
