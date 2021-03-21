@@ -24,6 +24,8 @@ class RoomPreviewViewController: DrawerViewController {
 
     weak var delegate: RoomPreviewViewControllerDelegate?
 
+    private var room: RoomAPIClient.Room?
+
     init(id: String) {
         self.id = id
         super.init()
@@ -65,6 +67,8 @@ class RoomPreviewViewController: DrawerViewController {
 
         members.translatesAutoresizingMaskIntoConstraints = false
         members.backgroundColor = .clear
+        members.register(cellWithClass: SelectableImageTextCell.self)
+        members.dataSource = self
         view.addSubview(members)
 
         let muted = UILabel()
@@ -138,11 +142,42 @@ class RoomPreviewViewController: DrawerViewController {
                 if let group = room.group {
                     self.groupLabel.text = group.name
                 }
+
+                self.room = room
+
+                DispatchQueue.main.async {
+                    activity.stopAnimating()
+                    members.reloadData()
+                }
             }
         })
     }
 
     @objc private func didTapJoin() {
         delegate?.roomPreviewViewController(view: self, shouldJoin: id)
+    }
+}
+
+extension RoomPreviewViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withClass: SelectableImageTextCell.self, for: indexPath)
+
+        let user = room!.members[indexPath.item]
+        cell.image.backgroundColor = .lightBrandColor
+        if user.image != "" {
+            cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + user.image))
+        }
+
+        cell.title.text = user.displayName.firstName()
+
+        return cell
+    }
+
+    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
+        guard let members = room?.members else {
+            return 0
+        }
+
+        return min(members.count, 8)
     }
 }
