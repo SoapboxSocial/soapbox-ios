@@ -59,10 +59,6 @@ class NavigationViewController: UINavigationController {
         navigationBar.titleTextAttributes = [
             NSAttributedString.Key.font: UIFont.rounded(forTextStyle: .headline, weight: .semibold),
         ]
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            self.openPreviewDrawerFor(room: "poop")
-        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
