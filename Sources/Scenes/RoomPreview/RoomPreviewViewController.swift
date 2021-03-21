@@ -56,9 +56,13 @@ class RoomPreviewViewController: DrawerViewController {
 
         groupLabel.isHidden = true
 
-        titleLabel.text = "Dean's Room"
+        titleLabel.text = NSLocalizedString("listen_in", comment: "")
 
-        let members = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
+        let members = UICollectionView(
+            frame: .zero,
+            collectionViewLayout: UICollectionViewFlowLayout.basicUserBubbleLayout(itemsPerRow: 4, width: view.frame.size.width - 40)
+        )
+
         members.translatesAutoresizingMaskIntoConstraints = false
         members.backgroundColor = .clear
         view.addSubview(members)
@@ -120,6 +124,22 @@ class RoomPreviewViewController: DrawerViewController {
         ])
 
         activity.startAnimating()
+
+        RoomAPIClient().room(id: id, callback: { result in
+            switch result {
+            case .failure:
+                // @TODO
+                break
+            case let .success(room):
+                if room.name != "" {
+                    self.titleLabel.text = room.name
+                }
+
+                if let group = room.group {
+                    self.groupLabel.text = group.name
+                }
+            }
+        })
     }
 
     @objc private func didTapJoin() {

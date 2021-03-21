@@ -9,7 +9,7 @@ class RoomAPIClient: Client {
         let image: String
 
         private enum CodingKeys: String, CodingKey {
-            case id, displayName = "display_name", image
+            case id, displayName = "display_name", image // @TODO
         }
     }
 
@@ -31,5 +31,9 @@ class RoomAPIClient: Client {
 
     func rooms(callback: @escaping (Result<[Room], Error>) -> Void) {
         get(path: "/v1/rooms", callback: callback)
+    }
+
+    func room(id: String, callback: @escaping (Result<Room, Error>) -> Void) {
+        get(path: "/v1/rooms/" + id, callback: callback)
     }
 }
