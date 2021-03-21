@@ -17,7 +17,7 @@ class NavigationViewController: UINavigationController {
 
     private var interactionController: PanTransition?
     private var edgeSwipeGestureRecognizer: UIScreenEdgePanGestureRecognizer?
-    
+
     private var roomToPreview: String?
     private var appeared = false
 
@@ -66,7 +66,7 @@ class NavigationViewController: UINavigationController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
         appeared = true
 
         view.backgroundColor = .background
@@ -79,15 +79,15 @@ class NavigationViewController: UINavigationController {
         view.addSubview(activityIndicator)
 
         navigationBar.isHidden = false
-        
+
         // We need to do it like this because launching takes a while.
         // So if we open from a notification it would not open because the view is still waiting to be presented.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             if let room = self.roomToPreview {
                 self.openPreviewDrawerFor(room: room)
                 self.roomToPreview = nil
             }
-        })
+        }
     }
 
     @objc func didTapCreateRoom() {
@@ -139,7 +139,7 @@ class NavigationViewController: UINavigationController {
             roomToPreview = room
             return
         }
-        
+
         let preview = RoomPreviewViewController(id: room)
         preview.delegate = self
         present(preview, animated: true)
