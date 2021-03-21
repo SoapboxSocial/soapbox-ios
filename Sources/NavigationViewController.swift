@@ -130,6 +130,7 @@ class NavigationViewController: UINavigationController {
 
     func openPreviewDrawerFor(room: String) {
         let preview = RoomPreviewViewController(id: room)
+        preview.delegate = self
         present(preview, animated: true)
     }
 
@@ -167,6 +168,14 @@ class NavigationViewController: UINavigationController {
         DispatchQueue.main.async {
             self.present(ActionSheetFactory.microphoneWarningActionSheet(), animated: true)
         }
+    }
+}
+
+extension NavigationViewController: RoomPreviewViewControllerDelegate {
+    func roomPreviewViewController(_ view: RoomPreviewViewController, shouldJoin room: String) {
+        view.dismiss(animated: true, completion: {
+            self.didSelect(room: room)
+        })
     }
 }
 

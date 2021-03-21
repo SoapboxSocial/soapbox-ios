@@ -1,7 +1,7 @@
 import UIKit
 
 protocol RoomPreviewViewControllerDelegate: AnyObject {
-    func roomPreviewViewController(view _: RoomPreviewViewController, shouldJoin: String)
+    func roomPreviewViewController(_ view: RoomPreviewViewController, shouldJoin room: String)
 }
 
 class RoomPreviewViewController: DrawerViewController {
@@ -132,7 +132,7 @@ class RoomPreviewViewController: DrawerViewController {
         RoomAPIClient().room(id: id, callback: { result in
             switch result {
             case .failure:
-                // @TODO
+                // @TODO close cause room not found
                 break
             case let .success(room):
                 if room.name != "" {
@@ -154,7 +154,7 @@ class RoomPreviewViewController: DrawerViewController {
     }
 
     @objc private func didTapJoin() {
-        delegate?.roomPreviewViewController(view: self, shouldJoin: id)
+        delegate?.roomPreviewViewController(self, shouldJoin: id)
     }
 }
 
