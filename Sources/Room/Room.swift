@@ -198,12 +198,12 @@ class Room {
         delegate?.pinnedLinkWasRemoved()
     }
 
-    func open(mini: String) {
+    func open(mini: Soapbox_V1_RoomState.Mini) {
         delegate?.opened(mini: mini, isAppOpener: true)
 
         // @TODO THIS SHOULD BE A CALLBACK ON THE VIEW ONCE LOADING IS DONE
         client.send(command: .openMini(Soapbox_V1_Command.OpenMini.with {
-            $0.mini = mini
+            $0.id = mini.id
         }))
     }
 
