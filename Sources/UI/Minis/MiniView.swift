@@ -106,7 +106,7 @@ class MiniView: UIView {
 
     var delegate: MiniViewDelegate?
 
-    init(app: Soapbox_V1_Mini, room: Room, appOpener: Bool = false) {
+    init(app: Soapbox_V1_RoomState.Mini, room: Room, appOpener: Bool = false) {
         self.room = room
 
         super.init(frame: .zero)

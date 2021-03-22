@@ -356,7 +356,7 @@ class RoomView: UIView {
 
         visibilityUpdated(visibility: room.state.visibility)
 
-        if room.state.mini != "" {
+        if room.state.hasMini {
             leftButtonBar.hide(button: .minis, animated: false)
             open(mini: room.state.mini, isAppOpener: false)
         }
@@ -750,7 +750,7 @@ extension RoomView: RoomDelegate {
         linkView.removePinnedLink()
     }
 
-    func opened(mini: Soapbox_V1_Mini, isAppOpener opener: Bool) {
+    func opened(mini: Soapbox_V1_RoomState.Mini, isAppOpener opener: Bool) {
         DispatchQueue.main.async {
             self.leftButtonBar.hide(button: .minis, animated: true)
             self.rightButtonBar.hide(button: .paste, animated: true)
@@ -902,7 +902,7 @@ extension RoomView: ButtonBarDelegate {
         window!.rootViewController!.present(alert, animated: true)
     }
 
-    private func open(mini: Soapbox_V1_Mini, isAppOpener opener: Bool) {
+    private func open(mini: Soapbox_V1_RoomState.Mini, isAppOpener opener: Bool) {
         if miniView != nil {
             return
         }
@@ -919,7 +919,7 @@ extension RoomView: ButtonBarDelegate {
         ])
     }
 
-    private func getHeightFor(mini: Soapbox_V1_Mini) -> CGFloat {
+    private func getHeightFor(mini: Soapbox_V1_RoomState.Mini) -> CGFloat {
         switch mini.size {
         case .small:
             return 0.33
