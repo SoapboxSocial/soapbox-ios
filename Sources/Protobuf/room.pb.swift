@@ -409,6 +409,8 @@ struct Soapbox_V1_Command {
 
     var mini: String = String()
 
+    var id: Int64 = 0
+
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
     init() {}
@@ -1596,12 +1598,14 @@ extension Soapbox_V1_Command.OpenMini: SwiftProtobuf.Message, SwiftProtobuf._Mes
   static let protoMessageName: String = Soapbox_V1_Command.protoMessageName + ".OpenMini"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "mini"),
+    2: .same(proto: "id"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularStringField(value: &self.mini)
+      case 2: try decoder.decodeSingularInt64Field(value: &self.id)
       default: break
       }
     }
@@ -1611,11 +1615,15 @@ extension Soapbox_V1_Command.OpenMini: SwiftProtobuf.Message, SwiftProtobuf._Mes
     if !self.mini.isEmpty {
       try visitor.visitSingularStringField(value: self.mini, fieldNumber: 1)
     }
+    if self.id != 0 {
+      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 2)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: Soapbox_V1_Command.OpenMini, rhs: Soapbox_V1_Command.OpenMini) -> Bool {
     if lhs.mini != rhs.mini {return false}
+    if lhs.id != rhs.id {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
