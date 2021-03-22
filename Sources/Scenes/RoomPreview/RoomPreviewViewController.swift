@@ -21,6 +21,7 @@ class RoomPreviewViewController: DrawerViewController {
     }()
 
     private let id: String
+    private let maxMembersToShow = 8
 
     weak var delegate: RoomPreviewViewControllerDelegate?
 
@@ -68,6 +69,7 @@ class RoomPreviewViewController: DrawerViewController {
         members.translatesAutoresizingMaskIntoConstraints = false
         members.backgroundColor = .clear
         members.register(cellWithClass: SelectableImageTextCell.self)
+        members.register(cellWithClass: RoomPreviewOverflowCell.self)
         members.dataSource = self
         view.addSubview(members)
 
@@ -160,6 +162,12 @@ class RoomPreviewViewController: DrawerViewController {
 
 extension RoomPreviewViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if indexPath.item >= maxMembersToShow - 1 {
+            let cell = collectionView.dequeueReusableCell(withClass: RoomPreviewOverflowCell.self, for: indexPath)
+            cell.label.text = String(room!.members.count - maxMembersToShow)
+            return cell
+        }
+
         let cell = collectionView.dequeueReusableCell(withClass: SelectableImageTextCell.self, for: indexPath)
 
         let user = room!.members[indexPath.item]
@@ -178,6 +186,6 @@ extension RoomPreviewViewController: UICollectionViewDataSource {
             return 0
         }
 
-        return min(members.count, 8)
+        return min(members.count, maxMembersToShow)
     }
 }
