@@ -750,7 +750,7 @@ extension RoomView: RoomDelegate {
         linkView.removePinnedLink()
     }
 
-    func opened(mini: String, isAppOpener opener: Bool) {
+    func opened(mini: Soapbox_V1_Mini, isAppOpener opener: Bool) {
         DispatchQueue.main.async {
             self.leftButtonBar.hide(button: .minis, animated: true)
             self.rightButtonBar.hide(button: .paste, animated: true)
