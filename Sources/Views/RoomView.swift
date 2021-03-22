@@ -922,7 +922,7 @@ extension RoomView: ButtonBarDelegate {
     private func getHeightFor(mini: Soapbox_V1_Mini) -> CGFloat {
         switch mini.size {
         case .small:
-            return 0.66
+            return 0.33
         case .regular:
             return 0.66
         case .large:
