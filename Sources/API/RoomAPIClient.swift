@@ -32,4 +32,8 @@ class RoomAPIClient: Client {
     func rooms(callback: @escaping (Result<[Room], Error>) -> Void) {
         get(path: "/v1/rooms", callback: callback)
     }
+
+    func room(id: String, callback: @escaping (Result<Room, Error>) -> Void) {
+        get(path: "/v1/rooms/" + id, callback: callback)
+    }
 }

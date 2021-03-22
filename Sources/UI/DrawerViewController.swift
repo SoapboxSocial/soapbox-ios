@@ -1,8 +1,6 @@
 import DrawerView
 import UIKit
 
-// @TODO add handle
-
 class DrawerViewController: UIViewController {
     let manager: DrawerPresentationManager = {
         let manager = DrawerPresentationManager()

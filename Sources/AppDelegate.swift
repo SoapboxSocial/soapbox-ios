@@ -325,7 +325,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                     return
                 }
 
-                nav.didSelect(room: id)
+                nav.openPreviewDrawerFor(room: id)
             case "NEW_FOLLOWER":
                 guard let id = args["id"] as? Int else {
                     return
