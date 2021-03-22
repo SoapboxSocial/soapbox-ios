@@ -525,7 +525,7 @@ extension APIClient {
         let image: String
         let slug: String
         let description: String
-        let size: String
+        let size: Int
     }
 
     func minis(callback: @escaping (Result<[Mini], Error>) -> Void) {
