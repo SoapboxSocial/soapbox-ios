@@ -14,6 +14,11 @@ class NavigationBar: UINavigationBar {
 
         addSubview(navBarBorder)
 
+        shadowImage = UIImage()
+        isTranslucent = false
+        barTintColor = .background
+        tintColor = .brandColor
+
         NSLayoutConstraint.activate([
             navBarBorder.heightAnchor.constraint(equalToConstant: 2),
             navBarBorder.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
