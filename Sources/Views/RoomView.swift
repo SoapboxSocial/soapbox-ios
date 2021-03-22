@@ -902,7 +902,7 @@ extension RoomView: ButtonBarDelegate {
         window!.rootViewController!.present(alert, animated: true)
     }
 
-    private func open(mini: String, isAppOpener opener: Bool) {
+    private func open(mini: Soapbox_V1_Mini, isAppOpener opener: Bool) {
         if miniView != nil {
             return
         }
@@ -913,10 +913,23 @@ extension RoomView: ButtonBarDelegate {
         content.insertArrangedSubview(miniView!, at: 0)
 
         NSLayoutConstraint.activate([
-            miniView!.heightAnchor.constraint(equalTo: content.heightAnchor, multiplier: 0.66),
+            miniView!.heightAnchor.constraint(equalTo: content.heightAnchor, multiplier: getHeightFor(mini: mini)),
             miniView!.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
             miniView!.rightAnchor.constraint(equalTo: rightAnchor, constant: -20), // @todo content.rightanchor doesn't seem to work
         ])
+    }
+
+    private func getHeightFor(mini: Soapbox_V1_Mini) -> CGFloat {
+        switch mini.size {
+        case .small:
+            return 0.66
+        case .regular:
+            return 0.66
+        case .large:
+            return 1.0
+        default:
+            return 0.66
+        }
     }
 }
 
