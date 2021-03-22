@@ -18,7 +18,7 @@ protocol RoomDelegate {
     func usersSpeaking(users: [Int])
     func linkWasPinned(link: URL)
     func pinnedLinkWasRemoved()
-    func opened(mini: String, isAppOpener: Bool)
+    func opened(mini: Soapbox_V1_Mini, isAppOpener: Bool)
     func closedMini(source: Bool)
 }
 
@@ -338,7 +338,7 @@ extension Room {
         delegate?.wasMutedByAdmin()
     }
 
-    private func on(openedMini mini: String) {
+    private func on(openedMini mini: Soapbox_V1_Mini) {
         delegate?.opened(mini: mini, isAppOpener: false)
     }
 
