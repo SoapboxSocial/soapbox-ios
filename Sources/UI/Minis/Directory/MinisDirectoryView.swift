@@ -2,12 +2,6 @@ import AlamofireImage
 import UIKit
 
 class MinisDirectoryView: DrawerViewController {
-    struct App {
-        let name: String
-        let description: String
-        let slug: String
-    }
-
     private var minis = [APIClient.Mini]()
 
     let collection: UICollectionView = {
@@ -37,7 +31,7 @@ class MinisDirectoryView: DrawerViewController {
         return view
     }()
 
-    var onSelected: ((APIClient.Mini) -> Void)?
+    var onSelected: ((Soapbox_V1_RoomState.Mini) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -93,7 +87,11 @@ class MinisDirectoryView: DrawerViewController {
 extension MinisDirectoryView: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let app = minis[indexPath.item]
-        onSelected?(app)
+        onSelected?(Soapbox_V1_RoomState.Mini.with {
+            $0.id = Int64(app.id)
+            $0.slug = app.slug
+            $0.size = .regular // @TODO SIZE
+        })
     }
 }
 
