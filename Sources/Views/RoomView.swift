@@ -840,6 +840,12 @@ extension RoomView: ButtonBarDelegate {
 
     private func minisTapped() {
         let directory = MinisDirectoryView()
+        directory.onSelected = { app in
+            directory.dismiss(animated: true, completion: {
+                self.room.open(mini: app.slug)
+            })
+        }
+
         directory.manager.drawer.openHeightBehavior = .fixed(height: frame.size.height / 2)
         window!.rootViewController!.present(directory, animated: true)
     }
