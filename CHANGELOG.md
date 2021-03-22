@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - Fix some UI animations.
+ - Made some improvements to the home screen and room UI.
  - When clicking on a notification you no longer immediately join the room!
  - Made some improvements to minis.
 
