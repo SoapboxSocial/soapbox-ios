@@ -86,6 +86,7 @@
 "rooms" = "Rooms";
 "got_something_to_say" = "Got something to say?";
 "start_a_room" = "Start a room 👇";
+"join_in" = "Join in";
 
 "create_a_room" = "Create a room";
 "room_was_closed" = "This room was already closed!";
