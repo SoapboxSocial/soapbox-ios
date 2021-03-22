@@ -6,6 +6,7 @@
  - Made some improvements to the home screen and room UI.
  - When clicking on a notification you no longer immediately join the room!
  - Made some improvements to minis.
+ - Sometimes minis just need more space, we decided to allow some to be larger!
 
 ## [2.18.2] - 2021-03-17
 
