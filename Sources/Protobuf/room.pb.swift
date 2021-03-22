@@ -795,11 +795,22 @@ struct Soapbox_V1_Event {
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
 
-    var mini: String = String()
+    var slug: String = String()
+
+    var mini: Soapbox_V1_Mini {
+      get {return _mini ?? Soapbox_V1_Mini()}
+      set {_mini = newValue}
+    }
+    /// Returns true if `mini` has been explicitly set.
+    var hasMini: Bool {return self._mini != nil}
+    /// Clears the value of `mini`. Subsequent reads from it will return its default value.
+    mutating func clearMini() {self._mini = nil}
 
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
     init() {}
+
+    fileprivate var _mini: Soapbox_V1_Mini? = nil
   }
 
   struct ClosedMini {
@@ -816,6 +827,66 @@ struct Soapbox_V1_Event {
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
+
+struct Soapbox_V1_Mini {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  var id: Int64 = 0
+
+  var slug: String = String()
+
+  var size: Soapbox_V1_Mini.Size = .small
+
+  var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  enum Size: SwiftProtobuf.Enum {
+    typealias RawValue = Int
+    case small // = 0
+    case regular // = 1
+    case large // = 2
+    case UNRECOGNIZED(Int)
+
+    init() {
+      self = .small
+    }
+
+    init?(rawValue: Int) {
+      switch rawValue {
+      case 0: self = .small
+      case 1: self = .regular
+      case 2: self = .large
+      default: self = .UNRECOGNIZED(rawValue)
+      }
+    }
+
+    var rawValue: Int {
+      switch self {
+      case .small: return 0
+      case .regular: return 1
+      case .large: return 2
+      case .UNRECOGNIZED(let i): return i
+      }
+    }
+
+  }
+
+  init() {}
+}
+
+#if swift(>=4.2)
+
+extension Soapbox_V1_Mini.Size: CaseIterable {
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  static var allCases: [Soapbox_V1_Mini.Size] = [
+    .small,
+    .regular,
+    .large,
+  ]
+}
+
+#endif  // swift(>=4.2)
 
 struct Soapbox_V1_RoomState {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
@@ -2211,27 +2282,33 @@ extension Soapbox_V1_Event.UnpinnedLink: SwiftProtobuf.Message, SwiftProtobuf._M
 extension Soapbox_V1_Event.OpenedMini: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = Soapbox_V1_Event.protoMessageName + ".OpenedMini"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "mini"),
+    1: .same(proto: "slug"),
+    2: .same(proto: "mini"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.mini)
+      case 1: try decoder.decodeSingularStringField(value: &self.slug)
+      case 2: try decoder.decodeSingularMessageField(value: &self._mini)
       default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.mini.isEmpty {
-      try visitor.visitSingularStringField(value: self.mini, fieldNumber: 1)
+    if !self.slug.isEmpty {
+      try visitor.visitSingularStringField(value: self.slug, fieldNumber: 1)
+    }
+    if let v = self._mini {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: Soapbox_V1_Event.OpenedMini, rhs: Soapbox_V1_Event.OpenedMini) -> Bool {
-    if lhs.mini != rhs.mini {return false}
+    if lhs.slug != rhs.slug {return false}
+    if lhs._mini != rhs._mini {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -2254,6 +2331,55 @@ extension Soapbox_V1_Event.ClosedMini: SwiftProtobuf.Message, SwiftProtobuf._Mes
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
+}
+
+extension Soapbox_V1_Mini: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = _protobuf_package + ".Mini"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+    2: .same(proto: "slug"),
+    3: .same(proto: "size"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      case 2: try decoder.decodeSingularStringField(value: &self.slug)
+      case 3: try decoder.decodeSingularEnumField(value: &self.size)
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.id != 0 {
+      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
+    }
+    if !self.slug.isEmpty {
+      try visitor.visitSingularStringField(value: self.slug, fieldNumber: 2)
+    }
+    if self.size != .small {
+      try visitor.visitSingularEnumField(value: self.size, fieldNumber: 3)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Soapbox_V1_Mini, rhs: Soapbox_V1_Mini) -> Bool {
+    if lhs.id != rhs.id {return false}
+    if lhs.slug != rhs.slug {return false}
+    if lhs.size != rhs.size {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Soapbox_V1_Mini.Size: SwiftProtobuf._ProtoNameProviding {
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    0: .same(proto: "SIZE_SMALL"),
+    1: .same(proto: "SIZE_REGULAR"),
+    2: .same(proto: "SIZE_LARGE"),
+  ]
 }
 
 extension Soapbox_V1_RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
