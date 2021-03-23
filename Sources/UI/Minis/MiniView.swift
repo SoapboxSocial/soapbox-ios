@@ -106,7 +106,7 @@ class MiniView: UIView {
 
     var delegate: MiniViewDelegate?
 
-    init(app: String, room: Room, appOpener: Bool = false) {
+    init(app: Soapbox_V1_RoomState.Mini, room: Room, appOpener: Bool = false) {
         self.room = room
 
         super.init(frame: .zero)
@@ -154,7 +154,7 @@ class MiniView: UIView {
             content.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
 
-        guard var url = URL(string: "https://apps.soapbox.social\(app)") else {
+        guard var url = URL(string: "https://apps.soapbox.social\(app.slug)") else {
             return
         }
 

@@ -356,7 +356,7 @@ class RoomView: UIView {
 
         visibilityUpdated(visibility: room.state.visibility)
 
-        if room.state.mini != "" {
+        if room.state.hasMini {
             leftButtonBar.hide(button: .minis, animated: false)
             open(mini: room.state.mini, isAppOpener: false)
         }
@@ -750,7 +750,7 @@ extension RoomView: RoomDelegate {
         linkView.removePinnedLink()
     }
 
-    func opened(mini: String, isAppOpener opener: Bool) {
+    func opened(mini: Soapbox_V1_RoomState.Mini, isAppOpener opener: Bool) {
         DispatchQueue.main.async {
             self.leftButtonBar.hide(button: .minis, animated: true)
             self.rightButtonBar.hide(button: .paste, animated: true)
@@ -842,10 +842,9 @@ extension RoomView: ButtonBarDelegate {
         let directory = MinisDirectoryView()
         directory.onSelected = { app in
             directory.dismiss(animated: true, completion: {
-                self.room.open(mini: app.slug)
+                self.room.open(mini: app)
             })
         }
-
         directory.manager.drawer.openHeightBehavior = .fixed(height: frame.size.height / 2)
         window!.rootViewController!.present(directory, animated: true)
     }
@@ -908,7 +907,7 @@ extension RoomView: ButtonBarDelegate {
         window!.rootViewController!.present(alert, animated: true)
     }
 
-    private func open(mini: String, isAppOpener opener: Bool) {
+    private func open(mini: Soapbox_V1_RoomState.Mini, isAppOpener opener: Bool) {
         if miniView != nil {
             return
         }
@@ -919,10 +918,18 @@ extension RoomView: ButtonBarDelegate {
         content.insertArrangedSubview(miniView!, at: 0)
 
         NSLayoutConstraint.activate([
-            miniView!.heightAnchor.constraint(equalTo: content.heightAnchor, multiplier: 0.66),
             miniView!.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
             miniView!.rightAnchor.constraint(equalTo: rightAnchor, constant: -20), // @todo content.rightanchor doesn't seem to work
         ])
+
+        switch mini.size {
+        case .large:
+            miniView!.heightAnchor.constraint(equalTo: content.heightAnchor, constant: -5).isActive = true
+        case .small:
+            miniView!.heightAnchor.constraint(equalTo: content.heightAnchor, multiplier: 0.33).isActive = true
+        default:
+            miniView!.heightAnchor.constraint(equalTo: content.heightAnchor, multiplier: 0.66).isActive = true
+        }
     }
 }
 
