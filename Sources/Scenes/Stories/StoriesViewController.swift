@@ -104,12 +104,8 @@ class StoriesViewController: UIViewController {
             menuButton.isHidden = true
         }
 
-        let image = UIImageView()
-        image.translatesAutoresizingMaskIntoConstraints = false
+        let image = RoundedImageView()
         image.backgroundColor = .lightBrandColor
-        image.layer.cornerRadius = 140 / 2
-        image.clipsToBounds = true
-        image.layer.masksToBounds = true
         content.addSubview(image)
 
         if let url = feed.user.image, url != "" {

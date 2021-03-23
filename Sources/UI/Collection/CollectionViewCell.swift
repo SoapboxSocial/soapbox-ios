@@ -1,14 +1,10 @@
 import UIKit
 
 class CollectionViewCell: UICollectionViewCell {
-    var image: UIImageView = {
-        let view = UIImageView()
-        view.layer.cornerRadius = 48 / 2
+    var image: RoundedImageView = {
+        let view = RoundedImageView()
         view.backgroundColor = .brandColor
-        view.clipsToBounds = true
-        view.layer.masksToBounds = true
         view.contentMode = .scaleAspectFill
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 

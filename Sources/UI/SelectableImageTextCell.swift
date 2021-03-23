@@ -1,13 +1,10 @@
 import UIKit
 
 class SelectableImageTextCell: UICollectionViewCell {
-    var image: UIImageView = {
-        let view = UIImageView()
+    var image: RoundedImageView = {
+        let view = RoundedImageView()
         view.backgroundColor = .brandColor
-        view.clipsToBounds = true
-        view.layer.masksToBounds = true
         view.contentMode = .scaleAspectFill
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 
@@ -85,7 +82,6 @@ class SelectableImageTextCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
 
-        image.layer.cornerRadius = frame.width / 2
         selectedView.layer.cornerRadius = frame.width / 2
     }
 
