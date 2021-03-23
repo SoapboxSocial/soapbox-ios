@@ -97,6 +97,16 @@ class RoomCell: UICollectionViewCell {
         return view
     }()
 
+    private var topStack: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.spacing = 10
+        stack.distribution = .fill
+        stack.alignment = .fill
+        stack.axis = .vertical
+        return stack
+    }()
+
     private var imageViews = [UIView]()
 
     override init(frame: CGRect) {
@@ -105,12 +115,6 @@ class RoomCell: UICollectionViewCell {
         backgroundColor = .clear
         widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.width).isActive = true
 
-        let topStack = UIStackView()
-        topStack.translatesAutoresizingMaskIntoConstraints = false
-        topStack.spacing = 10
-        topStack.distribution = .fill
-        topStack.alignment = .fill
-        topStack.axis = .vertical
         contentView.addSubview(topStack)
 
         let titleStack = UIStackView()
@@ -176,7 +180,6 @@ class RoomCell: UICollectionViewCell {
             topStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
             topStack.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
             topStack.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
-            topStack.bottomAnchor.constraint(equalTo: titleStack.bottomAnchor),
         ])
 
         NSLayoutConstraint.activate([
@@ -278,7 +281,7 @@ class RoomCell: UICollectionViewCell {
             view.layer.borderColor = contentView.backgroundColor?.cgColor
 
             NSLayoutConstraint.activate([
-                view.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 20),
+                view.topAnchor.constraint(equalTo: topStack.bottomAnchor, constant: 30),
                 view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
                 view.heightAnchor.constraint(equalToConstant: 40.0),
                 view.widthAnchor.constraint(equalToConstant: 40.0),
