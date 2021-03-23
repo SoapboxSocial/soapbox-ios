@@ -1,14 +1,10 @@
 import UIKit
 
 class GroupInviteView: UIView {
-    var image: UIImageView = {
-        let view = UIImageView()
-        view.layer.cornerRadius = 48 / 2
+    var image: RoundedImageView = {
+        let view = RoundedImageView()
         view.backgroundColor = .lightBrandColor
-        view.clipsToBounds = true
-        view.layer.masksToBounds = true
         view.contentMode = .scaleAspectFill
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
 

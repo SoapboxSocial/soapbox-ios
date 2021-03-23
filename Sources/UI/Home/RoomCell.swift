@@ -85,12 +85,9 @@ class RoomCell: UICollectionViewCell {
         return label
     }()
 
-    private var groupImage: UIImageView = {
-        let image = UIImageView()
-        image.layer.cornerRadius = 24 / 2
-        image.layer.masksToBounds = true
+    private var groupImage: RoundedImageView = {
+        let image = RoundedImageView()
         image.backgroundColor = .background
-        image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
 

@@ -30,10 +30,8 @@ class ActionSheet: DrawerViewController {
         return generator
     }()
 
-    private let image: UIImageView = {
-        let image = UIImageView()
-        image.translatesAutoresizingMaskIntoConstraints = false
-        image.layer.cornerRadius = 20
+    private let image: RoundedImageView = {
+        let image = RoundedImageView()
         image.tintColor = .brandColor
         return image
     }()

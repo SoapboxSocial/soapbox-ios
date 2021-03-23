@@ -1,14 +1,10 @@
 import UIKit
 
 class StoryCell: UICollectionViewCell {
-    var image: UIImageView = {
-        let view = UIImageView()
-        view.layer.cornerRadius = 64 / 2
+    var image: RoundedImageView = {
+        let view = RoundedImageView()
         view.backgroundColor = .brandColor
-        view.clipsToBounds = true
-        view.layer.masksToBounds = true
         view.contentMode = .scaleToFill
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.borderColor = UIColor.brandColor.cgColor
         view.layer.borderWidth = 4
         return view
