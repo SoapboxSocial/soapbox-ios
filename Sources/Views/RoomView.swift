@@ -924,7 +924,7 @@ extension RoomView: ButtonBarDelegate {
 
         switch mini.size {
         case .large:
-            miniView!.heightAnchor.constraint(equalTo: content.heightAnchor, constant: -5).isActive = true
+            miniView!.heightAnchor.constraint(equalTo: content.heightAnchor, constant: -20).isActive = true
         case .small:
             miniView!.heightAnchor.constraint(equalTo: content.heightAnchor, multiplier: 0.33).isActive = true
         default:
