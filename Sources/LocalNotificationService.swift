@@ -15,6 +15,8 @@ class LocalNotificationService {
         if let body = body {
             content.body = body
         }
+        
+        content.sound = .default
 
         UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil))
     }
