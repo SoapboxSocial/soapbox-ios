@@ -39,6 +39,15 @@ post_install do |installer|
       config.build_settings['ENABLE_BITCODE'] = 'NO'
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
     end
-  end  
+  end
+
+require 'fileutils'
+  FileUtils.cp_r('Pods/Target Support Files/Pods-Soapbox/Pods-Soapbox-acknowledgements.plist', 'Resources/Settings.bundle/Acknowledgements.plist', :remove_destination => true)
+  installer.aggregate_targets.each do |aggregate_target|
+    aggregate_target.xcconfigs.each do |config_name, config_file|
+      xcconfig_path = aggregate_target.xcconfig_path(config_name)
+      config_file.save_as(xcconfig_path)
+    end
+  end
 end
 
