@@ -753,6 +753,8 @@ extension RoomView: RoomDelegate {
     }
 
     func opened(mini: Soapbox_V1_RoomState.Mini, isAppOpener opener: Bool) {
+        // @TODO send notification
+
         DispatchQueue.main.async {
             self.leftButtonBar.hide(button: .minis, animated: true)
             self.rightButtonBar.hide(button: .paste, animated: true)
