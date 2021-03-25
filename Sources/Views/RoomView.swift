@@ -685,6 +685,8 @@ extension RoomView: RoomDelegate {
             name = user.displayName
         }
 
+        // @TODO SEND NOTIFICATION.
+
         DispatchQueue.main.async {
             self.linkView.displayLink(link: link, name: name)
         }
