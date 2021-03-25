@@ -253,3 +253,6 @@
 "deleting_is_permanent" = "Deleting your account is an irreversible action, your account will be deleted immediately!";
 "delete_caps" = "DELETE";
 "type_delete" = "Type \"DELETE\"";
+
+"user_shared_a_link" = "%@ shared a link!";
+"user_opened_mini" = "%@ just opened %@";
