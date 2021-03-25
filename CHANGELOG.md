@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [2.19.0] - 2021-03-25
 
  - Fix some UI animations.
  - Made some improvements to the home screen and room UI.
