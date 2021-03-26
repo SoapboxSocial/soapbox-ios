@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.19.3] - 2021-03-26
+
  - Fixed an issue showing an empty mini in rooms.
 
 ## [2.19.0] - 2021-03-25
