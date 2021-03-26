@@ -356,7 +356,7 @@ class RoomView: UIView {
 
         visibilityUpdated(visibility: room.state.visibility)
 
-        if room.state.hasMini {
+        if room.state.hasMini, room.state.mini.id != 0 {
             leftButtonBar.hide(button: .minis, animated: false)
             open(mini: room.state.mini, isAppOpener: false)
         }
