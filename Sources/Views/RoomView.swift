@@ -938,11 +938,3 @@ extension RoomView: MiniViewDelegate {
         room.closeMini()
     }
 }
-
-extension RoomView: DrawerViewDelegate {
-    func drawer(_ drawerView: DrawerView, didTransitionTo position: DrawerPosition) {
-        if position == .closed {
-            drawerView.removeFromSuperview()
-        }
-    }
-}
