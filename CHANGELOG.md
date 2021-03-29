@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fixed an issue showing wrong amount of people in rooms.
+
 ## [2.19.3] - 2021-03-26
 
  - Fixed an issue showing an empty mini in rooms.
