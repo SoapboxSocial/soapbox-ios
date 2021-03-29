@@ -583,7 +583,7 @@ extension RoomView: RoomDelegate {
         DispatchQueue.main.async {
             self.muteButton.isSelected = true
             self.bottomMuteButton.isSelected = true
-            self.members.reloadItems(at: [IndexPath(item: 0, section: 0)])
+            self.members.reloadData()
         }
     }
 
