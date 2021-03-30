@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Potential joined sound fix.
  - Fixed an issue showing wrong amount of people in rooms.
  - Fixed keyboard done button on delete screen.
 
