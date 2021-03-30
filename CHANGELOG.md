@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - Fixed an issue showing wrong amount of people in rooms.
+ - Fixed keyboard done button on delete screen.
 
 ## [2.19.3] - 2021-03-26
 

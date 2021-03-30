@@ -8,6 +8,7 @@ class DeleteAccountViewController: DrawerViewController {
         field.autocorrectionType = .no
         field.autocapitalizationType = .none
         field.textAlignment = .center
+        field.returnKeyType = .done
         return field
     }()
 
