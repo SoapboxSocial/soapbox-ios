@@ -613,9 +613,8 @@ extension RoomView: RoomDelegate {
     func userDidJoinRoom(user _: Int64) {
         DispatchQueue.main.async {
             self.members.reloadData()
+            Sounds.blop()
         }
-
-        Sounds.blop()
     }
 
     func roomWasRenamed(_ name: String) {
