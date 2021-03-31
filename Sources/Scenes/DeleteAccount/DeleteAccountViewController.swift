@@ -52,6 +52,8 @@ class DeleteAccountViewController: DrawerViewController {
         type.textColor = .secondaryLabel
         view.addSubview(type)
 
+        textField.delegate = self
+
         view.addSubview(textField)
         view.addSubview(button)
         view.addSubview(cancelButton)
@@ -136,5 +138,12 @@ class DeleteAccountViewController: DrawerViewController {
 
     @objc private func cancelPressed() {
         dismiss(animated: true)
+    }
+}
+
+extension DeleteAccountViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }
