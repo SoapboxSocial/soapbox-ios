@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.20.0] - 2021-04-03Z
+
  - Fixes some issues that made soapbox sound weird.
  - Fixed an issue that caused the notification preview to close.
 
