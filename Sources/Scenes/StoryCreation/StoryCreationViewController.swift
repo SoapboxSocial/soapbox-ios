@@ -329,6 +329,15 @@ class StoryCreationViewController: DrawerViewController {
             self.present(ActionSheetFactory.microphoneWarningActionSheet(), animated: true)
         }
     }
+
+    deinit {
+        // Not the most elegant way but probably the easiest for now.
+        do {
+            try AVAudioSession.sharedInstance().setActive(false)
+        } catch {
+            debugPrint("\(error)")
+        }
+    }
 }
 
 extension StoryCreationViewController: DrawerPresentationDelegate {
