@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fixed an issue that caused the notification preview to close.
+
 ## [2.19.4] - 2021-03-30Z
 
  - Potential joined sound fix.
