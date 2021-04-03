@@ -330,7 +330,8 @@ class StoryCreationViewController: DrawerViewController {
         }
     }
 
-    deinit {
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         // Not the most elegant way but probably the easiest for now.
         do {
             try AVAudioSession.sharedInstance().setActive(false)
