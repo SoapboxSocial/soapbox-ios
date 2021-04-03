@@ -94,8 +94,8 @@ class RoomPreviewViewController: DrawerViewController {
         ])
 
         NSLayoutConstraint.activate([
-            members.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            members.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            members.leftAnchor.constraint(equalTo: view.leftAnchor),
+            members.rightAnchor.constraint(equalTo: view.rightAnchor),
             members.heightAnchor.constraint(equalToConstant: 216),
             members.topAnchor.constraint(equalTo: stack.bottomAnchor, constant: 20),
         ])
