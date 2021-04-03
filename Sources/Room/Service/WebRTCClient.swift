@@ -77,6 +77,20 @@ final class WebRTCClient: NSObject {
         for (_, channel) in remoteDataChannels {
             channel.close()
         }
+
+        audioQueue.async { [weak self] in
+            guard let self = self else {
+                return
+            }
+
+            self.rtcAudioSession.lockForConfiguration()
+            do {
+                try self.rtcAudioSession.setActive(false)
+            } catch {
+                debugPrint("Couldn't force audio to speaker: \(error)")
+            }
+            self.rtcAudioSession.unlockForConfiguration()
+        }
     }
 
     func offer(completion: @escaping (_ sdp: RTCSessionDescription) -> Void) {

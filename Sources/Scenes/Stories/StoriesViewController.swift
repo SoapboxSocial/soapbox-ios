@@ -253,6 +253,13 @@ class StoriesViewController: UIViewController {
         super.viewWillDisappear(animated)
         player.pause()
         player.shutdown()
+
+        // Not the most elegant way but probably the easiest for now.
+        do {
+            try AVAudioSession.sharedInstance().setActive(false)
+        } catch {
+            debugPrint("\(error)")
+        }
     }
 
     // @TODO allow deselecting reaction?
