@@ -166,6 +166,14 @@ class MiniView: UIView {
 
         webView.load(URLRequest(url: url))
 
+        #if DEBUG
+            let source = "function captureLog(msg) { window.webkit.messageHandlers.logHandler.postMessage(msg); } window.console.log = captureLog;"
+            let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
+            webView.configuration.userContentController.addUserScript(script)
+            // register the bridge script that listens for the output
+            webView.configuration.userContentController.add(self, name: "logHandler")
+        #endif
+
         let id = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
         guard let user = room.state.members.first(where: { $0.id == Int64(id) }) else {
             return
@@ -216,6 +224,12 @@ class MiniView: UIView {
 
 extension MiniView: WKScriptMessageHandler {
     func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {
+        #if DEBUG
+            if message.name == "logHandler" {
+                return debugPrint("console.log: \(message.body)")
+            }
+        #endif
+
         guard let event = Query(rawValue: message.name) else {
             return
         }
