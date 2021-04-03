@@ -38,6 +38,7 @@ class RoomPreviewOverflowCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             circle.widthAnchor.constraint(equalTo: widthAnchor),
             circle.heightAnchor.constraint(equalTo: widthAnchor),
+            circle.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
 
         NSLayoutConstraint.activate([
