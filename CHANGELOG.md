@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.21.0] - 2021-04-04Z
+
  - Fixed a large issue that caused certain users to not be able to register.
 
 ## [2.20.0] - 2021-04-03Z
