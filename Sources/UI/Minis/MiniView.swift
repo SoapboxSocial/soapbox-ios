@@ -18,9 +18,10 @@ class MiniView: UIView {
         let displayName: String
         let id: Int
         let image: String
+        let username: String
 
         private enum CodingKeys: String, CodingKey {
-            case id, displayName = "display_name", image
+            case id, displayName = "display_name", image, username
         }
     }
 
@@ -251,11 +252,11 @@ extension MiniView: WKScriptMessageHandler {
             respond(
                 .user,
                 sequence: sequence.int64Value,
-                data: .user(UserData(displayName: user.displayName, id: user.id, image: user.image ?? ""))
+                data: .user(UserData(displayName: user.displayName, id: user.id, image: user.image ?? "", username: user.username))
             )
         case .members:
             let members = room.state.members.map {
-                UserData(displayName: $0.displayName, id: Int($0.id), image: $0.image)
+                UserData(displayName: $0.displayName, id: Int($0.id), image: $0.image, username: $0.username)
             }
 
             respond(.members, sequence: sequence.int64Value, data: .members(members))
