@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+ 
+ - Ever missed out when someone shared a link? Not anymore!
+
 ## [2.19.0] - 2021-03-25
 
  - Fix some UI animations.

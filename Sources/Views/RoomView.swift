@@ -683,9 +683,9 @@ extension RoomView: RoomDelegate {
             }
 
             name = user.displayName
+            
+            LocalNotificationService.send(body: String(format: NSLocalizedString("user_shared_a_link", comment: ""), name))
         }
-
-        // @TODO SEND NOTIFICATION.
 
         DispatchQueue.main.async {
             self.linkView.displayLink(link: link, name: name)
@@ -752,13 +752,21 @@ extension RoomView: RoomDelegate {
         linkView.removePinnedLink()
     }
 
-    func opened(mini: Soapbox_V1_RoomState.Mini, isAppOpener opener: Bool) {
-        // @TODO send notification
+    func opened(mini: Soapbox_V1_RoomState.Mini, from: Int64) {
+        if from != 0 {
+            guard let user = room.state.members.first(where: { $0.id == from }) else {
+                return
+            }
+            
+            LocalNotificationService.send(
+                body: String(format: NSLocalizedString("user_opened_mini", comment: ""), user.displayName, mini.name)
+            )
+        }
 
         DispatchQueue.main.async {
             self.leftButtonBar.hide(button: .minis, animated: true)
             self.rightButtonBar.hide(button: .paste, animated: true)
-            self.open(mini: mini, isAppOpener: opener)
+            self.open(mini: mini, isAppOpener: from == 0)
         }
     }
 

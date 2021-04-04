@@ -1,7 +1,7 @@
 import UserNotifications
 
 class LocalNotificationService {
-    func send(title: String? = nil, subtitle: String? = nil, body: String? = nil) {
+    static func send(title: String? = nil, subtitle: String? = nil, body: String? = nil) {
         let content = UNMutableNotificationContent()
 
         if let title = title {
