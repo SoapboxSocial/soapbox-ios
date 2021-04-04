@@ -20,7 +20,7 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
     }
 
     enum AuthenticationError {
-        case invalidEmail, invalidPin, invalidUsername, usernameTaken, missingProfileImage, general
+        case invalidEmail, invalidPin, invalidUsername, usernameTaken, missingProfileImage, general, registerWithEmailDisabled
     }
 
     init(output: AuthenticationInteractorOutput, api: APIClient) {
@@ -41,7 +41,12 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
 
         api.login(email: input) { result in
             switch result {
-            case .failure:
+            case let .failure(err):
+                if case let .endpoint(error) = err, error.code == .registerWithEmailDisabled {
+                    self.output.present(error: .registerWithEmailDisabled)
+                    return
+                }
+
                 self.output.present(error: .general)
             case let .success(token):
                 self.token = token
