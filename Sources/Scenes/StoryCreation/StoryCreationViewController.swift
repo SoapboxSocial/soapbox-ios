@@ -329,6 +329,16 @@ class StoryCreationViewController: DrawerViewController {
             self.present(ActionSheetFactory.microphoneWarningActionSheet(), animated: true)
         }
     }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        // Not the most elegant way but probably the easiest for now.
+        do {
+            try AVAudioSession.sharedInstance().setActive(false)
+        } catch {
+            debugPrint("\(error)")
+        }
+    }
 }
 
 extension StoryCreationViewController: DrawerPresentationDelegate {

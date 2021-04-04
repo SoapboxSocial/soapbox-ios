@@ -4,6 +4,21 @@
  
  - Ever missed out when someone shared a link? Not anymore!
 
+## [2.20.0] - 2021-04-03Z
+
+ - Fixes some issues that made soapbox sound weird.
+ - Fixed an issue that caused the notification preview to close.
+
+## [2.19.4] - 2021-03-30Z
+
+ - Potential joined sound fix.
+ - Fixed an issue showing wrong amount of people in rooms.
+ - Fixed keyboard done button on delete screen.
+
+## [2.19.3] - 2021-03-26
+
+ - Fixed an issue showing an empty mini in rooms.
+
 ## [2.19.0] - 2021-03-25
 
  - Fix some UI animations.

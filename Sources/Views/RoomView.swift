@@ -356,7 +356,7 @@ class RoomView: UIView {
 
         visibilityUpdated(visibility: room.state.visibility)
 
-        if room.state.hasMini {
+        if room.state.hasMini, room.state.mini.id != 0 {
             leftButtonBar.hide(button: .minis, animated: false)
             open(mini: room.state.mini, isAppOpener: false)
         }
@@ -585,7 +585,7 @@ extension RoomView: RoomDelegate {
         DispatchQueue.main.async {
             self.muteButton.isSelected = true
             self.bottomMuteButton.isSelected = true
-            self.members.reloadItems(at: [IndexPath(item: 0, section: 0)])
+            self.members.reloadData()
         }
     }
 
@@ -950,13 +950,5 @@ extension RoomView: ButtonBarDelegate {
 extension RoomView: MiniViewDelegate {
     func didTapCloseMiniView(_: MiniView) {
         room.closeMini()
-    }
-}
-
-extension RoomView: DrawerViewDelegate {
-    func drawer(_ drawerView: DrawerView, didTransitionTo position: DrawerPosition) {
-        if position == .closed {
-            drawerView.removeFromSuperview()
-        }
     }
 }
