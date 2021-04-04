@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fixed a large issue that caused certain users to not be able to register.
+
 ## [2.20.0] - 2021-04-03Z
 
  - Fixes some issues that made soapbox sound weird.
