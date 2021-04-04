@@ -71,6 +71,10 @@ class AuthenticationViewController: UIPageViewController {
 
 extension AuthenticationViewController: AuthenticationPresenterOutput {
     func displayEmailRegistrationDisabledError() {
+        if let controller = orderedViewControllers[state.rawValue] as? AuthenticationViewControllerWithInput {
+            controller.enableSubmit()
+        }
+
         let banner = NotificationBanner(title: NSLocalizedString("register_with_email_disabled_use_apple", comment: ""), style: .danger, type: .normal)
         banner.onTap = {
             DispatchQueue.main.async {
