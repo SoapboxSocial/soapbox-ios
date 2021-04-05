@@ -127,8 +127,15 @@ class MiniView: UIView {
         content.addArrangedSubview(buttonView)
 
         for event in Query.allCases {
-            webView.configuration.userContentController.add(self, name: event.rawValue)
+            webView.configuration.userContentController.add(WKScriptMessageHandlerLeakAvoider(self), name: event.rawValue)
         }
+
+        #if DEBUG
+            let source = "function captureLog(msg) { window.webkit.messageHandlers.logHandler.postMessage(msg); } window.console.log = captureLog;"
+            let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
+            webView.configuration.userContentController.addUserScript(script)
+            webView.configuration.userContentController.add(WKScriptMessageHandlerLeakAvoider(self), name: "logHandler")
+        #endif
 
         NSLayoutConstraint.activate([
             buttonView.leftAnchor.constraint(equalTo: leftAnchor),
@@ -166,14 +173,6 @@ class MiniView: UIView {
         }
 
         webView.load(URLRequest(url: url))
-
-        #if DEBUG
-            let source = "function captureLog(msg) { window.webkit.messageHandlers.logHandler.postMessage(msg); } window.console.log = captureLog;"
-            let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
-            webView.configuration.userContentController.addUserScript(script)
-            // register the bridge script that listens for the output
-            webView.configuration.userContentController.add(self, name: "logHandler")
-        #endif
 
         let id = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
         guard let user = room.state.members.first(where: { $0.id == Int64(id) }) else {
@@ -265,6 +264,13 @@ extension MiniView: WKScriptMessageHandler {
 
     func close(callback: (() -> Void)? = nil) {
         write(.closed, data: "{}", completion: callback)
+
+        webView.stopLoading()
+        webView.configuration.userContentController.removeAllUserScripts()
+
+        if #available(iOS 14.0, *) {
+            webView.configuration.userContentController.removeAllScriptMessageHandlers()
+        }
     }
 
     @objc private func exitTapped() {
