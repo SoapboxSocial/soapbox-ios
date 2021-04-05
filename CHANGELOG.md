@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.22.0] - 2021-04-05Z
+
  - Fixed some issues with minis.
 
 ## [2.21.0] - 2021-04-04Z
