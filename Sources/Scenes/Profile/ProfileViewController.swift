@@ -108,7 +108,7 @@ class ProfileViewController: ViewControllerWithRemoteContent<APIClient.Profile> 
         contentView.addSubview(stack)
 
         headerView.button.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
-        headerView.button.setTitle(NSLocalizedString("unfollow", comment: ""), for: .selected)
+        headerView.button.setTitle(NSLocalizedString("following", comment: ""), for: .selected)
         headerView.button.isHidden = false
         headerView.descriptionLabel.font = .rounded(forTextStyle: .body, weight: .regular)
         stack.addArrangedSubview(headerView)
