@@ -4,6 +4,7 @@ import UIWindowTransitions
 protocol AuthenticationPresenterOutput {
     func displayError(_ style: NotificationBanner.BannerType, title: String, description: String?)
     func transitionTo(state: AuthenticationInteractor.AuthenticationState)
+    func displayEmailRegistrationDisabledError()
 }
 
 class AuthenticationPresenter: AuthenticationInteractorOutput {
@@ -31,6 +32,8 @@ class AuthenticationPresenter: AuthenticationInteractorOutput {
             output.displayError(.normal, title: NSLocalizedString("pick_profile_image", comment: ""), description: nil)
         case .usernameTaken:
             output.displayError(.normal, title: NSLocalizedString("username_already_exists", comment: ""), description: nil)
+        case .registerWithEmailDisabled:
+            output.displayEmailRegistrationDisabledError()
         }
     }
 

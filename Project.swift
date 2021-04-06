@@ -31,7 +31,7 @@ let project = Project(
             deploymentTarget: .iOS(targetVersion: "13.0", devices: .iphone),
             infoPlist: "Info.plist",
             sources: ["Sources/**"],
-            resources: ["Resources/*", "Configurations/*", "Entitlements/*", "Assets.xcassets", "Localization/**/*.strings"],
+            resources: ["Resources/**", "Configurations/*", "Entitlements/*", "Assets.xcassets", "Localization/**/*.strings"],
             dependencies: [
                 .cocoapods(path: "."),
             ],

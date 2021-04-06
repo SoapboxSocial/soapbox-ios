@@ -32,6 +32,7 @@ class Client {
         case failedToStoreDevice
         case notFound
         case notAllowed
+        case registerWithEmailDisabled
     }
 
     struct ErrorResponse: Decodable {

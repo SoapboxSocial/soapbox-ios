@@ -206,10 +206,11 @@ class RoomCell: UICollectionViewCell {
 
         // @todo only use members with images
         let count = members.count
+        let visible = 6
 
-        for i in 0 ..< min(7, count) {
+        for i in 0 ..< min(visible + 1, count) {
             let view: UIView = {
-                if i == 6, count > 6 {
+                if i == visible, count > visible {
                     let view = UIView()
                     if style == .current {
                         view.backgroundColor = .brandColor
@@ -228,7 +229,7 @@ class RoomCell: UICollectionViewCell {
                     }
 
                     label.font = .rounded(forTextStyle: .body, weight: .black)
-                    label.text = String(min(members.count - 3, 9))
+                    label.text = String(min(members.count - visible, 9))
                     view.addSubview(label)
 
                     let plus = UILabel()

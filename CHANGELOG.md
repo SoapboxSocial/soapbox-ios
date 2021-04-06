@@ -1,8 +1,32 @@
 # Changelog
 
 ## [Unreleased]
- 
+
  - Ever missed out when someone shared a link? Not anymore!
+
+## [2.22.0] - 2021-04-05Z
+
+ - Fixed some issues with minis.
+
+## [2.21.0] - 2021-04-04Z
+
+ - Fixed a large issue that caused certain users to not be able to register.
+
+## [2.20.0] - 2021-04-03Z
+
+ - Fixes some issues that made soapbox sound weird.
+ - Fixed an issue that caused the notification preview to close.
+
+## [2.19.4] - 2021-03-30Z
+
+ - Potential joined sound fix.
+ - Fixed an issue showing wrong amount of people in rooms.
+ - Fixed keyboard done button on delete screen.
+
+## [2.19.3] - 2021-03-26
+
+ - Fixed an issue showing an empty mini in rooms.
+>>>>>>> master
 
 ## [2.19.0] - 2021-03-25
 
