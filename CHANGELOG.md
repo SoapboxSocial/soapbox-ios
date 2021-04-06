@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - Ever missed out when someone shared a link? Not anymore!
  - We've disabled allowing a mini to be opened when a link is already pinned.
 
 ## [2.22.0] - 2021-04-05Z

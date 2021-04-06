@@ -254,4 +254,7 @@
 "delete_caps" = "DELETE";
 "type_delete" = "Type \"DELETE\"";
 
+"user_shared_a_link" = "%@ shared a link!";
+"user_opened_mini" = "%@ started \"%@\", come play!";
+
 "register_with_email_disabled_use_apple" = "Registering with email is currently disabled, Click here to Sign in with Apple instead!";

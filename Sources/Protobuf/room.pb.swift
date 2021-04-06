@@ -887,8 +887,6 @@ struct Soapbox_V1_RoomState {
 
     var ssrc: UInt32 = 0
 
-    var username: String = String()
-
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
     enum Role: SwiftProtobuf.Enum {
@@ -948,6 +946,8 @@ struct Soapbox_V1_RoomState {
     var slug: String = String()
 
     var size: Soapbox_V1_RoomState.Mini.Size = .small
+
+    var name: String = String()
 
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -2435,7 +2435,6 @@ extension Soapbox_V1_RoomState.RoomMember: SwiftProtobuf.Message, SwiftProtobuf.
     4: .same(proto: "role"),
     5: .same(proto: "muted"),
     6: .same(proto: "ssrc"),
-    7: .same(proto: "username"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -2447,7 +2446,6 @@ extension Soapbox_V1_RoomState.RoomMember: SwiftProtobuf.Message, SwiftProtobuf.
       case 4: try decoder.decodeSingularEnumField(value: &self.role)
       case 5: try decoder.decodeSingularBoolField(value: &self.muted)
       case 6: try decoder.decodeSingularUInt32Field(value: &self.ssrc)
-      case 7: try decoder.decodeSingularStringField(value: &self.username)
       default: break
       }
     }
@@ -2472,9 +2470,6 @@ extension Soapbox_V1_RoomState.RoomMember: SwiftProtobuf.Message, SwiftProtobuf.
     if self.ssrc != 0 {
       try visitor.visitSingularUInt32Field(value: self.ssrc, fieldNumber: 6)
     }
-    if !self.username.isEmpty {
-      try visitor.visitSingularStringField(value: self.username, fieldNumber: 7)
-    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -2485,7 +2480,6 @@ extension Soapbox_V1_RoomState.RoomMember: SwiftProtobuf.Message, SwiftProtobuf.
     if lhs.role != rhs.role {return false}
     if lhs.muted != rhs.muted {return false}
     if lhs.ssrc != rhs.ssrc {return false}
-    if lhs.username != rhs.username {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -2545,6 +2539,7 @@ extension Soapbox_V1_RoomState.Mini: SwiftProtobuf.Message, SwiftProtobuf._Messa
     1: .same(proto: "id"),
     2: .same(proto: "slug"),
     3: .same(proto: "size"),
+    4: .same(proto: "name"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -2553,6 +2548,7 @@ extension Soapbox_V1_RoomState.Mini: SwiftProtobuf.Message, SwiftProtobuf._Messa
       case 1: try decoder.decodeSingularInt64Field(value: &self.id)
       case 2: try decoder.decodeSingularStringField(value: &self.slug)
       case 3: try decoder.decodeSingularEnumField(value: &self.size)
+      case 4: try decoder.decodeSingularStringField(value: &self.name)
       default: break
       }
     }
@@ -2568,6 +2564,9 @@ extension Soapbox_V1_RoomState.Mini: SwiftProtobuf.Message, SwiftProtobuf._Messa
     if self.size != .small {
       try visitor.visitSingularEnumField(value: self.size, fieldNumber: 3)
     }
+    if !self.name.isEmpty {
+      try visitor.visitSingularStringField(value: self.name, fieldNumber: 4)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -2575,6 +2574,7 @@ extension Soapbox_V1_RoomState.Mini: SwiftProtobuf.Message, SwiftProtobuf._Messa
     if lhs.id != rhs.id {return false}
     if lhs.slug != rhs.slug {return false}
     if lhs.size != rhs.size {return false}
+    if lhs.name != rhs.name {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
