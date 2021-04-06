@@ -802,11 +802,13 @@ extension RoomView: LinkSharingViewDelegate {
     func didPin(link: URL) {
         room.pin(link: link)
         rightButtonBar.hide(button: .paste, animated: true)
+        leftButtonBar.hide(button: .minis, animated: true)
     }
 
     func didUnpin() {
         room.unpin()
         rightButtonBar.show(button: .paste, animated: true)
+        leftButtonBar.show(button: .minis, animated: true)
     }
 }
 
