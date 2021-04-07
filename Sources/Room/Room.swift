@@ -452,6 +452,10 @@ extension Room: RoomClientDelegate {
     private func addMeToState(role: Soapbox_V1_RoomState.RoomMember.Role) {
         let user = UserStore.get()
 
+        if state.members.contains(where: { $0.id == Int64(user.id) }) {
+            return
+        }
+
         state.members.append(Soapbox_V1_RoomState.RoomMember.with {
             $0.id = Int64(user.id)
             $0.image = user.image ?? ""

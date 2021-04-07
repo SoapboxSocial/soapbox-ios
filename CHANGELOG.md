@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fixed a bug that made a user appear twice in a room.
+
 ## [2.23.0] - 2021-04-06Z
 
  - Ever missed out when someone shared a link? Not anymore!
