@@ -1,13 +1,9 @@
 import UIKit
 
 class CreateCell: UICollectionViewCell {
-    private var image: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
+    private var image: RoundedImageView = {
+        let view = RoundedImageView()
         view.backgroundColor = UIColor.brandColor.withAlphaComponent(0.5)
-        view.clipsToBounds = true
-        view.layer.cornerRadius = 56 / 2
-        view.layer.masksToBounds = true
 
         let image = UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 40, weight: .semibold))
         let imageView = UIImageView(image: image)

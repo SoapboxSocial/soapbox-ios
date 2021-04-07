@@ -2,9 +2,43 @@
 
 ## [Unreleased]
 
- - Fix some UI animations.
- - Made some improvements to minis.
  - Fixed a bug that made a user appear twice in a room.
+
+## [2.23.0] - 2021-04-06Z
+
+ - Ever missed out when someone shared a link? Not anymore!
+ - We've disabled allowing a mini to be opened when a link is already pinned.
+
+## [2.22.0] - 2021-04-05Z
+
+ - Fixed some issues with minis.
+
+## [2.21.0] - 2021-04-04Z
+
+ - Fixed a large issue that caused certain users to not be able to register.
+
+## [2.20.0] - 2021-04-03Z
+
+ - Fixes some issues that made soapbox sound weird.
+ - Fixed an issue that caused the notification preview to close.
+
+## [2.19.4] - 2021-03-30Z
+
+ - Potential joined sound fix.
+ - Fixed an issue showing wrong amount of people in rooms.
+ - Fixed keyboard done button on delete screen.
+
+## [2.19.3] - 2021-03-26
+
+ - Fixed an issue showing an empty mini in rooms.
+
+## [2.19.0] - 2021-03-25
+
+ - Fix some UI animations.
+ - Made some improvements to the home screen and room UI.
+ - When clicking on a notification you no longer immediately join the room!
+ - Made some improvements to minis.
+ - Sometimes minis just need more space, we decided to allow some to be larger!
 
 ## [2.18.2] - 2021-03-17
 

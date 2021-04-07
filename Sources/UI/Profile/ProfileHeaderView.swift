@@ -1,12 +1,9 @@
 import UIKit
 
 class ProfileHeaderView: UIView {
-    var image: UIImageView = {
-        let image = UIImageView()
+    var image: RoundedImageView = {
+        let image = RoundedImageView()
         image.backgroundColor = .brandColor
-        image.layer.cornerRadius = 96 / 2
-        image.clipsToBounds = true
-        image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
 

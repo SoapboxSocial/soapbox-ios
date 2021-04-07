@@ -33,7 +33,7 @@ class ViewControllerWithScrollableContent<T: UIScrollView>: ViewController, UISc
         }
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
         guard let navigationBar = (navigationController as? NavigationViewController)?.navigationBar as? NavigationBar else {

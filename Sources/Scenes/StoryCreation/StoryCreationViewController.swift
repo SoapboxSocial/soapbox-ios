@@ -69,12 +69,9 @@ class StoryCreationViewController: DrawerViewController {
         label.text = NSLocalizedString("hold_to_record", comment: "")
         view.addSubview(label)
 
-        let image = UIImageView()
+        let image = RoundedImageView()
         image.backgroundColor = .lightBrandColor
-        image.layer.cornerRadius = 140 / 2
-        image.layer.masksToBounds = true
         image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + UserDefaults.standard.string(forKey: UserDefaultsKeys.userImage)!))
-        image.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(image)
 
         button.addTarget(self, action: #selector(startRecording), for: .touchDown)
@@ -330,6 +327,16 @@ class StoryCreationViewController: DrawerViewController {
     private func showMicrophoneWarning() {
         DispatchQueue.main.async {
             self.present(ActionSheetFactory.microphoneWarningActionSheet(), animated: true)
+        }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        // Not the most elegant way but probably the easiest for now.
+        do {
+            try AVAudioSession.sharedInstance().setActive(false)
+        } catch {
+            debugPrint("\(error)")
         }
     }
 }

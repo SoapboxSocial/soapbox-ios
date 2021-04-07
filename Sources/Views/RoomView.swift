@@ -203,13 +203,14 @@ class RoomView: UIView {
         stack.axis = .horizontal
         stack.spacing = 10
         stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.distribution = .fill
+        stack.alignment = .center
         topBar.addSubview(stack)
 
         stack.addArrangedSubview(lock)
         stack.addArrangedSubview(name)
 
         NSLayoutConstraint.activate([
-            lock.topAnchor.constraint(equalTo: name.topAnchor),
             lock.heightAnchor.constraint(equalToConstant: 20),
             lock.widthAnchor.constraint(equalToConstant: 20),
         ])
@@ -355,7 +356,7 @@ class RoomView: UIView {
 
         visibilityUpdated(visibility: room.state.visibility)
 
-        if room.state.mini != "" {
+        if room.state.hasMini, room.state.mini.id != 0 {
             leftButtonBar.hide(button: .minis, animated: false)
             open(mini: room.state.mini, isAppOpener: false)
         }
@@ -555,14 +556,16 @@ extension RoomView: RoomDelegate {
     }
 
     func userWasInvitedToBeAdmin(by: Int64) {
-        let title = NSLocalizedString("invited_to_be_admin_by", comment: "")
-
         guard let member = room.state.members.first(where: { $0.id == by }) else {
             return
         }
 
+        let title = String(format: NSLocalizedString("invited_to_be_admin_by", comment: ""), member.displayName.firstName())
+
+        LocalNotificationService.send(body: title)
+
         let alert = UIAlertController(
-            title: String(format: title, member.displayName.firstName()),
+            title: title,
             message: NSLocalizedString("would_you_like_to_accept", comment: ""),
             preferredStyle: .alert
         )
@@ -582,7 +585,7 @@ extension RoomView: RoomDelegate {
         DispatchQueue.main.async {
             self.muteButton.isSelected = true
             self.bottomMuteButton.isSelected = true
-            self.members.reloadItems(at: [IndexPath(item: 0, section: 0)])
+            self.members.reloadData()
         }
     }
 
@@ -682,6 +685,8 @@ extension RoomView: RoomDelegate {
             }
 
             name = user.displayName
+
+            LocalNotificationService.send(body: String(format: NSLocalizedString("user_shared_a_link", comment: ""), name))
         }
 
         DispatchQueue.main.async {
@@ -749,11 +754,21 @@ extension RoomView: RoomDelegate {
         linkView.removePinnedLink()
     }
 
-    func opened(mini: String, isAppOpener opener: Bool) {
+    func opened(mini: Soapbox_V1_RoomState.Mini, from: Int64) {
+        if from != 0 {
+            guard let user = room.state.members.first(where: { $0.id == from }) else {
+                return
+            }
+
+            LocalNotificationService.send(
+                body: String(format: NSLocalizedString("user_opened_mini", comment: ""), user.displayName, mini.name)
+            )
+        }
+
         DispatchQueue.main.async {
             self.leftButtonBar.hide(button: .minis, animated: true)
             self.rightButtonBar.hide(button: .paste, animated: true)
-            self.open(mini: mini, isAppOpener: opener)
+            self.open(mini: mini, isAppOpener: from == 0)
         }
     }
 
@@ -801,11 +816,13 @@ extension RoomView: LinkSharingViewDelegate {
     func didPin(link: URL) {
         room.pin(link: link)
         rightButtonBar.hide(button: .paste, animated: true)
+        leftButtonBar.hide(button: .minis, animated: true)
     }
 
     func didUnpin() {
         room.unpin()
         rightButtonBar.show(button: .paste, animated: true)
+        leftButtonBar.show(button: .minis, animated: true)
     }
 }
 
@@ -839,6 +856,11 @@ extension RoomView: ButtonBarDelegate {
 
     private func minisTapped() {
         let directory = MinisDirectoryView()
+        directory.onSelected = { app in
+            directory.dismiss(animated: true, completion: {
+                self.room.open(mini: app)
+            })
+        }
         directory.manager.drawer.openHeightBehavior = .fixed(height: frame.size.height / 2)
         window!.rootViewController!.present(directory, animated: true)
     }
@@ -901,7 +923,7 @@ extension RoomView: ButtonBarDelegate {
         window!.rootViewController!.present(alert, animated: true)
     }
 
-    private func open(mini: String, isAppOpener opener: Bool) {
+    private func open(mini: Soapbox_V1_RoomState.Mini, isAppOpener opener: Bool) {
         if miniView != nil {
             return
         }
@@ -912,23 +934,23 @@ extension RoomView: ButtonBarDelegate {
         content.insertArrangedSubview(miniView!, at: 0)
 
         NSLayoutConstraint.activate([
-            miniView!.heightAnchor.constraint(equalTo: content.heightAnchor, multiplier: 0.66),
             miniView!.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
             miniView!.rightAnchor.constraint(equalTo: rightAnchor, constant: -20), // @todo content.rightanchor doesn't seem to work
         ])
+
+        switch mini.size {
+        case .large:
+            miniView!.heightAnchor.constraint(equalTo: content.heightAnchor, constant: -20).isActive = true
+        case .small:
+            miniView!.heightAnchor.constraint(equalTo: content.heightAnchor, multiplier: 0.33).isActive = true
+        default:
+            miniView!.heightAnchor.constraint(equalTo: content.heightAnchor, multiplier: 0.66).isActive = true
+        }
     }
 }
 
 extension RoomView: MiniViewDelegate {
     func didTapCloseMiniView(_: MiniView) {
         room.closeMini()
-    }
-}
-
-extension RoomView: DrawerViewDelegate {
-    func drawer(_ drawerView: DrawerView, didTransitionTo position: DrawerPosition) {
-        if position == .closed {
-            drawerView.removeFromSuperview()
-        }
     }
 }

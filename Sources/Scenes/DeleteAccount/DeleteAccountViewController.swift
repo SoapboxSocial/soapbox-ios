@@ -8,6 +8,7 @@ class DeleteAccountViewController: DrawerViewController {
         field.autocorrectionType = .no
         field.autocapitalizationType = .none
         field.textAlignment = .center
+        field.returnKeyType = .done
         return field
     }()
 
@@ -50,6 +51,8 @@ class DeleteAccountViewController: DrawerViewController {
         type.textAlignment = .center
         type.textColor = .secondaryLabel
         view.addSubview(type)
+
+        textField.delegate = self
 
         view.addSubview(textField)
         view.addSubview(button)
@@ -135,5 +138,12 @@ class DeleteAccountViewController: DrawerViewController {
 
     @objc private func cancelPressed() {
         dismiss(animated: true)
+    }
+}
+
+extension DeleteAccountViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }

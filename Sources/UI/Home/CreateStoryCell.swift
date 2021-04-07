@@ -11,13 +11,9 @@ class CreateStoryCell: UICollectionViewCell {
         return view
     }()
 
-    private var image: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
+    private var image: RoundedImageView = {
+        let view = RoundedImageView()
         view.backgroundColor = .brandColor
-        view.clipsToBounds = true
-        view.layer.masksToBounds = true
-
         return view
     }()
 
@@ -97,11 +93,6 @@ class CreateStoryCell: UICollectionViewCell {
             plus.widthAnchor.constraint(equalToConstant: 26),
             plus.heightAnchor.constraint(equalToConstant: 26),
         ])
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        image.layer.cornerRadius = frame.size.width / 2
     }
 
     required init?(coder _: NSCoder) {

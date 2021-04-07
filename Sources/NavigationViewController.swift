@@ -73,11 +73,7 @@ class NavigationViewController: UINavigationController {
         activityIndicator.center = view.center
         view.addSubview(activityIndicator)
 
-        navigationBar.shadowImage = UIImage()
         navigationBar.isHidden = false
-        navigationBar.isTranslucent = false
-        navigationBar.barTintColor = .background
-        navigationBar.tintColor = .brandColor
     }
 
     @objc func didTapCreateRoom() {
@@ -124,6 +120,12 @@ class NavigationViewController: UINavigationController {
         }
     }
 
+    func openPreviewDrawerFor(room: String) {
+        let preview = RoomPreviewViewController(id: room)
+        preview.delegate = self
+        present(preview, animated: true)
+    }
+
     private func showClosedError() {
         let banner = NotificationBanner(
             title: NSLocalizedString("room_was_closed", comment: ""),
@@ -158,6 +160,14 @@ class NavigationViewController: UINavigationController {
         DispatchQueue.main.async {
             self.present(ActionSheetFactory.microphoneWarningActionSheet(), animated: true)
         }
+    }
+}
+
+extension NavigationViewController: RoomPreviewViewControllerDelegate {
+    func roomPreviewViewController(_ view: RoomPreviewViewController, shouldJoin room: String) {
+        view.dismiss(animated: true, completion: {
+            self.didSelect(room: room)
+        })
     }
 }
 

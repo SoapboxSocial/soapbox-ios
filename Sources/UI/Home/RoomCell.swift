@@ -10,12 +10,10 @@ class RoomCell: UICollectionViewCell {
             switch style {
             case .normal:
                 contentView.backgroundColor = .foreground
-                badge.style = .normal
                 title.textColor = .label
                 lockImage.tintColor = .label
                 groupLabel.textColor = .secondaryLabel
             case .current:
-                badge.style = .current
                 contentView.backgroundColor = .brandColor
                 lockImage.tintColor = .white
                 title.textColor = .white
@@ -47,20 +45,10 @@ class RoomCell: UICollectionViewCell {
     var members = [RoomAPIClient.Member]() {
         didSet {
             createImageViews()
-
-            if members.count >= 16 {
-                badge.label.text = NSLocalizedString("full", comment: "")
-            }
         }
     }
 
-    private var badge: RoomBadge = {
-        let badge = RoomBadge(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-        badge.translatesAutoresizingMaskIntoConstraints = false
-        return badge
-    }()
-
-    private var lockImage: UIImageView = {
+    private var lockImage: UIView = {
         let lock = UIImageView(image: UIImage(systemName: "lock", withConfiguration: UIImage.SymbolConfiguration(weight: .medium)))
         lock.tintColor = .label
         lock.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
@@ -97,12 +85,9 @@ class RoomCell: UICollectionViewCell {
         return label
     }()
 
-    private var groupImage: UIImageView = {
-        let image = UIImageView()
-        image.layer.cornerRadius = 24 / 2
-        image.layer.masksToBounds = true
+    private var groupImage: RoundedImageView = {
+        let image = RoundedImageView()
         image.backgroundColor = .background
-        image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
 
@@ -110,6 +95,16 @@ class RoomCell: UICollectionViewCell {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
+    }()
+
+    private var topStack: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.spacing = 10
+        stack.distribution = .fill
+        stack.alignment = .fill
+        stack.axis = .vertical
+        return stack
     }()
 
     private var imageViews = [UIView]()
@@ -120,20 +115,14 @@ class RoomCell: UICollectionViewCell {
         backgroundColor = .clear
         widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.width).isActive = true
 
-        let topScroll = UIStackView()
-        topScroll.translatesAutoresizingMaskIntoConstraints = false
-        topScroll.spacing = 10
-        topScroll.distribution = .fill
-        topScroll.alignment = .fill
-        topScroll.axis = .vertical
-        contentView.addSubview(topScroll)
+        contentView.addSubview(topStack)
 
-        let titleScroll = UIStackView()
-        titleScroll.translatesAutoresizingMaskIntoConstraints = false
-        titleScroll.spacing = 10
-        titleScroll.distribution = .fill
-        titleScroll.alignment = .fill
-        titleScroll.axis = .horizontal
+        let titleStack = UIStackView()
+        titleStack.translatesAutoresizingMaskIntoConstraints = false
+        titleStack.spacing = 10
+        titleStack.distribution = .fill
+        titleStack.alignment = .center
+        titleStack.axis = .horizontal
 
         contentView.backgroundColor = .foreground
         contentView.translatesAutoresizingMaskIntoConstraints = false
@@ -142,17 +131,13 @@ class RoomCell: UICollectionViewCell {
         groupView.addSubview(groupImage)
         groupView.addSubview(groupLabel)
 
-        groupLabel.text = "this is a test"
+        topStack.addArrangedSubview(titleStack)
+        topStack.addArrangedSubview(groupView)
 
-        topScroll.addArrangedSubview(groupView)
-        topScroll.addArrangedSubview(titleScroll)
-
-        titleScroll.addArrangedSubview(lock)
-        titleScroll.addArrangedSubview(title)
+        titleStack.addArrangedSubview(lock)
+        titleStack.addArrangedSubview(title)
 
         lock.addSubview(lockImage)
-
-        contentView.addSubview(badge)
 
         NSLayoutConstraint.activate([
             groupImage.leftAnchor.constraint(equalTo: groupView.leftAnchor),
@@ -174,17 +159,17 @@ class RoomCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             lock.heightAnchor.constraint(equalToConstant: 20),
             lock.widthAnchor.constraint(equalToConstant: 20),
-            lock.leftAnchor.constraint(equalTo: titleScroll.leftAnchor),
-            lock.centerYAnchor.constraint(equalTo: titleScroll.centerYAnchor),
+            lock.leftAnchor.constraint(equalTo: titleStack.leftAnchor),
+            lock.centerYAnchor.constraint(equalTo: titleStack.centerYAnchor),
         ])
 
         NSLayoutConstraint.activate([
-            titleScroll.heightAnchor.constraint(equalToConstant: 28),
-            titleScroll.bottomAnchor.constraint(equalTo: title.bottomAnchor),
+            titleStack.heightAnchor.constraint(equalToConstant: 28),
+            titleStack.bottomAnchor.constraint(equalTo: title.bottomAnchor),
         ])
 
         NSLayoutConstraint.activate([
-            groupView.leftAnchor.constraint(equalTo: topScroll.leftAnchor),
+            groupView.leftAnchor.constraint(equalTo: topStack.leftAnchor),
             groupView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
             groupView.heightAnchor.constraint(equalToConstant: 24),
         ])
@@ -192,21 +177,14 @@ class RoomCell: UICollectionViewCell {
         groupView.isHidden = true
 
         NSLayoutConstraint.activate([
-            topScroll.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
-            topScroll.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
-            topScroll.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
-            topScroll.bottomAnchor.constraint(equalTo: titleScroll.bottomAnchor),
+            topStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
+            topStack.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
+            topStack.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
         ])
 
         NSLayoutConstraint.activate([
-            titleScroll.leftAnchor.constraint(equalTo: topScroll.leftAnchor),
-            titleScroll.rightAnchor.constraint(equalTo: topScroll.rightAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
-            badge.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 20),
-            badge.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
-            badge.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
+            titleStack.leftAnchor.constraint(equalTo: topStack.leftAnchor),
+            titleStack.rightAnchor.constraint(equalTo: topStack.rightAnchor),
         ])
 
         NSLayoutConstraint.activate([
@@ -228,10 +206,11 @@ class RoomCell: UICollectionViewCell {
 
         // @todo only use members with images
         let count = members.count
+        let visible = 6
 
-        for i in 0 ..< min(4, count) {
+        for i in 0 ..< min(visible + 1, count) {
             let view: UIView = {
-                if i == 3, count > 3 {
+                if i == visible, count > visible {
                     let view = UIView()
                     if style == .current {
                         view.backgroundColor = .brandColor
@@ -250,7 +229,7 @@ class RoomCell: UICollectionViewCell {
                     }
 
                     label.font = .rounded(forTextStyle: .body, weight: .black)
-                    label.text = String(min(members.count - 3, 9))
+                    label.text = String(min(members.count - visible, 9))
                     view.addSubview(label)
 
                     let plus = UILabel()
@@ -303,7 +282,7 @@ class RoomCell: UICollectionViewCell {
             view.layer.borderColor = contentView.backgroundColor?.cgColor
 
             NSLayoutConstraint.activate([
-                view.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 20),
+                view.topAnchor.constraint(equalTo: topStack.bottomAnchor, constant: 30),
                 view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
                 view.heightAnchor.constraint(equalToConstant: 40.0),
                 view.widthAnchor.constraint(equalToConstant: 40.0),

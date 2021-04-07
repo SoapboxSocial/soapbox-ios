@@ -70,6 +70,21 @@ class AuthenticationViewController: UIPageViewController {
 }
 
 extension AuthenticationViewController: AuthenticationPresenterOutput {
+    func displayEmailRegistrationDisabledError() {
+        if let controller = orderedViewControllers[state.rawValue] as? AuthenticationViewControllerWithInput {
+            controller.enableSubmit()
+        }
+
+        let banner = NotificationBanner(title: NSLocalizedString("register_with_email_disabled_use_apple", comment: ""), style: .danger, type: .normal)
+        banner.onTap = {
+            DispatchQueue.main.async {
+                self.transitionTo(state: .getStarted)
+            }
+        }
+
+        banner.show()
+    }
+
     func displayError(_ style: NotificationBanner.BannerType, title: String, description: String?) {
         if let controller = orderedViewControllers[state.rawValue] as? AuthenticationViewControllerWithInput {
             controller.enableSubmit()
@@ -80,9 +95,14 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
     }
 
     func transitionTo(state: AuthenticationInteractor.AuthenticationState) {
+        var direction = UIPageViewController.NavigationDirection.forward
+        if state.rawValue < self.state.rawValue {
+            direction = .reverse
+        }
+
         self.state = state
 
-        setViewControllers([orderedViewControllers[state.rawValue]], direction: .forward, animated: true)
+        setViewControllers([orderedViewControllers[state.rawValue]], direction: direction, animated: true)
     }
 }
 

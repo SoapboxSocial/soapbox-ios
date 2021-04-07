@@ -1,8 +1,8 @@
 import UIKit
 
-class EditImageButton: UIImageView {
-    init() {
-        super.init(frame: CGRect.zero)
+class EditImageButton: RoundedImageView {
+    override init() {
+        super.init()
         setup()
     }
 
@@ -18,9 +18,6 @@ class EditImageButton: UIImageView {
 
     private func setup() {
         backgroundColor = .brandColor
-        clipsToBounds = true
-
-        translatesAutoresizingMaskIntoConstraints = false
 
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -53,6 +50,5 @@ class EditImageButton: UIImageView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        layer.cornerRadius = frame.size.width / 2
     }
 }

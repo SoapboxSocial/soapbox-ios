@@ -18,9 +18,10 @@ class MiniView: UIView {
         let displayName: String
         let id: Int
         let image: String
+        let username: String
 
         private enum CodingKeys: String, CodingKey {
-            case id, displayName = "display_name", image
+            case id, displayName = "display_name", image, username
         }
     }
 
@@ -106,7 +107,7 @@ class MiniView: UIView {
 
     var delegate: MiniViewDelegate?
 
-    init(app: String, room: Room, appOpener: Bool = false) {
+    init(app: Soapbox_V1_RoomState.Mini, room: Room, appOpener: Bool = false) {
         self.room = room
 
         super.init(frame: .zero)
@@ -126,8 +127,15 @@ class MiniView: UIView {
         content.addArrangedSubview(buttonView)
 
         for event in Query.allCases {
-            webView.configuration.userContentController.add(self, name: event.rawValue)
+            webView.configuration.userContentController.add(WKScriptMessageHandlerLeakAvoider(self), name: event.rawValue)
         }
+
+        #if DEBUG
+            let source = "function captureLog(msg) { window.webkit.messageHandlers.logHandler.postMessage(msg); } window.console.log = captureLog;"
+            let script = WKUserScript(source: source, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
+            webView.configuration.userContentController.addUserScript(script)
+            webView.configuration.userContentController.add(WKScriptMessageHandlerLeakAvoider(self), name: "logHandler")
+        #endif
 
         NSLayoutConstraint.activate([
             buttonView.leftAnchor.constraint(equalTo: leftAnchor),
@@ -154,7 +162,7 @@ class MiniView: UIView {
             content.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
 
-        guard var url = URL(string: "https://apps.soapbox.social\(app)") else {
+        guard var url = URL(string: "https://apps.soapbox.social\(app.slug)") else {
             return
         }
 
@@ -216,6 +224,12 @@ class MiniView: UIView {
 
 extension MiniView: WKScriptMessageHandler {
     func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {
+        #if DEBUG
+            if message.name == "logHandler" {
+                return debugPrint("console.log: \(message.body)")
+            }
+        #endif
+
         guard let event = Query(rawValue: message.name) else {
             return
         }
@@ -237,11 +251,11 @@ extension MiniView: WKScriptMessageHandler {
             respond(
                 .user,
                 sequence: sequence.int64Value,
-                data: .user(UserData(displayName: user.displayName, id: user.id, image: user.image ?? ""))
+                data: .user(UserData(displayName: user.displayName, id: user.id, image: user.image ?? "", username: user.username))
             )
         case .members:
             let members = room.state.members.map {
-                UserData(displayName: $0.displayName, id: Int($0.id), image: $0.image)
+                UserData(displayName: $0.displayName, id: Int($0.id), image: $0.image, username: $0.username)
             }
 
             respond(.members, sequence: sequence.int64Value, data: .members(members))
@@ -250,6 +264,13 @@ extension MiniView: WKScriptMessageHandler {
 
     func close(callback: (() -> Void)? = nil) {
         write(.closed, data: "{}", completion: callback)
+
+        webView.stopLoading()
+        webView.configuration.userContentController.removeAllUserScripts()
+
+        if #available(iOS 14.0, *) {
+            webView.configuration.userContentController.removeAllScriptMessageHandlers()
+        }
     }
 
     @objc private func exitTapped() {

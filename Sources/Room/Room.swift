@@ -18,7 +18,7 @@ protocol RoomDelegate {
     func usersSpeaking(users: [Int])
     func linkWasPinned(link: URL)
     func pinnedLinkWasRemoved()
-    func opened(mini: String, isAppOpener: Bool)
+    func opened(mini: Soapbox_V1_RoomState.Mini, from: Int64)
     func closedMini(source: Bool)
 }
 
@@ -198,12 +198,12 @@ class Room {
         delegate?.pinnedLinkWasRemoved()
     }
 
-    func open(mini: String) {
-        delegate?.opened(mini: mini, isAppOpener: true)
+    func open(mini: Soapbox_V1_RoomState.Mini) {
+        delegate?.opened(mini: mini, from: 0)
 
         // @TODO THIS SHOULD BE A CALLBACK ON THE VIEW ONCE LOADING IS DONE
         client.send(command: .openMini(Soapbox_V1_Command.OpenMini.with {
-            $0.mini = mini
+            $0.id = mini.id
         }))
     }
 
@@ -249,7 +249,7 @@ extension Room {
         case .unpinnedLink:
             linkWasUnpinned()
         case let .openedMini(evt):
-            on(openedMini: evt.mini)
+            on(openedMini: evt.mini, from: event.from)
         case .closedMini:
             onMiniClosed()
         default:
@@ -338,8 +338,8 @@ extension Room {
         delegate?.wasMutedByAdmin()
     }
 
-    private func on(openedMini mini: String) {
-        delegate?.opened(mini: mini, isAppOpener: false)
+    private func on(openedMini mini: Soapbox_V1_RoomState.Mini, from: Int64) {
+        delegate?.opened(mini: mini, from: from)
     }
 
     private func onMiniClosed() {

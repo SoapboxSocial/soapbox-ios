@@ -41,7 +41,6 @@
 
 "follows_you" = "Follows you";
 "follow" = "Follow";
-"unfollow" = "Unfollow";
 
 "following" = "Following";
 "followers" = "Followers";
@@ -87,7 +86,6 @@
 "got_something_to_say" = "Got something to say?";
 "start_a_room" = "Start a room 👇";
 "join_in" = "Join in";
-"current" = "Current";
 
 "create_a_room" = "Create a room";
 "room_was_closed" = "This room was already closed!";
@@ -129,8 +127,6 @@
 "restricted_group_description" = "Anyone can view, but only invited users can create and join rooms";
 
 "started_following_you" = "started following you.";
-
-"full" = "Full";
 
 "invalid_name" = "Please enter a valid name";
 "failed_to_create_group" = "Failed to create group.";
@@ -256,3 +252,8 @@
 "deleting_is_permanent" = "Deleting your account is an irreversible action, your account will be deleted immediately!";
 "delete_caps" = "DELETE";
 "type_delete" = "Type \"DELETE\"";
+
+"user_shared_a_link" = "%@ shared a link!";
+"user_opened_mini" = "%@ started \"%@\", come play!";
+
+"register_with_email_disabled_use_apple" = "Registering with email is currently disabled, Click here to Sign in with Apple instead!";

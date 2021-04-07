@@ -20,7 +20,7 @@ xcodeproj = "Soapbox.xcodeproj"
 workspace = "Soapbox.xcworkspace"
 scheme = "Soapbox"
 output_name = "Soapbox.ipa"
-codesigning_identity = "Apple Distribution: Dean Eigenmann (Z9LC5GZ33U)"
+codesigning_identity = "Apple Distribution: Soaper Inc. (Z9LC5GZ33U)"
 
 platform :ios do
   desc "Push a new release build to the App Store"

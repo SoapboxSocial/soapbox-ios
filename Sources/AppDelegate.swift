@@ -11,6 +11,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private var launchedShortcutItem: UIApplicationShortcutItem?
 
+    private var launchedNotificationItem: [String: AnyObject]?
+
     func application(
         _: UIApplication,
         didFinishLaunchingWithOptions options: [UIApplication.LaunchOptionsKey: Any]?
@@ -42,7 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         NotificationManager.shared.requestAuthorization()
 
         if let notification = options?[.remoteNotification] as? [String: AnyObject] {
-            launchWith(notification: notification)
+            launchedNotificationItem = notification
         }
 
         if let shortcutItem = options?[UIApplication.LaunchOptionsKey.shortcutItem] as? UIApplicationShortcutItem {
@@ -75,7 +77,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
         if application.applicationState == .inactive || application.applicationState == .background {
             guard let notification = userInfo as? [String: AnyObject] else { return }
-            launchWith(notification: notification)
+            launchedNotificationItem = notification
         }
     }
 
@@ -215,13 +217,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_: UIApplication) {
-        guard let shortcut = launchedShortcutItem else { return }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            _ = self.handle(shortcutItem: shortcut)
+        if let notification = launchedNotificationItem {
+            launchedNotificationItem = nil
+            return DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.launchWith(notification: notification)
+            }
         }
 
-        launchedShortcutItem = nil
+        if let shortcut = launchedShortcutItem {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                _ = self.handle(shortcutItem: shortcut)
+            }
+
+            launchedShortcutItem = nil
+        }
     }
 
     private func handle(shortcutItem: UIApplicationShortcutItem) -> Bool {
@@ -289,9 +298,11 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         }
     }
 
-    func userNotificationCenter(_: UNUserNotificationCenter,
-                                willPresent notification: UNNotification,
-                                withCompletionHandler _: @escaping (UNNotificationPresentationOptions) -> Void) {
+    func userNotificationCenter(
+        _: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler _: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
         guard let aps = notification.request.content.userInfo["aps"] as? [String: AnyObject] else {
             return
         }
@@ -325,7 +336,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                     return
                 }
 
-                nav.didSelect(room: id)
+                nav.openPreviewDrawerFor(room: id)
             case "NEW_FOLLOWER":
                 guard let id = args["id"] as? Int else {
                     return
