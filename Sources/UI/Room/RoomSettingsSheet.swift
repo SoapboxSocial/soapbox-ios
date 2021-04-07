@@ -8,9 +8,7 @@ class RoomSettingsSheet {
             self.editRoomNameButtonTapped(room: room)
         }))
 
-        if !room.state.hasGroup {
-            sheet.add(action: createVisibilityToggle(room: room))
-        }
+        sheet.add(action: createVisibilityToggle(room: room))
 
         sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
         view.present(sheet, animated: true)
