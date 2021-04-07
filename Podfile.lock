@@ -4,7 +4,7 @@ PODS:
   - AlamofireImage (4.2.0):
     - Alamofire (~> 5.4)
   - BetterSegmentedControl (2.0.1)
-  - DrawerView (1.3.2)
+  - DrawerView (1.3.3)
   - EasyTipView (2.1.0)
   - GoogleWebRTC (1.1.31999)
   - GSImageViewerController (1.6.3)
@@ -26,7 +26,7 @@ DEPENDENCIES:
   - Alamofire
   - AlamofireImage
   - BetterSegmentedControl (~> 2.0)
-  - "DrawerView (from `git@github.com:SoapboxSocial/DrawerView.git`, commit `27f03afaf2b5c590c18614485a3b9d8f82711bfe`)"
+  - "DrawerView (from `git@github.com:SoapboxSocial/DrawerView.git`, commit `4e9ac525ae1784ba0c8daaa5830433b708461841`)"
   - EasyTipView
   - GoogleWebRTC
   - GSImageViewerController
@@ -60,14 +60,14 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   DrawerView:
-    :commit: 27f03afaf2b5c590c18614485a3b9d8f82711bfe
+    :commit: 4e9ac525ae1784ba0c8daaa5830433b708461841
     :git: "git@github.com:SoapboxSocial/DrawerView.git"
   Swifter:
     :git: "git@github.com:mattdonnelly/Swifter.git"
 
 CHECKOUT OPTIONS:
   DrawerView:
-    :commit: 27f03afaf2b5c590c18614485a3b9d8f82711bfe
+    :commit: 4e9ac525ae1784ba0c8daaa5830433b708461841
     :git: "git@github.com:SoapboxSocial/DrawerView.git"
   Swifter:
     :commit: 50682ebe64e4c08f18957ccfd16888f035c20755
@@ -78,7 +78,7 @@ SPEC CHECKSUMS:
   Alamofire: bfbc4c2fe5909b1d94fb4ef2277c6b3727ef5dae
   AlamofireImage: 34a2d90b0e5fe6a5605f85ae4b7b01e784c60192
   BetterSegmentedControl: 09607b27861d49cbce48b7673b74f9150a3d371a
-  DrawerView: e4ceb9ddbd71548143c66565f4f3258d7b4d7821
+  DrawerView: 41c5e5d6593d86335ee2cf9b18d738835593dbc1
   EasyTipView: a92b6edc377b81c5ac18e9fd35d5ee78e9409488
   GoogleWebRTC: b39a78c4f5cc6b0323415b9233db03a2faa7b0f0
   GSImageViewerController: 20a257d7e3dd9ee171c2dfea659992eba2761839
@@ -93,6 +93,6 @@ SPEC CHECKSUMS:
   SwiftProtobuf: 3320217e9d8fb75f36b40282e78c482640fd75dd
   UIWindowTransitions: 2237083382e11f100db7de934041bba0c4669c86
 
-PODFILE CHECKSUM: 7e56cc5fab10f47550d41aff2705e527e0e99f60
+PODFILE CHECKSUM: 2e59b82efd186e93c38b10b1d225502c48ce8451
 
 COCOAPODS: 1.10.1
