@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.24.0] - 2021-04-07Z
+
  - We've decided to remove groups.
 
 ## [2.23.0] - 2021-04-06Z
