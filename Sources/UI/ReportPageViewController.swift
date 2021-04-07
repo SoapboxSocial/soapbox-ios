@@ -20,12 +20,10 @@ class ReportPageViewController: UIViewController {
 
     private let userId: Int
     private let reportedUserId: Int?
-    private let reportedGroupId: Int?
 
-    init(userId: Int, reportedUserId: Int? = nil, reportedGroupId: Int? = nil) {
+    init(userId: Int, reportedUserId: Int? = nil) {
         self.userId = userId
         self.reportedUserId = reportedUserId
-        self.reportedGroupId = reportedGroupId
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -53,10 +51,6 @@ class ReportPageViewController: UIViewController {
 
         if let reportedUser = reportedUserId {
             url.appendQueryParameters(["reportedUserId": String(reportedUser)])
-        }
-
-        if let reportedGroup = reportedGroupId {
-            url.appendQueryParameters(["reportedGroupId": String(reportedGroup)])
         }
 
         webView.load(URLRequest(url: url))

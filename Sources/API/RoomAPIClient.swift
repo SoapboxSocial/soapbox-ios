@@ -22,7 +22,6 @@ class RoomAPIClient: Client {
         let name: String
         let visibility: Visibility
         let members: [Member]
-        let group: APIClient.Group?
     }
 
     init() {

@@ -240,9 +240,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         switch shortcutItem.type {
         case "NEW_ROOM":
-            nav.createRoom(name: nil, isPrivate: false, group: nil, users: [])
+            nav.createRoom(name: nil, isPrivate: false, users: [])
         case "NEW_PRIVATE_ROOM":
-            nav.createRoom(name: nil, isPrivate: true, group: nil, users: []) // @TODO THIS IS A TAD BIT DUMB
+            nav.createRoom(name: nil, isPrivate: true, users: []) // @TODO THIS IS A TAD BIT DUMB
         default:
             break
         }
@@ -343,12 +343,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 }
 
                 nav.pushViewController(SceneFactory.createProfileViewController(id: id), animated: true)
-            case "GROUP_INVITE":
-                guard let id = args["id"] as? Int else {
-                    return
-                }
-
-                nav.pushViewController(SceneFactory.createGroupViewController(id: id), animated: true)
             default:
                 break
             }

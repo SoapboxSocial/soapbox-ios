@@ -137,9 +137,6 @@ extension NotificationsViewController: UICollectionViewDataSource {
         switch notification.category {
         case "NEW_FOLLOWER":
             body = NSLocalizedString("started_following_you", comment: "")
-        case "GROUP_INVITE":
-            let fmt = NSLocalizedString("invited_you_to_join", comment: "")
-            body = String(format: fmt, notification.group?.name ?? "")
         case "WELCOME_ROOM":
             body = NSLocalizedString("just_joined_welcome", comment: "")
         default:
@@ -191,12 +188,6 @@ extension NotificationsViewController: UICollectionViewDelegate {
         switch item.category {
         case "NEW_FOLLOWER":
             nav.pushViewController(SceneFactory.createProfileViewController(id: item.from.id), animated: true)
-        case "GROUP_INVITE":
-            guard let id = item.group?.id else {
-                return
-            }
-
-            nav.pushViewController(SceneFactory.createGroupViewController(id: id), animated: true)
         case "WELCOME_ROOM":
             guard let room = item.room else {
                 return

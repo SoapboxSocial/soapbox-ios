@@ -846,15 +846,6 @@ struct Soapbox_V1_RoomState {
 
   var visibility: Soapbox_V1_Visibility = .public
 
-  var group: Soapbox_V1_RoomState.Group {
-    get {return _group ?? Soapbox_V1_RoomState.Group()}
-    set {_group = newValue}
-  }
-  /// Returns true if `group` has been explicitly set.
-  var hasGroup: Bool {return self._group != nil}
-  /// Clears the value of `group`. Subsequent reads from it will return its default value.
-  mutating func clearGroup() {self._group = nil}
-
   var link: String = String()
 
   var miniOld: String = String()
@@ -922,22 +913,6 @@ struct Soapbox_V1_RoomState {
     init() {}
   }
 
-  struct Group {
-    // SwiftProtobuf.Message conformance is added in an extension below. See the
-    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-    // methods supported on all messages.
-
-    var id: Int64 = 0
-
-    var name: String = String()
-
-    var image: String = String()
-
-    var unknownFields = SwiftProtobuf.UnknownStorage()
-
-    init() {}
-  }
-
   struct Mini {
     // SwiftProtobuf.Message conformance is added in an extension below. See the
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -989,7 +964,6 @@ struct Soapbox_V1_RoomState {
 
   init() {}
 
-  fileprivate var _group: Soapbox_V1_RoomState.Group? = nil
   fileprivate var _mini: Soapbox_V1_RoomState.Mini? = nil
 }
 
@@ -2359,7 +2333,6 @@ extension Soapbox_V1_RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     3: .same(proto: "members"),
     4: .same(proto: "role"),
     5: .same(proto: "visibility"),
-    6: .same(proto: "group"),
     7: .same(proto: "link"),
     8: .standard(proto: "mini_old"),
     9: .same(proto: "mini"),
@@ -2373,7 +2346,6 @@ extension Soapbox_V1_RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
       case 3: try decoder.decodeRepeatedMessageField(value: &self.members)
       case 4: try decoder.decodeSingularStringField(value: &self.role)
       case 5: try decoder.decodeSingularEnumField(value: &self.visibility)
-      case 6: try decoder.decodeSingularMessageField(value: &self._group)
       case 7: try decoder.decodeSingularStringField(value: &self.link)
       case 8: try decoder.decodeSingularStringField(value: &self.miniOld)
       case 9: try decoder.decodeSingularMessageField(value: &self._mini)
@@ -2398,9 +2370,6 @@ extension Soapbox_V1_RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     if self.visibility != .public {
       try visitor.visitSingularEnumField(value: self.visibility, fieldNumber: 5)
     }
-    if let v = self._group {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
-    }
     if !self.link.isEmpty {
       try visitor.visitSingularStringField(value: self.link, fieldNumber: 7)
     }
@@ -2419,7 +2388,6 @@ extension Soapbox_V1_RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
     if lhs.members != rhs.members {return false}
     if lhs.role != rhs.role {return false}
     if lhs.visibility != rhs.visibility {return false}
-    if lhs._group != rhs._group {return false}
     if lhs.link != rhs.link {return false}
     if lhs.miniOld != rhs.miniOld {return false}
     if lhs._mini != rhs._mini {return false}
@@ -2498,47 +2466,6 @@ extension Soapbox_V1_RoomState.RoomMember.Role: SwiftProtobuf._ProtoNameProvidin
     0: .same(proto: "ROLE_REGULAR"),
     1: .same(proto: "ROLE_ADMIN"),
   ]
-}
-
-extension Soapbox_V1_RoomState.Group: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  static let protoMessageName: String = Soapbox_V1_RoomState.protoMessageName + ".Group"
-  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "id"),
-    2: .same(proto: "name"),
-    3: .same(proto: "image"),
-  ]
-
-  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
-      case 2: try decoder.decodeSingularStringField(value: &self.name)
-      case 3: try decoder.decodeSingularStringField(value: &self.image)
-      default: break
-      }
-    }
-  }
-
-  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if self.id != 0 {
-      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
-    }
-    if !self.name.isEmpty {
-      try visitor.visitSingularStringField(value: self.name, fieldNumber: 2)
-    }
-    if !self.image.isEmpty {
-      try visitor.visitSingularStringField(value: self.image, fieldNumber: 3)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  static func ==(lhs: Soapbox_V1_RoomState.Group, rhs: Soapbox_V1_RoomState.Group) -> Bool {
-    if lhs.id != rhs.id {return false}
-    if lhs.name != rhs.name {return false}
-    if lhs.image != rhs.image {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
 }
 
 extension Soapbox_V1_RoomState.Mini: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {

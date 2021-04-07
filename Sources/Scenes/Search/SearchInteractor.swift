@@ -2,9 +2,7 @@ import Foundation
 
 protocol SearchInteractorOutput {
     func didFetch(users: [APIClient.User])
-    func didFetch(groups: [APIClient.Group])
     func didFetchMore(users: [APIClient.User])
-    func didFetchMore(groups: [APIClient.Group])
     func failedToFetch()
 }
 
@@ -12,7 +10,7 @@ class SearchInteractor {
     private let output: SearchInteractorOutput
     private let api: APIClient
 
-    private let initialLimit = 6
+    private let initialLimit = 10
 
     private let limit = 10
     private var offsets = [APIClient.SearchIndex: Int]()
@@ -22,7 +20,6 @@ class SearchInteractor {
         self.output = output
         self.api = api
 
-        offsets[.groups] = 0
         offsets[.users] = 0
     }
 }
@@ -31,19 +28,12 @@ extension SearchInteractor: SearchViewControllerOutput {
     func search(_ keyword: String) {
         self.keyword = keyword
 
-        api.search(keyword, types: [.users, .groups], limit: initialLimit, offset: 0, callback: { result in
+        api.search(keyword, types: [.users], limit: initialLimit, offset: 0, callback: { result in
             switch result {
             case .failure:
                 self.output.failedToFetch()
             case let .success(response):
-                self.offsets[.groups] = 0
                 self.offsets[.users] = 0
-
-                if let groups = response.groups {
-                    self.output.didFetch(groups: groups)
-                } else {
-                    self.output.didFetch(groups: [])
-                }
 
                 if let users = response.users {
                     self.output.didFetch(users: users)
@@ -82,8 +72,6 @@ extension SearchInteractor: SearchViewControllerOutput {
                 self.offsets[type] = nextOffset
 
                 switch type {
-                case .groups:
-                    self.output.didFetchMore(groups: response.groups ?? [])
                 case .users:
                     self.output.didFetchMore(users: response.users ?? [])
                 }

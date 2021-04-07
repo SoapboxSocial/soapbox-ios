@@ -269,8 +269,6 @@ struct Soapbox_V1_CreateRequest {
 
   var visibility: Soapbox_V1_Visibility = .public
 
-  var group: Int64 = 0
-
   var users: [Int64] = []
 
   var description_p: Soapbox_V1_SessionDescription {
@@ -663,7 +661,6 @@ extension Soapbox_V1_CreateRequest: SwiftProtobuf.Message, SwiftProtobuf._Messag
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "name"),
     2: .same(proto: "visibility"),
-    3: .same(proto: "group"),
     4: .same(proto: "users"),
     5: .same(proto: "description"),
   ]
@@ -673,7 +670,6 @@ extension Soapbox_V1_CreateRequest: SwiftProtobuf.Message, SwiftProtobuf._Messag
       switch fieldNumber {
       case 1: try decoder.decodeSingularStringField(value: &self.name)
       case 2: try decoder.decodeSingularEnumField(value: &self.visibility)
-      case 3: try decoder.decodeSingularInt64Field(value: &self.group)
       case 4: try decoder.decodeRepeatedInt64Field(value: &self.users)
       case 5: try decoder.decodeSingularMessageField(value: &self._description_p)
       default: break
@@ -688,9 +684,6 @@ extension Soapbox_V1_CreateRequest: SwiftProtobuf.Message, SwiftProtobuf._Messag
     if self.visibility != .public {
       try visitor.visitSingularEnumField(value: self.visibility, fieldNumber: 2)
     }
-    if self.group != 0 {
-      try visitor.visitSingularInt64Field(value: self.group, fieldNumber: 3)
-    }
     if !self.users.isEmpty {
       try visitor.visitPackedInt64Field(value: self.users, fieldNumber: 4)
     }
@@ -703,7 +696,6 @@ extension Soapbox_V1_CreateRequest: SwiftProtobuf.Message, SwiftProtobuf._Messag
   static func ==(lhs: Soapbox_V1_CreateRequest, rhs: Soapbox_V1_CreateRequest) -> Bool {
     if lhs.name != rhs.name {return false}
     if lhs.visibility != rhs.visibility {return false}
-    if lhs.group != rhs.group {return false}
     if lhs.users != rhs.users {return false}
     if lhs._description_p != rhs._description_p {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}

@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - We've decided to remove groups.
+
 ## [2.23.0] - 2021-04-06Z
 
  - Ever missed out when someone shared a link? Not anymore!

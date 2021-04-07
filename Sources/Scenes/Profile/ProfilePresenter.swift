@@ -2,14 +2,12 @@ import Foundation
 
 protocol ProfilePresenterOutput {
     func display(profile: APIClient.Profile)
-    func display(groups: [APIClient.Group])
     func display(personal profile: APIClient.Profile)
     func didUnfollow()
     func didFollow()
     func didBlock()
     func didUnblock()
     func displayError(title: String, description: String?)
-    func display(moreGroups groups: [APIClient.Group])
     func display(stories: [APIClient.Story])
 }
 
@@ -41,14 +39,6 @@ class ProfilePresenter: ProfileInteractorOutput {
             title: NSLocalizedString("something_went_wrong", comment: ""),
             description: NSLocalizedString("please_try_again_later", comment: "")
         )
-    }
-
-    func display(groups: [APIClient.Group]) {
-        output.display(groups: groups)
-    }
-
-    func display(moreGroups groups: [APIClient.Group]) {
-        output.display(moreGroups: groups)
     }
 
     func display(stories: [APIClient.Story]) {
