@@ -12,14 +12,6 @@ class RoomPreviewViewController: DrawerViewController {
         return label
     }()
 
-    private let groupLabel: UILabel = {
-        let label = UILabel()
-        label.font = .rounded(forTextStyle: .subheadline, weight: .semibold)
-        label.textColor = .secondaryLabel
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
     private let id: String
     private let maxMembersToShow = 8
 
@@ -55,9 +47,6 @@ class RoomPreviewViewController: DrawerViewController {
         view.addSubview(stack)
 
         stack.addArrangedSubview(titleLabel)
-        stack.addArrangedSubview(groupLabel)
-
-        groupLabel.isHidden = true
 
         titleLabel.text = NSLocalizedString("listen_in", comment: "")
 
@@ -139,10 +128,6 @@ class RoomPreviewViewController: DrawerViewController {
             case let .success(room):
                 if room.name != "" {
                     self.titleLabel.text = room.name
-                }
-
-                if let group = room.group {
-                    self.groupLabel.text = group.name
                 }
 
                 self.room = room

@@ -12,12 +12,10 @@ class RoomCell: UICollectionViewCell {
                 contentView.backgroundColor = .foreground
                 title.textColor = .label
                 lockImage.tintColor = .label
-                groupLabel.textColor = .secondaryLabel
             case .current:
                 contentView.backgroundColor = .brandColor
                 lockImage.tintColor = .white
                 title.textColor = .white
-                groupLabel.textColor = .white
             }
 
             createImageViews()
@@ -62,41 +60,6 @@ class RoomCell: UICollectionViewCell {
         return view
     }()
 
-    var group: APIClient.Group? {
-        didSet {
-            if group == nil {
-                groupView.isHidden = true
-            } else {
-                if let image = group?.image, image != "" {
-                    groupImage.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
-                }
-
-                groupLabel.text = group?.name
-                groupView.isHidden = false
-            }
-        }
-    }
-
-    private var groupLabel: UILabel = {
-        let label = UILabel()
-        label.font = .rounded(forTextStyle: .footnote, weight: .semibold)
-        label.textColor = .secondaryLabel
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    private var groupImage: RoundedImageView = {
-        let image = RoundedImageView()
-        image.backgroundColor = .background
-        return image
-    }()
-
-    private var groupView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
     private var topStack: UIStackView = {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -128,28 +91,12 @@ class RoomCell: UICollectionViewCell {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         contentView.layer.cornerRadius = 30
 
-        groupView.addSubview(groupImage)
-        groupView.addSubview(groupLabel)
-
         topStack.addArrangedSubview(titleStack)
-        topStack.addArrangedSubview(groupView)
 
         titleStack.addArrangedSubview(lock)
         titleStack.addArrangedSubview(title)
 
         lock.addSubview(lockImage)
-
-        NSLayoutConstraint.activate([
-            groupImage.leftAnchor.constraint(equalTo: groupView.leftAnchor),
-            groupImage.widthAnchor.constraint(equalToConstant: 24),
-            groupImage.heightAnchor.constraint(equalToConstant: 24),
-        ])
-
-        NSLayoutConstraint.activate([
-            groupLabel.centerYAnchor.constraint(equalTo: groupImage.centerYAnchor),
-            groupLabel.leftAnchor.constraint(equalTo: groupImage.rightAnchor, constant: 8),
-            groupLabel.rightAnchor.constraint(equalTo: groupView.rightAnchor),
-        ])
 
         NSLayoutConstraint.activate([
             lockImage.heightAnchor.constraint(equalToConstant: 20),
@@ -167,14 +114,6 @@ class RoomCell: UICollectionViewCell {
             titleStack.heightAnchor.constraint(equalToConstant: 28),
             titleStack.bottomAnchor.constraint(equalTo: title.bottomAnchor),
         ])
-
-        NSLayoutConstraint.activate([
-            groupView.leftAnchor.constraint(equalTo: topStack.leftAnchor),
-            groupView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -20),
-            groupView.heightAnchor.constraint(equalToConstant: 24),
-        ])
-
-        groupView.isHidden = true
 
         NSLayoutConstraint.activate([
             topStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),

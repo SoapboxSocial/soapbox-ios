@@ -1,7 +1,7 @@
 import UIKit
 
 protocol RoomCreationDelegate {
-    func didEnterWithName(_ name: String?, isPrivate: Bool, group: Int?, users: [Int]?)
+    func didEnterWithName(_ name: String?, isPrivate: Bool, users: [Int]?)
 }
 
 class RoomCreationView: DrawerViewController, UITextFieldDelegate {
@@ -28,19 +28,6 @@ class RoomCreationView: DrawerViewController, UITextFieldDelegate {
         field.translatesAutoresizingMaskIntoConstraints = false
         field.returnKeyType = .done
         return field
-    }()
-
-    private let groupView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
-    private let groupsSlider: GroupsSlider = {
-        let slider = GroupsSlider(textColor: .white, imageBackground: .lightBrandColor, markSelection: true)
-        slider.backgroundColor = .brandColor
-        slider.translatesAutoresizingMaskIntoConstraints = false
-        return slider
     }()
 
     private let cancelButton: UIButton = {
@@ -72,7 +59,6 @@ class RoomCreationView: DrawerViewController, UITextFieldDelegate {
         return button
     }()
 
-    // @TODO MAYBE CHANGE LABEL FOR PRIVATE GROUP?
     private let visibilityTooltip: UILabel = {
         let label = UILabel()
         label.font = .rounded(forTextStyle: .title3, weight: .bold)
@@ -130,8 +116,6 @@ class RoomCreationView: DrawerViewController, UITextFieldDelegate {
         let creationView = createRoomView()
         scrollView.addSubview(creationView)
 
-        groupsSlider.delegate = self
-
         userList.delegate = self
         scrollView.addSubview(userList)
 
@@ -177,38 +161,6 @@ class RoomCreationView: DrawerViewController, UITextFieldDelegate {
         mutedText.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(mutedText)
 
-        let groupLabel = UILabel()
-        groupLabel.text = NSLocalizedString("choose_a_group", comment: "")
-        groupLabel.translatesAutoresizingMaskIntoConstraints = false
-        groupLabel.font = .rounded(forTextStyle: .title1, weight: .bold)
-        groupLabel.textColor = .white
-        groupView.addSubview(groupLabel)
-
-        groupView.addSubview(groupsSlider)
-
-        NSLayoutConstraint.activate([
-            groupLabel.topAnchor.constraint(equalTo: groupView.topAnchor),
-            groupLabel.leftAnchor.constraint(equalTo: groupView.leftAnchor, constant: 20),
-            groupLabel.rightAnchor.constraint(equalTo: groupView.rightAnchor, constant: -20),
-        ])
-
-        NSLayoutConstraint.activate([
-            groupsSlider.heightAnchor.constraint(equalToConstant: 82),
-            groupsSlider.topAnchor.constraint(equalTo: groupLabel.bottomAnchor, constant: 20),
-            groupsSlider.leftAnchor.constraint(equalTo: groupView.leftAnchor),
-            groupsSlider.rightAnchor.constraint(equalTo: groupView.rightAnchor),
-            groupsSlider.bottomAnchor.constraint(equalTo: groupView.bottomAnchor),
-        ])
-
-        groupView.isHidden = true
-        view.addSubview(groupView)
-
-        NSLayoutConstraint.activate([
-            groupView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            groupView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            groupView.topAnchor.constraint(equalTo: visibilityTooltip.bottomAnchor, constant: 20),
-        ])
-
         NSLayoutConstraint.activate([
             textField.topAnchor.constraint(equalTo: view.topAnchor),
             textField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
@@ -235,28 +187,9 @@ class RoomCreationView: DrawerViewController, UITextFieldDelegate {
             mutedText.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
         ])
 
-        loadGroups()
         loadFriends()
 
         return view
-    }
-
-    func loadGroups() {
-        // @TODO Paginate
-        api.groups(id: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId), limit: 100, offset: 0, callback: { result in
-            switch result {
-            case .failure:
-                self.groupView.isHidden = true
-            case let .success(groups):
-                if groups.count == 0 {
-                    self.groupView.isHidden = true
-                    return
-                }
-
-                self.groupsSlider.set(groups: groups)
-                self.groupView.isHidden = false
-            }
-        })
     }
 
     func loadFriends() {
@@ -294,18 +227,13 @@ class RoomCreationView: DrawerViewController, UITextFieldDelegate {
             return
         }
 
-        var group: Int?
-        if !isPrivate {
-            group = groupsSlider.selectedGroup
-        }
-
         var users = [Int]()
         if isPrivate {
             users = userList.selected
         }
 
         dismiss(animated: true, completion: {
-            self.delegate?.didEnterWithName(self.textField.text, isPrivate: isPrivate, group: group, users: users)
+            self.delegate?.didEnterWithName(self.textField.text, isPrivate: isPrivate, users: users)
         })
     }
 
@@ -324,14 +252,8 @@ class RoomCreationView: DrawerViewController, UITextFieldDelegate {
         switch visibilityControl.index {
         case 0:
             button.setTitle(NSLocalizedString("start_room", comment: ""), for: .normal)
-
-            // @TODO WTF?
-            if groupsSlider.groupsCount >= 1 {
-                groupView.isHidden = false
-            }
         case 1:
             button.setTitle(NSLocalizedString("choose_people", comment: ""), for: .normal)
-            groupView.isHidden = true
         default:
             break
         }
@@ -340,12 +262,6 @@ class RoomCreationView: DrawerViewController, UITextFieldDelegate {
     private func updateVisibilityLabel() {
         switch visibilityControl.index {
         case 0:
-            if let id = groupsSlider.selectedGroup, let group = groupsSlider.data.first(where: { $0.id == id }), group.groupType == .private {
-                let text = NSLocalizedString("anyone_in_group_can_join", comment: "")
-                visibilityTooltip.text = String(format: text, group.name)
-                return
-            }
-
             visibilityTooltip.text = NSLocalizedString("anyone_can_join", comment: "")
         case 1:
             visibilityTooltip.text = NSLocalizedString("only_invited_can_join", comment: "")
@@ -373,18 +289,6 @@ class RoomCreationView: DrawerViewController, UITextFieldDelegate {
             cancelButton.setTitle(NSLocalizedString("cancel", comment: ""), for: .normal)
         }
     }
-}
-
-extension RoomCreationView: GroupsSliderDelegate {
-    func didSelect(group _: Int) {
-        updateVisibilityLabel()
-    }
-
-    @objc func didDeselect(group _: Int) {
-        updateVisibilityLabel()
-    }
-
-    func loadMoreGroups() {}
 }
 
 extension RoomCreationView: UsersListWithSearchDelegate {

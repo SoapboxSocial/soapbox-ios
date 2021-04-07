@@ -29,7 +29,6 @@ class APIClient: Client {
     struct Notification: Decodable {
         let timestamp: Int
         var from: NotificationUser
-        var group: Group?
         let room: String?
         let category: String
     }
@@ -293,12 +292,10 @@ extension APIClient {
 extension APIClient {
     enum SearchIndex: String {
         case users
-        case groups
     }
 
     struct SearchResponse: Decodable {
         let users: [User]?
-        let groups: [Group]?
     }
 
     func search(_ text: String, types: [SearchIndex], limit: Int, offset: Int, callback: @escaping (Result<SearchResponse, Error>) -> Void) {
@@ -307,139 +304,6 @@ extension APIClient {
             parameters: ["query": text, "limit": limit, "offset": offset, "type": types.compactMap { $0.rawValue }.joined(separator: ",")],
             callback: callback
         )
-    }
-}
-
-extension APIClient {
-    enum GroupType: String, Decodable, CaseIterable {
-        case restricted
-        case `private`
-        case `public`
-    }
-
-    enum Role: String, Decodable {
-        case admin, user
-    }
-
-    struct Group: Decodable {
-        let id: Int
-        let name: String
-        let groupType: GroupType
-        let image: String?
-        let description: String
-        let isInvited: Bool?
-        let members: Int?
-        let role: Role?
-
-        private enum CodingKeys: String, CodingKey {
-            case id, name, groupType = "group_type", image, description, isInvited = "is_invited", members, role
-        }
-    }
-
-    struct GroupSuccess: Decodable {
-        let success: Bool
-        let id: Int
-    }
-
-    func groups(id: Int, limit: Int, offset: Int, callback: @escaping (Result<[Group], Error>) -> Void) {
-        get(path: "/v1/users/" + String(id) + "/groups", parameters: ["limit": limit, "offset": offset], callback: callback)
-    }
-
-    func inviteGroupMembers(id: Int, users: [Int], callback: @escaping (Result<Void, Error>) -> Void) {
-        post(
-            path: "/v1/groups/" + String(id) + "/invite",
-            parameters: ["ids": users.map(String.init).joined(separator: ",")],
-            callback: callback
-        )
-    }
-
-    func declineInvite(id: Int, callback: @escaping (Result<Void, Error>) -> Void) {
-        post(path: "/v1/groups/" + String(id) + "/invite/decline", callback: callback)
-    }
-
-    func acceptInvite(id: Int, callback: @escaping (Result<Void, Error>) -> Void) {
-        post(path: "/v1/groups/" + String(id) + "/invite/accept", callback: callback)
-    }
-
-    func createGroup(name: String, type: GroupType, description: String?, image: UIImage?, callback: @escaping (Result<Int, Error>) -> Void) {
-        // @TODO MAKE UPLOAD FUNC
-        AF.upload(
-            multipartFormData: { multipartFormData in
-                if let uploadImage = image {
-                    guard let imgData = uploadImage.jpegData(compressionQuality: 0.5) else {
-                        return callback(.failure(.preprocessing))
-                    }
-
-                    multipartFormData.append(imgData, withName: "image", fileName: "image", mimeType: "image/jpg")
-                }
-
-                multipartFormData.append(name.data(using: String.Encoding.utf8)!, withName: "name")
-                multipartFormData.append(type.rawValue.data(using: String.Encoding.utf8)!, withName: "group_type")
-
-                if let desc = description {
-                    multipartFormData.append(desc.data(using: String.Encoding.utf8)!, withName: "description")
-                }
-            },
-            to: Configuration.rootURL.appendingPathComponent("/v1/groups/create"),
-            headers: ["Authorization": token!]
-        )
-        .validate()
-        .response { result in
-            self.decodable(result, callback: { (result: Result<GroupSuccess, Error>) in
-                switch result {
-                case let .failure(error):
-                    callback(.failure(error))
-                case let .success(data):
-                    callback(.success(data.id))
-                }
-            })
-        }
-    }
-
-    func group(id: Int, callback: @escaping (Result<Group, Error>) -> Void) {
-        get(path: "/v1/groups/" + String(id), callback: callback)
-    }
-
-    func getInvite(id: Int, callback: @escaping (Result<User, Error>) -> Void) {
-        get(path: "/v1/groups/" + String(id) + "/invite", callback: callback)
-    }
-
-    func groupMembers(_ id: Int, _ limit: Int, _ offset: Int, _ callback: @escaping (Result<[User], Error>) -> Void) {
-        userListRequest("/v1/groups/" + String(id) + "/members", parameters: ["limit": limit, "offset": offset], callback: callback)
-    }
-
-    func join(group: Int, callback: @escaping (Result<Void, Error>) -> Void) {
-        post(path: "/v1/groups/" + String(group) + "/join", callback: callback)
-    }
-
-    func editGroup(group: Int, description: String, image: UIImage?, callback: @escaping (Result<Bool, Error>) -> Void) {
-        AF.upload(
-            multipartFormData: { multipartFormData in
-                if let uploadImage = image {
-                    guard let imgData = uploadImage.jpegData(compressionQuality: 0.5) else {
-                        return callback(.failure(.preprocessing))
-                    }
-
-                    multipartFormData.append(imgData, withName: "image", fileName: "image", mimeType: "image/jpg")
-                }
-
-                multipartFormData.append(description.data(using: String.Encoding.utf8)!, withName: "description")
-            },
-            to: Configuration.rootURL.appendingPathComponent("/v1/groups/" + String(group) + "/edit"),
-            headers: ["Authorization": token!]
-        )
-        .validate()
-        .response { result in
-            if let error = self.validate(result) {
-                return callback(.failure(error))
-            }
-
-            callback(.success(true))
-        }
-    }
-
-    func deleteGroup(group: Int, callback: @escaping (Result<Void, Error>) -> Void) {
-        void(path: "/v1/groups/" + String(group), method: .delete, callback: callback)
     }
 }
 

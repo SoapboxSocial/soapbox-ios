@@ -6,7 +6,6 @@ protocol ProfileViewControllerOutput {
     func loadData()
     func follow()
     func unfollow()
-    func loadMoreGroups()
     func block()
     func unblock()
 }
@@ -75,12 +74,6 @@ class ProfileViewController: ViewControllerWithRemoteContent<APIClient.Profile> 
         return view
     }()
 
-    private let groupsContainer: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-
     private let badges: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -92,12 +85,6 @@ class ProfileViewController: ViewControllerWithRemoteContent<APIClient.Profile> 
         badge.translatesAutoresizingMaskIntoConstraints = false
         badge.isUserInteractionEnabled = true
         return badge
-    }()
-
-    private let groups: GroupsSlider = {
-        let view = GroupsSlider()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
     }()
 
     override func viewDidLoad() {
@@ -175,37 +162,6 @@ class ProfileViewController: ViewControllerWithRemoteContent<APIClient.Profile> 
             badges.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             badges.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             badges.bottomAnchor.constraint(equalTo: twitter.bottomAnchor),
-        ])
-
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .rounded(forTextStyle: .title2, weight: .bold)
-        label.text = NSLocalizedString("groups", comment: "")
-        groupsContainer.addSubview(label)
-
-        groups.delegate = self
-        groupsContainer.addSubview(groups)
-        groupsContainer.isHidden = true
-
-        stack.addArrangedSubview(groupsContainer)
-
-        NSLayoutConstraint.activate([
-            label.topAnchor.constraint(equalTo: groupsContainer.topAnchor),
-            label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-        ])
-
-        NSLayoutConstraint.activate([
-            groupsContainer.leftAnchor.constraint(equalTo: view.leftAnchor),
-            groupsContainer.rightAnchor.constraint(equalTo: view.rightAnchor),
-            groupsContainer.bottomAnchor.constraint(equalTo: groups.bottomAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
-            groups.heightAnchor.constraint(equalToConstant: 82),
-            groups.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 20),
-            groups.leftAnchor.constraint(equalTo: groupsContainer.leftAnchor),
-            groups.rightAnchor.constraint(equalTo: groupsContainer.rightAnchor),
         ])
 
         output.loadData()
@@ -452,27 +408,6 @@ extension ProfileViewController: ProfilePresenterOutput {
         headerView.button.setTitle(NSLocalizedString("edit", comment: ""), for: .normal)
         headerView.button.addTarget(self, action: #selector(editPressed), for: .touchUpInside)
         followsYouBadge.isHidden = true
-        groupsContainer.isHidden = false
-        groups.allowCreation = true
-    }
-
-    func display(groups: [APIClient.Group]) {
-        self.groups.clear()
-
-        if groups.isEmpty {
-            if content != nil, content.id != UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
-                groupsContainer.isHidden = true
-            }
-
-            return
-        }
-
-        groupsContainer.isHidden = false
-        self.groups.set(groups: groups)
-    }
-
-    func display(moreGroups groups: [APIClient.Group]) {
-        self.groups.set(groups: groups)
     }
 
     func display(stories: [APIClient.Story]) {
@@ -595,19 +530,5 @@ extension ProfileViewController: ProfilePresenterOutput {
         )
 
         navigationItem.rightBarButtonItem = item
-    }
-}
-
-extension ProfileViewController: GroupsSliderDelegate {
-    func loadMoreGroups() {
-        output.loadMoreGroups()
-    }
-
-    func didSelect(group: Int) {
-        navigationController?.pushViewController(SceneFactory.createGroupViewController(id: group), animated: true)
-    }
-
-    func didTapGroupCreation() {
-        present(SceneFactory.createGroupCreationViewController(), animated: true)
     }
 }

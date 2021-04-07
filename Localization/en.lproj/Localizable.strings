@@ -54,7 +54,6 @@
 "new_follower_notification" = "%@ started following you!";
 "room_invite_with_name_notification" = "%@ invited you to join the room \"%@\"";
 "room_invite_notification" = "%@ invited you to join a room";
-"group_invite_notification" = "%@ invited you to join the group \"%@\"";
 "welcome_room_notification" = "%@ just signed up, why not welcome them?";
 
 "join_room_with_1_notification" = "%@ is in a room, why not join them?";
@@ -67,9 +66,6 @@
 "join_room_name_with_3_notification" = "Join \"%@\" with %@, %@ and %@";
 "join_room_name_with_3_and_more_notification" = "Join \"%@\" with %@, %@, %@ and %@ others";
 
-"new_room_with_group_notification" = "%@ created a room in \"%@\", why not join them?";
-"new_room_with_group_and_name_notification" = "%@ created the room \"%@\" in \"%@\", why not join them?";
-
 "save" = "Save";
 "invalid_display_name" = "Valid display name required";
 
@@ -80,7 +76,7 @@
 "room_is_full" = "This room is full!";
 "why_not_create_a_new_room" = "Why not create a new room?";
 
-"search_placeholder" = "Search groups and friends...";
+"search_placeholder" = "Search for friends...";
 
 "rooms" = "Rooms";
 "got_something_to_say" = "Got something to say?";
@@ -116,26 +112,16 @@
 "close" = "Close";
 "back" = "Back";
 
-"name_group" = "Name your group";
 "next" = "Next";
-
-"group_names_cannot_be_changed" = "Group names cannot be changed";
-"describe_group" = "Describe your group";
-
-"public_group_description" = "Anyone can view, create rooms, and see the members of this group";
-"private_group_description" = "Only invited users can view and create rooms in this group";
-"restricted_group_description" = "Anyone can view, but only invited users can create and join rooms";
 
 "started_following_you" = "started following you.";
 
 "invalid_name" = "Please enter a valid name";
-"failed_to_create_group" = "Failed to create group.";
 
 "skip" = "Skip";
 "invite" = "Invite";
 
 "invited_you_to_join" = "invited you to join %@.";
-"user_invited_you_to_join_group" = "%@ invited you to join %@.";
 "just_joined_welcome" = "just joined, why not welcome them?";
 
 "accept" = "Accept";
@@ -145,7 +131,6 @@
 "joined" = "Joined";
 
 "members" = "Members";
-"groups" = "Groups";
 "users" = "Users";
 
 "today" = "Today";
@@ -165,10 +150,8 @@
 "join_room" = "Join room";
 
 "you_will_be_muted_by_default" = "You will be muted by default.";
-"choose_a_group" = "Choose a group";
 
 "description" = "Description";
-"new_group" = "New Group";
 "delete" = "Delete";
 
 "hold_to_record" = "Hold to record";
@@ -199,7 +182,6 @@
 
 "only_invited_can_join" = "Only invited users can join the room";
 "anyone_can_join" = "Anyone can join the room";
-"anyone_in_group_can_join" = "Anyone in \"%@\" can join";
 "choose_people" = "Choose people";
 
 "user_will_no_longer_be_able_to_join_room" = "%@ will no longer be able to join this room.";

@@ -6,7 +6,6 @@ class SearchCollectionPresenter {
 
     enum SectionType: Int, CaseIterable {
         case userList
-        case groupList
         case inviteFriends
     }
 
@@ -48,21 +47,6 @@ class SearchCollectionPresenter {
         return count + 1
     }
 
-    func configure(item: CollectionViewCell, forGroup indexPath: IndexPath) {
-        let section = dataSource[indexPath.section]
-        guard let group = section.data[indexPath.row] as? APIClient.Group else {
-            print("Error getting active user for indexPath: \(indexPath)")
-            return
-        }
-
-        item.title.text = group.name
-
-        item.image.image = nil
-        if let image = group.image, image != "" {
-            item.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/groups/" + image))
-        }
-    }
-
     func configure(item: CollectionViewCell, forUser indexPath: IndexPath) {
         let section = dataSource[indexPath.section]
         guard let user = section.data[indexPath.row] as? APIClient.User else {
@@ -77,16 +61,6 @@ class SearchCollectionPresenter {
         if let image = user.image, image != "" {
             item.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
         }
-    }
-
-    func set(groups: [APIClient.Group]) {
-        dataSource.removeAll(where: { $0.type == .groupList })
-
-        if groups.isEmpty {
-            return
-        }
-
-        dataSource.append(Section(type: .groupList, title: NSLocalizedString("groups", comment: ""), data: groups))
     }
 
     func set(users: [APIClient.User]) {
@@ -110,14 +84,6 @@ class SearchCollectionPresenter {
         }
 
         dataSource[index].data.append(contentsOf: users)
-    }
-
-    func append(groups: [APIClient.Group]) {
-        guard let index = dataSource.firstIndex(where: { $0.type == .groupList }) else {
-            return
-        }
-
-        dataSource[index].data.append(contentsOf: groups)
     }
 
     func appendInviteFriendsSection() {

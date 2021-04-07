@@ -65,7 +65,7 @@ class Room {
         client.join(id: id)
     }
 
-    func create(name: String?, isPrivate: Bool, group: Int? = nil, users: [Int]? = nil, completion: @escaping ConnectionCompletion) {
+    func create(name: String?, isPrivate: Bool, users: [Int]? = nil, completion: @escaping ConnectionCompletion) {
         self.completion = completion
 
         if let name = name {
@@ -81,14 +81,6 @@ class Room {
         var request = Soapbox_V1_CreateRequest.with {
             $0.name = name ?? ""
             $0.visibility = state.visibility
-        }
-
-        if let id = group {
-            request.group = Int64(id)
-
-            // This is a hack, when a room is created we don't get the group etc back.
-            // However we need it to ensure the admin can't change visibility if the room is in a group.
-            state.group.id = Int64(id)
         }
 
         if let ids = users {
@@ -424,10 +416,6 @@ extension Room: RoomClientDelegate {
             }
 
             self.state.members.append(member)
-        }
-
-        if state.hasGroup {
-            self.state.group = state.group
         }
 
         addMeToState(role: role)

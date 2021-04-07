@@ -116,10 +116,6 @@ class HomeCollectionPresenter {
 
         item.visibility = room.visibility
         item.members = room.members
-        item.group = nil
-        if let group = room.group {
-            item.group = group
-        }
     }
 
     func set(rooms: [RoomAPIClient.Room]) {

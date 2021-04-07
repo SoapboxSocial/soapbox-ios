@@ -96,10 +96,8 @@ class SearchViewController: ViewControllerWithScrollableContent<UICollectionView
     private func makeLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             switch self.presenter.sectionType(for: sectionIndex) {
-            case .groupList:
-                return self.content.section(hasHeader: true, hasFooter: true)
             case .userList:
-                return self.content.section(hasHeader: true, hasFooter: self.presenter.index(of: .groupList) == nil)
+                return self.content.section(hasHeader: true, hasFooter: true)
             case .inviteFriends:
                 return self.content.section(height: 182, hasBackground: false)
             }
@@ -129,13 +127,6 @@ extension SearchViewController: UICollectionViewDelegate {
 
             let user = presenter.item(for: IndexPath(item: indexPath.item, section: indexPath.section), ofType: APIClient.User.self)
             navigationController?.pushViewController(SceneFactory.createProfileViewController(id: user.id), animated: true)
-        case .groupList:
-            if (indexPath.item + 1) == presenter.numberOfItems(for: indexPath.section) {
-                return output.loadMore(type: .groups)
-            }
-
-            let group = presenter.item(for: IndexPath(item: indexPath.item, section: indexPath.section), ofType: APIClient.Group.self)
-            navigationController?.pushViewController(SceneFactory.createGroupViewController(id: group.id), animated: true)
         case .inviteFriends:
             return
         }
@@ -153,14 +144,6 @@ extension SearchViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch presenter.sectionType(for: indexPath.section) {
-        case .groupList:
-            if (indexPath.item + 1) == presenter.numberOfItems(for: indexPath.section) {
-                return collectionView.dequeueReusableCell(withClass: ViewMoreCellCollectionViewCell.self, for: indexPath)
-            }
-
-            let cell = collectionView.dequeueReusableCell(withClass: CollectionViewCell.self, for: indexPath)
-            presenter.configure(item: cell, forGroup: indexPath)
-            return cell
         case .userList:
             if (indexPath.item + 1) == presenter.numberOfItems(for: indexPath.section) {
                 return collectionView.dequeueReusableCell(withClass: ViewMoreCellCollectionViewCell.self, for: indexPath)
@@ -199,15 +182,6 @@ extension SearchViewController: SearchPresenterOutput {
         }
     }
 
-    func display(groups: [APIClient.Group]) {
-        presenter.set(groups: groups)
-
-        DispatchQueue.main.async {
-            self.content.refreshControl?.endRefreshing()
-            self.content.reloadData()
-        }
-    }
-
     func displayMore(users: [APIClient.User]) {
         if users.isEmpty {
             return stopLoader(for: .userList)
@@ -224,26 +198,9 @@ extension SearchViewController: SearchPresenterOutput {
         }
     }
 
-    func displayMore(groups: [APIClient.Group]) {
-        if groups.isEmpty {
-            return stopLoader(for: .groupList)
-        }
-
-        presenter.append(groups: groups)
-
-        guard let index = presenter.index(of: .groupList) else {
-            return
-        }
-
-        DispatchQueue.main.async {
-            self.content.reloadSections(IndexSet(integer: index))
-        }
-    }
-
     func displaySearchError() {
         content.refreshControl?.endRefreshing()
         stopLoader(for: .userList)
-        stopLoader(for: .groupList)
     }
 
     private func stopLoader(for section: SearchCollectionPresenter.SectionType) {

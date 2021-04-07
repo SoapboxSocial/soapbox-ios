@@ -288,13 +288,13 @@ extension NavigationViewController: RoomController {
 }
 
 extension NavigationViewController: RoomCreationDelegate {
-    func didEnterWithName(_ name: String?, isPrivate: Bool, group: Int?, users: [Int]?) {
+    func didEnterWithName(_ name: String?, isPrivate: Bool, users: [Int]?) {
         DispatchQueue.main.async {
-            self.createRoom(name: name, isPrivate: isPrivate, group: group, users: users)
+            self.createRoom(name: name, isPrivate: isPrivate, users: users)
         }
     }
 
-    func createRoom(name: String?, isPrivate: Bool, group: Int?, users: [Int]?) {
+    func createRoom(name: String?, isPrivate: Bool, users: [Int]?) {
         DispatchQueue.main.async {
             self.createRoomButton.isHidden = true
             self.activityIndicator.startAnimating()
@@ -304,7 +304,7 @@ extension NavigationViewController: RoomCreationDelegate {
         RoomFactory.create(callback: { room in
             self.room = room
 
-            room.create(name: name, isPrivate: isPrivate, group: group, users: users) { result in
+            room.create(name: name, isPrivate: isPrivate, users: users) { result in
                 DispatchQueue.main.async {
                     self.activityIndicator.stopAnimating()
                     self.activityIndicator.isHidden = true
