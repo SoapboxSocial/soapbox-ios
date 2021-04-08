@@ -52,6 +52,8 @@ class ActionSheet: DrawerViewController {
         view.axis = .vertical
         view.spacing = 10
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.isLayoutMarginsRelativeArrangement = true
+        view.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
         return view
     }()
 
@@ -98,17 +100,10 @@ class ActionSheet: DrawerViewController {
         ])
 
         NSLayoutConstraint.activate([
-            imageContainer.leftAnchor.constraint(equalTo: stack.leftAnchor),
-            imageContainer.rightAnchor.constraint(equalTo: stack.rightAnchor),
             imageContainer.heightAnchor.constraint(equalToConstant: 40),
         ])
 
         stack.addArrangedSubview(titleLabel)
-
-        NSLayoutConstraint.activate([
-            titleLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            titleLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-        ])
 
         let actionsView = UIView()
         actionsView.translatesAutoresizingMaskIntoConstraints = false
