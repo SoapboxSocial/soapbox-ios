@@ -2,7 +2,7 @@ import Foundation
 import KeychainAccess
 import WebRTC
 
-protocol RoomDelegate {
+protocol RoomDelegate: AnyObject {
     func userWasInvitedToBeAdmin(by: Int64)
     func userDidJoinRoom(user: Int64)
     func userDidLeaveRoom(user: Int64)
@@ -46,7 +46,7 @@ class Room {
 
     var isClosed = false
 
-    var delegate: RoomDelegate?
+    weak var delegate: RoomDelegate?
 
     private let client: RoomClient
 

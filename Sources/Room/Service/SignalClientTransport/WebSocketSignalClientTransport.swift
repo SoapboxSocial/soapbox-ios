@@ -2,7 +2,7 @@ import Foundation
 import KeychainAccess
 
 class WebSocketSignalClientTransport: NSObject, SignalClientTransport {
-    var delegate: SignalClientTransportDelegate?
+    weak var delegate: SignalClientTransportDelegate?
 
     private let url: URL
     private var socket: URLSessionWebSocketTask?

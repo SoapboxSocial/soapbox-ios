@@ -2,14 +2,14 @@ import DrawerView
 import LinkPresentation
 import UIKit
 
-protocol RoomViewDelegate {
+protocol RoomViewDelegate: AnyObject {
     func roomWasClosedDueToError()
     func roomDidExit()
     func didSelectViewProfile(id: Int)
 }
 
 class RoomView: UIView {
-    var delegate: RoomViewDelegate?
+    weak var delegate: RoomViewDelegate?
 
     private static let iconConfig = UIImage.SymbolConfiguration(weight: .semibold)
 

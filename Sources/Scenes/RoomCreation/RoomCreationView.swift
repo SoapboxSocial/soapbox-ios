@@ -1,11 +1,11 @@
 import UIKit
 
-protocol RoomCreationDelegate {
+protocol RoomCreationDelegate: AnyObject {
     func didEnterWithName(_ name: String?, isPrivate: Bool, users: [Int]?)
 }
 
 class RoomCreationView: DrawerViewController, UITextFieldDelegate {
-    var delegate: RoomCreationDelegate?
+    weak var delegate: RoomCreationDelegate?
 
     private enum State: Int {
         case start, invite
