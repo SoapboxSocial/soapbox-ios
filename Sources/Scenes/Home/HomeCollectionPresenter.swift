@@ -139,7 +139,9 @@ class HomeCollectionPresenter {
         self.hasOwnStory = hasOwnStory
     }
 
-    func set(actives _: [RoomAPIClient.ActiveUser]) {}
+    func set(actives: [RoomAPIClient.ActiveUser]) {
+        
+    }
 
     private func removeRooms() {
         dataSource.removeAll(where: { $0.type == .roomList })
