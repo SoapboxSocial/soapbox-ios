@@ -409,6 +409,7 @@ class RoomView: UIView {
     }
 
     @objc private func exitTapped() {
+        debugPrint("wtf 1")
         if room.state.members.count == 1 {
             showExitAlert()
             return
@@ -447,6 +448,7 @@ class RoomView: UIView {
     private func exitRoom() {
         room.close()
         delegate?.roomDidExit()
+        miniView?.close()
     }
 
     @objc private func openBar() {
@@ -774,6 +776,7 @@ extension RoomView: RoomDelegate {
 
     func closedMini(source: Bool) {
         DispatchQueue.main.async {
+            debugPrint("wtf")
             if self.miniView == nil {
                 return
             }

@@ -273,8 +273,21 @@ extension HomeViewController: HomePresenterOutput {
     }
 
     func didFetchRooms(_ rooms: [RoomAPIClient.Room]) {
+        let topRoom = { () -> RoomAPIClient.Room? in
+            var room: RoomAPIClient.Room?
+            if let id = presenter.currentRoom {
+                room = rooms.first(where: { $0.id == id })
+            }
+
+            if let room = room {
+                return room
+            }
+
+            return rooms.sorted(by: { $0.members.count > $1.members.count }).first
+        }()
+
         // sorted is temporary
-        update(.topRoom(rooms.first!))
+        update(.topRoom(topRoom!))
         update(.rooms(rooms.sorted(by: { $0.id < $1.id })))
     }
 
@@ -342,16 +355,37 @@ extension HomeViewController {
         switch data {
         case let .rooms(rooms):
             presenter.set(rooms: rooms)
-            content.reloadSections(IndexSet(integer: presenter.numberOfSections - 1))
         case let .feed(feed):
             presenter.set(stories: feed)
-            content.reloadSections(IndexSet(integer: 0))
         case let .ownStory(has):
             presenter.set(hasOwnStory: has)
-            content.reloadSections(IndexSet(integer: 0))
         case let .topRoom(room):
             presenter.set(topRoom: room)
-            content.reloadData()
+        }
+
+        if content.numberOfSections > presenter.numberOfSections {
+            content.deleteSections(IndexSet(presenter.numberOfSections ..< content.numberOfSections))
+        } else if content.numberOfSections < presenter.numberOfSections {
+            content.insertSections(IndexSet(content.numberOfSections ..< presenter.numberOfSections))
+        }
+
+        switch data {
+        case .rooms:
+            if let index = presenter.index(of: .roomList) {
+                content.reloadSections(IndexSet(integer: index))
+            }
+        case .feed:
+            if let index = presenter.index(of: .storiesList) {
+                content.reloadSections(IndexSet(integer: index))
+            }
+        case .ownStory:
+            if let index = presenter.index(of: .storiesList) {
+                content.reloadSections(IndexSet(integer: index))
+            }
+        case .topRoom:
+            if let index = presenter.index(of: .topRoom) {
+                content.reloadSections(IndexSet(integer: index))
+            }
         }
 
         updateQueue.removeFirst()
