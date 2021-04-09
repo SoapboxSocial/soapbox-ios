@@ -445,6 +445,12 @@ class RoomView: UIView {
     }
 
     private func exitRoom() {
+        if let mini = miniView {
+            mini.shutdown()
+            mini.removeFromSuperview()
+            miniView = nil
+        }
+
         room.close()
         delegate?.roomDidExit()
     }

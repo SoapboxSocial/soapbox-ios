@@ -1,7 +1,7 @@
 import UIKit
 import WebKit
 
-protocol MiniViewDelegate {
+protocol MiniViewDelegate: AnyObject {
     func didTapCloseMiniView(_ view: MiniView)
 }
 
@@ -264,7 +264,10 @@ extension MiniView: WKScriptMessageHandler {
 
     func close(callback: (() -> Void)? = nil) {
         write(.closed, data: "{}", completion: callback)
+        shutdown()
+    }
 
+    func shutdown() {
         webView.stopLoading()
         webView.configuration.userContentController.removeAllUserScripts()
 
