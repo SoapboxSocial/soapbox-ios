@@ -118,6 +118,8 @@ class HomeCollectionPresenter {
         item.members = room.members
     }
 
+    func configure(item _: CollectionViewCell, for _: IndexPath) {}
+
     func set(rooms: [RoomAPIClient.Room]) {
         if rooms.isEmpty {
             removeRooms()
@@ -136,6 +138,8 @@ class HomeCollectionPresenter {
     func set(hasOwnStory: Bool) {
         self.hasOwnStory = hasOwnStory
     }
+
+    func set(actives _: [RoomAPIClient.ActiveUser]) {}
 
     private func removeRooms() {
         dataSource.removeAll(where: { $0.type == .roomList })
