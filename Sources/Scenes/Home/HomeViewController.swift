@@ -138,6 +138,8 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
                 return self.createStoriesListSection()
             case .roomList:
                 return self.createRoomListSection()
+            case .topRoom:
+                return self.createTopRoomSection()
             case .activeUserList:
                 return self.createActiveUserSection()
             case .noRooms:
@@ -157,9 +159,12 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
 
         layoutItem.contentInsets = .zero
 
-        let height = NSCollectionLayoutDimension.absolute(view.frame.size.height - 300)
+        var height = view.frame.size.height - 300
+        if presenter.has(section: .activeUserList) {
+            height -= 300
+        }
 
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: height)
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: NSCollectionLayoutDimension.absolute(height))
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitem: layoutItem, count: 1)
 
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
@@ -198,7 +203,26 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
         layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
         layoutSection.interGroupSpacing = 20
 
-        layoutSection.boundarySupplementaryItems = [createSectionHeader(), createSectionFooter()]
+        // @TODO ONLY ADD HEADER WHEN NO ACTIVES
+        layoutSection.boundarySupplementaryItems = [createSectionFooter()]
+
+        return layoutSection
+    }
+
+    private func createTopRoomSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(138))
+        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(138))
+        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitems: [layoutItem])
+
+        layoutGroup.contentInsets = .zero
+
+        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
+        layoutSection.interGroupSpacing = 20
+
+        layoutSection.boundarySupplementaryItems = [createSectionHeader()]
 
         return layoutSection
     }
@@ -248,9 +272,10 @@ extension HomeViewController: HomePresenterOutput {
         }
     }
 
-    func didFetchRooms(_: [RoomAPIClient.Room]) {
+    func didFetchRooms(_ rooms: [RoomAPIClient.Room]) {
         // sorted is temporary
-//        update(.rooms(rooms.sorted(by: { $0.id < $1.id })))
+        update(.topRoom(rooms.first!))
+        update(.rooms(rooms.sorted(by: { $0.id < $1.id })))
     }
 
     func didFetchFeed(_ feed: [APIClient.StoryFeed]) {
@@ -294,18 +319,19 @@ extension HomeViewController: HomePresenterOutput {
 
 extension HomeViewController {
     enum Update {
+        case topRoom(RoomAPIClient.Room)
         case ownStory(Bool)
         case rooms([RoomAPIClient.Room])
         case feed([APIClient.StoryFeed])
     }
 
-    func update(_: Update) {
+    func update(_ update: Update) {
         refresh.endRefreshing()
 
-//        updateQueue.append(update)
-//        if updateQueue.count == 1 {
-//            reloadData()
-//        }
+        updateQueue.append(update)
+        if updateQueue.count == 1 {
+            reloadData()
+        }
     }
 
     private func reloadData() {
@@ -323,6 +349,9 @@ extension HomeViewController {
         case let .ownStory(has):
             presenter.set(hasOwnStory: has)
             content.reloadSections(IndexSet(integer: 0))
+        case let .topRoom(room):
+            presenter.set(topRoom: room)
+            content.reloadData()
         }
 
         updateQueue.removeFirst()
@@ -369,6 +398,9 @@ extension HomeViewController: UICollectionViewDelegate {
 
             present(vc, animated: true)
         case .roomList:
+            let room = presenter.item(for: indexPath, ofType: RoomAPIClient.Room.self)
+            output.didSelectRoom(room: room.id)
+        case .topRoom:
             let room = presenter.item(for: indexPath, ofType: RoomAPIClient.Room.self)
             output.didSelectRoom(room: room.id)
         case .noRooms:
@@ -421,6 +453,10 @@ extension HomeViewController: UICollectionViewDataSource {
             let cell = collectionView.dequeueReusableCell(withClass: RoomCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
+        case .topRoom:
+            let cell = collectionView.dequeueReusableCell(withClass: RoomCell.self, for: indexPath)
+            presenter.configure(item: cell, for: indexPath)
+            return cell
         case .activeUserList:
             let cell = collectionView.dequeueReusableCell(withClass: CollectionViewCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
@@ -436,13 +472,20 @@ extension HomeViewController: UICollectionViewDataSource {
             return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: EmptyCollectionFooterView.self, for: indexPath)
         case UICollectionView.elementKindSectionHeader:
             let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
-            cell.title.text = presenter.title(for: indexPath.section)
 
-            if presenter.sectionType(for: indexPath.section) == .roomList {
+            if let title = presenter.title(for: indexPath.section) {
+                cell.title.text = title
+            }
+
+            let section = presenter.sectionType(for: indexPath.section)
+            if section == .roomList || section == .topRoom {
                 cell.title.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
             }
 
-            cell.subtitle.text = "Start a room with them"
+            if let subtitle = presenter.subtitle(for: indexPath.section) {
+                cell.subtitle.text = subtitle
+            }
+
             return cell
         default:
             fatalError("unknown kind: \(kind)")

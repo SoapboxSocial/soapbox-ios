@@ -7,6 +7,7 @@ class HomeCollectionPresenter {
     private var dataSource = [Section]()
 
     enum SectionType: Int, CaseIterable {
+        case topRoom
         case roomList
         case storiesList
         case activeUserList
@@ -15,7 +16,8 @@ class HomeCollectionPresenter {
 
     struct Section {
         let type: SectionType
-        let title: String
+        let title: String?
+        let subtitle: String?
         var data: [Any]
     }
 
@@ -38,8 +40,12 @@ class HomeCollectionPresenter {
         set(rooms: [])
     }
 
-    func title(for sectionIndex: Int) -> String {
+    func title(for sectionIndex: Int) -> String? {
         return dataSource[sectionIndex].title
+    }
+
+    func subtitle(for sectionIndex: Int) -> String? {
+        return dataSource[sectionIndex].subtitle
     }
 
     func sectionType(for sectionIndex: Int) -> SectionType {
@@ -140,6 +146,17 @@ class HomeCollectionPresenter {
         item.subtitle.text = "@" + user.username
     }
 
+    func set(topRoom: RoomAPIClient.Room) {
+        dataSource.removeAll(where: { $0.type == .topRoom })
+
+        var index = 0
+        if has(section: .storiesList) {
+            index = 1
+        }
+
+        dataSource.insert(Section(type: .topRoom, title: NSLocalizedString("rooms", comment: ""), subtitle: nil, data: [topRoom]), at: index)
+    }
+
     func set(rooms: [RoomAPIClient.Room]) {
         if rooms.isEmpty {
             removeRooms()
@@ -147,12 +164,12 @@ class HomeCollectionPresenter {
         }
 
         dataSource.removeAll(where: { $0.type == .roomList || $0.type == .noRooms })
-        dataSource.append(Section(type: .roomList, title: NSLocalizedString("rooms", comment: ""), data: rooms))
+        dataSource.append(Section(type: .roomList, title: "", subtitle: nil, data: rooms))
     }
 
     func set(stories: [APIClient.StoryFeed]) {
         dataSource.removeAll(where: { $0.type == .storiesList })
-        dataSource.insert(Section(type: .storiesList, title: "", data: stories), at: 0)
+        dataSource.insert(Section(type: .storiesList, title: nil, subtitle: nil, data: stories), at: 0)
     }
 
     func set(hasOwnStory: Bool) {
@@ -160,7 +177,11 @@ class HomeCollectionPresenter {
     }
 
     func set(actives: [APIClient.ActiveUser]) {
-        dataSource.append(Section(type: .activeUserList, title: "Online right now", data: actives))
+        dataSource.append(Section(type: .activeUserList, title: "Online right now", subtitle: "Start a room with them", data: actives))
+    }
+
+    func has(section: SectionType) -> Bool {
+        return dataSource.contains(where: { $0.type == section })
     }
 
     private func removeRooms() {
@@ -170,6 +191,6 @@ class HomeCollectionPresenter {
             return
         }
 
-        dataSource.append(Section(type: .noRooms, title: "", data: []))
+        dataSource.append(Section(type: .noRooms, title: nil, subtitle: nil, data: []))
     }
 }
