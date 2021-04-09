@@ -70,6 +70,10 @@ class HomeInteractor: HomeViewControllerOutput {
                 )
             }
         })
+
+        api.actives(callback: { result in
+            debugPrint(result)
+        })
     }
 
     func fetchMe() {

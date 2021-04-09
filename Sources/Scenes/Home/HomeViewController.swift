@@ -48,6 +48,7 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
         content.register(cellWithClass: RoomCell.self)
         content.register(cellWithClass: StoryCell.self)
         content.register(cellWithClass: CreateStoryCell.self)
+        content.register(cellWithClass: CollectionViewCell.self)
 
         content.refreshControl = refresh
         refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -137,6 +138,8 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
                 return self.createStoriesListSection()
             case .roomList:
                 return self.createRoomListSection()
+            case .activeUserList:
+                return self.createActiveUserSection()
             case .noRooms:
                 return self.createNoRoomsSection()
             }
@@ -144,6 +147,7 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
 
         layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
         layout.configuration.interSectionSpacing = 20
+        layout.register(CollectionBackgroundView.self, forDecorationViewOfKind: "background")
         return layout
     }
 
@@ -199,6 +203,22 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
         return layoutSection
     }
 
+    private func createActiveUserSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.33))
+        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
+        layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5)
+
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.66), heightDimension: .estimated(160))
+        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitem: layoutItem, count: 3)
+        layoutGroup.interItemSpacing = .fixed(20)
+
+        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        layoutSection.orthogonalScrollingBehavior = .paging
+        layoutSection.interGroupSpacing = 10
+
+        return layoutSection
+    }
+
     private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
         return NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(80)),
@@ -225,9 +245,9 @@ extension HomeViewController: HomePresenterOutput {
         }
     }
 
-    func didFetchRooms(_ rooms: [RoomAPIClient.Room]) {
+    func didFetchRooms(_: [RoomAPIClient.Room]) {
         // sorted is temporary
-        update(.rooms(rooms.sorted(by: { $0.id < $1.id })))
+//        update(.rooms(rooms.sorted(by: { $0.id < $1.id })))
     }
 
     func didFetchFeed(_ feed: [APIClient.StoryFeed]) {
@@ -276,13 +296,13 @@ extension HomeViewController {
         case feed([APIClient.StoryFeed])
     }
 
-    func update(_ update: Update) {
+    func update(_: Update) {
         refresh.endRefreshing()
 
-        updateQueue.append(update)
-        if updateQueue.count == 1 {
-            reloadData()
-        }
+//        updateQueue.append(update)
+//        if updateQueue.count == 1 {
+//            reloadData()
+//        }
     }
 
     private func reloadData() {
@@ -350,6 +370,8 @@ extension HomeViewController: UICollectionViewDelegate {
             output.didSelectRoom(room: room.id)
         case .noRooms:
             return
+        case .activeUserList:
+            return
         }
     }
 }
@@ -394,6 +416,10 @@ extension HomeViewController: UICollectionViewDataSource {
             return cell
         case .roomList:
             let cell = collectionView.dequeueReusableCell(withClass: RoomCell.self, for: indexPath)
+            presenter.configure(item: cell, for: indexPath)
+            return cell
+        case .activeUserList:
+            let cell = collectionView.dequeueReusableCell(withClass: CollectionViewCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
         case .noRooms:

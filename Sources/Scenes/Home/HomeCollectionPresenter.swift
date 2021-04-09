@@ -9,6 +9,7 @@ class HomeCollectionPresenter {
     enum SectionType: Int, CaseIterable {
         case roomList
         case storiesList
+        case activeUserList
         case noRooms
     }
 
@@ -27,6 +28,14 @@ class HomeCollectionPresenter {
     init() {
         set(stories: [])
         set(rooms: [])
+        set(actives: [
+            APIClient.ActiveUser(id: 1, displayName: "Dean", username: "test", image: "", room: nil),
+            APIClient.ActiveUser(id: 1, displayName: "poop", username: "test", image: "", room: nil),
+            APIClient.ActiveUser(id: 1, displayName: "poop", username: "test", image: "", room: nil),
+            APIClient.ActiveUser(id: 1, displayName: "poop", username: "test", image: "", room: nil),
+            APIClient.ActiveUser(id: 1, displayName: "poop", username: "test", image: "", room: nil),
+            APIClient.ActiveUser(id: 1, displayName: "poop", username: "test", image: "", room: nil),
+        ])
     }
 
     func title(for sectionIndex: Int) -> String {
@@ -118,7 +127,16 @@ class HomeCollectionPresenter {
         item.members = room.members
     }
 
-    func configure(item _: CollectionViewCell, for _: IndexPath) {}
+    func configure(item: CollectionViewCell, for indexPath: IndexPath) {
+        let section = dataSource[indexPath.section]
+        guard let user = section.data[indexPath.row] as? APIClient.ActiveUser else {
+            print("Error getting room for indexPath: \(indexPath)")
+            return
+        }
+
+        item.title.text = user.displayName
+        item.subtitle.text = "@" + user.username
+    }
 
     func set(rooms: [RoomAPIClient.Room]) {
         if rooms.isEmpty {
@@ -139,8 +157,8 @@ class HomeCollectionPresenter {
         self.hasOwnStory = hasOwnStory
     }
 
-    func set(actives: [RoomAPIClient.ActiveUser]) {
-        
+    func set(actives: [APIClient.ActiveUser]) {
+        dataSource.append(Section(type: .activeUserList, title: "", data: actives))
     }
 
     private func removeRooms() {
