@@ -217,23 +217,74 @@ struct Soapbox_V1_Command {
 
   #if !swift(>=4.1)
     static func ==(lhs: Soapbox_V1_Command.OneOf_Payload, rhs: Soapbox_V1_Command.OneOf_Payload) -> Bool {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch (lhs, rhs) {
-      case (.muteUpdate(let l), .muteUpdate(let r)): return l == r
-      case (.reaction(let l), .reaction(let r)): return l == r
-      case (.linkShare(let l), .linkShare(let r)): return l == r
-      case (.inviteAdmin(let l), .inviteAdmin(let r)): return l == r
-      case (.acceptAdmin(let l), .acceptAdmin(let r)): return l == r
-      case (.removeAdmin(let l), .removeAdmin(let r)): return l == r
-      case (.renameRoom(let l), .renameRoom(let r)): return l == r
-      case (.inviteUser(let l), .inviteUser(let r)): return l == r
-      case (.kickUser(let l), .kickUser(let r)): return l == r
-      case (.muteUser(let l), .muteUser(let r)): return l == r
-      case (.recordScreen(let l), .recordScreen(let r)): return l == r
-      case (.visibilityUpdate(let l), .visibilityUpdate(let r)): return l == r
-      case (.pinLink(let l), .pinLink(let r)): return l == r
-      case (.unpinLink(let l), .unpinLink(let r)): return l == r
-      case (.openMini(let l), .openMini(let r)): return l == r
-      case (.closeMini(let l), .closeMini(let r)): return l == r
+      case (.muteUpdate, .muteUpdate): return {
+        guard case .muteUpdate(let l) = lhs, case .muteUpdate(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.reaction, .reaction): return {
+        guard case .reaction(let l) = lhs, case .reaction(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.linkShare, .linkShare): return {
+        guard case .linkShare(let l) = lhs, case .linkShare(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.inviteAdmin, .inviteAdmin): return {
+        guard case .inviteAdmin(let l) = lhs, case .inviteAdmin(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.acceptAdmin, .acceptAdmin): return {
+        guard case .acceptAdmin(let l) = lhs, case .acceptAdmin(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.removeAdmin, .removeAdmin): return {
+        guard case .removeAdmin(let l) = lhs, case .removeAdmin(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.renameRoom, .renameRoom): return {
+        guard case .renameRoom(let l) = lhs, case .renameRoom(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.inviteUser, .inviteUser): return {
+        guard case .inviteUser(let l) = lhs, case .inviteUser(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.kickUser, .kickUser): return {
+        guard case .kickUser(let l) = lhs, case .kickUser(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.muteUser, .muteUser): return {
+        guard case .muteUser(let l) = lhs, case .muteUser(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.recordScreen, .recordScreen): return {
+        guard case .recordScreen(let l) = lhs, case .recordScreen(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.visibilityUpdate, .visibilityUpdate): return {
+        guard case .visibilityUpdate(let l) = lhs, case .visibilityUpdate(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.pinLink, .pinLink): return {
+        guard case .pinLink(let l) = lhs, case .pinLink(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.unpinLink, .unpinLink): return {
+        guard case .unpinLink(let l) = lhs, case .unpinLink(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.openMini, .openMini): return {
+        guard case .openMini(let l) = lhs, case .openMini(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.closeMini, .closeMini): return {
+        guard case .closeMini(let l) = lhs, case .closeMini(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
       default: return false
       }
     }
@@ -257,7 +308,7 @@ struct Soapbox_V1_Command {
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
 
-    var emoji: Data = SwiftProtobuf.Internal.emptyData
+    var emoji: Data = Data()
 
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -434,142 +485,136 @@ struct Soapbox_V1_Event {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  var from: Int64 {
-    get {return _storage._from}
-    set {_uniqueStorage()._from = newValue}
-  }
+  var from: Int64 = 0
 
-  var payload: OneOf_Payload? {
-    get {return _storage._payload}
-    set {_uniqueStorage()._payload = newValue}
-  }
+  var payload: Soapbox_V1_Event.OneOf_Payload? = nil
 
   var joined: Soapbox_V1_Event.Joined {
     get {
-      if case .joined(let v)? = _storage._payload {return v}
+      if case .joined(let v)? = payload {return v}
       return Soapbox_V1_Event.Joined()
     }
-    set {_uniqueStorage()._payload = .joined(newValue)}
+    set {payload = .joined(newValue)}
   }
 
   var left: Soapbox_V1_Event.Left {
     get {
-      if case .left(let v)? = _storage._payload {return v}
+      if case .left(let v)? = payload {return v}
       return Soapbox_V1_Event.Left()
     }
-    set {_uniqueStorage()._payload = .left(newValue)}
+    set {payload = .left(newValue)}
   }
 
   var muteUpdated: Soapbox_V1_Event.MuteUpdated {
     get {
-      if case .muteUpdated(let v)? = _storage._payload {return v}
+      if case .muteUpdated(let v)? = payload {return v}
       return Soapbox_V1_Event.MuteUpdated()
     }
-    set {_uniqueStorage()._payload = .muteUpdated(newValue)}
+    set {payload = .muteUpdated(newValue)}
   }
 
   var reacted: Soapbox_V1_Event.Reacted {
     get {
-      if case .reacted(let v)? = _storage._payload {return v}
+      if case .reacted(let v)? = payload {return v}
       return Soapbox_V1_Event.Reacted()
     }
-    set {_uniqueStorage()._payload = .reacted(newValue)}
+    set {payload = .reacted(newValue)}
   }
 
   var linkShared: Soapbox_V1_Event.LinkShared {
     get {
-      if case .linkShared(let v)? = _storage._payload {return v}
+      if case .linkShared(let v)? = payload {return v}
       return Soapbox_V1_Event.LinkShared()
     }
-    set {_uniqueStorage()._payload = .linkShared(newValue)}
+    set {payload = .linkShared(newValue)}
   }
 
   var invitedAdmin: Soapbox_V1_Event.InvitedAdmin {
     get {
-      if case .invitedAdmin(let v)? = _storage._payload {return v}
+      if case .invitedAdmin(let v)? = payload {return v}
       return Soapbox_V1_Event.InvitedAdmin()
     }
-    set {_uniqueStorage()._payload = .invitedAdmin(newValue)}
+    set {payload = .invitedAdmin(newValue)}
   }
 
   var addedAdmin: Soapbox_V1_Event.AddedAdmin {
     get {
-      if case .addedAdmin(let v)? = _storage._payload {return v}
+      if case .addedAdmin(let v)? = payload {return v}
       return Soapbox_V1_Event.AddedAdmin()
     }
-    set {_uniqueStorage()._payload = .addedAdmin(newValue)}
+    set {payload = .addedAdmin(newValue)}
   }
 
   var removedAdmin: Soapbox_V1_Event.RemovedAdmin {
     get {
-      if case .removedAdmin(let v)? = _storage._payload {return v}
+      if case .removedAdmin(let v)? = payload {return v}
       return Soapbox_V1_Event.RemovedAdmin()
     }
-    set {_uniqueStorage()._payload = .removedAdmin(newValue)}
+    set {payload = .removedAdmin(newValue)}
   }
 
   var renamedRoom: Soapbox_V1_Event.RenamedRoom {
     get {
-      if case .renamedRoom(let v)? = _storage._payload {return v}
+      if case .renamedRoom(let v)? = payload {return v}
       return Soapbox_V1_Event.RenamedRoom()
     }
-    set {_uniqueStorage()._payload = .renamedRoom(newValue)}
+    set {payload = .renamedRoom(newValue)}
   }
 
   var recordedScreen: Soapbox_V1_Event.RecordedScreen {
     get {
-      if case .recordedScreen(let v)? = _storage._payload {return v}
+      if case .recordedScreen(let v)? = payload {return v}
       return Soapbox_V1_Event.RecordedScreen()
     }
-    set {_uniqueStorage()._payload = .recordedScreen(newValue)}
+    set {payload = .recordedScreen(newValue)}
   }
 
   var mutedByAdmin: Soapbox_V1_Event.MutedByAdmin {
     get {
-      if case .mutedByAdmin(let v)? = _storage._payload {return v}
+      if case .mutedByAdmin(let v)? = payload {return v}
       return Soapbox_V1_Event.MutedByAdmin()
     }
-    set {_uniqueStorage()._payload = .mutedByAdmin(newValue)}
+    set {payload = .mutedByAdmin(newValue)}
   }
 
   var visibilityUpdated: Soapbox_V1_Event.VisibilityUpdated {
     get {
-      if case .visibilityUpdated(let v)? = _storage._payload {return v}
+      if case .visibilityUpdated(let v)? = payload {return v}
       return Soapbox_V1_Event.VisibilityUpdated()
     }
-    set {_uniqueStorage()._payload = .visibilityUpdated(newValue)}
+    set {payload = .visibilityUpdated(newValue)}
   }
 
   var pinnedLink: Soapbox_V1_Event.PinnedLink {
     get {
-      if case .pinnedLink(let v)? = _storage._payload {return v}
+      if case .pinnedLink(let v)? = payload {return v}
       return Soapbox_V1_Event.PinnedLink()
     }
-    set {_uniqueStorage()._payload = .pinnedLink(newValue)}
+    set {payload = .pinnedLink(newValue)}
   }
 
   var unpinnedLink: Soapbox_V1_Event.UnpinnedLink {
     get {
-      if case .unpinnedLink(let v)? = _storage._payload {return v}
+      if case .unpinnedLink(let v)? = payload {return v}
       return Soapbox_V1_Event.UnpinnedLink()
     }
-    set {_uniqueStorage()._payload = .unpinnedLink(newValue)}
+    set {payload = .unpinnedLink(newValue)}
   }
 
   var openedMini: Soapbox_V1_Event.OpenedMini {
     get {
-      if case .openedMini(let v)? = _storage._payload {return v}
+      if case .openedMini(let v)? = payload {return v}
       return Soapbox_V1_Event.OpenedMini()
     }
-    set {_uniqueStorage()._payload = .openedMini(newValue)}
+    set {payload = .openedMini(newValue)}
   }
 
   var closedMini: Soapbox_V1_Event.ClosedMini {
     get {
-      if case .closedMini(let v)? = _storage._payload {return v}
+      if case .closedMini(let v)? = payload {return v}
       return Soapbox_V1_Event.ClosedMini()
     }
-    set {_uniqueStorage()._payload = .closedMini(newValue)}
+    set {payload = .closedMini(newValue)}
   }
 
   var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -594,23 +639,74 @@ struct Soapbox_V1_Event {
 
   #if !swift(>=4.1)
     static func ==(lhs: Soapbox_V1_Event.OneOf_Payload, rhs: Soapbox_V1_Event.OneOf_Payload) -> Bool {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch (lhs, rhs) {
-      case (.joined(let l), .joined(let r)): return l == r
-      case (.left(let l), .left(let r)): return l == r
-      case (.muteUpdated(let l), .muteUpdated(let r)): return l == r
-      case (.reacted(let l), .reacted(let r)): return l == r
-      case (.linkShared(let l), .linkShared(let r)): return l == r
-      case (.invitedAdmin(let l), .invitedAdmin(let r)): return l == r
-      case (.addedAdmin(let l), .addedAdmin(let r)): return l == r
-      case (.removedAdmin(let l), .removedAdmin(let r)): return l == r
-      case (.renamedRoom(let l), .renamedRoom(let r)): return l == r
-      case (.recordedScreen(let l), .recordedScreen(let r)): return l == r
-      case (.mutedByAdmin(let l), .mutedByAdmin(let r)): return l == r
-      case (.visibilityUpdated(let l), .visibilityUpdated(let r)): return l == r
-      case (.pinnedLink(let l), .pinnedLink(let r)): return l == r
-      case (.unpinnedLink(let l), .unpinnedLink(let r)): return l == r
-      case (.openedMini(let l), .openedMini(let r)): return l == r
-      case (.closedMini(let l), .closedMini(let r)): return l == r
+      case (.joined, .joined): return {
+        guard case .joined(let l) = lhs, case .joined(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.left, .left): return {
+        guard case .left(let l) = lhs, case .left(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.muteUpdated, .muteUpdated): return {
+        guard case .muteUpdated(let l) = lhs, case .muteUpdated(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.reacted, .reacted): return {
+        guard case .reacted(let l) = lhs, case .reacted(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.linkShared, .linkShared): return {
+        guard case .linkShared(let l) = lhs, case .linkShared(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.invitedAdmin, .invitedAdmin): return {
+        guard case .invitedAdmin(let l) = lhs, case .invitedAdmin(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.addedAdmin, .addedAdmin): return {
+        guard case .addedAdmin(let l) = lhs, case .addedAdmin(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.removedAdmin, .removedAdmin): return {
+        guard case .removedAdmin(let l) = lhs, case .removedAdmin(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.renamedRoom, .renamedRoom): return {
+        guard case .renamedRoom(let l) = lhs, case .renamedRoom(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.recordedScreen, .recordedScreen): return {
+        guard case .recordedScreen(let l) = lhs, case .recordedScreen(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.mutedByAdmin, .mutedByAdmin): return {
+        guard case .mutedByAdmin(let l) = lhs, case .mutedByAdmin(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.visibilityUpdated, .visibilityUpdated): return {
+        guard case .visibilityUpdated(let l) = lhs, case .visibilityUpdated(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.pinnedLink, .pinnedLink): return {
+        guard case .pinnedLink(let l) = lhs, case .pinnedLink(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.unpinnedLink, .unpinnedLink): return {
+        guard case .unpinnedLink(let l) = lhs, case .unpinnedLink(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.openedMini, .openedMini): return {
+        guard case .openedMini(let l) = lhs, case .openedMini(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.closedMini, .closedMini): return {
+        guard case .closedMini(let l) = lhs, case .closedMini(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
       default: return false
       }
     }
@@ -667,7 +763,7 @@ struct Soapbox_V1_Event {
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
 
-    var emoji: Data = SwiftProtobuf.Internal.emptyData
+    var emoji: Data = Data()
 
     var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -826,8 +922,6 @@ struct Soapbox_V1_Event {
   }
 
   init() {}
-
-  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 struct Soapbox_V1_RoomState {
@@ -1022,8 +1116,11 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1:
+      case 1: try {
         var v: Soapbox_V1_Command.MuteUpdate?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1031,7 +1128,8 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .muteUpdate(v)}
-      case 2:
+      }()
+      case 2: try {
         var v: Soapbox_V1_Command.Reaction?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1039,7 +1137,8 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .reaction(v)}
-      case 3:
+      }()
+      case 3: try {
         var v: Soapbox_V1_Command.LinkShare?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1047,7 +1146,8 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .linkShare(v)}
-      case 4:
+      }()
+      case 4: try {
         var v: Soapbox_V1_Command.InviteAdmin?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1055,7 +1155,8 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .inviteAdmin(v)}
-      case 5:
+      }()
+      case 5: try {
         var v: Soapbox_V1_Command.AcceptAdmin?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1063,7 +1164,8 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .acceptAdmin(v)}
-      case 6:
+      }()
+      case 6: try {
         var v: Soapbox_V1_Command.RemoveAdmin?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1071,7 +1173,8 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .removeAdmin(v)}
-      case 7:
+      }()
+      case 7: try {
         var v: Soapbox_V1_Command.RenameRoom?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1079,7 +1182,8 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .renameRoom(v)}
-      case 8:
+      }()
+      case 8: try {
         var v: Soapbox_V1_Command.InviteUser?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1087,7 +1191,8 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .inviteUser(v)}
-      case 9:
+      }()
+      case 9: try {
         var v: Soapbox_V1_Command.KickUser?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1095,7 +1200,8 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .kickUser(v)}
-      case 10:
+      }()
+      case 10: try {
         var v: Soapbox_V1_Command.MuteUser?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1103,7 +1209,8 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .muteUser(v)}
-      case 11:
+      }()
+      case 11: try {
         var v: Soapbox_V1_Command.RecordScreen?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1111,7 +1218,8 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .recordScreen(v)}
-      case 12:
+      }()
+      case 12: try {
         var v: Soapbox_V1_Command.VisibilityUpdate?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1119,7 +1227,8 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .visibilityUpdate(v)}
-      case 13:
+      }()
+      case 13: try {
         var v: Soapbox_V1_Command.PinLink?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1127,7 +1236,8 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .pinLink(v)}
-      case 14:
+      }()
+      case 14: try {
         var v: Soapbox_V1_Command.UnpinLink?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1135,7 +1245,8 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .unpinLink(v)}
-      case 15:
+      }()
+      case 15: try {
         var v: Soapbox_V1_Command.OpenMini?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1143,7 +1254,8 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .openMini(v)}
-      case 16:
+      }()
+      case 16: try {
         var v: Soapbox_V1_Command.CloseMini?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -1151,45 +1263,81 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .closeMini(v)}
+      }()
       default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every case branch when no optimizations are
+    // enabled. https://github.com/apple/swift-protobuf/issues/1034
     switch self.payload {
-    case .muteUpdate(let v)?:
+    case .muteUpdate?: try {
+      guard case .muteUpdate(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    case .reaction(let v)?:
+    }()
+    case .reaction?: try {
+      guard case .reaction(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    case .linkShare(let v)?:
+    }()
+    case .linkShare?: try {
+      guard case .linkShare(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-    case .inviteAdmin(let v)?:
+    }()
+    case .inviteAdmin?: try {
+      guard case .inviteAdmin(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
-    case .acceptAdmin(let v)?:
+    }()
+    case .acceptAdmin?: try {
+      guard case .acceptAdmin(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
-    case .removeAdmin(let v)?:
+    }()
+    case .removeAdmin?: try {
+      guard case .removeAdmin(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
-    case .renameRoom(let v)?:
+    }()
+    case .renameRoom?: try {
+      guard case .renameRoom(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
-    case .inviteUser(let v)?:
+    }()
+    case .inviteUser?: try {
+      guard case .inviteUser(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
-    case .kickUser(let v)?:
+    }()
+    case .kickUser?: try {
+      guard case .kickUser(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
-    case .muteUser(let v)?:
+    }()
+    case .muteUser?: try {
+      guard case .muteUser(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
-    case .recordScreen(let v)?:
+    }()
+    case .recordScreen?: try {
+      guard case .recordScreen(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
-    case .visibilityUpdate(let v)?:
+    }()
+    case .visibilityUpdate?: try {
+      guard case .visibilityUpdate(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 12)
-    case .pinLink(let v)?:
+    }()
+    case .pinLink?: try {
+      guard case .pinLink(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 13)
-    case .unpinLink(let v)?:
+    }()
+    case .unpinLink?: try {
+      guard case .unpinLink(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 14)
-    case .openMini(let v)?:
+    }()
+    case .openMini?: try {
+      guard case .openMini(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 15)
-    case .closeMini(let v)?:
+    }()
+    case .closeMini?: try {
+      guard case .closeMini(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 16)
+    }()
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -1210,8 +1358,11 @@ extension Soapbox_V1_Command.MuteUpdate: SwiftProtobuf.Message, SwiftProtobuf._M
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularBoolField(value: &self.muted)
+      case 1: try { try decoder.decodeSingularBoolField(value: &self.muted) }()
       default: break
       }
     }
@@ -1239,8 +1390,11 @@ extension Soapbox_V1_Command.Reaction: SwiftProtobuf.Message, SwiftProtobuf._Mes
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularBytesField(value: &self.emoji)
+      case 1: try { try decoder.decodeSingularBytesField(value: &self.emoji) }()
       default: break
       }
     }
@@ -1268,8 +1422,11 @@ extension Soapbox_V1_Command.LinkShare: SwiftProtobuf.Message, SwiftProtobuf._Me
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.link)
+      case 1: try { try decoder.decodeSingularStringField(value: &self.link) }()
       default: break
       }
     }
@@ -1297,8 +1454,11 @@ extension Soapbox_V1_Command.InviteAdmin: SwiftProtobuf.Message, SwiftProtobuf._
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self.id) }()
       default: break
       }
     }
@@ -1345,8 +1505,11 @@ extension Soapbox_V1_Command.RemoveAdmin: SwiftProtobuf.Message, SwiftProtobuf._
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self.id) }()
       default: break
       }
     }
@@ -1374,8 +1537,11 @@ extension Soapbox_V1_Command.RenameRoom: SwiftProtobuf.Message, SwiftProtobuf._M
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.name)
+      case 1: try { try decoder.decodeSingularStringField(value: &self.name) }()
       default: break
       }
     }
@@ -1403,8 +1569,11 @@ extension Soapbox_V1_Command.InviteUser: SwiftProtobuf.Message, SwiftProtobuf._M
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self.id) }()
       default: break
       }
     }
@@ -1432,8 +1601,11 @@ extension Soapbox_V1_Command.KickUser: SwiftProtobuf.Message, SwiftProtobuf._Mes
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self.id) }()
       default: break
       }
     }
@@ -1461,8 +1633,11 @@ extension Soapbox_V1_Command.MuteUser: SwiftProtobuf.Message, SwiftProtobuf._Mes
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self.id) }()
       default: break
       }
     }
@@ -1509,8 +1684,11 @@ extension Soapbox_V1_Command.VisibilityUpdate: SwiftProtobuf.Message, SwiftProto
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularEnumField(value: &self.visibility)
+      case 1: try { try decoder.decodeSingularEnumField(value: &self.visibility) }()
       default: break
       }
     }
@@ -1538,8 +1716,11 @@ extension Soapbox_V1_Command.PinLink: SwiftProtobuf.Message, SwiftProtobuf._Mess
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.link)
+      case 1: try { try decoder.decodeSingularStringField(value: &self.link) }()
       default: break
       }
     }
@@ -1587,9 +1768,12 @@ extension Soapbox_V1_Command.OpenMini: SwiftProtobuf.Message, SwiftProtobuf._Mes
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.mini)
-      case 2: try decoder.decodeSingularInt64Field(value: &self.id)
+      case 1: try { try decoder.decodeSingularStringField(value: &self.mini) }()
+      case 2: try { try decoder.decodeSingularInt64Field(value: &self.id) }()
       default: break
       }
     }
@@ -1654,222 +1838,242 @@ extension Soapbox_V1_Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     17: .standard(proto: "closed_mini"),
   ]
 
-  fileprivate class _StorageClass {
-    var _from: Int64 = 0
-    var _payload: Soapbox_V1_Event.OneOf_Payload?
-
-    static let defaultInstance = _StorageClass()
-
-    private init() {}
-
-    init(copying source: _StorageClass) {
-      _from = source._from
-      _payload = source._payload
-    }
-  }
-
-  fileprivate mutating func _uniqueStorage() -> _StorageClass {
-    if !isKnownUniquelyReferenced(&_storage) {
-      _storage = _StorageClass(copying: _storage)
-    }
-    return _storage
-  }
-
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    _ = _uniqueStorage()
-    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
-      while let fieldNumber = try decoder.nextFieldNumber() {
-        switch fieldNumber {
-        case 1: try decoder.decodeSingularInt64Field(value: &_storage._from)
-        case 2:
-          var v: Soapbox_V1_Event.Joined?
-          if let current = _storage._payload {
-            try decoder.handleConflictingOneOf()
-            if case .joined(let m) = current {v = m}
-          }
-          try decoder.decodeSingularMessageField(value: &v)
-          if let v = v {_storage._payload = .joined(v)}
-        case 3:
-          var v: Soapbox_V1_Event.Left?
-          if let current = _storage._payload {
-            try decoder.handleConflictingOneOf()
-            if case .left(let m) = current {v = m}
-          }
-          try decoder.decodeSingularMessageField(value: &v)
-          if let v = v {_storage._payload = .left(v)}
-        case 4:
-          var v: Soapbox_V1_Event.MuteUpdated?
-          if let current = _storage._payload {
-            try decoder.handleConflictingOneOf()
-            if case .muteUpdated(let m) = current {v = m}
-          }
-          try decoder.decodeSingularMessageField(value: &v)
-          if let v = v {_storage._payload = .muteUpdated(v)}
-        case 5:
-          var v: Soapbox_V1_Event.Reacted?
-          if let current = _storage._payload {
-            try decoder.handleConflictingOneOf()
-            if case .reacted(let m) = current {v = m}
-          }
-          try decoder.decodeSingularMessageField(value: &v)
-          if let v = v {_storage._payload = .reacted(v)}
-        case 6:
-          var v: Soapbox_V1_Event.LinkShared?
-          if let current = _storage._payload {
-            try decoder.handleConflictingOneOf()
-            if case .linkShared(let m) = current {v = m}
-          }
-          try decoder.decodeSingularMessageField(value: &v)
-          if let v = v {_storage._payload = .linkShared(v)}
-        case 7:
-          var v: Soapbox_V1_Event.InvitedAdmin?
-          if let current = _storage._payload {
-            try decoder.handleConflictingOneOf()
-            if case .invitedAdmin(let m) = current {v = m}
-          }
-          try decoder.decodeSingularMessageField(value: &v)
-          if let v = v {_storage._payload = .invitedAdmin(v)}
-        case 8:
-          var v: Soapbox_V1_Event.AddedAdmin?
-          if let current = _storage._payload {
-            try decoder.handleConflictingOneOf()
-            if case .addedAdmin(let m) = current {v = m}
-          }
-          try decoder.decodeSingularMessageField(value: &v)
-          if let v = v {_storage._payload = .addedAdmin(v)}
-        case 9:
-          var v: Soapbox_V1_Event.RemovedAdmin?
-          if let current = _storage._payload {
-            try decoder.handleConflictingOneOf()
-            if case .removedAdmin(let m) = current {v = m}
-          }
-          try decoder.decodeSingularMessageField(value: &v)
-          if let v = v {_storage._payload = .removedAdmin(v)}
-        case 10:
-          var v: Soapbox_V1_Event.RenamedRoom?
-          if let current = _storage._payload {
-            try decoder.handleConflictingOneOf()
-            if case .renamedRoom(let m) = current {v = m}
-          }
-          try decoder.decodeSingularMessageField(value: &v)
-          if let v = v {_storage._payload = .renamedRoom(v)}
-        case 11:
-          var v: Soapbox_V1_Event.RecordedScreen?
-          if let current = _storage._payload {
-            try decoder.handleConflictingOneOf()
-            if case .recordedScreen(let m) = current {v = m}
-          }
-          try decoder.decodeSingularMessageField(value: &v)
-          if let v = v {_storage._payload = .recordedScreen(v)}
-        case 12:
-          var v: Soapbox_V1_Event.MutedByAdmin?
-          if let current = _storage._payload {
-            try decoder.handleConflictingOneOf()
-            if case .mutedByAdmin(let m) = current {v = m}
-          }
-          try decoder.decodeSingularMessageField(value: &v)
-          if let v = v {_storage._payload = .mutedByAdmin(v)}
-        case 13:
-          var v: Soapbox_V1_Event.VisibilityUpdated?
-          if let current = _storage._payload {
-            try decoder.handleConflictingOneOf()
-            if case .visibilityUpdated(let m) = current {v = m}
-          }
-          try decoder.decodeSingularMessageField(value: &v)
-          if let v = v {_storage._payload = .visibilityUpdated(v)}
-        case 14:
-          var v: Soapbox_V1_Event.PinnedLink?
-          if let current = _storage._payload {
-            try decoder.handleConflictingOneOf()
-            if case .pinnedLink(let m) = current {v = m}
-          }
-          try decoder.decodeSingularMessageField(value: &v)
-          if let v = v {_storage._payload = .pinnedLink(v)}
-        case 15:
-          var v: Soapbox_V1_Event.UnpinnedLink?
-          if let current = _storage._payload {
-            try decoder.handleConflictingOneOf()
-            if case .unpinnedLink(let m) = current {v = m}
-          }
-          try decoder.decodeSingularMessageField(value: &v)
-          if let v = v {_storage._payload = .unpinnedLink(v)}
-        case 16:
-          var v: Soapbox_V1_Event.OpenedMini?
-          if let current = _storage._payload {
-            try decoder.handleConflictingOneOf()
-            if case .openedMini(let m) = current {v = m}
-          }
-          try decoder.decodeSingularMessageField(value: &v)
-          if let v = v {_storage._payload = .openedMini(v)}
-        case 17:
-          var v: Soapbox_V1_Event.ClosedMini?
-          if let current = _storage._payload {
-            try decoder.handleConflictingOneOf()
-            if case .closedMini(let m) = current {v = m}
-          }
-          try decoder.decodeSingularMessageField(value: &v)
-          if let v = v {_storage._payload = .closedMini(v)}
-        default: break
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self.from) }()
+      case 2: try {
+        var v: Soapbox_V1_Event.Joined?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .joined(let m) = current {v = m}
         }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .joined(v)}
+      }()
+      case 3: try {
+        var v: Soapbox_V1_Event.Left?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .left(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .left(v)}
+      }()
+      case 4: try {
+        var v: Soapbox_V1_Event.MuteUpdated?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .muteUpdated(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .muteUpdated(v)}
+      }()
+      case 5: try {
+        var v: Soapbox_V1_Event.Reacted?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .reacted(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .reacted(v)}
+      }()
+      case 6: try {
+        var v: Soapbox_V1_Event.LinkShared?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .linkShared(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .linkShared(v)}
+      }()
+      case 7: try {
+        var v: Soapbox_V1_Event.InvitedAdmin?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .invitedAdmin(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .invitedAdmin(v)}
+      }()
+      case 8: try {
+        var v: Soapbox_V1_Event.AddedAdmin?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .addedAdmin(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .addedAdmin(v)}
+      }()
+      case 9: try {
+        var v: Soapbox_V1_Event.RemovedAdmin?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .removedAdmin(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .removedAdmin(v)}
+      }()
+      case 10: try {
+        var v: Soapbox_V1_Event.RenamedRoom?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .renamedRoom(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .renamedRoom(v)}
+      }()
+      case 11: try {
+        var v: Soapbox_V1_Event.RecordedScreen?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .recordedScreen(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .recordedScreen(v)}
+      }()
+      case 12: try {
+        var v: Soapbox_V1_Event.MutedByAdmin?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .mutedByAdmin(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .mutedByAdmin(v)}
+      }()
+      case 13: try {
+        var v: Soapbox_V1_Event.VisibilityUpdated?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .visibilityUpdated(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .visibilityUpdated(v)}
+      }()
+      case 14: try {
+        var v: Soapbox_V1_Event.PinnedLink?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .pinnedLink(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .pinnedLink(v)}
+      }()
+      case 15: try {
+        var v: Soapbox_V1_Event.UnpinnedLink?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .unpinnedLink(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .unpinnedLink(v)}
+      }()
+      case 16: try {
+        var v: Soapbox_V1_Event.OpenedMini?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .openedMini(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .openedMini(v)}
+      }()
+      case 17: try {
+        var v: Soapbox_V1_Event.ClosedMini?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .closedMini(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .closedMini(v)}
+      }()
+      default: break
       }
     }
   }
 
   func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
-      if _storage._from != 0 {
-        try visitor.visitSingularInt64Field(value: _storage._from, fieldNumber: 1)
-      }
-      switch _storage._payload {
-      case .joined(let v)?:
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-      case .left(let v)?:
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-      case .muteUpdated(let v)?:
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
-      case .reacted(let v)?:
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
-      case .linkShared(let v)?:
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
-      case .invitedAdmin(let v)?:
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
-      case .addedAdmin(let v)?:
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
-      case .removedAdmin(let v)?:
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
-      case .renamedRoom(let v)?:
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
-      case .recordedScreen(let v)?:
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
-      case .mutedByAdmin(let v)?:
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 12)
-      case .visibilityUpdated(let v)?:
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 13)
-      case .pinnedLink(let v)?:
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 14)
-      case .unpinnedLink(let v)?:
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 15)
-      case .openedMini(let v)?:
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 16)
-      case .closedMini(let v)?:
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 17)
-      case nil: break
-      }
+    if self.from != 0 {
+      try visitor.visitSingularInt64Field(value: self.from, fieldNumber: 1)
+    }
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every case branch when no optimizations are
+    // enabled. https://github.com/apple/swift-protobuf/issues/1034
+    switch self.payload {
+    case .joined?: try {
+      guard case .joined(let v)? = self.payload else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    }()
+    case .left?: try {
+      guard case .left(let v)? = self.payload else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    }()
+    case .muteUpdated?: try {
+      guard case .muteUpdated(let v)? = self.payload else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+    }()
+    case .reacted?: try {
+      guard case .reacted(let v)? = self.payload else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+    }()
+    case .linkShared?: try {
+      guard case .linkShared(let v)? = self.payload else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
+    }()
+    case .invitedAdmin?: try {
+      guard case .invitedAdmin(let v)? = self.payload else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+    }()
+    case .addedAdmin?: try {
+      guard case .addedAdmin(let v)? = self.payload else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
+    }()
+    case .removedAdmin?: try {
+      guard case .removedAdmin(let v)? = self.payload else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
+    }()
+    case .renamedRoom?: try {
+      guard case .renamedRoom(let v)? = self.payload else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
+    }()
+    case .recordedScreen?: try {
+      guard case .recordedScreen(let v)? = self.payload else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 11)
+    }()
+    case .mutedByAdmin?: try {
+      guard case .mutedByAdmin(let v)? = self.payload else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 12)
+    }()
+    case .visibilityUpdated?: try {
+      guard case .visibilityUpdated(let v)? = self.payload else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 13)
+    }()
+    case .pinnedLink?: try {
+      guard case .pinnedLink(let v)? = self.payload else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 14)
+    }()
+    case .unpinnedLink?: try {
+      guard case .unpinnedLink(let v)? = self.payload else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 15)
+    }()
+    case .openedMini?: try {
+      guard case .openedMini(let v)? = self.payload else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 16)
+    }()
+    case .closedMini?: try {
+      guard case .closedMini(let v)? = self.payload else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 17)
+    }()
+    case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   static func ==(lhs: Soapbox_V1_Event, rhs: Soapbox_V1_Event) -> Bool {
-    if lhs._storage !== rhs._storage {
-      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
-        let _storage = _args.0
-        let rhs_storage = _args.1
-        if _storage._from != rhs_storage._from {return false}
-        if _storage._payload != rhs_storage._payload {return false}
-        return true
-      }
-      if !storagesAreEqual {return false}
-    }
+    if lhs.from != rhs.from {return false}
+    if lhs.payload != rhs.payload {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -1883,8 +2087,11 @@ extension Soapbox_V1_Event.Joined: SwiftProtobuf.Message, SwiftProtobuf._Message
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularMessageField(value: &self._user)
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._user) }()
       default: break
       }
     }
@@ -1912,8 +2119,11 @@ extension Soapbox_V1_Event.Left: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self.id) }()
       default: break
       }
     }
@@ -1941,8 +2151,11 @@ extension Soapbox_V1_Event.MuteUpdated: SwiftProtobuf.Message, SwiftProtobuf._Me
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularBoolField(value: &self.isMuted)
+      case 1: try { try decoder.decodeSingularBoolField(value: &self.isMuted) }()
       default: break
       }
     }
@@ -1970,8 +2183,11 @@ extension Soapbox_V1_Event.Reacted: SwiftProtobuf.Message, SwiftProtobuf._Messag
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularBytesField(value: &self.emoji)
+      case 1: try { try decoder.decodeSingularBytesField(value: &self.emoji) }()
       default: break
       }
     }
@@ -1999,8 +2215,11 @@ extension Soapbox_V1_Event.LinkShared: SwiftProtobuf.Message, SwiftProtobuf._Mes
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.link)
+      case 1: try { try decoder.decodeSingularStringField(value: &self.link) }()
       default: break
       }
     }
@@ -2028,8 +2247,11 @@ extension Soapbox_V1_Event.InvitedAdmin: SwiftProtobuf.Message, SwiftProtobuf._M
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self.id) }()
       default: break
       }
     }
@@ -2057,8 +2279,11 @@ extension Soapbox_V1_Event.AddedAdmin: SwiftProtobuf.Message, SwiftProtobuf._Mes
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self.id) }()
       default: break
       }
     }
@@ -2086,8 +2311,11 @@ extension Soapbox_V1_Event.RemovedAdmin: SwiftProtobuf.Message, SwiftProtobuf._M
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self.id) }()
       default: break
       }
     }
@@ -2115,8 +2343,11 @@ extension Soapbox_V1_Event.RenamedRoom: SwiftProtobuf.Message, SwiftProtobuf._Me
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.name)
+      case 1: try { try decoder.decodeSingularStringField(value: &self.name) }()
       default: break
       }
     }
@@ -2144,8 +2375,11 @@ extension Soapbox_V1_Event.RecordedScreen: SwiftProtobuf.Message, SwiftProtobuf.
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self.id) }()
       default: break
       }
     }
@@ -2173,8 +2407,11 @@ extension Soapbox_V1_Event.MutedByAdmin: SwiftProtobuf.Message, SwiftProtobuf._M
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self.id) }()
       default: break
       }
     }
@@ -2202,8 +2439,11 @@ extension Soapbox_V1_Event.VisibilityUpdated: SwiftProtobuf.Message, SwiftProtob
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularEnumField(value: &self.visibility)
+      case 1: try { try decoder.decodeSingularEnumField(value: &self.visibility) }()
       default: break
       }
     }
@@ -2231,8 +2471,11 @@ extension Soapbox_V1_Event.PinnedLink: SwiftProtobuf.Message, SwiftProtobuf._Mes
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.link)
+      case 1: try { try decoder.decodeSingularStringField(value: &self.link) }()
       default: break
       }
     }
@@ -2280,9 +2523,12 @@ extension Soapbox_V1_Event.OpenedMini: SwiftProtobuf.Message, SwiftProtobuf._Mes
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.slug)
-      case 2: try decoder.decodeSingularMessageField(value: &self._mini)
+      case 1: try { try decoder.decodeSingularStringField(value: &self.slug) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._mini) }()
       default: break
       }
     }
@@ -2340,15 +2586,18 @@ extension Soapbox_V1_RoomState: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.id)
-      case 2: try decoder.decodeSingularStringField(value: &self.name)
-      case 3: try decoder.decodeRepeatedMessageField(value: &self.members)
-      case 4: try decoder.decodeSingularStringField(value: &self.role)
-      case 5: try decoder.decodeSingularEnumField(value: &self.visibility)
-      case 7: try decoder.decodeSingularStringField(value: &self.link)
-      case 8: try decoder.decodeSingularStringField(value: &self.miniOld)
-      case 9: try decoder.decodeSingularMessageField(value: &self._mini)
+      case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.name) }()
+      case 3: try { try decoder.decodeRepeatedMessageField(value: &self.members) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self.role) }()
+      case 5: try { try decoder.decodeSingularEnumField(value: &self.visibility) }()
+      case 7: try { try decoder.decodeSingularStringField(value: &self.link) }()
+      case 8: try { try decoder.decodeSingularStringField(value: &self.miniOld) }()
+      case 9: try { try decoder.decodeSingularMessageField(value: &self._mini) }()
       default: break
       }
     }
@@ -2410,14 +2659,17 @@ extension Soapbox_V1_RoomState.RoomMember: SwiftProtobuf.Message, SwiftProtobuf.
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
-      case 2: try decoder.decodeSingularStringField(value: &self.displayName)
-      case 3: try decoder.decodeSingularStringField(value: &self.image)
-      case 4: try decoder.decodeSingularEnumField(value: &self.role)
-      case 5: try decoder.decodeSingularBoolField(value: &self.muted)
-      case 6: try decoder.decodeSingularUInt32Field(value: &self.ssrc)
-      case 7: try decoder.decodeSingularStringField(value: &self.username)
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self.id) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.displayName) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self.image) }()
+      case 4: try { try decoder.decodeSingularEnumField(value: &self.role) }()
+      case 5: try { try decoder.decodeSingularBoolField(value: &self.muted) }()
+      case 6: try { try decoder.decodeSingularUInt32Field(value: &self.ssrc) }()
+      case 7: try { try decoder.decodeSingularStringField(value: &self.username) }()
       default: break
       }
     }
@@ -2479,11 +2731,14 @@ extension Soapbox_V1_RoomState.Mini: SwiftProtobuf.Message, SwiftProtobuf._Messa
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularInt64Field(value: &self.id)
-      case 2: try decoder.decodeSingularStringField(value: &self.slug)
-      case 3: try decoder.decodeSingularEnumField(value: &self.size)
-      case 4: try decoder.decodeSingularStringField(value: &self.name)
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self.id) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.slug) }()
+      case 3: try { try decoder.decodeSingularEnumField(value: &self.size) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self.name) }()
       default: break
       }
     }
