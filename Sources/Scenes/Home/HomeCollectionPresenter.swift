@@ -27,7 +27,6 @@ class HomeCollectionPresenter {
 
     init() {
         set(stories: [])
-        set(rooms: [])
         set(actives: [
             APIClient.ActiveUser(id: 1, displayName: "Dean", username: "test", image: "", room: nil),
             APIClient.ActiveUser(id: 1, displayName: "poop", username: "test", image: "", room: nil),
@@ -36,6 +35,7 @@ class HomeCollectionPresenter {
             APIClient.ActiveUser(id: 1, displayName: "poop", username: "test", image: "", room: nil),
             APIClient.ActiveUser(id: 1, displayName: "poop", username: "test", image: "", room: nil),
         ])
+        set(rooms: [])
     }
 
     func title(for sectionIndex: Int) -> String {
@@ -134,6 +134,8 @@ class HomeCollectionPresenter {
             return
         }
 
+        item.image.leftAnchor.constraint(equalTo: item.leftAnchor).isActive = true
+
         item.title.text = user.displayName
         item.subtitle.text = "@" + user.username
     }
@@ -158,7 +160,7 @@ class HomeCollectionPresenter {
     }
 
     func set(actives: [APIClient.ActiveUser]) {
-        dataSource.append(Section(type: .activeUserList, title: "", data: actives))
+        dataSource.append(Section(type: .activeUserList, title: "Online right now", data: actives))
     }
 
     private func removeRooms() {

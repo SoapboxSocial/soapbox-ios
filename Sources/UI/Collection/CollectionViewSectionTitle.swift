@@ -1,24 +1,44 @@
 import UIKit
 
 class CollectionViewSectionTitle: UICollectionReusableView {
-    var label: UILabel = {
+    var title: UILabel = {
         let label = UILabel()
         label.textColor = .label
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
+        label.font = .rounded(forTextStyle: .title2, weight: .bold)
         return label
+    }()
+
+    var subtitle: UILabel = {
+        let label = UILabel()
+        label.textColor = .secondaryLabel
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .rounded(forTextStyle: .body, weight: .semibold)
+        return label
+    }()
+
+    private var stack: UIStackView = {
+        let view = UIStackView()
+        view.spacing = 5
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.distribution = .fill
+        view.axis = .vertical
+        return view
     }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        addSubview(label)
+        stack.addArrangedSubview(title)
+        stack.addArrangedSubview(subtitle)
+
+        addSubview(stack)
 
         NSLayoutConstraint.activate([
-            label.topAnchor.constraint(equalTo: topAnchor),
-            label.bottomAnchor.constraint(equalTo: bottomAnchor),
-            label.leftAnchor.constraint(equalTo: leftAnchor),
-            label.rightAnchor.constraint(equalTo: rightAnchor),
+            stack.topAnchor.constraint(equalTo: topAnchor),
+            stack.bottomAnchor.constraint(equalTo: bottomAnchor),
+            stack.leftAnchor.constraint(equalTo: leftAnchor),
+            stack.rightAnchor.constraint(equalTo: rightAnchor),
         ])
     }
 

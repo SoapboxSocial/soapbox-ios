@@ -208,13 +208,16 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
         layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5)
 
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.66), heightDimension: .estimated(160))
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.60), heightDimension: .estimated(160))
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitem: layoutItem, count: 3)
         layoutGroup.interItemSpacing = .fixed(20)
 
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
-        layoutSection.orthogonalScrollingBehavior = .paging
+        layoutSection.orthogonalScrollingBehavior = .continuous
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
         layoutSection.interGroupSpacing = 10
+
+        layoutSection.boundarySupplementaryItems = [createSectionHeader()]
 
         return layoutSection
     }
@@ -433,8 +436,13 @@ extension HomeViewController: UICollectionViewDataSource {
             return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: EmptyCollectionFooterView.self, for: indexPath)
         case UICollectionView.elementKindSectionHeader:
             let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
-            cell.label.text = presenter.title(for: indexPath.section)
-            cell.label.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
+            cell.title.text = presenter.title(for: indexPath.section)
+
+            if presenter.sectionType(for: indexPath.section) == .roomList {
+                cell.title.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
+            }
+
+            cell.subtitle.text = "Start a room with them"
             return cell
         default:
             fatalError("unknown kind: \(kind)")

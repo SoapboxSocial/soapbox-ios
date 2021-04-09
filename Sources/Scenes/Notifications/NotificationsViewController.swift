@@ -159,17 +159,17 @@ extension NotificationsViewController: UICollectionViewDataSource {
         }
 
         let cell = content.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
-        cell.label.font = .rounded(forTextStyle: .title3, weight: .bold)
+        cell.title.font = .rounded(forTextStyle: .title3, weight: .bold)
 
         switch notifications[indexPath.section].time {
         case .today:
-            cell.label.text = NSLocalizedString("today", comment: "")
+            cell.title.text = NSLocalizedString("today", comment: "")
         case .yesterday:
-            cell.label.text = NSLocalizedString("yesterday", comment: "")
+            cell.title.text = NSLocalizedString("yesterday", comment: "")
         case .thisWeek:
-            cell.label.text = NSLocalizedString("this_week", comment: "")
+            cell.title.text = NSLocalizedString("this_week", comment: "")
         case .earlier:
-            cell.label.text = NSLocalizedString("earlier", comment: "")
+            cell.title.text = NSLocalizedString("earlier", comment: "")
         }
 
         return cell

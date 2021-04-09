@@ -163,8 +163,7 @@ extension SearchViewController: UICollectionViewDataSource {
             return content.dequeueReusableSupplementaryView(ofKind: kind, withClass: EmptyCollectionFooterView.self, for: indexPath)
         case UICollectionView.elementKindSectionHeader:
             let cell = content.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
-            cell.label.font = .rounded(forTextStyle: .title2, weight: .bold)
-            cell.label.text = presenter.sectionTitle(for: indexPath.section)
+            cell.title.text = presenter.sectionTitle(for: indexPath.section)
             return cell
         default:
             fatalError("unknown kind: \(kind)")
