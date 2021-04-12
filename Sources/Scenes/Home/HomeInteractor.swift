@@ -2,6 +2,13 @@ import Foundation
 import KeychainAccess
 import SwiftProtobuf
 
+class Feed {
+    var rooms = [RoomAPIClient.Room]()
+    var stories = [APIClient.StoryFeed]()
+    var ownStory = [APIClient.Story]()
+    var actives = [APIClient.ActiveUser]()
+}
+
 protocol RoomController {
     func didSelect(room id: String)
 }
@@ -14,11 +21,9 @@ protocol RoomControllerDelegate {
 
 protocol HomeInteractorOutput {
     func didFailToFetchRooms()
-    func didFetchRooms(rooms: [RoomAPIClient.Room])
     func didJoin(room: String)
     func didLeaveRoom()
-    func didFetchFeed(_ feed: [APIClient.StoryFeed])
-    func didFetchOwnStories(_ stories: [APIClient.Story])
+    func didFetch(feed: Feed)
     func has(notifications: Bool)
 }
 
@@ -36,40 +41,61 @@ class HomeInteractor: HomeViewControllerOutput {
     }
 
     func fetchData() {
-        // @TODO probably want to start refresh control.
+        let feed = Feed()
 
-        roomApi.rooms { result in
+        let group = DispatchGroup()
+
+        group.enter()
+        roomApi.rooms(callback: { result in
+            group.leave()
             switch result {
             case .failure:
-                self.output.didFailToFetchRooms()
+                self.output.didFailToFetchRooms() // @TODO
             case let .success(list):
-                self.output.didFetchRooms(rooms: list)
+                feed.rooms = list
             }
-        }
+        })
 
         let user = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
 
+        group.enter()
         api.stories(user: user, callback: { result in
+            group.leave()
             switch result {
             case .failure:
-                self.output.didFetchOwnStories([])
+                break
             case let .success(stories):
-                self.output.didFetchOwnStories(stories)
+                feed.ownStory = stories
             }
         })
 
+        group.enter()
         api.feed(callback: { result in
+            group.leave()
             switch result {
             case .failure:
-                self.output.didFetchFeed([])
+                break
             case let .success(stories):
-                self.output.didFetchFeed(
-                    stories.sorted(by: {
-                        ($0.stories.map { $0.deviceTimestamp }.max() ?? 0) > ($1.stories.map { $0.deviceTimestamp }.max() ?? 0)
-                    })
-                )
+                feed.stories = stories.sorted(by: {
+                    ($0.stories.map { $0.deviceTimestamp }.max() ?? 0) > ($1.stories.map { $0.deviceTimestamp }.max() ?? 0)
+                })
             }
         })
+
+        group.enter()
+        api.actives(callback: { result in
+            group.leave()
+            switch result {
+            case .failure:
+                break
+            case let .success(actives):
+                feed.actives = actives
+            }
+        })
+
+        group.notify(queue: .main) {
+            self.output.didFetch(feed: feed)
+        }
     }
 
     func fetchMe() {
@@ -107,6 +133,7 @@ extension HomeInteractor: RoomControllerDelegate {
         output.didLeaveRoom()
     }
 
+    // @TODO seems like this is called too early
     func reloadRooms() {
         fetchData()
     }

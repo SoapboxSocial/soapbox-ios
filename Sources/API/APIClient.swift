@@ -364,6 +364,22 @@ extension APIClient {
     func feed(callback: @escaping (Result<[StoryFeed], Error>) -> Void) {
         get(path: "/v1/me/feed", callback: callback)
     }
+
+    struct ActiveUser: Decodable {
+        let id: Int
+        let displayName: String
+        let username: String
+        let image: String
+        let room: String?
+
+        private enum CodingKeys: String, CodingKey {
+            case id, displayName = "display_name", username, image, room
+        }
+    }
+
+    func actives(callback: @escaping (Result<[ActiveUser], Error>) -> Void) {
+        get(path: "/v1/me/feed/actives", callback: callback)
+    }
 }
 
 extension APIClient {

@@ -61,6 +61,13 @@ class CollectionViewCell: UICollectionViewCell {
             image.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
             image.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
+
+        NSLayoutConstraint.activate([
+            contentView.leftAnchor.constraint(equalTo: leftAnchor),
+            contentView.rightAnchor.constraint(equalTo: rightAnchor),
+            contentView.topAnchor.constraint(equalTo: topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
     }
 
     required init?(coder _: NSCoder) {

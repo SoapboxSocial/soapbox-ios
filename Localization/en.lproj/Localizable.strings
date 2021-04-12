@@ -239,3 +239,7 @@
 "user_opened_mini" = "%@ started \"%@\", come play!";
 
 "register_with_email_disabled_use_apple" = "Registering with email is currently disabled, Click here to Sign in with Apple instead!";
+
+"online_right_now" = "Online right now";
+"start_a_room_with_them" = "Start a room with them";
+"start_room" = "Start a room";

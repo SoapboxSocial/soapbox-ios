@@ -208,6 +208,10 @@ extension NavigationViewController: RoomViewDelegate {
     }
 
     private func shutdownRoom(completion: (() -> Void)? = nil) {
+        if room == nil, let completion = completion {
+            return completion()
+        }
+
         roomControllerDelegate?.didLeaveRoom()
 
         room?.close()
@@ -298,31 +302,33 @@ extension NavigationViewController: RoomCreationDelegate {
             self.activityIndicator.isHidden = false
         }
 
-        RoomFactory.create(callback: { room in
-            self.room = room
+        shutdownRoom {
+            RoomFactory.create(callback: { room in
+                self.room = room
 
-            room.create(name: name, isPrivate: isPrivate, users: users) { result in
-                DispatchQueue.main.async {
-                    self.activityIndicator.stopAnimating()
-                    self.activityIndicator.isHidden = true
+                room.create(name: name, isPrivate: isPrivate, users: users) { result in
+                    DispatchQueue.main.async {
+                        self.activityIndicator.stopAnimating()
+                        self.activityIndicator.isHidden = true
 
-                    switch result {
-                    case .failure:
-                        self.createRoomButton.isHidden = false
-                        self.room = nil
-                        return self.showNetworkError()
-                    case .success:
-                        if let id = self.room?.state.id {
-                            self.roomControllerDelegate?.didJoin(room: id)
+                        switch result {
+                        case .failure:
+                            self.createRoomButton.isHidden = false
+                            self.room = nil
+                            return self.showNetworkError()
+                        case .success:
+                            if let id = self.room?.state.id {
+                                self.roomControllerDelegate?.didJoin(room: id)
+                            }
+
+                            self.roomControllerDelegate?.reloadRooms()
+
+                            return self.presentCurrentRoom()
                         }
-
-                        self.roomControllerDelegate?.reloadRooms()
-
-                        return self.presentCurrentRoom()
                     }
                 }
-            }
-        })
+            })
+        }
     }
 }
 

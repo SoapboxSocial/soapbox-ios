@@ -452,6 +452,7 @@ class RoomView: UIView {
         }
 
         delegate?.roomDidExit()
+        miniView?.close()
     }
 
     @objc private func openBar() {
@@ -779,6 +780,7 @@ extension RoomView: RoomDelegate {
 
     func closedMini(source: Bool) {
         DispatchQueue.main.async {
+            debugPrint("wtf")
             if self.miniView == nil {
                 return
             }

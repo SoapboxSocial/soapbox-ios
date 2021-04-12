@@ -14,8 +14,6 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
 
     var output: HomeViewControllerOutput!
 
-    private var updateQueue = [Update]()
-
     private var ownStories = [APIClient.Story]()
 
     private let feedbackGenerator: UIImpactFeedbackGenerator = {
@@ -48,6 +46,7 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
         content.register(cellWithClass: RoomCell.self)
         content.register(cellWithClass: StoryCell.self)
         content.register(cellWithClass: CreateStoryCell.self)
+        content.register(cellWithClass: CollectionViewCell.self)
 
         content.refreshControl = refresh
         refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -137,6 +136,10 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
                 return self.createStoriesListSection()
             case .roomList:
                 return self.createRoomListSection()
+            case .topRoom:
+                return self.createTopRoomSection()
+            case .activeUserList:
+                return self.createActiveUserSection()
             case .noRooms:
                 return self.createNoRoomsSection()
             }
@@ -153,9 +156,12 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
 
         layoutItem.contentInsets = .zero
 
-        let height = NSCollectionLayoutDimension.absolute(view.frame.size.height - 300)
+        var height = view.frame.size.height - 300
+        if presenter.has(section: .activeUserList) {
+            height -= 300
+        }
 
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: height)
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: NSCollectionLayoutDimension.absolute(height))
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitem: layoutItem, count: 1)
 
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
@@ -194,14 +200,60 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
         layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
         layoutSection.interGroupSpacing = 20
 
-        layoutSection.boundarySupplementaryItems = [createSectionHeader(), createSectionFooter()]
+        layoutSection.boundarySupplementaryItems = [createSectionFooter()]
+        if !presenter.has(section: .activeUserList) {
+            layoutSection.boundarySupplementaryItems = [createSectionHeader()]
+        }
+
+        return layoutSection
+    }
+
+    private func createTopRoomSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(138))
+        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(138))
+        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitems: [layoutItem])
+
+        layoutGroup.contentInsets = .zero
+
+        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
+        layoutSection.interGroupSpacing = 20
+
+        layoutSection.boundarySupplementaryItems = [createSectionHeader()]
+
+        return layoutSection
+    }
+
+    private func createActiveUserSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(40))
+        let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
+        layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5)
+
+        var num = 0
+        if let index = presenter.index(of: .activeUserList) {
+            let numOfItems = presenter.numberOfItems(for: index)
+            num = min(3, numOfItems)
+        }
+
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.60), heightDimension: .estimated(CGFloat(60 * num)))
+        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitem: layoutItem, count: num)
+        layoutGroup.interItemSpacing = .fixed(20)
+
+        let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
+        layoutSection.orthogonalScrollingBehavior = .continuous
+        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
+        layoutSection.interGroupSpacing = 10
+
+        layoutSection.boundarySupplementaryItems = [createSectionHeader()]
 
         return layoutSection
     }
 
     private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
         return NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(80)),
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(50)),
             elementKind: UICollectionView.elementKindSectionHeader,
             alignment: .top
         )
@@ -225,21 +277,14 @@ extension HomeViewController: HomePresenterOutput {
         }
     }
 
-    func didFetchRooms(_ rooms: [RoomAPIClient.Room]) {
-        // sorted is temporary
-        update(.rooms(rooms.sorted(by: { $0.id < $1.id })))
-    }
+    func display(feed: Feed) {
+        content.refreshControl?.endRefreshing()
 
-    func didFetchFeed(_ feed: [APIClient.StoryFeed]) {
-        update(.feed(feed))
-    }
+        presenter.set(feed: feed)
 
-    func didFetchOwnStories(_ stories: [APIClient.Story]) {
-        let has = stories.count >= 1
-
-        ownStories = stories
-
-        update(.ownStory(has))
+        DispatchQueue.main.async {
+            self.content.reloadData()
+        }
     }
 
     func displayError(title: String, description: String?) {
@@ -266,44 +311,6 @@ extension HomeViewController: HomePresenterOutput {
         DispatchQueue.main.async {
             self.content.reloadData()
         }
-    }
-}
-
-extension HomeViewController {
-    enum Update {
-        case ownStory(Bool)
-        case rooms([RoomAPIClient.Room])
-        case feed([APIClient.StoryFeed])
-    }
-
-    func update(_ update: Update) {
-        refresh.endRefreshing()
-
-        updateQueue.append(update)
-        if updateQueue.count == 1 {
-            reloadData()
-        }
-    }
-
-    private func reloadData() {
-        guard let data = updateQueue.first else {
-            return
-        }
-
-        switch data {
-        case let .rooms(rooms):
-            presenter.set(rooms: rooms)
-            content.reloadSections(IndexSet(integer: presenter.numberOfSections - 1))
-        case let .feed(feed):
-            presenter.set(stories: feed)
-            content.reloadSections(IndexSet(integer: 0))
-        case let .ownStory(has):
-            presenter.set(hasOwnStory: has)
-            content.reloadSections(IndexSet(integer: 0))
-        }
-
-        updateQueue.removeFirst()
-        reloadData()
     }
 }
 
@@ -348,6 +355,30 @@ extension HomeViewController: UICollectionViewDelegate {
         case .roomList:
             let room = presenter.item(for: indexPath, ofType: RoomAPIClient.Room.self)
             output.didSelectRoom(room: room.id)
+        case .topRoom:
+            let room = presenter.item(for: indexPath, ofType: RoomAPIClient.Room.self)
+            output.didSelectRoom(room: room.id)
+        case .activeUserList:
+            let active = presenter.item(for: indexPath, ofType: APIClient.ActiveUser.self)
+
+            let sheet = ActionSheet(title: active.displayName, image: nil)
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("start_room", comment: ""), style: .default, handler: { _ in
+                DispatchQueue.main.async {
+                    (self.navigationController as? NavigationViewController)?.createRoom(name: nil, isPrivate: false, users: [active.id])
+                }
+            }))
+
+            if let room = active.room, room != "" {
+                sheet.add(action: ActionSheet.Action(
+                    title: NSLocalizedString("join_room", comment: ""),
+                    style: .default,
+                    handler: { _ in
+                        self.output.didSelectRoom(room: room)
+                    }
+                ))
+            }
+
+            present(sheet, animated: true)
         case .noRooms:
             return
         }
@@ -396,6 +427,14 @@ extension HomeViewController: UICollectionViewDataSource {
             let cell = collectionView.dequeueReusableCell(withClass: RoomCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
+        case .topRoom:
+            let cell = collectionView.dequeueReusableCell(withClass: RoomCell.self, for: indexPath)
+            presenter.configure(item: cell, for: indexPath)
+            return cell
+        case .activeUserList:
+            let cell = collectionView.dequeueReusableCell(withClass: CollectionViewCell.self, for: indexPath)
+            presenter.configure(item: cell, for: indexPath)
+            return cell
         case .noRooms:
             return collectionView.dequeueReusableCell(withClass: EmptyRoomCollectionViewCell.self, for: indexPath)
         }
@@ -407,8 +446,20 @@ extension HomeViewController: UICollectionViewDataSource {
             return collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: EmptyCollectionFooterView.self, for: indexPath)
         case UICollectionView.elementKindSectionHeader:
             let cell = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withClass: CollectionViewSectionTitle.self, for: indexPath)
-            cell.label.text = presenter.title(for: indexPath.section)
-            cell.label.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
+
+            if let title = presenter.title(for: indexPath.section) {
+                cell.title.text = title
+            }
+
+            let section = presenter.sectionType(for: indexPath.section)
+            if section == .roomList || section == .topRoom {
+                cell.title.font = .rounded(forTextStyle: .largeTitle, weight: .heavy)
+            }
+
+            if let subtitle = presenter.subtitle(for: indexPath.section) {
+                cell.subtitle.text = subtitle
+            }
+
             return cell
         default:
             fatalError("unknown kind: \(kind)")

@@ -1,11 +1,9 @@
 import Foundation
 
 protocol HomePresenterOutput {
-    func didFetchFeed(_ feed: [APIClient.StoryFeed])
-    func didFetchOwnStories(_ stories: [APIClient.Story])
-    func didFetchRooms(_ rooms: [RoomAPIClient.Room])
     func displayError(title: String, description: String?)
     func displayCurrentRoom(_ id: String)
+    func display(feed: Feed)
     func has(notifications: Bool)
     func removeCurrentRoom()
 }
@@ -20,10 +18,6 @@ class HomePresenter: HomeInteractorOutput {
         )
     }
 
-    func didFetchRooms(rooms: [RoomAPIClient.Room]) {
-        output.didFetchRooms(rooms)
-    }
-
     func didJoin(room: String) {
         output.displayCurrentRoom(room)
     }
@@ -32,12 +26,8 @@ class HomePresenter: HomeInteractorOutput {
         output.removeCurrentRoom()
     }
 
-    func didFetchFeed(_ feed: [APIClient.StoryFeed]) {
-        output.didFetchFeed(feed)
-    }
-
-    func didFetchOwnStories(_ stories: [APIClient.Story]) {
-        output.didFetchOwnStories(stories)
+    func didFetch(feed: Feed) {
+        output.display(feed: feed)
     }
 
     func has(notifications: Bool) {
