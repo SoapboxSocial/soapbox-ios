@@ -200,7 +200,6 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
         layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
         layoutSection.interGroupSpacing = 20
 
-        // @TODO ONLY ADD HEADER WHEN NO ACTIVES
         layoutSection.boundarySupplementaryItems = [createSectionFooter()]
         if !presenter.has(section: .activeUserList) {
             layoutSection.boundarySupplementaryItems = [createSectionHeader()]
