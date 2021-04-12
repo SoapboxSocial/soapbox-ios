@@ -227,7 +227,7 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
     }
 
     private func createActiveUserSection() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(40))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(40))
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
         layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5)
 
@@ -358,9 +358,13 @@ extension HomeViewController: UICollectionViewDelegate {
         case .topRoom:
             let room = presenter.item(for: indexPath, ofType: RoomAPIClient.Room.self)
             output.didSelectRoom(room: room.id)
-        case .noRooms:
-            return
         case .activeUserList:
+            let active = presenter.item(for: indexPath, ofType: APIClient.ActiveUser.self)
+
+            let sheet = ActionSheet(title: active.displayName, image: nil)
+            sheet.add(action: ActionSheet.Action(title: "Start a room", style: .default))
+            present(sheet, animated: true)
+        case .noRooms:
             return
         }
     }
