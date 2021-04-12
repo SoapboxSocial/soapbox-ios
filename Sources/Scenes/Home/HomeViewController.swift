@@ -218,7 +218,7 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
         layoutGroup.contentInsets = .zero
 
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
-        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
+//        layoutSection.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
         layoutSection.interGroupSpacing = 20
 
         layoutSection.boundarySupplementaryItems = [createSectionHeader()]
@@ -253,7 +253,7 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
 
     private func createSectionHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
         return NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(80)),
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(50)),
             elementKind: UICollectionView.elementKindSectionHeader,
             alignment: .top
         )
