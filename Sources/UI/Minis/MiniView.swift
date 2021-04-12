@@ -1,7 +1,7 @@
 import UIKit
 import WebKit
 
-protocol MiniViewDelegate {
+protocol MiniViewDelegate: AnyObject {
     func didTapCloseMiniView(_ view: MiniView)
 }
 
@@ -88,7 +88,7 @@ class MiniView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "xmark.circle", withConfiguration: UIImage.SymbolConfiguration(weight: .semibold)), for: .normal)
         button.tintColor = .systemRed
-        button.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(exitMini), for: .touchUpInside)
         return button
     }()
 
@@ -264,7 +264,10 @@ extension MiniView: WKScriptMessageHandler {
 
     func close(callback: (() -> Void)? = nil) {
         write(.closed, data: "{}", completion: callback)
+        shutdown()
+    }
 
+    func shutdown() {
         webView.stopLoading()
         webView.configuration.userContentController.removeAllUserScripts()
 
@@ -273,7 +276,7 @@ extension MiniView: WKScriptMessageHandler {
         }
     }
 
-    @objc private func exitTapped() {
+    @objc private func exitMini() {
         delegate?.didTapCloseMiniView(self)
     }
 }

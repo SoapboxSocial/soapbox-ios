@@ -71,11 +71,26 @@ struct Soapbox_V1_SignalRequest {
 
   #if !swift(>=4.1)
     static func ==(lhs: Soapbox_V1_SignalRequest.OneOf_Payload, rhs: Soapbox_V1_SignalRequest.OneOf_Payload) -> Bool {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch (lhs, rhs) {
-      case (.join(let l), .join(let r)): return l == r
-      case (.create(let l), .create(let r)): return l == r
-      case (.description_p(let l), .description_p(let r)): return l == r
-      case (.trickle(let l), .trickle(let r)): return l == r
+      case (.join, .join): return {
+        guard case .join(let l) = lhs, case .join(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.create, .create): return {
+        guard case .create(let l) = lhs, case .create(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.description_p, .description_p): return {
+        guard case .description_p(let l) = lhs, case .description_p(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.trickle, .trickle): return {
+        guard case .trickle(let l) = lhs, case .trickle(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
       default: return false
       }
     }
@@ -145,12 +160,30 @@ struct Soapbox_V1_SignalReply {
 
   #if !swift(>=4.1)
     static func ==(lhs: Soapbox_V1_SignalReply.OneOf_Payload, rhs: Soapbox_V1_SignalReply.OneOf_Payload) -> Bool {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch (lhs, rhs) {
-      case (.join(let l), .join(let r)): return l == r
-      case (.create(let l), .create(let r)): return l == r
-      case (.description_p(let l), .description_p(let r)): return l == r
-      case (.trickle(let l), .trickle(let r)): return l == r
-      case (.error(let l), .error(let r)): return l == r
+      case (.join, .join): return {
+        guard case .join(let l) = lhs, case .join(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.create, .create): return {
+        guard case .create(let l) = lhs, case .create(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.description_p, .description_p): return {
+        guard case .description_p(let l) = lhs, case .description_p(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.trickle, .trickle): return {
+        guard case .trickle(let l) = lhs, case .trickle(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.error, .error): return {
+        guard case .error(let l) = lhs, case .error(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
       default: return false
       }
     }
@@ -422,9 +455,12 @@ extension Soapbox_V1_SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._Messag
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.id)
-      case 2:
+      case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
+      case 2: try {
         var v: Soapbox_V1_JoinRequest?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -432,7 +468,8 @@ extension Soapbox_V1_SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._Messag
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .join(v)}
-      case 3:
+      }()
+      case 3: try {
         var v: Soapbox_V1_CreateRequest?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -440,7 +477,8 @@ extension Soapbox_V1_SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._Messag
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .create(v)}
-      case 4:
+      }()
+      case 4: try {
         var v: Soapbox_V1_SessionDescription?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -448,7 +486,8 @@ extension Soapbox_V1_SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._Messag
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .description_p(v)}
-      case 5:
+      }()
+      case 5: try {
         var v: Soapbox_V1_Trickle?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -456,6 +495,7 @@ extension Soapbox_V1_SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._Messag
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .trickle(v)}
+      }()
       default: break
       }
     }
@@ -465,15 +505,26 @@ extension Soapbox_V1_SignalRequest: SwiftProtobuf.Message, SwiftProtobuf._Messag
     if !self.id.isEmpty {
       try visitor.visitSingularStringField(value: self.id, fieldNumber: 1)
     }
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every case branch when no optimizations are
+    // enabled. https://github.com/apple/swift-protobuf/issues/1034
     switch self.payload {
-    case .join(let v)?:
+    case .join?: try {
+      guard case .join(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    case .create(let v)?:
+    }()
+    case .create?: try {
+      guard case .create(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-    case .description_p(let v)?:
+    }()
+    case .description_p?: try {
+      guard case .description_p(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
-    case .trickle(let v)?:
+    }()
+    case .trickle?: try {
+      guard case .trickle(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+    }()
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -500,9 +551,12 @@ extension Soapbox_V1_SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageI
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.id)
-      case 2:
+      case 1: try { try decoder.decodeSingularStringField(value: &self.id) }()
+      case 2: try {
         var v: Soapbox_V1_JoinReply?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -510,7 +564,8 @@ extension Soapbox_V1_SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageI
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .join(v)}
-      case 3:
+      }()
+      case 3: try {
         var v: Soapbox_V1_CreateReply?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -518,7 +573,8 @@ extension Soapbox_V1_SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageI
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .create(v)}
-      case 4:
+      }()
+      case 4: try {
         var v: Soapbox_V1_SessionDescription?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -526,7 +582,8 @@ extension Soapbox_V1_SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageI
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .description_p(v)}
-      case 5:
+      }()
+      case 5: try {
         var v: Soapbox_V1_Trickle?
         if let current = self.payload {
           try decoder.handleConflictingOneOf()
@@ -534,11 +591,13 @@ extension Soapbox_V1_SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageI
         }
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .trickle(v)}
-      case 6:
+      }()
+      case 6: try {
         if self.payload != nil {try decoder.handleConflictingOneOf()}
         var v: Soapbox_V1_SignalReply.Error?
         try decoder.decodeSingularEnumField(value: &v)
         if let v = v {self.payload = .error(v)}
+      }()
       default: break
       }
     }
@@ -548,17 +607,30 @@ extension Soapbox_V1_SignalReply: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     if !self.id.isEmpty {
       try visitor.visitSingularStringField(value: self.id, fieldNumber: 1)
     }
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every case branch when no optimizations are
+    // enabled. https://github.com/apple/swift-protobuf/issues/1034
     switch self.payload {
-    case .join(let v)?:
+    case .join?: try {
+      guard case .join(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-    case .create(let v)?:
+    }()
+    case .create?: try {
+      guard case .create(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-    case .description_p(let v)?:
+    }()
+    case .description_p?: try {
+      guard case .description_p(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
-    case .trickle(let v)?:
+    }()
+    case .trickle?: try {
+      guard case .trickle(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
-    case .error(let v)?:
+    }()
+    case .error?: try {
+      guard case .error(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularEnumField(value: v, fieldNumber: 6)
+    }()
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
@@ -589,9 +661,12 @@ extension Soapbox_V1_JoinRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageI
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.room)
-      case 2: try decoder.decodeSingularMessageField(value: &self._description_p)
+      case 1: try { try decoder.decodeSingularStringField(value: &self.room) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._description_p) }()
       default: break
       }
     }
@@ -625,10 +700,13 @@ extension Soapbox_V1_JoinReply: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularMessageField(value: &self._description_p)
-      case 2: try decoder.decodeSingularMessageField(value: &self._room)
-      case 3: try decoder.decodeSingularEnumField(value: &self.role)
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._description_p) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._room) }()
+      case 3: try { try decoder.decodeSingularEnumField(value: &self.role) }()
       default: break
       }
     }
@@ -667,11 +745,14 @@ extension Soapbox_V1_CreateRequest: SwiftProtobuf.Message, SwiftProtobuf._Messag
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.name)
-      case 2: try decoder.decodeSingularEnumField(value: &self.visibility)
-      case 4: try decoder.decodeRepeatedInt64Field(value: &self.users)
-      case 5: try decoder.decodeSingularMessageField(value: &self._description_p)
+      case 1: try { try decoder.decodeSingularStringField(value: &self.name) }()
+      case 2: try { try decoder.decodeSingularEnumField(value: &self.visibility) }()
+      case 4: try { try decoder.decodeRepeatedInt64Field(value: &self.users) }()
+      case 5: try { try decoder.decodeSingularMessageField(value: &self._description_p) }()
       default: break
       }
     }
@@ -712,9 +793,12 @@ extension Soapbox_V1_CreateReply: SwiftProtobuf.Message, SwiftProtobuf._MessageI
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularMessageField(value: &self._description_p)
-      case 2: try decoder.decodeSingularStringField(value: &self.id)
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._description_p) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.id) }()
       default: break
       }
     }
@@ -747,9 +831,12 @@ extension Soapbox_V1_SessionDescription: SwiftProtobuf.Message, SwiftProtobuf._M
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.type)
-      case 2: try decoder.decodeSingularStringField(value: &self.sdp)
+      case 1: try { try decoder.decodeSingularStringField(value: &self.type) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.sdp) }()
       default: break
       }
     }
@@ -784,11 +871,14 @@ extension Soapbox_V1_ICECandidate: SwiftProtobuf.Message, SwiftProtobuf._Message
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularStringField(value: &self.candidate)
-      case 2: try decoder.decodeSingularStringField(value: &self.sdpMid)
-      case 3: try decoder.decodeSingularInt64Field(value: &self.sdpMLineIndex)
-      case 4: try decoder.decodeSingularStringField(value: &self.usernameFragment)
+      case 1: try { try decoder.decodeSingularStringField(value: &self.candidate) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.sdpMid) }()
+      case 3: try { try decoder.decodeSingularInt64Field(value: &self.sdpMLineIndex) }()
+      case 4: try { try decoder.decodeSingularStringField(value: &self.usernameFragment) }()
       default: break
       }
     }
@@ -829,9 +919,12 @@ extension Soapbox_V1_Trickle: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try decoder.decodeSingularEnumField(value: &self.target)
-      case 2: try decoder.decodeSingularMessageField(value: &self._iceCandidate)
+      case 1: try { try decoder.decodeSingularEnumField(value: &self.target) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._iceCandidate) }()
       default: break
       }
     }

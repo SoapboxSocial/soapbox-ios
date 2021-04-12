@@ -216,16 +216,13 @@ extension NavigationViewController: RoomViewDelegate {
         createRoomButton.isHidden = false
         UIApplication.shared.isIdleTimerDisabled = false
 
-        roomDrawer?.setPosition(.closed, animated: true) { _ in
-            DispatchQueue.main.async {
-                self.roomDrawer?.removeFromSuperview()
-                self.roomDrawer = nil
-            }
+        roomDrawer?.removeFromSuperview(animated: true, completion: { _ in
+            self.roomDrawer = nil
 
-            if completion != nil {
-                completion!()
+            if let completion = completion {
+                completion()
             }
-        }
+        })
     }
 }
 
