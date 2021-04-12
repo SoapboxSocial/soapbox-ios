@@ -273,6 +273,12 @@ extension HomeViewController: HomePresenterOutput {
     }
 
     func didFetchRooms(_ rooms: [RoomAPIClient.Room]) {
+        if rooms.isEmpty {
+            update(.topRoom(nil))
+            update(.rooms([]))
+            return
+        }
+
         let topRoom = { () -> RoomAPIClient.Room? in
             var room: RoomAPIClient.Room?
             if let id = presenter.currentRoom {
@@ -286,9 +292,16 @@ extension HomeViewController: HomePresenterOutput {
             return rooms.sorted(by: { $0.members.count > $1.members.count }).first
         }()
 
+        var data = rooms
+        if let room = topRoom {
+            update(.topRoom(room))
+            data.removeAll(where: { $0.id == room.id })
+        } else {
+            update(.topRoom(nil))
+        }
+
         // sorted is temporary
-        update(.topRoom(topRoom!))
-        update(.rooms(rooms.sorted(by: { $0.id < $1.id })))
+        update(.rooms(data.sorted(by: { $0.id < $1.id })))
     }
 
     func didFetchFeed(_ feed: [APIClient.StoryFeed]) {
@@ -332,7 +345,7 @@ extension HomeViewController: HomePresenterOutput {
 
 extension HomeViewController {
     enum Update {
-        case topRoom(RoomAPIClient.Room)
+        case topRoom(RoomAPIClient.Room?)
         case ownStory(Bool)
         case rooms([RoomAPIClient.Room])
         case feed([APIClient.StoryFeed])
@@ -360,7 +373,11 @@ extension HomeViewController {
         case let .ownStory(has):
             presenter.set(hasOwnStory: has)
         case let .topRoom(room):
-            presenter.set(topRoom: room)
+            if let room = room {
+                presenter.set(topRoom: room)
+            } else {
+                presenter.removeTopRoom()
+            }
         }
 
         if content.numberOfSections > presenter.numberOfSections {
@@ -385,6 +402,7 @@ extension HomeViewController {
         case .topRoom:
             if let index = presenter.index(of: .topRoom) {
                 content.reloadSections(IndexSet(integer: index))
+//                content.reloadSections(IndexSet(integer: presenter.numberOfSections - 1))
             }
         }
 

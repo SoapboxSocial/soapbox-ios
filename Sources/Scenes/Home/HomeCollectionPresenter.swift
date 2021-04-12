@@ -147,7 +147,7 @@ class HomeCollectionPresenter {
     }
 
     func set(topRoom: RoomAPIClient.Room) {
-        dataSource.removeAll(where: { $0.type == .topRoom })
+        dataSource.removeAll(where: { $0.type == .topRoom || $0.type == .noRooms })
 
         var index = 0
         if has(section: .storiesList) {
@@ -188,10 +188,14 @@ class HomeCollectionPresenter {
         return dataSource.firstIndex(where: { $0.type == section })
     }
 
+    func removeTopRoom() {
+        dataSource.removeAll(where: { $0.type == .topRoom })
+    }
+
     private func removeRooms() {
         dataSource.removeAll(where: { $0.type == .roomList })
 
-        if dataSource.contains(where: { $0.type == .noRooms }) {
+        if dataSource.contains(where: { $0.type == .noRooms || $0.type == .topRoom }) {
             return
         }
 
