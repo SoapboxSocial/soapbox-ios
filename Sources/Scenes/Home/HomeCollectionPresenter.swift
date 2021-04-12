@@ -136,6 +136,10 @@ class HomeCollectionPresenter {
 
         item.title.text = user.displayName
         item.subtitle.text = "@" + user.username
+
+        if let image = user.image, image != "" {
+            item.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
+        }
     }
 
     func set(feed: Feed) {
