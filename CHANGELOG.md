@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Showing you recently active users!
+
 ## [2.24.0] - 2021-04-07Z
 
  - We've decided to remove groups.
