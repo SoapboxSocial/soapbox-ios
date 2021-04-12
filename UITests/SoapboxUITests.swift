@@ -1,6 +1,6 @@
 import XCTest
 
-class SoapboxUITests: XCTestCase {
+class soapboxUITests: XCTestCase {
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
 
@@ -24,11 +24,8 @@ class SoapboxUITests: XCTestCase {
     }
 
     func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTOSSignpostMetric.applicationLaunch]) {
-                XCUIApplication().launch()
-            }
+        measure(metrics: [XCTApplicationLaunchMetric(waitUntilResponsive: true)]) {
+            XCUIApplication().launch()
         }
     }
 }

@@ -1,4 +1,4 @@
-@testable import soapbox
+@testable import Soapbox
 import XCTest
 
 class SoapboxTests: XCTestCase {
