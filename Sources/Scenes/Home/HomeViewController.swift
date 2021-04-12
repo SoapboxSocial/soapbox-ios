@@ -147,7 +147,6 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
 
         layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
         layout.configuration.interSectionSpacing = 20
-        layout.register(CollectionBackgroundView.self, forDecorationViewOfKind: "background")
         return layout
     }
 
@@ -226,12 +225,18 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
     }
 
     private func createActiveUserSection() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(0.33))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(40))
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
         layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5)
 
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.60), heightDimension: .estimated(160))
-        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitem: layoutItem, count: 3)
+        var num = 0
+        if let index = presenter.index(of: .activeUserList) {
+            let numOfItems = presenter.numberOfItems(for: index)
+            num = min(3, numOfItems)
+        }
+
+        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.60), heightDimension: .estimated(CGFloat(60 * num)))
+        let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitem: layoutItem, count: num)
         layoutGroup.interItemSpacing = .fixed(20)
 
         let layoutSection = NSCollectionLayoutSection(group: layoutGroup)
@@ -273,61 +278,11 @@ extension HomeViewController: HomePresenterOutput {
     func display(feed: Feed) {
         content.refreshControl?.endRefreshing()
 
-        if let ownStory = feed.ownStory {
-            ownStories = ownStory
-            presenter.set(hasOwnStory: ownStory.count >= 1)
-        }
-
-        if let stories = feed.stories {
-            presenter.set(stories: stories)
-        }
-
-        if let actives = feed.actives {
-            presenter.set(actives: actives)
-        }
-
-        if let rooms = feed.rooms {
-            handle(rooms: rooms)
-        } else {
-            handle(rooms: [])
-        }
+        presenter.set(feed: feed)
 
         DispatchQueue.main.async {
             self.content.reloadData()
         }
-    }
-
-    func handle(rooms: [RoomAPIClient.Room]) {
-        if rooms.isEmpty {
-            presenter.removeTopRoom()
-            presenter.set(rooms: [])
-            return
-        }
-
-        var data = rooms
-        if presenter.has(section: .activeUserList) {
-            let topRoom = { () -> RoomAPIClient.Room? in
-                var room: RoomAPIClient.Room?
-                if let id = presenter.currentRoom {
-                    room = rooms.first(where: { $0.id == id })
-                }
-
-                if let room = room {
-                    return room
-                }
-
-                return rooms.sorted(by: { $0.members.count > $1.members.count }).first
-            }()
-
-            if let room = topRoom {
-                presenter.set(topRoom: room)
-                data.removeAll(where: { $0.id == room.id })
-            } else {
-                presenter.removeTopRoom()
-            }
-        }
-
-        presenter.set(rooms: data.sorted(by: { $0.id < $1.id }))
     }
 
     func displayError(title: String, description: String?) {

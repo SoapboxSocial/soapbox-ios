@@ -3,10 +3,10 @@ import KeychainAccess
 import SwiftProtobuf
 
 class Feed {
-    var rooms: [RoomAPIClient.Room]?
-    var stories: [APIClient.StoryFeed]?
-    var ownStory: [APIClient.Story]?
-    var actives: [APIClient.ActiveUser]?
+    var rooms = [RoomAPIClient.Room]()
+    var stories = [APIClient.StoryFeed]()
+    var ownStory = [APIClient.Story]()
+    var actives = [APIClient.ActiveUser]()
 }
 
 protocol RoomController {

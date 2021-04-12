@@ -28,8 +28,8 @@ class HomeCollectionPresenter {
     private(set) var hasOwnStory = false
 
     init() {
-        set(stories: [])
-        set(rooms: [])
+        dataSource.append(Section(type: .storiesList, title: nil, subtitle: nil, data: []))
+        dataSource.append(Section(type: .noRooms, title: nil, subtitle: nil, data: []))
     }
 
     func title(for sectionIndex: Int) -> String? {
@@ -138,47 +138,40 @@ class HomeCollectionPresenter {
         item.subtitle.text = "@" + user.username
     }
 
-    func set(topRoom: RoomAPIClient.Room) {
-        dataSource.removeAll(where: { $0.type == .topRoom || $0.type == .noRooms })
+    func set(feed: Feed) {
+        dataSource.removeAll()
 
-        var index = 0
-        if has(section: .storiesList) {
-            index = 1
+        dataSource.insert(Section(type: .storiesList, title: nil, subtitle: nil, data: feed.stories), at: 0)
+
+        hasOwnStory = feed.ownStory.count > 0
+
+        var rooms = feed.rooms
+
+        // @TODO move actives to the bottom cause layout estimate issue0 &
+        if feed.actives.count > 0 {
+            if rooms.count > 0 {
+                var room: RoomAPIClient.Room
+                if let id = currentRoom, let r = rooms.first(where: { $0.id == id }) {
+                    room = r
+                } else {
+                    room = rooms.sorted(by: { $0.members.count > $1.members.count }).first!
+                }
+
+                rooms.removeAll(where: { $0.id == room.id })
+                dataSource.append(Section(type: .topRoom, title: NSLocalizedString("rooms", comment: ""), subtitle: nil, data: [room]))
+            }
+
+            dataSource.append(
+                Section(type: .activeUserList, title: "Online right now", subtitle: "Start a room with them", data: feed.actives)
+            )
         }
 
-        dataSource.insert(Section(type: .topRoom, title: NSLocalizedString("rooms", comment: ""), subtitle: nil, data: [topRoom]), at: index)
-    }
-
-    func removeTopRoom() {
-        dataSource.removeAll(where: { $0.type == .topRoom })
-    }
-
-    func set(rooms: [RoomAPIClient.Room]) {
-        if rooms.isEmpty {
-            removeRooms()
+        if feed.rooms.count == 0 {
+            dataSource.append(Section(type: .noRooms, title: nil, subtitle: nil, data: []))
             return
         }
 
-        dataSource.removeAll(where: { $0.type == .roomList || $0.type == .noRooms })
-        dataSource.append(Section(type: .roomList, title: "", subtitle: nil, data: rooms))
-    }
-
-    func set(stories: [APIClient.StoryFeed]) {
-        dataSource.removeAll(where: { $0.type == .storiesList })
-        dataSource.insert(Section(type: .storiesList, title: nil, subtitle: nil, data: stories), at: 0)
-    }
-
-    func set(hasOwnStory: Bool) {
-        self.hasOwnStory = hasOwnStory
-    }
-
-    func set(actives: [APIClient.ActiveUser]) {
-        dataSource.removeAll(where: { $0.type == .activeUserList })
-
-//        if let topRoom =
-        let index = 1
-
-        dataSource.insert(Section(type: .activeUserList, title: "Online right now", subtitle: "Start a room with them", data: actives), at: index)
+        dataSource.append(Section(type: .roomList, title: feed.actives.count > 0 ? NSLocalizedString("rooms", comment: "") : nil, subtitle: nil, data: rooms))
     }
 
     func has(section: SectionType) -> Bool {
