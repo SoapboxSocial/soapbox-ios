@@ -6,6 +6,7 @@ protocol HomePresenterOutput {
     func didFetchRooms(_ rooms: [RoomAPIClient.Room])
     func displayError(title: String, description: String?)
     func displayCurrentRoom(_ id: String)
+    func display(feed: Feed)
     func has(notifications: Bool)
     func removeCurrentRoom()
 }
@@ -38,6 +39,10 @@ class HomePresenter: HomeInteractorOutput {
 
     func didFetchOwnStories(_ stories: [APIClient.Story]) {
         output.didFetchOwnStories(stories)
+    }
+
+    func didFetch(feed: Feed) {
+        output.display(feed: feed)
     }
 
     func has(notifications: Bool) {

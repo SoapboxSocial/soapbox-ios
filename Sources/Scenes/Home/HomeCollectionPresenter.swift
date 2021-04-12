@@ -29,14 +29,6 @@ class HomeCollectionPresenter {
 
     init() {
         set(stories: [])
-        set(actives: [
-            APIClient.ActiveUser(id: 1, displayName: "Dean", username: "test", image: "", room: nil),
-            APIClient.ActiveUser(id: 1, displayName: "poop", username: "test", image: "", room: nil),
-            APIClient.ActiveUser(id: 1, displayName: "poop", username: "test", image: "", room: nil),
-            APIClient.ActiveUser(id: 1, displayName: "poop", username: "test", image: "", room: nil),
-            APIClient.ActiveUser(id: 1, displayName: "poop", username: "test", image: "", room: nil),
-            APIClient.ActiveUser(id: 1, displayName: "poop", username: "test", image: "", room: nil),
-        ])
         set(rooms: [])
     }
 
@@ -181,7 +173,12 @@ class HomeCollectionPresenter {
     }
 
     func set(actives: [APIClient.ActiveUser]) {
-        dataSource.append(Section(type: .activeUserList, title: "Online right now", subtitle: "Start a room with them", data: actives))
+        dataSource.removeAll(where: { $0.type == .activeUserList })
+
+//        if let topRoom =
+        let index = 1
+
+        dataSource.insert(Section(type: .activeUserList, title: "Online right now", subtitle: "Start a room with them", data: actives), at: index)
     }
 
     func has(section: SectionType) -> Bool {

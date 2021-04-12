@@ -49,6 +49,7 @@ class CollectionViewSectionTitle: UICollectionReusableView {
     override func prepareForReuse() {
         super.prepareForReuse()
         title.text = ""
+        title.font = .rounded(forTextStyle: .title2, weight: .bold)
         subtitle.text = ""
     }
 }

@@ -14,8 +14,6 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
 
     var output: HomeViewControllerOutput!
 
-    private var updateQueue = [Update]()
-
     private var ownStories = [APIClient.Story]()
 
     private let feedbackGenerator: UIImpactFeedbackGenerator = {
@@ -272,49 +270,71 @@ extension HomeViewController: HomePresenterOutput {
         }
     }
 
-    func didFetchRooms(_ rooms: [RoomAPIClient.Room]) {
+    func display(feed: Feed) {
+        content.refreshControl?.endRefreshing()
+
+        if let ownStory = feed.ownStory {
+            ownStories = ownStory
+            presenter.set(hasOwnStory: ownStory.count >= 1)
+        }
+
+        if let stories = feed.stories {
+            presenter.set(stories: stories)
+        }
+
+        if let actives = feed.actives {
+            presenter.set(actives: actives)
+        }
+
+        if let rooms = feed.rooms {
+            handle(rooms: rooms)
+        } else {
+            handle(rooms: [])
+        }
+
+        DispatchQueue.main.async {
+            self.content.reloadData()
+        }
+    }
+
+    func handle(rooms: [RoomAPIClient.Room]) {
         if rooms.isEmpty {
-            update(.topRoom(nil))
-            update(.rooms([]))
+            presenter.removeTopRoom()
+            presenter.set(rooms: [])
             return
         }
 
-        let topRoom = { () -> RoomAPIClient.Room? in
-            var room: RoomAPIClient.Room?
-            if let id = presenter.currentRoom {
-                room = rooms.first(where: { $0.id == id })
-            }
-
-            if let room = room {
-                return room
-            }
-
-            return rooms.sorted(by: { $0.members.count > $1.members.count }).first
-        }()
-
         var data = rooms
-        if let room = topRoom {
-            update(.topRoom(room))
-            data.removeAll(where: { $0.id == room.id })
-        } else {
-            update(.topRoom(nil))
+        if presenter.has(section: .activeUserList) {
+            let topRoom = { () -> RoomAPIClient.Room? in
+                var room: RoomAPIClient.Room?
+                if let id = presenter.currentRoom {
+                    room = rooms.first(where: { $0.id == id })
+                }
+
+                if let room = room {
+                    return room
+                }
+
+                return rooms.sorted(by: { $0.members.count > $1.members.count }).first
+            }()
+
+            if let room = topRoom {
+                presenter.set(topRoom: room)
+                data.removeAll(where: { $0.id == room.id })
+            } else {
+                presenter.removeTopRoom()
+            }
         }
 
-        // sorted is temporary
-        update(.rooms(data.sorted(by: { $0.id < $1.id })))
+        presenter.set(rooms: data.sorted(by: { $0.id < $1.id }))
     }
 
-    func didFetchFeed(_ feed: [APIClient.StoryFeed]) {
-        update(.feed(feed))
-    }
+    func didFetchRooms(_: [RoomAPIClient.Room]) {}
 
-    func didFetchOwnStories(_ stories: [APIClient.Story]) {
-        let has = stories.count >= 1
+    func didFetchFeed(_: [APIClient.StoryFeed]) {}
 
-        ownStories = stories
-
-        update(.ownStory(has))
-    }
+    func didFetchOwnStories(_: [APIClient.Story]) {}
 
     func displayError(title: String, description: String?) {
         let banner = NotificationBanner(
@@ -340,74 +360,6 @@ extension HomeViewController: HomePresenterOutput {
         DispatchQueue.main.async {
             self.content.reloadData()
         }
-    }
-}
-
-extension HomeViewController {
-    enum Update {
-        case topRoom(RoomAPIClient.Room?)
-        case ownStory(Bool)
-        case rooms([RoomAPIClient.Room])
-        case feed([APIClient.StoryFeed])
-    }
-
-    func update(_ update: Update) {
-        refresh.endRefreshing()
-
-        updateQueue.append(update)
-        if updateQueue.count == 1 {
-            reloadData()
-        }
-    }
-
-    private func reloadData() {
-        guard let data = updateQueue.first else {
-            return
-        }
-
-        switch data {
-        case let .rooms(rooms):
-            presenter.set(rooms: rooms)
-        case let .feed(feed):
-            presenter.set(stories: feed)
-        case let .ownStory(has):
-            presenter.set(hasOwnStory: has)
-        case let .topRoom(room):
-            if let room = room {
-                presenter.set(topRoom: room)
-            } else {
-                presenter.removeTopRoom()
-            }
-        }
-
-        if content.numberOfSections > presenter.numberOfSections {
-            content.deleteSections(IndexSet(presenter.numberOfSections ..< content.numberOfSections))
-        } else if content.numberOfSections < presenter.numberOfSections {
-            content.insertSections(IndexSet(content.numberOfSections ..< presenter.numberOfSections))
-        }
-
-        switch data {
-        case .rooms:
-            if let index = presenter.index(of: .roomList) {
-                content.reloadSections(IndexSet(integer: index))
-            }
-        case .feed:
-            if let index = presenter.index(of: .storiesList) {
-                content.reloadSections(IndexSet(integer: index))
-            }
-        case .ownStory:
-            if let index = presenter.index(of: .storiesList) {
-                content.reloadSections(IndexSet(integer: index))
-            }
-        case .topRoom:
-            if let index = presenter.index(of: .topRoom) {
-                content.reloadSections(IndexSet(integer: index))
-//                content.reloadSections(IndexSet(integer: presenter.numberOfSections - 1))
-            }
-        }
-
-        updateQueue.removeFirst()
-        reloadData()
     }
 }
 
