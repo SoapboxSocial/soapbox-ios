@@ -88,7 +88,7 @@ class MiniView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "xmark.circle", withConfiguration: UIImage.SymbolConfiguration(weight: .semibold)), for: .normal)
         button.tintColor = .systemRed
-        button.addTarget(self, action: #selector(exitTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(exitMini), for: .touchUpInside)
         return button
     }()
 
@@ -276,7 +276,7 @@ extension MiniView: WKScriptMessageHandler {
         }
     }
 
-    @objc private func exitTapped() {
+    @objc private func exitMini() {
         delegate?.didTapCloseMiniView(self)
     }
 }

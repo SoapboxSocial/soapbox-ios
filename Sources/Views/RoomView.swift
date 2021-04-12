@@ -451,7 +451,6 @@ class RoomView: UIView {
             miniView = nil
         }
 
-        room.close()
         delegate?.roomDidExit()
     }
 
