@@ -23,6 +23,7 @@ protocol HomeInteractorOutput {
     func didFailToFetchRooms()
     func didJoin(room: String)
     func didLeaveRoom()
+    func didFetch(feed: Feed)
     func has(notifications: Bool)
 }
 

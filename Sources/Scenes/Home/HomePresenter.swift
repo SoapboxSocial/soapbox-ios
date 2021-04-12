@@ -1,9 +1,6 @@
 import Foundation
 
 protocol HomePresenterOutput {
-    func didFetchFeed(_ feed: [APIClient.StoryFeed])
-    func didFetchOwnStories(_ stories: [APIClient.Story])
-    func didFetchRooms(_ rooms: [RoomAPIClient.Room])
     func displayError(title: String, description: String?)
     func displayCurrentRoom(_ id: String)
     func display(feed: Feed)
