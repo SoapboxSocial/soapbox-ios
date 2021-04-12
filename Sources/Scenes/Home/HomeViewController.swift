@@ -362,7 +362,22 @@ extension HomeViewController: UICollectionViewDelegate {
             let active = presenter.item(for: indexPath, ofType: APIClient.ActiveUser.self)
 
             let sheet = ActionSheet(title: active.displayName, image: nil)
-            sheet.add(action: ActionSheet.Action(title: "Start a room", style: .default))
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("start_room", comment: ""), style: .default, handler: { _ in
+                DispatchQueue.main.async {
+                    (self.navigationController as? NavigationViewController)?.createRoom(name: nil, isPrivate: false, users: [active.id])
+                }
+            }))
+
+            if let room = active.room, room != "" {
+                sheet.add(action: ActionSheet.Action(
+                    title: NSLocalizedString("join_room", comment: ""),
+                    style: .default,
+                    handler: { _ in
+                        self.output.didSelectRoom(room: room)
+                    }
+                ))
+            }
+
             present(sheet, animated: true)
         case .noRooms:
             return

@@ -89,7 +89,6 @@ class HomeInteractor: HomeViewControllerOutput {
             case .failure:
                 break
             case let .success(actives):
-                debugPrint(actives)
                 feed.actives = actives
             }
         })
