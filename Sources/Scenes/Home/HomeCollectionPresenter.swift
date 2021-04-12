@@ -176,7 +176,7 @@ class HomeCollectionPresenter {
             return
         }
 
-        dataSource.append(Section(type: .roomList, title: feed.actives.count > 0 ? NSLocalizedString("rooms", comment: "") : nil, subtitle: nil, data: rooms))
+        dataSource.append(Section(type: .roomList, title: feed.actives.count == 0 ? NSLocalizedString("rooms", comment: "") : nil, subtitle: nil, data: rooms))
     }
 
     func has(section: SectionType) -> Bool {

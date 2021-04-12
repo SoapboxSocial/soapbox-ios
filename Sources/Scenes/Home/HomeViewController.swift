@@ -202,6 +202,9 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
 
         // @TODO ONLY ADD HEADER WHEN NO ACTIVES
         layoutSection.boundarySupplementaryItems = [createSectionFooter()]
+        if !presenter.has(section: .activeUserList) {
+            layoutSection.boundarySupplementaryItems = [createSectionHeader()]
+        }
 
         return layoutSection
     }
