@@ -149,7 +149,7 @@ extension RoomPreviewViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if indexPath.item >= maxMembersToShow - 1 {
             let cell = collectionView.dequeueReusableCell(withClass: RoomPreviewOverflowCell.self, for: indexPath)
-            cell.label.text = String(room!.members.count - maxMembersToShow)
+            cell.label.text = String(room!.members.count - (maxMembersToShow - 1))
             return cell
         }
 
