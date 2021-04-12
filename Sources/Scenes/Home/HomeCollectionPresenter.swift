@@ -157,6 +157,10 @@ class HomeCollectionPresenter {
         dataSource.insert(Section(type: .topRoom, title: NSLocalizedString("rooms", comment: ""), subtitle: nil, data: [topRoom]), at: index)
     }
 
+    func removeTopRoom() {
+        dataSource.removeAll(where: { $0.type == .topRoom })
+    }
+
     func set(rooms: [RoomAPIClient.Room]) {
         if rooms.isEmpty {
             removeRooms()
@@ -186,10 +190,6 @@ class HomeCollectionPresenter {
 
     func index(of section: SectionType) -> Int? {
         return dataSource.firstIndex(where: { $0.type == section })
-    }
-
-    func removeTopRoom() {
-        dataSource.removeAll(where: { $0.type == .topRoom })
     }
 
     private func removeRooms() {

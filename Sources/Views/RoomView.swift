@@ -409,7 +409,6 @@ class RoomView: UIView {
     }
 
     @objc private func exitTapped() {
-        debugPrint("wtf 1")
         if room.state.members.count == 1 {
             showExitAlert()
             return
