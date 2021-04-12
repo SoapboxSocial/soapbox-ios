@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.25.0] - 2021-04-12Z
+
  - Showing you recently active users!
 
 ## [2.24.0] - 2021-04-07Z
