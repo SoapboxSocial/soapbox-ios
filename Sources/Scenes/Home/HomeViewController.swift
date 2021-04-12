@@ -330,12 +330,6 @@ extension HomeViewController: HomePresenterOutput {
         presenter.set(rooms: data.sorted(by: { $0.id < $1.id }))
     }
 
-    func didFetchRooms(_: [RoomAPIClient.Room]) {}
-
-    func didFetchFeed(_: [APIClient.StoryFeed]) {}
-
-    func didFetchOwnStories(_: [APIClient.Story]) {}
-
     func displayError(title: String, description: String?) {
         let banner = NotificationBanner(
             title: title,

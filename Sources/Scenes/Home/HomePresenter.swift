@@ -21,24 +21,12 @@ class HomePresenter: HomeInteractorOutput {
         )
     }
 
-    func didFetchRooms(rooms: [RoomAPIClient.Room]) {
-        output.didFetchRooms(rooms)
-    }
-
     func didJoin(room: String) {
         output.displayCurrentRoom(room)
     }
 
     func didLeaveRoom() {
         output.removeCurrentRoom()
-    }
-
-    func didFetchFeed(_ feed: [APIClient.StoryFeed]) {
-        output.didFetchFeed(feed)
-    }
-
-    func didFetchOwnStories(_ stories: [APIClient.Story]) {
-        output.didFetchOwnStories(stories)
     }
 
     func didFetch(feed: Feed) {

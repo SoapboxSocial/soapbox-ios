@@ -21,12 +21,8 @@ protocol RoomControllerDelegate {
 
 protocol HomeInteractorOutput {
     func didFailToFetchRooms()
-    func didFetchRooms(rooms: [RoomAPIClient.Room])
     func didJoin(room: String)
     func didLeaveRoom()
-    func didFetchFeed(_ feed: [APIClient.StoryFeed])
-    func didFetchOwnStories(_ stories: [APIClient.Story])
-    func didFetch(feed: Feed)
     func has(notifications: Bool)
 }
 
