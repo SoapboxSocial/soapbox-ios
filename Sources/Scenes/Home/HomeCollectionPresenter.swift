@@ -162,7 +162,12 @@ class HomeCollectionPresenter {
             }
 
             dataSource.append(
-                Section(type: .activeUserList, title: "Online right now", subtitle: "Start a room with them", data: feed.actives)
+                Section(
+                    type: .activeUserList,
+                    title: NSLocalizedString("online_right_now", comment: ""),
+                    subtitle: NSLocalizedString("start_a_room_with_them", comment: ""),
+                    data: feed.actives
+                )
             )
         }
 
