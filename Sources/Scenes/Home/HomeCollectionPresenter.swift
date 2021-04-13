@@ -125,20 +125,22 @@ class HomeCollectionPresenter {
         item.members = room.members
     }
 
-    func configure(item: CollectionViewCell, for indexPath: IndexPath) {
+    func configure(item: ActiveUserCell, for indexPath: IndexPath) {
         let section = dataSource[indexPath.section]
         guard let user = section.data[indexPath.row] as? APIClient.ActiveUser else {
             print("Error getting room for indexPath: \(indexPath)")
             return
         }
 
-        item.image.leftAnchor.constraint(equalTo: item.leftAnchor).isActive = true
-
         item.title.text = user.displayName
         item.subtitle.text = "@" + user.username
 
         if user.image != "" {
             item.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + user.image))
+        }
+
+        if let room = user.room, room != "" {
+            item.onlineIndicator.isHidden = false
         }
     }
 

@@ -46,7 +46,7 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
         content.register(cellWithClass: RoomCell.self)
         content.register(cellWithClass: StoryCell.self)
         content.register(cellWithClass: CreateStoryCell.self)
-        content.register(cellWithClass: CollectionViewCell.self)
+        content.register(cellWithClass: ActiveUserCell.self)
 
         content.refreshControl = refresh
         refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -227,7 +227,7 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
     }
 
     private func createActiveUserSection() -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(40))
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .estimated(48))
         let layoutItem = NSCollectionLayoutItem(layoutSize: itemSize)
         layoutItem.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 5, bottom: 0, trailing: 5)
 
@@ -237,7 +237,16 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
             num = min(3, numOfItems)
         }
 
-        let layoutGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.60), heightDimension: .estimated(CGFloat(60 * num)))
+        var spacing = 0
+        if num > 1 {
+            spacing = num * 10
+        }
+
+        let layoutGroupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(0.60),
+            heightDimension: .estimated(CGFloat((48 * num) + spacing))
+        )
+
         let layoutGroup = NSCollectionLayoutGroup.vertical(layoutSize: layoutGroupSize, subitem: layoutItem, count: num)
         layoutGroup.interItemSpacing = .fixed(20)
 
@@ -362,6 +371,13 @@ extension HomeViewController: UICollectionViewDelegate {
             let active = presenter.item(for: indexPath, ofType: APIClient.ActiveUser.self)
 
             let sheet = ActionSheet(title: active.displayName, image: nil)
+
+            sheet.add(action: ActionSheet.Action(title: NSLocalizedString("view_profile", comment: ""), style: .default, handler: { _ in
+                DispatchQueue.main.async {
+                    self.navigationController?.pushViewController(SceneFactory.createProfileViewController(id: active.id), animated: true)
+                }
+            }))
+
             sheet.add(action: ActionSheet.Action(title: NSLocalizedString("start_room", comment: ""), style: .default, handler: { _ in
                 DispatchQueue.main.async {
                     (self.navigationController as? NavigationViewController)?.createRoom(name: nil, isPrivate: false, users: [active.id])
@@ -432,7 +448,7 @@ extension HomeViewController: UICollectionViewDataSource {
             presenter.configure(item: cell, for: indexPath)
             return cell
         case .activeUserList:
-            let cell = collectionView.dequeueReusableCell(withClass: CollectionViewCell.self, for: indexPath)
+            let cell = collectionView.dequeueReusableCell(withClass: ActiveUserCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
         case .noRooms:
