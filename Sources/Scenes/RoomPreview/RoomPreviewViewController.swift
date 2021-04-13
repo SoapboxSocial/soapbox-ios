@@ -123,8 +123,16 @@ class RoomPreviewViewController: DrawerViewController {
         RoomAPIClient().room(id: id, callback: { result in
             switch result {
             case .failure:
-                // @TODO close cause room not found
-                break
+                self.dismiss(animated: true, completion: {
+                    let banner = NotificationBanner(
+                        title: NSLocalizedString("room_was_closed", comment: ""),
+                        subtitle: NSLocalizedString("why_not_create_a_new_room", comment: ""),
+                        style: .success,
+                        type: .floating
+                    )
+
+                    banner.show()
+                })
             case let .success(room):
                 if room.name != "" {
                     self.titleLabel.text = room.name
