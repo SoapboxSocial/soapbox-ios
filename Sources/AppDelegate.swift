@@ -331,12 +331,18 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             }
 
             switch category {
-            case "NEW_ROOM", "ROOM_JOINED", "ROOM_INVITE", "WELCOME_ROOM":
+            case "NEW_ROOM", "ROOM_JOINED", "ROOM_INVITE":
                 guard let id = args["id"] as? String else {
                     return
                 }
 
                 nav.openPreviewDrawerFor(room: id)
+            case "WELCOME_ROOM":
+                guard let id = args["id"] as? String else {
+                    return
+                }
+
+                nav.didSelect(room: id)
             case "NEW_FOLLOWER":
                 guard let id = args["id"] as? Int else {
                     return

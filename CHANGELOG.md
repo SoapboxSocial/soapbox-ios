@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fixed an issue with the room preview sheet when the room is already closed (thanks Rory).
+
 ## [2.25.0] - 2021-04-12Z
 
  - Showing you recently active users!
