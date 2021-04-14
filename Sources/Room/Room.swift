@@ -348,7 +348,7 @@ extension Room {
     }
 
     private func on(requestedMini mini: Soapbox_V1_RoomState.Mini, from: Int64) {
-        delegate?.opened(mini: mini, from: from)
+        delegate?.requested(mini: mini, from: from)
     }
 }
 
