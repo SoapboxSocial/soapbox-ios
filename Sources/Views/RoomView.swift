@@ -803,7 +803,6 @@ extension RoomView: RoomDelegate {
 
     func closedMini(source: Bool) {
         DispatchQueue.main.async {
-            debugPrint("wtf")
             if self.miniView == nil {
                 return
             }
@@ -819,10 +818,7 @@ extension RoomView: RoomDelegate {
                 mini?.removeFromSuperview()
             }
 
-            if self.me.role == .admin {
-                self.leftButtonBar.show(button: .minis, animated: true)
-            }
-
+            self.leftButtonBar.show(button: .minis, animated: true)
             self.rightButtonBar.show(button: .paste, animated: true)
 
             if !source {
@@ -888,7 +884,11 @@ extension RoomView: ButtonBarDelegate {
         let directory = MinisDirectoryView()
         directory.onSelected = { app in
             directory.dismiss(animated: true, completion: {
-                self.room.open(mini: app)
+                if self.me.role == .admin {
+                    return self.room.open(mini: app)
+                }
+
+                self.room.request(mini: app.id)
             })
         }
         directory.manager.drawer.openHeightBehavior = .fixed(height: frame.size.height / 2)

@@ -200,6 +200,12 @@ class Room {
         }))
     }
 
+    func request(mini: Int64) {
+        client.send(command: .requestMini(Soapbox_V1_Command.RequestMini.with {
+            $0.id = mini
+        }))
+    }
+
     func closeMini() {
         client.send(command: .closeMini(Soapbox_V1_Command.CloseMini()))
         delegate?.closedMini(source: true)
