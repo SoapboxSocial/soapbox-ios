@@ -90,6 +90,7 @@ extension MinisDirectoryView: UICollectionViewDelegate {
         onSelected?(Soapbox_V1_RoomState.Mini.with {
             $0.id = Int64(app.id)
             $0.slug = app.slug
+            $0.name = app.name
             $0.size = Soapbox_V1_RoomState.Mini.Size(rawValue: app.size) ?? .regular
         })
     }

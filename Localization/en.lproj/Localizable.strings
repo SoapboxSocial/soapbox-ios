@@ -244,4 +244,5 @@
 "start_a_room_with_them" = "Start a room with them";
 "start_room" = "Start a room";
 
-"user_wants_to_play_mini" = "%@ wants to play %@";
+"user_wants_to_start_mini" = "%@ wants to start %@";
+"you_requested_to_start_mini" = "You requested to start %@";

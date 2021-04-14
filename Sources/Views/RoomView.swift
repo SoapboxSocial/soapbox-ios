@@ -888,6 +888,15 @@ extension RoomView: ButtonBarDelegate {
                     return self.room.open(mini: app)
                 }
 
+                let banner = NotificationBanner(
+                    title: String(format: NSLocalizedString("you_requested_to_start_mini", comment: ""), app.name),
+                    subtitle: nil,
+                    style: .info,
+                    type: .floating
+                )
+
+                banner.show()
+
                 self.room.request(mini: app.id)
             })
         }
