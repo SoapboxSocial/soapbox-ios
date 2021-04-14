@@ -19,6 +19,7 @@ protocol RoomDelegate: AnyObject {
     func linkWasPinned(link: URL)
     func pinnedLinkWasRemoved()
     func opened(mini: Soapbox_V1_RoomState.Mini, from: Int64)
+    func requested(mini: Soapbox_V1_RoomState.Mini, from: Int64)
     func closedMini(source: Bool)
 }
 
@@ -244,6 +245,8 @@ extension Room {
             on(openedMini: evt.mini, from: event.from)
         case .closedMini:
             onMiniClosed()
+        case let .requestedMini(evt):
+            on(requestedMini: evt.mini, from: event.from)
         default:
             return
         }
@@ -336,6 +339,10 @@ extension Room {
 
     private func onMiniClosed() {
         delegate?.closedMini(source: false)
+    }
+
+    private func on(requestedMini mini: Soapbox_V1_RoomState.Mini, from: Int64) {
+        delegate?.opened(mini: mini, from: from)
     }
 }
 

@@ -549,6 +549,32 @@ extension RoomView: UICollectionViewDataSource {
 }
 
 extension RoomView: RoomDelegate {
+    func requested(mini: Soapbox_V1_RoomState.Mini, from: Int64) {
+        guard let member = room.state.members.first(where: { $0.id == from }) else {
+            return
+        }
+
+        let title = String(format: NSLocalizedString("user_wants_to_play_mini", comment: ""), member.displayName.firstName(), mini.name)
+
+        LocalNotificationService.send(body: title)
+
+        let alert = UIAlertController(
+            title: title,
+            message: NSLocalizedString("would_you_like_to_accept", comment: ""),
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .default, handler: { _ in
+            self.room.open(mini: mini)
+        }))
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel))
+
+        DispatchQueue.main.async {
+            self.window!.rootViewController!.present(alert, animated: true)
+        }
+    }
+
     func usersSpeaking(users: [Int]) {
         DispatchQueue.main.async {
             guard let cells = self.members.visibleCells as? [RoomMemberCell] else {
