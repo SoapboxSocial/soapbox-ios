@@ -347,7 +347,6 @@ class RoomView: UIView {
 
         if me.role != .admin {
             leftButtonBar.hide(button: .settings, animated: false)
-            leftButtonBar.hide(button: .minis, animated: false)
 
             if room.state.visibility == .private {
                 leftButtonBar.hide(button: .invite, animated: false)
@@ -682,7 +681,6 @@ extension RoomView: RoomDelegate {
             if role == .admin {
                 self.linkView.adminRoleChanged(isAdmin: true)
                 self.leftButtonBar.show(button: .settings, animated: true)
-                self.leftButtonBar.show(button: .minis, animated: true)
                 self.leftButtonBar.show(button: .invite, animated: true)
 
                 if let mini = self.miniView {
@@ -691,7 +689,6 @@ extension RoomView: RoomDelegate {
             } else {
                 self.linkView.adminRoleChanged(isAdmin: false)
                 self.leftButtonBar.hide(button: .settings, animated: true)
-                self.leftButtonBar.hide(button: .minis, animated: true)
 
                 if self.room.state.visibility == .private {
                     self.leftButtonBar.hide(button: .invite, animated: true)
