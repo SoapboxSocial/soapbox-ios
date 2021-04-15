@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - Fixed an issue with the room preview sheet when the room is already closed (thanks Rory).
+ - We allow any user to request opening up a mini now.
 
 ## [2.25.0] - 2021-04-12Z
 

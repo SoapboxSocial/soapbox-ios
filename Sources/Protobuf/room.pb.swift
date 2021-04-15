@@ -195,6 +195,14 @@ struct Soapbox_V1_Command {
     set {payload = .closeMini(newValue)}
   }
 
+  var requestMini: Soapbox_V1_Command.RequestMini {
+    get {
+      if case .requestMini(let v)? = payload {return v}
+      return Soapbox_V1_Command.RequestMini()
+    }
+    set {payload = .requestMini(newValue)}
+  }
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum OneOf_Payload: Equatable {
@@ -214,6 +222,7 @@ struct Soapbox_V1_Command {
     case unpinLink(Soapbox_V1_Command.UnpinLink)
     case openMini(Soapbox_V1_Command.OpenMini)
     case closeMini(Soapbox_V1_Command.CloseMini)
+    case requestMini(Soapbox_V1_Command.RequestMini)
 
   #if !swift(>=4.1)
     static func ==(lhs: Soapbox_V1_Command.OneOf_Payload, rhs: Soapbox_V1_Command.OneOf_Payload) -> Bool {
@@ -283,6 +292,10 @@ struct Soapbox_V1_Command {
       }()
       case (.closeMini, .closeMini): return {
         guard case .closeMini(let l) = lhs, case .closeMini(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.requestMini, .requestMini): return {
+        guard case .requestMini(let l) = lhs, case .requestMini(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
       default: return false
@@ -477,6 +490,18 @@ struct Soapbox_V1_Command {
     init() {}
   }
 
+  struct RequestMini {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var id: Int64 = 0
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+  }
+
   init() {}
 }
 
@@ -617,6 +642,14 @@ struct Soapbox_V1_Event {
     set {payload = .closedMini(newValue)}
   }
 
+  var requestedMini: Soapbox_V1_Event.RequestedMini {
+    get {
+      if case .requestedMini(let v)? = payload {return v}
+      return Soapbox_V1_Event.RequestedMini()
+    }
+    set {payload = .requestedMini(newValue)}
+  }
+
   var unknownFields = SwiftProtobuf.UnknownStorage()
 
   enum OneOf_Payload: Equatable {
@@ -636,6 +669,7 @@ struct Soapbox_V1_Event {
     case unpinnedLink(Soapbox_V1_Event.UnpinnedLink)
     case openedMini(Soapbox_V1_Event.OpenedMini)
     case closedMini(Soapbox_V1_Event.ClosedMini)
+    case requestedMini(Soapbox_V1_Event.RequestedMini)
 
   #if !swift(>=4.1)
     static func ==(lhs: Soapbox_V1_Event.OneOf_Payload, rhs: Soapbox_V1_Event.OneOf_Payload) -> Bool {
@@ -705,6 +739,10 @@ struct Soapbox_V1_Event {
       }()
       case (.closedMini, .closedMini): return {
         guard case .closedMini(let l) = lhs, case .closedMini(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.requestedMini, .requestedMini): return {
+        guard case .requestedMini(let l) = lhs, case .requestedMini(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
       default: return false
@@ -921,6 +959,27 @@ struct Soapbox_V1_Event {
     init() {}
   }
 
+  struct RequestedMini {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    var mini: Soapbox_V1_RoomState.Mini {
+      get {return _mini ?? Soapbox_V1_RoomState.Mini()}
+      set {_mini = newValue}
+    }
+    /// Returns true if `mini` has been explicitly set.
+    var hasMini: Bool {return self._mini != nil}
+    /// Clears the value of `mini`. Subsequent reads from it will return its default value.
+    mutating func clearMini() {self._mini = nil}
+
+    var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    init() {}
+
+    fileprivate var _mini: Soapbox_V1_RoomState.Mini? = nil
+  }
+
   init() {}
 }
 
@@ -1112,6 +1171,7 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     14: .standard(proto: "unpin_link"),
     15: .standard(proto: "open_mini"),
     16: .standard(proto: "close_mini"),
+    17: .standard(proto: "request_mini"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1264,6 +1324,15 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .closeMini(v)}
       }()
+      case 17: try {
+        var v: Soapbox_V1_Command.RequestMini?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .requestMini(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .requestMini(v)}
+      }()
       default: break
       }
     }
@@ -1337,6 +1406,10 @@ extension Soapbox_V1_Command: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     case .closeMini?: try {
       guard case .closeMini(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 16)
+    }()
+    case .requestMini?: try {
+      guard case .requestMini(let v)? = self.payload else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 17)
     }()
     case nil: break
     }
@@ -1816,6 +1889,38 @@ extension Soapbox_V1_Command.CloseMini: SwiftProtobuf.Message, SwiftProtobuf._Me
   }
 }
 
+extension Soapbox_V1_Command.RequestMini: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Soapbox_V1_Command.protoMessageName + ".RequestMini"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularInt64Field(value: &self.id) }()
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.id != 0 {
+      try visitor.visitSingularInt64Field(value: self.id, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Soapbox_V1_Command.RequestMini, rhs: Soapbox_V1_Command.RequestMini) -> Bool {
+    if lhs.id != rhs.id {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
 extension Soapbox_V1_Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   static let protoMessageName: String = _protobuf_package + ".Event"
   static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -1836,6 +1941,7 @@ extension Soapbox_V1_Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     15: .standard(proto: "unpinned_link"),
     16: .standard(proto: "opened_mini"),
     17: .standard(proto: "closed_mini"),
+    18: .standard(proto: "requested_mini"),
   ]
 
   mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -1989,6 +2095,15 @@ extension Soapbox_V1_Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
         try decoder.decodeSingularMessageField(value: &v)
         if let v = v {self.payload = .closedMini(v)}
       }()
+      case 18: try {
+        var v: Soapbox_V1_Event.RequestedMini?
+        if let current = self.payload {
+          try decoder.handleConflictingOneOf()
+          if case .requestedMini(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {self.payload = .requestedMini(v)}
+      }()
       default: break
       }
     }
@@ -2065,6 +2180,10 @@ extension Soapbox_V1_Event: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     case .closedMini?: try {
       guard case .closedMini(let v)? = self.payload else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 17)
+    }()
+    case .requestedMini?: try {
+      guard case .requestedMini(let v)? = self.payload else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 18)
     }()
     case nil: break
     }
@@ -2566,6 +2685,38 @@ extension Soapbox_V1_Event.ClosedMini: SwiftProtobuf.Message, SwiftProtobuf._Mes
   }
 
   static func ==(lhs: Soapbox_V1_Event.ClosedMini, rhs: Soapbox_V1_Event.ClosedMini) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Soapbox_V1_Event.RequestedMini: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  static let protoMessageName: String = Soapbox_V1_Event.protoMessageName + ".RequestedMini"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "mini"),
+  ]
+
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._mini) }()
+      default: break
+      }
+    }
+  }
+
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if let v = self._mini {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  static func ==(lhs: Soapbox_V1_Event.RequestedMini, rhs: Soapbox_V1_Event.RequestedMini) -> Bool {
+    if lhs._mini != rhs._mini {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

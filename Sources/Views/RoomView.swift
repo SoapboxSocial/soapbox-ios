@@ -347,7 +347,6 @@ class RoomView: UIView {
 
         if me.role != .admin {
             leftButtonBar.hide(button: .settings, animated: false)
-            leftButtonBar.hide(button: .minis, animated: false)
 
             if room.state.visibility == .private {
                 leftButtonBar.hide(button: .invite, animated: false)
@@ -549,6 +548,32 @@ extension RoomView: UICollectionViewDataSource {
 }
 
 extension RoomView: RoomDelegate {
+    func requested(mini: Soapbox_V1_RoomState.Mini, from: Int64) {
+        guard let member = room.state.members.first(where: { $0.id == from }) else {
+            return
+        }
+
+        let title = String(format: NSLocalizedString("user_wants_to_play_mini", comment: ""), member.displayName.firstName(), mini.name)
+
+        LocalNotificationService.send(body: title)
+
+        let alert = UIAlertController(
+            title: title,
+            message: NSLocalizedString("would_you_like_to_accept", comment: ""),
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("yes", comment: ""), style: .default, handler: { _ in
+            self.room.open(mini: mini)
+        }))
+
+        alert.addAction(UIAlertAction(title: NSLocalizedString("no", comment: ""), style: .cancel))
+
+        DispatchQueue.main.async {
+            self.window!.rootViewController!.present(alert, animated: true)
+        }
+    }
+
     func usersSpeaking(users: [Int]) {
         DispatchQueue.main.async {
             guard let cells = self.members.visibleCells as? [RoomMemberCell] else {
@@ -656,7 +681,6 @@ extension RoomView: RoomDelegate {
             if role == .admin {
                 self.linkView.adminRoleChanged(isAdmin: true)
                 self.leftButtonBar.show(button: .settings, animated: true)
-                self.leftButtonBar.show(button: .minis, animated: true)
                 self.leftButtonBar.show(button: .invite, animated: true)
 
                 if let mini = self.miniView {
@@ -665,7 +689,6 @@ extension RoomView: RoomDelegate {
             } else {
                 self.linkView.adminRoleChanged(isAdmin: false)
                 self.leftButtonBar.hide(button: .settings, animated: true)
-                self.leftButtonBar.hide(button: .minis, animated: true)
 
                 if self.room.state.visibility == .private {
                     self.leftButtonBar.hide(button: .invite, animated: true)
@@ -780,7 +803,6 @@ extension RoomView: RoomDelegate {
 
     func closedMini(source: Bool) {
         DispatchQueue.main.async {
-            debugPrint("wtf")
             if self.miniView == nil {
                 return
             }
@@ -796,10 +818,7 @@ extension RoomView: RoomDelegate {
                 mini?.removeFromSuperview()
             }
 
-            if self.me.role == .admin {
-                self.leftButtonBar.show(button: .minis, animated: true)
-            }
-
+            self.leftButtonBar.show(button: .minis, animated: true)
             self.rightButtonBar.show(button: .paste, animated: true)
 
             if !source {
@@ -865,7 +884,20 @@ extension RoomView: ButtonBarDelegate {
         let directory = MinisDirectoryView()
         directory.onSelected = { app in
             directory.dismiss(animated: true, completion: {
-                self.room.open(mini: app)
+                if self.me.role == .admin {
+                    return self.room.open(mini: app)
+                }
+
+                let banner = NotificationBanner(
+                    title: String(format: NSLocalizedString("you_requested_to_start_mini", comment: ""), app.name),
+                    subtitle: nil,
+                    style: .info,
+                    type: .floating
+                )
+
+                banner.show()
+
+                self.room.request(mini: app.id)
             })
         }
         directory.manager.drawer.openHeightBehavior = .fixed(height: frame.size.height / 2)
