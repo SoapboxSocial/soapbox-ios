@@ -104,6 +104,7 @@ class NavigationViewController: UINavigationController {
         roomDrawer!.snapPositions = [.collapsed, .open]
         roomDrawer!.backgroundColor = .roomBackground
         roomDrawer!.delegate = self
+        roomDrawer!.panDelegate = roomView!
 
         // check that we are in an iphone 11 or higher.
         if view.frame.size.height > (RoomView.height() + view.safeAreaInsets.bottom + 68.0) {

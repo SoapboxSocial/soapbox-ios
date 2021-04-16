@@ -993,3 +993,17 @@ extension RoomView: MiniViewDelegate {
         room.closeMini()
     }
 }
+
+extension RoomView: DrawerViewPanDelegate {
+    func shouldHandle(pan: UIPanGestureRecognizer) -> Bool {
+        guard let view = miniView else {
+            return true
+        }
+        
+        let translation = pan.location(in: self)
+        
+        let converted = view.convert(translation, from: self)
+        
+        return !view.frame.contains(converted)
+    }
+}
