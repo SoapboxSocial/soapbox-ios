@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.26.0] - 2021-04-16Z
+
  - Fixed an issue with the room preview sheet when the room is already closed (thanks Rory).
  - We allow any user to request opening up a mini now.
  - Prevent the room from minimizing when you're just trying to play a game!
