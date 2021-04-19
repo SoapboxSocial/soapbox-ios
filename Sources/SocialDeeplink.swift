@@ -35,6 +35,7 @@ class SocialDeeplink {
         guard let url = URL(string: String(format: platform.post, message)) else {
             return
         }
+
         UIApplication.shared.open(url)
     }
 }
