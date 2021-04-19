@@ -283,8 +283,8 @@ class RoomView: UIView {
         ])
 
         NSLayoutConstraint.activate([
-            members.leftAnchor.constraint(equalTo: foreground.leftAnchor),
-            members.rightAnchor.constraint(equalTo: foreground.rightAnchor),
+            members.leftAnchor.constraint(equalTo: foreground.leftAnchor, constant: 20),
+            members.rightAnchor.constraint(equalTo: foreground.rightAnchor, constant: -20),
         ])
 
         NSLayoutConstraint.activate([

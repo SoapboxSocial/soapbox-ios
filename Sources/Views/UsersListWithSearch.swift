@@ -58,8 +58,8 @@ class UsersListWithSearch: UIView {
 
         NSLayoutConstraint.activate([
             searchBar.topAnchor.constraint(equalTo: topAnchor),
-            searchBar.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            searchBar.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            searchBar.leftAnchor.constraint(equalTo: leftAnchor),
+            searchBar.rightAnchor.constraint(equalTo: rightAnchor),
             searchBar.heightAnchor.constraint(equalToConstant: 48),
         ])
 

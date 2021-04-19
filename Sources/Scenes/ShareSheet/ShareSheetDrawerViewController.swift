@@ -7,10 +7,14 @@ class ShareSheetDrawerViewController: DrawerViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.spacing = 20
         view.isLayoutMarginsRelativeArrangement = true
-        view.alignment = .leading
         view.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
+        view.distribution = .fill
+        view.alignment = .fill
+        view.axis = .vertical
         return view
     }()
+
+    private var userList: UsersListWithSearch!
 
     private let room: Room
 
@@ -31,6 +35,10 @@ class ShareSheetDrawerViewController: DrawerViewController {
         manager.drawer.backgroundColor = .brandColor
 
         let share = createShareLinkView()
+        content.addArrangedSubview(share)
+
+        let invite = createInviteFriendsView()
+        content.addArrangedSubview(invite)
 
         view.addSubview(content)
 
@@ -40,19 +48,17 @@ class ShareSheetDrawerViewController: DrawerViewController {
             content.topAnchor.constraint(equalTo: view.topAnchor, constant: 40),
             content.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
-
-        content.addArrangedSubview(share)
     }
 
     private func createShareLinkView() -> UIView {
         let view = UIView()
 
-        let shareLinkTitle = UILabel()
-        shareLinkTitle.translatesAutoresizingMaskIntoConstraints = false
-        shareLinkTitle.textColor = .white
-        shareLinkTitle.text = NSLocalizedString("share_link_to_the_room", comment: "").uppercased()
-        shareLinkTitle.font = .boldSystemFont(ofSize: 17)
-        view.addSubview(shareLinkTitle)
+        let title = UILabel()
+        title.translatesAutoresizingMaskIntoConstraints = false
+        title.textColor = .white
+        title.text = NSLocalizedString("share_link_to_the_room", comment: "").uppercased()
+        title.font = .boldSystemFont(ofSize: 17)
+        view.addSubview(title)
 
         let seperator = UIView()
         seperator.translatesAutoresizingMaskIntoConstraints = false
@@ -102,12 +108,12 @@ class ShareSheetDrawerViewController: DrawerViewController {
         buttonStack.addArrangedSubview(overflow)
 
         NSLayoutConstraint.activate([
-            shareLinkTitle.leftAnchor.constraint(equalTo: view.leftAnchor),
-            shareLinkTitle.topAnchor.constraint(equalTo: view.topAnchor),
+            title.leftAnchor.constraint(equalTo: view.leftAnchor),
+            title.topAnchor.constraint(equalTo: view.topAnchor),
         ])
 
         NSLayoutConstraint.activate([
-            buttonStack.topAnchor.constraint(equalTo: shareLinkTitle.bottomAnchor, constant: 10),
+            buttonStack.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 10),
             buttonStack.leftAnchor.constraint(equalTo: view.leftAnchor),
             buttonStack.rightAnchor.constraint(equalTo: overflow.rightAnchor),
             buttonStack.heightAnchor.constraint(equalToConstant: 40),
@@ -119,6 +125,43 @@ class ShareSheetDrawerViewController: DrawerViewController {
             seperator.rightAnchor.constraint(equalTo: view.rightAnchor),
             seperator.topAnchor.constraint(equalTo: buttonStack.bottomAnchor, constant: 20),
             view.bottomAnchor.constraint(equalTo: seperator.bottomAnchor),
+        ])
+
+        return view
+    }
+
+    private func createInviteFriendsView() -> UIView {
+        let view = UIView()
+
+        let title = UILabel()
+        title.translatesAutoresizingMaskIntoConstraints = false
+        title.textColor = .white
+        title.text = NSLocalizedString("invite_your_friends", comment: "").uppercased()
+        title.font = .boldSystemFont(ofSize: 17)
+        view.addSubview(title)
+
+        NSLayoutConstraint.activate([
+            title.topAnchor.constraint(equalTo: view.topAnchor),
+            title.leftAnchor.constraint(equalTo: view.leftAnchor),
+            title.rightAnchor.constraint(equalTo: view.rightAnchor),
+        ])
+
+        let list = UsersListWithSearch(width: UIScreen.main.bounds.size.width, allowsDeselection: false)
+        view.addSubview(list)
+
+        APIClient().friends(id: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)) { result in
+            switch result {
+            case .failure: break
+            case let .success(users):
+                list.set(users: users)
+            }
+        }
+
+        NSLayoutConstraint.activate([
+            list.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 10),
+            list.leftAnchor.constraint(equalTo: view.leftAnchor),
+            list.rightAnchor.constraint(equalTo: view.rightAnchor),
+            list.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
 
         return view
