@@ -18,11 +18,11 @@ class SocialDeeplink {
         var post: String {
             switch self {
             case .twitter:
-                return ""
+                return "twitter://post?message=%@"
             case .whatsapp:
-                return ""
+                return "whatsapp://send?text=%@"
             case .telegram:
-                return ""
+                return "tg://msg?text=%@"
             }
         }
     }

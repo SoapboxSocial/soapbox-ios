@@ -1,7 +1,10 @@
 import UIKit
 
 class ShareButton: ButtonWithSpringAnimation {
-    init(image: UIImage) {
+    let platform: SocialDeeplink.Platform?
+
+    init(image: UIImage, platform: SocialDeeplink.Platform? = nil) {
+        self.platform = platform
         super.init()
         translatesAutoresizingMaskIntoConstraints = false
         setImage(image, for: .normal)

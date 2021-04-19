@@ -12,12 +12,10 @@ class ShareSheetDrawerViewController: DrawerViewController {
         return view
     }()
 
-    private let id: String
-    private let name: String
+    private let room: Room
 
-    init(id: String, name: String) {
-        self.id = id
-        self.name = name
+    init(room: Room) {
+        self.room = room
         super.init()
     }
 
@@ -72,7 +70,8 @@ class ShareSheetDrawerViewController: DrawerViewController {
                 continue
             }
 
-            let button = ShareButton(image: UIImage(named: social.rawValue)!)
+            let button = ShareButton(image: UIImage(named: social.rawValue)!, platform: social)
+            button.addTarget(self, action: #selector(socialTapped), for: .touchUpInside)
 
             NSLayoutConstraint.activate([
                 button.heightAnchor.constraint(equalToConstant: 40),
@@ -135,14 +134,26 @@ extension ShareSheetDrawerViewController {
         let data = LPLinkMetadata()
         data.originalURL = roomURL()
 
-        data.title = String(format: NSLocalizedString("share_room", comment: ""), name)
+        data.title = String(format: NSLocalizedString("share_room", comment: ""), room.state.name)
 
         let ac = UIActivityViewController(activityItems: [MetadataItemSource(metadata: data)], applicationActivities: nil)
         ac.excludedActivityTypes = [.markupAsPDF, .openInIBooks, .addToReadingList, .assignToContact]
         present(ac, animated: true)
     }
 
+    @objc private func socialTapped(_ sender: UIButton) {
+        guard let button = sender as? ShareButton else {
+            return
+        }
+
+        guard let platform = button.platform else {
+            return
+        }
+
+        SocialDeeplink.open(platform: platform, message: roomURL().absoluteString)
+    }
+
     private func roomURL() -> URL {
-        return URL(string: "https://soapbox.social/room/" + id)!
+        return URL(string: "https://soapbox.social/room/" + room.state.id)!
     }
 }

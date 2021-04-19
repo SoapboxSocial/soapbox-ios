@@ -910,7 +910,7 @@ extension RoomView: ButtonBarDelegate {
 
     private func inviteTapped() {
         window!.rootViewController!.present(
-            ShareSheetDrawerViewController(id: room.state.id, name: room.state.name),
+            ShareSheetDrawerViewController(room: room),
             animated: true
         )
     }
