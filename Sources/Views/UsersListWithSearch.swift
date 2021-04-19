@@ -8,7 +8,7 @@ import UIKit
 class UsersListWithSearch: UIView {
     var delegate: UsersListWithSearchDelegate?
 
-    private var users = [APIClient.User]()
+    private(set) var users = [APIClient.User]()
 
     private var filtered = [APIClient.User]()
 

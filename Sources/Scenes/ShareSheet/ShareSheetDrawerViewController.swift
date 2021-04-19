@@ -34,8 +34,10 @@ class ShareSheetDrawerViewController: DrawerViewController {
 
         manager.drawer.backgroundColor = .brandColor
 
-        let share = createShareLinkView()
-        content.addArrangedSubview(share)
+        if room.state.visibility == .public {
+            let share = createShareLinkView()
+            content.addArrangedSubview(share)
+        }
 
         let invite = createInviteFriendsView()
         content.addArrangedSubview(invite)
@@ -147,6 +149,7 @@ class ShareSheetDrawerViewController: DrawerViewController {
         ])
 
         let list = UsersListWithSearch(width: UIScreen.main.bounds.size.width, allowsDeselection: false)
+        list.delegate = self
         view.addSubview(list)
 
         APIClient().friends(id: UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)) { result in
@@ -198,5 +201,22 @@ extension ShareSheetDrawerViewController {
 
     private func roomURL() -> URL {
         return URL(string: "https://soapbox.social/room/" + room.state.id)!
+    }
+}
+
+extension ShareSheetDrawerViewController: UsersListWithSearchDelegate {
+    func usersList(_ list: UsersListWithSearch, didSelect id: Int) {
+        room.invite(user: id)
+
+        guard let data = list.users.first(where: { $0.id == id }) else {
+            return
+        }
+
+        let banner = NotificationBanner(
+            title: String(format: NSLocalizedString("user_invited", comment: ""), data.displayName),
+            style: .success,
+            type: .floating
+        )
+        banner.show()
     }
 }
