@@ -11,7 +11,7 @@ class SocialDeeplink {
             case .whatsapp:
                 return "whatsapp://"
             case .telegram:
-                return "telegram://"
+                return "tg://"
             }
         }
 

@@ -41,8 +41,10 @@
 	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>whatsapp</string>
 		<string>twitter</string>
 		<string>twitterauth</string>
+		<string>tg</string>
 	</array>
 	<key>NSAppTransportSecurity</key>
 	<dict>
