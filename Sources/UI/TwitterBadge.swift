@@ -2,7 +2,7 @@ import UIKit
 
 class TwitterBadge: Badge {
     private var icon: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "twitter"))
+        let imageView = UIImageView(image: UIImage(named: "twitter-blue"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()

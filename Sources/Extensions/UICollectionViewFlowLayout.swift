@@ -8,7 +8,6 @@ extension UICollectionViewFlowLayout {
         layout.itemSize = CGSize(width: size, height: size + 30)
         layout.minimumInteritemSpacing = spacing
         layout.minimumLineSpacing = spacing
-        layout.sectionInset = UIEdgeInsets(top: 0, left: spacing, bottom: 0, right: spacing)
 
         return layout
     }

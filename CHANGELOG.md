@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Made inviting friends and sharing a room just a bit nicer.
+
 ## [2.26.0] - 2021-04-16Z
 
  - Fixed an issue with the room preview sheet when the room is already closed (thanks Rory).

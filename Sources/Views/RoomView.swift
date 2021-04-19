@@ -120,12 +120,12 @@ class RoomView: UIView {
     }()
 
     enum RightButtonBar: String, Item, CaseIterable {
-        case share, paste
+        case minis, paste
 
         func icon() -> String {
             switch self {
-            case .share:
-                return "square.and.arrow.up"
+            case .minis:
+                return "gamecontroller"
             case .paste:
                 return "link.badge.plus"
             }
@@ -133,7 +133,7 @@ class RoomView: UIView {
     }
 
     enum LeftButtonBar: String, Item, CaseIterable {
-        case settings, invite, minis
+        case settings, invite
 
         func icon() -> String {
             switch self {
@@ -141,8 +141,6 @@ class RoomView: UIView {
                 return "gearshape"
             case .invite:
                 return "person.badge.plus"
-            case .minis:
-                return "gamecontroller"
             }
         }
     }
@@ -283,8 +281,8 @@ class RoomView: UIView {
         ])
 
         NSLayoutConstraint.activate([
-            members.leftAnchor.constraint(equalTo: foreground.leftAnchor),
-            members.rightAnchor.constraint(equalTo: foreground.rightAnchor),
+            members.leftAnchor.constraint(equalTo: foreground.leftAnchor, constant: 20),
+            members.rightAnchor.constraint(equalTo: foreground.rightAnchor, constant: -20),
         ])
 
         NSLayoutConstraint.activate([
@@ -356,7 +354,7 @@ class RoomView: UIView {
         visibilityUpdated(visibility: room.state.visibility)
 
         if room.state.hasMini, room.state.mini.id != 0 {
-            leftButtonBar.hide(button: .minis, animated: false)
+            rightButtonBar.hide(button: .minis, animated: false)
             open(mini: room.state.mini, isAppOpener: false)
         }
 
@@ -746,7 +744,6 @@ extension RoomView: RoomDelegate {
             switch visibility {
             case .private:
                 self.lock.isHidden = false
-                self.rightButtonBar.hide(button: .share, animated: true)
 
                 if self.me.role != .admin {
                     self.leftButtonBar.hide(button: .invite, animated: true)
@@ -754,7 +751,6 @@ extension RoomView: RoomDelegate {
 
             case .public:
                 self.lock.isHidden = true
-                self.rightButtonBar.show(button: .share, animated: true)
                 self.leftButtonBar.show(button: .invite, animated: true)
             default:
                 return
@@ -795,7 +791,7 @@ extension RoomView: RoomDelegate {
         }
 
         DispatchQueue.main.async {
-            self.leftButtonBar.hide(button: .minis, animated: true)
+            self.rightButtonBar.hide(button: .minis, animated: true)
             self.rightButtonBar.hide(button: .paste, animated: true)
             self.open(mini: mini, isAppOpener: from == 0)
         }
@@ -818,7 +814,7 @@ extension RoomView: RoomDelegate {
                 mini?.removeFromSuperview()
             }
 
-            self.leftButtonBar.show(button: .minis, animated: true)
+            self.rightButtonBar.show(button: .minis, animated: true)
             self.rightButtonBar.show(button: .paste, animated: true)
 
             if !source {
@@ -842,13 +838,13 @@ extension RoomView: LinkSharingViewDelegate {
     func didPin(link: URL) {
         room.pin(link: link)
         rightButtonBar.hide(button: .paste, animated: true)
-        leftButtonBar.hide(button: .minis, animated: true)
+        rightButtonBar.hide(button: .minis, animated: true)
     }
 
     func didUnpin() {
         room.unpin()
         rightButtonBar.show(button: .paste, animated: true)
-        leftButtonBar.show(button: .minis, animated: true)
+        rightButtonBar.show(button: .minis, animated: true)
     }
 }
 
@@ -859,8 +855,8 @@ extension RoomView: ButtonBarDelegate {
             switch button.value {
             case .paste:
                 return pasteTapped()
-            case .share:
-                return shareTapped()
+            case .minis:
+                return minisTapped()
             default:
                 return
             }
@@ -870,8 +866,6 @@ extension RoomView: ButtonBarDelegate {
                 return inviteTapped()
             case .settings:
                 return settingsTapped()
-            case .minis:
-                return minisTapped()
             default:
                 return
             }
@@ -910,25 +904,9 @@ extension RoomView: ButtonBarDelegate {
 
     private func inviteTapped() {
         window!.rootViewController!.present(
-            SceneFactory.createInviteFriendsListViewController(room: room),
+            ShareSheetDrawerViewController(room: room),
             animated: true
         )
-    }
-
-    private func shareTapped() {
-        if room.state.id == "" {
-            return
-        }
-
-        let data = LPLinkMetadata()
-        data.originalURL = URL(string: "https://soapbox.social/room/" + room.state.id)!
-
-        let format = NSLocalizedString("share_room", comment: "")
-        data.title = String(format: format, name.text!)
-
-        let ac = UIActivityViewController(activityItems: [MetadataItemSource(metadata: data)], applicationActivities: nil)
-        ac.excludedActivityTypes = [.markupAsPDF, .openInIBooks, .addToReadingList, .assignToContact]
-        window!.rootViewController!.present(ac, animated: true)
     }
 
     private func pasteTapped() {
@@ -999,11 +977,11 @@ extension RoomView: DrawerViewPanDelegate {
         guard let view = miniView else {
             return true
         }
-        
+
         let translation = pan.location(in: self)
-        
+
         let converted = view.convert(translation, from: self)
-        
+
         return !view.frame.contains(converted)
     }
 }

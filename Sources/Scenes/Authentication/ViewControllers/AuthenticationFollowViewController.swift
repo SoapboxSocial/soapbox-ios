@@ -65,8 +65,8 @@ class AuthenticationFollowViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             list.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 20),
-            list.leftAnchor.constraint(equalTo: view.leftAnchor),
-            list.rightAnchor.constraint(equalTo: view.rightAnchor),
+            list.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            list.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             list.bottomAnchor.constraint(equalTo: followButton.topAnchor),
         ])
 

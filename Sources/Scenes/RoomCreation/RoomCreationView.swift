@@ -134,8 +134,8 @@ class RoomCreationView: DrawerViewController, UITextFieldDelegate {
         ])
 
         NSLayoutConstraint.activate([
-            userList.leftAnchor.constraint(equalTo: creationView.rightAnchor),
-            userList.widthAnchor.constraint(equalTo: view.widthAnchor),
+            userList.leftAnchor.constraint(equalTo: creationView.rightAnchor, constant: 20),
+            userList.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -40),
             userList.topAnchor.constraint(equalTo: scrollView.topAnchor),
             userList.bottomAnchor.constraint(equalTo: button.topAnchor),
         ])
