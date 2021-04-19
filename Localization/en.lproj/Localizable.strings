@@ -246,3 +246,5 @@
 
 "user_wants_to_start_mini" = "%@ wants to start %@";
 "you_requested_to_start_mini" = "You requested to start %@";
+
+"share_link_to_the_room" = "Share link to room";

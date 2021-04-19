@@ -910,7 +910,7 @@ extension RoomView: ButtonBarDelegate {
 
     private func inviteTapped() {
         window!.rootViewController!.present(
-            SceneFactory.createInviteFriendsListViewController(room: room),
+            ShareSheetDrawerViewController(id: room.state.id, name: room.state.name),
             animated: true
         )
     }
@@ -999,11 +999,11 @@ extension RoomView: DrawerViewPanDelegate {
         guard let view = miniView else {
             return true
         }
-        
+
         let translation = pan.location(in: self)
-        
+
         let converted = view.convert(translation, from: self)
-        
+
         return !view.frame.contains(converted)
     }
 }
