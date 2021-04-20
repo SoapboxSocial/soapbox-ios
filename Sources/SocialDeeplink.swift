@@ -25,6 +25,17 @@ class SocialDeeplink {
                 return "tg://msg?text=%@"
             }
         }
+
+        var color: UIColor {
+            switch self {
+            case .telegram:
+                return UIColor(red: 0 / 255, green: 136 / 255, blue: 204 / 255, alpha: 1.0)
+            case .twitter:
+                return UIColor(red: 29 / 255, green: 161 / 255, blue: 242 / 255, alpha: 1.0)
+            case .whatsapp:
+                return UIColor(red: 79 / 255, green: 206 / 255, blue: 93 / 255, alpha: 1.0)
+            }
+        }
     }
 
     static func canOpen(platform: Platform) -> Bool {
