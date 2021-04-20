@@ -368,9 +368,7 @@ class RoomView: UIView {
             linkView.pinned(link: url)
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: {
-            self.pulsateSocial()
-        })
+        pulsateSocial()
     }
 
     func showMuteButton() {
@@ -996,7 +994,7 @@ extension RoomView: DrawerViewPanDelegate {
 
 extension RoomView {
     func pulsateSocial() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 60) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 30) { [weak self] in
             guard let self = self else {
                 return
             }
