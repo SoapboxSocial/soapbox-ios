@@ -23,7 +23,7 @@ class ButtonBar<E: Item>: UIView where E.RawValue == String {
 
     private let iconConfig = UIImage.SymbolConfiguration(weight: .semibold)
 
-    private var buttons = [E: Button]()
+    private(set) var buttons = [E: Button]()
 
     weak var delegate: ButtonBarDelegate?
 

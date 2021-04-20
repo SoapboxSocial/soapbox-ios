@@ -119,6 +119,8 @@ class RoomView: UIView {
         return generator
     }()
 
+    private var roomWasShared = false
+
     enum RightButtonBar: String, Item, CaseIterable {
         case minis, paste
 
@@ -365,6 +367,8 @@ class RoomView: UIView {
 
             linkView.pinned(link: url)
         }
+
+        pulsateSocial()
     }
 
     func showMuteButton() {
@@ -903,6 +907,8 @@ extension RoomView: ButtonBarDelegate {
     }
 
     private func inviteTapped() {
+        roomWasShared = true
+
         window!.rootViewController!.present(
             ShareSheetDrawerViewController(room: room),
             animated: true
@@ -983,5 +989,38 @@ extension RoomView: DrawerViewPanDelegate {
         let converted = view.convert(translation, from: self)
 
         return !view.frame.contains(converted)
+    }
+}
+
+extension RoomView {
+    func pulsateSocial() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 30) { [weak self] in
+            guard let self = self else {
+                return
+            }
+
+            if self.roomWasShared {
+                return
+            }
+
+            if self.room.state.members.count > 3 || self.room.state.visibility == .private {
+                return
+            }
+
+            guard let button = self.leftButtonBar.buttons[.invite] else { return }
+            button.layer.cornerRadius = button.frame.size.width / 2
+
+            for platform in SocialDeeplink.Platform.allCases {
+                if !SocialDeeplink.canOpen(platform: platform) {
+                    continue
+                }
+
+                return PulsatingButtonAnimation.animate(
+                    button,
+                    icon: UIImage(named: platform.rawValue)!,
+                    color: platform.color
+                )
+            }
+        }
     }
 }
