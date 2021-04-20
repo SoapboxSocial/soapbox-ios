@@ -365,6 +365,10 @@ class RoomView: UIView {
 
             linkView.pinned(link: url)
         }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: {
+            self.test()
+        })
     }
 
     func showMuteButton() {
@@ -983,5 +987,48 @@ extension RoomView: DrawerViewPanDelegate {
         let converted = view.convert(translation, from: self)
 
         return !view.frame.contains(converted)
+    }
+}
+
+extension RoomView {
+    func test() {
+        guard let button = leftButtonBar.buttons[.invite] else { return }
+        button.layer.cornerRadius = button.frame.size.width / 2
+
+        func animate() {
+            let border = CALayer()
+            border.frame = button.frame
+            border.cornerRadius = button.layer.cornerRadius
+            border.backgroundColor = button.backgroundColor?.cgColor
+            button.layer.masksToBounds = false
+            button.layer.superlayer?.insertSublayer(border, below: button.layer)
+
+            let animation = CABasicAnimation(keyPath: "transform.scale")
+            animation.fromValue = 1.0
+            animation.toValue = 1.2
+            animation.duration = 0.8
+            animation.autoreverses = true
+            animation.repeatDuration = 8
+
+            CATransaction.setCompletionBlock {
+                UIView.transition(with: button, duration: 0.3, options: .transitionCrossDissolve, animations: {
+                    button.backgroundColor = .clear
+                    button.setImage(UIImage(systemName: LeftButtonBar.invite.icon()), for: .normal)
+                })
+
+                border.removeFromSuperlayer()
+            }
+
+            border.add(animation, forKey: "test")
+
+            CATransaction.commit()
+        }
+
+        UIView.transition(with: button, duration: 0.3, options: .transitionCrossDissolve, animations: {
+            button.backgroundColor = UIColor(red: 29 / 255, green: 161 / 255, blue: 242 / 255, alpha: 1.0)
+            button.setImage(UIImage(named: "twitter"), for: .normal)
+        }, completion: { _ in
+            animate()
+        })
     }
 }
