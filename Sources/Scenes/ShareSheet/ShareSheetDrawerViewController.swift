@@ -174,6 +174,13 @@ class ShareSheetDrawerViewController: DrawerViewController {
 extension ShareSheetDrawerViewController {
     @objc private func copyToClipboard() {
         UIPasteboard.general.url = roomURL()
+
+        let banner = NotificationBanner(
+            title: String(format: NSLocalizedString("copied", comment: "")),
+            style: .info,
+            type: .floating
+        )
+        banner.show()
     }
 
     @objc private func overflowTapped() {
