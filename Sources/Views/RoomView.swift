@@ -277,14 +277,19 @@ class RoomView: UIView {
 
         NSLayoutConstraint.activate([
             content.topAnchor.constraint(equalTo: exitButton.bottomAnchor, constant: 20),
-            content.leftAnchor.constraint(equalTo: foreground.leftAnchor),
-            content.rightAnchor.constraint(equalTo: foreground.rightAnchor),
+            content.leftAnchor.constraint(equalTo: foreground.leftAnchor, constant: 20),
+            content.rightAnchor.constraint(equalTo: foreground.rightAnchor, constant: -20),
             foreground.bottomAnchor.constraint(equalTo: content.bottomAnchor),
         ])
 
         NSLayoutConstraint.activate([
-            members.leftAnchor.constraint(equalTo: foreground.leftAnchor, constant: 20),
-            members.rightAnchor.constraint(equalTo: foreground.rightAnchor, constant: -20),
+            members.leftAnchor.constraint(equalTo: content.leftAnchor),
+            members.rightAnchor.constraint(equalTo: content.rightAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            linkView.leftAnchor.constraint(equalTo: content.leftAnchor),
+            linkView.rightAnchor.constraint(equalTo: content.rightAnchor),
         ])
 
         NSLayoutConstraint.activate([
@@ -957,8 +962,8 @@ extension RoomView: ButtonBarDelegate {
         content.insertArrangedSubview(miniView!, at: 0)
 
         NSLayoutConstraint.activate([
-            miniView!.leftAnchor.constraint(equalTo: content.leftAnchor, constant: 20),
-            miniView!.rightAnchor.constraint(equalTo: rightAnchor, constant: -20), // @todo content.rightanchor doesn't seem to work
+            miniView!.leftAnchor.constraint(equalTo: content.leftAnchor),
+            miniView!.rightAnchor.constraint(equalTo: content.rightAnchor),
         ])
 
         switch mini.size {

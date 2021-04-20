@@ -92,12 +92,12 @@ class LinkSharingView: UIView {
 
         NSLayoutConstraint.activate([
             linkView.topAnchor.constraint(equalTo: topAnchor),
-            linkView.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            linkView.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            linkView.leftAnchor.constraint(equalTo: leftAnchor),
+            linkView.rightAnchor.constraint(equalTo: rightAnchor),
         ])
 
         NSLayoutConstraint.activate([
-            stack.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            stack.leftAnchor.constraint(equalTo: leftAnchor),
             stack.heightAnchor.constraint(equalToConstant: 20),
             stack.topAnchor.constraint(equalTo: linkView.bottomAnchor, constant: 5),
             stack.rightAnchor.constraint(equalTo: pin.rightAnchor),
