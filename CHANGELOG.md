@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.27.0] - 2021-04-20Z
+
  - Made inviting friends and sharing a room just a bit nicer.
 
 ## [2.26.0] - 2021-04-16Z
