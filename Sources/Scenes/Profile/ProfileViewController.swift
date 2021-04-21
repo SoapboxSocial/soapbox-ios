@@ -524,7 +524,7 @@ extension ProfileViewController: ProfilePresenterOutput {
 
         var image = "ellipsis"
         if profile.id == UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
-            image = "gear"
+            image = "gearshape"
         }
 
         let item = UIBarButtonItem(

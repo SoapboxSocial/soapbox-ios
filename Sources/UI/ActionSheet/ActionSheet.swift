@@ -149,7 +149,7 @@ class ActionSheet: DrawerViewController {
         ])
 
         NSLayoutConstraint.activate([
-            spacer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            spacer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
 
