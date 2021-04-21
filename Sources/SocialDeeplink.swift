@@ -22,7 +22,7 @@ class SocialDeeplink {
             case .whatsapp:
                 return "whatsapp://send?text=%@"
             case .telegram:
-                return "tg://msg?text=%@"
+                return "tg://msg_url?url=%@"
             }
         }
 

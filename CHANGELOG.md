@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fixed sharing to telegram.
+
 ## [2.27.2] - 2021-04-21Z
 
  - Fixed some translations.
