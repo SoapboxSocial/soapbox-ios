@@ -151,7 +151,7 @@ class HomeCollectionPresenter {
 
         hasOwnStory = feed.ownStory.count > 0
 
-        var rooms = feed.rooms
+        var rooms = feed.rooms.sorted(by: { $0.members.count > $1.members.count })
 
         // @TODO move actives to the bottom cause layout estimate issue0 &
         if feed.actives.count > 0 {
@@ -160,7 +160,7 @@ class HomeCollectionPresenter {
                 if let id = currentRoom, let r = rooms.first(where: { $0.id == id }) {
                     room = r
                 } else {
-                    room = rooms.sorted(by: { $0.members.count > $1.members.count }).first!
+                    room = rooms.first!
                 }
 
                 rooms.removeAll(where: { $0.id == room.id })
