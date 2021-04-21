@@ -197,14 +197,23 @@ extension NavigationViewController: RoomViewDelegate {
 
     func roomDidExit() {
         var askForReview = false
+        var askForNotifications = false
         if let room = self.room {
             askForReview = shouldPromptForReview(room: room)
+
+            if !askForReview {
+                askForNotifications = true
+            }
         }
 
         shutdownRoom()
 
         if askForReview {
-            promptForReview()
+            return promptForReview()
+        }
+
+        if askForNotifications {
+            promptForNotifications()
         }
     }
 
@@ -356,7 +365,7 @@ extension NavigationViewController: DrawerViewDelegate {
 }
 
 extension NavigationViewController {
-    func shouldPromptForReview(room: Room) -> Bool {
+    private func shouldPromptForReview(room: Room) -> Bool {
         let now = Date()
 
         let last = Date(timeIntervalSince1970: TimeInterval(UserDefaults.standard.integer(forKey: UserDefaultsKeys.lastReviewed)))
@@ -373,10 +382,12 @@ extension NavigationViewController {
         return minutesInRoom >= 5 && monthsSince >= 4
     }
 
-    func promptForReview() {
+    private func promptForReview() {
         SKStoreReviewController.requestReview()
         UserDefaults.standard.set(Int(Date().timeIntervalSince1970), forKey: UserDefaultsKeys.lastReviewed)
     }
+
+    private func promptForNotifications() {}
 }
 
 extension NavigationViewController: UINavigationControllerDelegate {
