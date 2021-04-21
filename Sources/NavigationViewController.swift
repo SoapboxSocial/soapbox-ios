@@ -387,7 +387,10 @@ extension NavigationViewController {
         UserDefaults.standard.set(Int(Date().timeIntervalSince1970), forKey: UserDefaultsKeys.lastReviewed)
     }
 
-    private func promptForNotifications() {}
+    private func promptForNotifications() {
+        let view = NotificationPromptViewController()
+        present(view, animated: true)
+    }
 }
 
 extension NavigationViewController: UINavigationControllerDelegate {
