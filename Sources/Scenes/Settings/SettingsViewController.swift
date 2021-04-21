@@ -8,6 +8,7 @@ class SettingsViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.register(cellWithClass: SettingsLinkTableViewCell.self)
         view.register(cellWithClass: SettingsSelectionTableViewCell.self)
+        view.register(cellWithClass: SettingsToggleTableViewCell.self)
         view.register(cellWithClass: SettingsDestructiveTableViewCell.self)
         view.backgroundColor = .background
         return view
@@ -24,6 +25,11 @@ class SettingsViewController: UIViewController {
 
         presenter.set(appearance: [
             createThemeSetting(),
+        ])
+
+        presenter.set(notifications: [
+            SettingsPresenter.Selection(name: NSLocalizedString("Settings.Notifications.RoomNotifications", comment: ""), handler: {}, value: { "Normal" }),
+            SettingsPresenter.Toggle(name: NSLocalizedString("Settings.Notifications.NewFollowers", comment: ""), isOn: true),
         ])
 
         presenter.set(links: [
@@ -155,22 +161,25 @@ extension SettingsViewController: UITableViewDataSource {
     }
 
     func tableView(_: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let item = presenter.item(for: indexPath)
-        switch item {
-        case let item as SettingsPresenter.Selection:
+        switch presenter.item(for: indexPath) {
+        case is SettingsPresenter.Selection:
             let cell = tableView.dequeueReusableCell(withClass: SettingsSelectionTableViewCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
-        case let item as SettingsPresenter.Link:
+        case is SettingsPresenter.Link:
             let cell = tableView.dequeueReusableCell(withClass: SettingsLinkTableViewCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
-        case let item as SettingsPresenter.Destructive:
+        case is SettingsPresenter.Destructive:
             let cell = tableView.dequeueReusableCell(withClass: SettingsDestructiveTableViewCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
+        case is SettingsPresenter.Toggle:
+            let cell = tableView.dequeueReusableCell(withClass: SettingsToggleTableViewCell.self, for: indexPath)
+            presenter.configure(item: cell, for: indexPath)
+            return cell
         default:
-            fatalError("unknown item \(item)")
+            fatalError("unknown item")
         }
     }
 

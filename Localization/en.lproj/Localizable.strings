@@ -250,3 +250,7 @@
 "share_link_to_the_room" = "Share link to room";
 
 "copied" = "Copied!";
+
+"Settings.Notifications.Title" = "Notifications";
+"Settings.Notifications.NewFollowers" = "New Followers";
+"Settings.Notifications.RoomNotifications" = "Room Notifications";
