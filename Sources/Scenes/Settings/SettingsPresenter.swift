@@ -1,5 +1,9 @@
 import Foundation
 
+protocol SettingsItem {
+    var name: String { get }
+}
+
 class SettingsPresenter {
     private var dataSource = [Section]()
 
@@ -9,38 +13,33 @@ class SettingsPresenter {
         case deleteAccount
     }
 
-    struct Section {
-        let type: SectionType
-        let title: String?
-        var data: [Any]
-    }
-
-    struct Link {
+    struct Link: SettingsItem {
         let name: String
         let link: URL
     }
 
-    struct Appearance {
+    struct Selection: SettingsItem {
         let name: String
         let handler: () -> Void
         let value: () -> String
     }
 
-    struct Destructive {
+    struct Destructive: SettingsItem {
         let name: String
         let handler: () -> Void
+    }
+
+    struct Section {
+        let title: String?
+        var data: [SettingsItem]
     }
 
     var numberOfSections: Int {
         return dataSource.count
     }
 
-    func sectionType(for sectionIndex: Int) -> SectionType {
-        return dataSource[sectionIndex].type
-    }
-
-    func item<T: Any>(for index: IndexPath, ofType _: T.Type) -> T {
-        return dataSource[index.section].data[index.row] as! T
+    func item(for index: IndexPath) -> SettingsItem {
+        return dataSource[index.section].data[index.row]
     }
 
     func numberOfItems(for sectionIndex: Int) -> Int {
@@ -60,7 +59,7 @@ class SettingsPresenter {
     }
 
     func configure(item: SettingsSelectionTableViewCell, for indexPath: IndexPath) {
-        guard let selection = dataSource[indexPath.section].data[indexPath.row] as? Appearance else {
+        guard let selection = dataSource[indexPath.section].data[indexPath.row] as? Selection else {
             return
         }
 
@@ -77,14 +76,14 @@ class SettingsPresenter {
     }
 
     func set(links: [Link]) {
-        dataSource.append(Section(type: .links, title: nil, data: links))
+        dataSource.append(Section(title: nil, data: links))
     }
 
-    func set(appearance: [Appearance]) {
-        dataSource.append(Section(type: .appearance, title: NSLocalizedString("appearance", comment: ""), data: appearance))
+    func set(appearance: [Selection]) {
+        dataSource.append(Section(title: NSLocalizedString("appearance", comment: ""), data: appearance))
     }
 
     func set(deleteAccount: Destructive) {
-        dataSource.append(Section(type: .deleteAccount, title: nil, data: [deleteAccount]))
+        dataSource.append(Section(title: nil, data: [deleteAccount]))
     }
 }

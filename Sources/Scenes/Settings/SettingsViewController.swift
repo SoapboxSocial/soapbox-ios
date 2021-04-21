@@ -79,8 +79,8 @@ class SettingsViewController: UIViewController {
         dismiss(animated: true)
     }
 
-    private func createThemeSetting() -> SettingsPresenter.Appearance {
-        return SettingsPresenter.Appearance(
+    private func createThemeSetting() -> SettingsPresenter.Selection {
+        return SettingsPresenter.Selection(
             name: NSLocalizedString("theme", comment: ""),
             handler: {
                 let sheet = ActionSheet()
@@ -131,16 +131,16 @@ extension SettingsViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        switch presenter.sectionType(for: indexPath.section) {
-        case .appearance:
-            let selection = presenter.item(for: indexPath, ofType: SettingsPresenter.Appearance.self)
-            selection.handler()
-        case .links:
-            let link = presenter.item(for: indexPath, ofType: SettingsPresenter.Link.self)
-            UIApplication.shared.open(link.link)
-        case .deleteAccount:
-            let selection = presenter.item(for: indexPath, ofType: SettingsPresenter.Destructive.self)
-            selection.handler()
+        let item = presenter.item(for: indexPath)
+        switch item {
+        case let item as SettingsPresenter.Selection:
+            item.handler()
+        case let item as SettingsPresenter.Link:
+            UIApplication.shared.open(item.link)
+        case let item as SettingsPresenter.Destructive:
+            item.handler()
+        default:
+            return
         }
     }
 }
@@ -155,19 +155,22 @@ extension SettingsViewController: UITableViewDataSource {
     }
 
     func tableView(_: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch presenter.sectionType(for: indexPath.section) {
-        case .appearance:
+        let item = presenter.item(for: indexPath)
+        switch item {
+        case let item as SettingsPresenter.Selection:
             let cell = tableView.dequeueReusableCell(withClass: SettingsSelectionTableViewCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
-        case .links:
+        case let item as SettingsPresenter.Link:
             let cell = tableView.dequeueReusableCell(withClass: SettingsLinkTableViewCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
-        case .deleteAccount:
+        case let item as SettingsPresenter.Destructive:
             let cell = tableView.dequeueReusableCell(withClass: SettingsDestructiveTableViewCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
+        default:
+            fatalError("unknown item \(item)")
         }
     }
 
