@@ -3,6 +3,7 @@
 ## [Unreleased]
 
  - Fixed sharing to telegram.
+ - Added a settings button on profile, made things clearer.
 
 ## [2.27.2] - 2021-04-21Z
 

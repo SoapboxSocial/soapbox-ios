@@ -522,8 +522,13 @@ extension ProfileViewController: ProfilePresenterOutput {
             headerView.image.contentMode = .scaleAspectFill
         }
 
+        var image = "ellipsis"
+        if profile.id == UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
+            image = "gear"
+        }
+
         let item = UIBarButtonItem(
-            image: UIImage(systemName: "ellipsis"),
+            image: UIImage(systemName: image),
             style: .plain,
             target: self,
             action: #selector(menuButtonPressed)
