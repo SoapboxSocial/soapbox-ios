@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fixed some translations.
+
 ## [2.27.1] - 2021-04-20Z
 
  - Fixed some display issues.

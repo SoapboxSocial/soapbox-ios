@@ -560,7 +560,7 @@ extension RoomView: RoomDelegate {
             return
         }
 
-        let title = String(format: NSLocalizedString("user_wants_to_play_mini", comment: ""), member.displayName.firstName(), mini.name)
+        let title = String(format: NSLocalizedString("user_wants_to_start_mini", comment: ""), member.displayName.firstName(), mini.name)
 
         LocalNotificationService.send(body: title)
 
