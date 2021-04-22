@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+ - We added nicer short links, no more soapbox.social now its just soap.link!
  - Fixed sharing to telegram.
  - Added a settings button on profile, made things clearer.
  - Fixes the fact that rooms were sometimes reordered on the feed.

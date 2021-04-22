@@ -11,6 +11,7 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:soapbox.social</string>
+		<string>applinks:soap.link</string>
 	</array>
 </dict>
 </plist>

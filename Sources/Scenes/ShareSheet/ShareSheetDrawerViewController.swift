@@ -207,7 +207,7 @@ extension ShareSheetDrawerViewController {
     }
 
     private func roomURL() -> URL {
-        return URL(string: "https://soapbox.social/room/" + room.state.id)!
+        return URL(string: "https://soap.link/" + room.state.id)!
     }
 }
 
