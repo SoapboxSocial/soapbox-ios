@@ -82,7 +82,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_: UIApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb, let incomingURL = userActivity.webpageURL, else {
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb, let incomingURL = userActivity.webpageURL else {
             return false
         }
 
@@ -137,7 +137,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var path = pathComponents[0]
 
         if path.prefix(1) == "@" {
-            return handleUserURL(path.removeFirst())
+            path.remove(at: path.startIndex)
+            return handleUserURL(username: path)
         }
 
         return handleRoomURL(room: path)
