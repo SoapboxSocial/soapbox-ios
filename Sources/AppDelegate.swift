@@ -94,8 +94,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         default:
             return false
         }
-
-        return false
     }
 
     private func handleLegacySoapbox(_ url: URL) -> Bool {
@@ -130,11 +128,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private func handleSoapShortLinks(_ url: URL) -> Bool {
         let pathComponents = url.pathComponents
-        if pathComponents.count != 1 {
+        if pathComponents.count != 2 {
             return false
         }
 
-        var path = pathComponents[0]
+        var path = pathComponents[1]
 
         if path.prefix(1) == "@" {
             path.remove(at: path.startIndex)
