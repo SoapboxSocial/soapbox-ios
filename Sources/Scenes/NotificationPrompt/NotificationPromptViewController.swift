@@ -38,6 +38,7 @@ class NotificationPromptViewController: DrawerViewController {
         settingsButton.backgroundColor = .white
         settingsButton.setTitle("Go to Settings", for: .normal)
         settingsButton.setTitleColor(.black, for: .normal)
+        settingsButton.addTarget(self, action: #selector(openSettings), for: .touchUpInside)
         view.addSubview(settingsButton)
 
         let cancelButton = UIButton()
@@ -45,6 +46,7 @@ class NotificationPromptViewController: DrawerViewController {
         cancelButton.setTitleColor(.white, for: .normal)
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         cancelButton.titleLabel?.font = .rounded(forTextStyle: .title3, weight: .bold)
+        cancelButton.addTarget(self, action: #selector(close), for: .touchUpInside)
         view.addSubview(cancelButton)
 
         NSLayoutConstraint.activate([
@@ -80,5 +82,13 @@ class NotificationPromptViewController: DrawerViewController {
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    @objc private func openSettings() {
+        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+    }
+
+    @objc private func close() {
+        dismiss(animated: true)
     }
 }
