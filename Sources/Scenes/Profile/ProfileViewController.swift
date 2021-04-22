@@ -309,7 +309,7 @@ class ProfileViewController: ViewControllerWithRemoteContent<APIClient.Profile> 
 
         sheet.add(action: ActionSheet.Action(title: NSLocalizedString("share_profile", comment: ""), style: .default, handler: { _ in
             let items: [Any] = [
-                URL(string: "https://soapbox.social/user/" + self.content.username)!,
+                URL(string: "https://soap.link/@" + self.content.username)!,
             ]
 
             let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
@@ -524,7 +524,7 @@ extension ProfileViewController: ProfilePresenterOutput {
 
         var image = "ellipsis"
         if profile.id == UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) {
-            image = "gear"
+            image = "gearshape"
         }
 
         let item = UIBarButtonItem(

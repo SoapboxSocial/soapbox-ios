@@ -2,8 +2,13 @@
 
 ## [Unreleased]
 
+## [2.28.0] - 2021-04-22
+
+ - We added nicer short links, no more soapbox.social now its just soap.link!
  - Fixed sharing to telegram.
  - Added a settings button on profile, made things clearer.
+ - Fixes the fact that rooms were sometimes reordered on the feed.
+ - Fixed minor bugs with our action sheets.
 
 ## [2.27.2] - 2021-04-21Z
 
