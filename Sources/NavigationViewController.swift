@@ -387,6 +387,22 @@ extension NavigationViewController {
         UserDefaults.standard.set(Int(Date().timeIntervalSince1970), forKey: UserDefaultsKeys.lastReviewed)
     }
 
+    private func shouldPromptForNotifications(room: Room) -> Bool {
+        let settings = UNUserNotificationCenter.current().notificationSettings
+        if settings.authorizationStatus != .denied {
+            return false
+        }
+
+        let interval = Calendar.current.dateComponents([.minute], from: room.started, to: Date())
+        guard let minutesInRoom = interval.minute else {
+            return false
+        }
+
+        // @TODO CHECK THAT MORE THAN X PEOPLE WERE IN THE ROOM?
+
+        return minutesInRoom >= 5
+    }
+
     private func promptForNotifications() {
         let view = NotificationPromptViewController()
         present(view, animated: true)

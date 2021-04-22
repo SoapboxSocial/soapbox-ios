@@ -5,51 +5,76 @@ class NotificationPromptViewController: DrawerViewController {
         super.init()
 
         manager.drawer.openHeightBehavior = .fitting
-        manager.drawer.backgroundColor = .foreground
+        manager.drawer.backgroundColor = .brandColor
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .foreground
+        view.backgroundColor = .brandColor
 
-        let button = Button(size: .regular)
-        button.setTitle("Take me to settings", for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(button)
+        let image = UIImageView(image: UIImage(named: "dude.notification"))
+        image.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(image)
 
         let title = UILabel()
-        title.text = "oh no!"
-        title.textAlignment = .center
         title.translatesAutoresizingMaskIntoConstraints = false
+        title.text = "Turn on notifications for Soapbox"
         title.font = .rounded(forTextStyle: .title1, weight: .bold)
+        title.numberOfLines = 0
+        title.textColor = .white
         view.addSubview(title)
 
-        let description = UILabel()
-        description.text = "It looks like you have your notifications turned off, to get notified about more rooms like this one why not turn them back on?\n\n Our settings allow you to customize them to your preference!"
-        description.numberOfLines = 0
-        description.translatesAutoresizingMaskIntoConstraints = false
-        description.font = .rounded(forTextStyle: .body, weight: .bold)
-        view.addSubview(description)
+        let content = UILabel()
+        content.translatesAutoresizingMaskIntoConstraints = false
+        content.text = "Enabling notifications keeps you in the loop with whats going on!\n\nYou can further customize what notifications you receive from your profile."
+        content.numberOfLines = 0
+        content.textColor = .white
+        content.font = .rounded(forTextStyle: .body, weight: .semibold)
+        view.addSubview(content)
+
+        let settingsButton = Button(size: .large)
+        settingsButton.translatesAutoresizingMaskIntoConstraints = false
+        settingsButton.backgroundColor = .white
+        settingsButton.setTitle("Go to Settings", for: .normal)
+        settingsButton.setTitleColor(.black, for: .normal)
+        view.addSubview(settingsButton)
+
+        let cancelButton = UIButton()
+        cancelButton.setTitle("Not Now", for: .normal)
+        cancelButton.setTitleColor(.white, for: .normal)
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        cancelButton.titleLabel?.font = .rounded(forTextStyle: .title3, weight: .bold)
+        view.addSubview(cancelButton)
 
         NSLayoutConstraint.activate([
-            title.topAnchor.constraint(equalTo: handle.bottomAnchor, constant: 20),
-            title.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            title.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            image.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            image.topAnchor.constraint(equalTo: handle.bottomAnchor, constant: 40),
         ])
 
         NSLayoutConstraint.activate([
-            description.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 10),
-            description.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            description.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            title.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 60),
+            title.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -60),
+            title.topAnchor.constraint(equalTo: image.bottomAnchor, constant: 20),
         ])
 
         NSLayoutConstraint.activate([
-            button.topAnchor.constraint(equalTo: description.bottomAnchor, constant: 20),
-            button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            button.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
-            button.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            button.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            content.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 30),
+            content.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -30),
+            content.topAnchor.constraint(equalTo: title.bottomAnchor, constant: 40),
+        ])
+
+        NSLayoutConstraint.activate([
+            settingsButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            settingsButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            settingsButton.topAnchor.constraint(equalTo: content.bottomAnchor, constant: 80),
+        ])
+
+        NSLayoutConstraint.activate([
+            cancelButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            cancelButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            cancelButton.topAnchor.constraint(equalTo: settingsButton.bottomAnchor, constant: 20),
+            cancelButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20),
         ])
     }
 
