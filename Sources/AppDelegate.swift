@@ -88,7 +88,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return false
         }
 
-        let pathComponents = incomingURL.pathComponents
+        if components.host == "soapbox.social" {
+            return handleLegacySoapbox(incomingURL, components: components)
+        }
+
+        if components.host == "soap.link" {
+            return handleSoapShortLinks(incomingURL, components: components)
+        }
+
+        return false
+    }
+
+    private func handleLegacySoapbox(_ url: URL, components: URLComponents) -> Bool {
+        let pathComponents = url.pathComponents
         if pathComponents.count < 2 {
             return false
         }
@@ -111,6 +123,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         default:
             return false
         }
+    }
+
+    private func handleSoapShortLinks(_ url: URL, components _: URLComponents) -> Bool {
+        let pathComponents = url.pathComponents
+        if pathComponents.count != 1 {
+            return false
+        }
+
+        var path = pathComponents[0]
+
+        if path.prefix(1) == "@" {
+            return handleUserURL(path.removeFirst())
+        }
+
+        return handleRoomURL(room: path)
     }
 
     private func handlePinURL(components: URLComponents) -> Bool {
