@@ -4,7 +4,6 @@ class SettingsToggleTableViewCell: UITableViewCell {
     let toggle: UISwitch = {
         let toggle = UISwitch()
         toggle.translatesAutoresizingMaskIntoConstraints = false
-        toggle.addTarget(self, action: #selector(toggled), for: .valueChanged)
         return toggle
     }()
 
@@ -24,6 +23,7 @@ class SettingsToggleTableViewCell: UITableViewCell {
         ])
 
         textLabel?.font = .rounded(forTextStyle: .body, weight: .regular)
+        toggle.addTarget(self, action: #selector(toggled), for: .valueChanged)
     }
 
     required init?(coder _: NSCoder) {

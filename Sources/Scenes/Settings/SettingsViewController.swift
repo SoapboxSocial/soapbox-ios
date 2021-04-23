@@ -133,6 +133,23 @@ class SettingsViewController: UIViewController {
         })
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        if !notificationsEdited {
+            return
+        }
+
+        APIClient().updateNotificationSettings(frequency: notifications.roomFrequency, follows: notifications.follows, callback: { result in
+            switch result {
+            case .failure:
+                break // @todo
+            case .success:
+                break
+            }
+        })
+    }
+
     @objc private func didTapClose() {
         dismiss(animated: true)
     }
