@@ -430,4 +430,8 @@ extension APIClient {
     func settings(callback: @escaping (Result<Settings, Error>) -> Void) {
         get(path: "/v1/me/settings", callback: callback)
     }
+
+    func updateNotificationSettings(frequency: Int, follows: Bool, callback: @escaping (Result<Void, Error>) -> Void) {
+        post(path: "/v1/me/settings/notifications", parameters: ["frequency": frequency, "follows": follows], callback: callback)
+    }
 }
