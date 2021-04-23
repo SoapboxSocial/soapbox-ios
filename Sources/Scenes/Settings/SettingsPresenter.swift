@@ -31,7 +31,8 @@ class SettingsPresenter {
 
     struct Toggle: SettingsItem {
         let name: String
-        let isOn: Bool
+        let isOn: () -> Bool
+        let handler: (Bool) -> Void
     }
 
     struct Section {
@@ -78,8 +79,8 @@ class SettingsPresenter {
         }
 
         item.textLabel?.text = toggle.name
-        item.toggle.isOn = toggle.isOn
-//        item.selection.text = selection.value()
+        item.toggle.isOn = toggle.isOn()
+        item.handler = toggle.handler
     }
 
     func configure(item: SettingsDestructiveTableViewCell, for indexPath: IndexPath) {

@@ -4,8 +4,11 @@ class SettingsToggleTableViewCell: UITableViewCell {
     let toggle: UISwitch = {
         let toggle = UISwitch()
         toggle.translatesAutoresizingMaskIntoConstraints = false
+        toggle.addTarget(self, action: #selector(toggled), for: .valueChanged)
         return toggle
     }()
+
+    var handler: ((Bool) -> Void)!
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -25,5 +28,9 @@ class SettingsToggleTableViewCell: UITableViewCell {
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    @objc private func toggled() {
+        handler(toggle.isOn)
     }
 }

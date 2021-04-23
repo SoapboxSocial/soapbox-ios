@@ -254,3 +254,8 @@
 "Settings.Notifications.Title" = "Notifications";
 "Settings.Notifications.NewFollowers" = "New Followers";
 "Settings.Notifications.RoomNotifications" = "Room Notifications";
+
+"Settings.Notifications.Frequency.Off" = "Off";
+"Settings.Notifications.Frequency.Infrequent" = "Infrequent";
+"Settings.Notifications.Frequency.Normal" = "Normal";
+"Settings.Notifications.Frequency.Frequent" = "Frequent";

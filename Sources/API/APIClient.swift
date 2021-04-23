@@ -412,3 +412,22 @@ extension APIClient {
         get(path: "/v1/minis", callback: callback)
     }
 }
+
+extension APIClient {
+    struct NotificationSettings: Decodable {
+        var roomFrequency: Int
+        var follows: Bool
+
+        private enum CodingKeys: String, CodingKey {
+            case roomFrequency = "room_frequency", follows
+        }
+    }
+
+    struct Settings: Decodable {
+        let notifications: NotificationSettings
+    }
+
+    func settings(callback: @escaping (Result<Settings, Error>) -> Void) {
+        get(path: "/v1/me/settings", callback: callback)
+    }
+}

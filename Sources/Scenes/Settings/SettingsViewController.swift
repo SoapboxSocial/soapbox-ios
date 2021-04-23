@@ -14,6 +14,9 @@ class SettingsViewController: UIViewController {
         return view
     }()
 
+    private var notificationsEdited = false
+    private var notifications: APIClient.NotificationSettings!
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -28,8 +31,15 @@ class SettingsViewController: UIViewController {
         ])
 
         presenter.set(notifications: [
-            SettingsPresenter.Selection(name: NSLocalizedString("Settings.Notifications.RoomNotifications", comment: ""), handler: {}, value: { "Normal" }),
-            SettingsPresenter.Toggle(name: NSLocalizedString("Settings.Notifications.NewFollowers", comment: ""), isOn: true),
+            createRoomNotificationFrequencySetting(),
+            SettingsPresenter.Toggle(
+                name: NSLocalizedString("Settings.Notifications.NewFollowers", comment: ""),
+                isOn: { self.notifications == nil ? false : self.notifications.follows },
+                handler: { value in
+                    self.notificationsEdited = true
+                    self.notifications.follows = value
+                }
+            ),
         ])
 
         presenter.set(links: [
@@ -108,13 +118,65 @@ class SettingsViewController: UIViewController {
 
         tableView.addSubview(view)
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            view.removeFromSuperview()
-        }
+        APIClient().settings(callback: { result in
+            switch result {
+            case .failure:
+                break // @todo
+            case let .success(settings):
+                view.removeFromSuperview()
+                self.notifications = settings.notifications
+
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+            }
+        })
     }
 
     @objc private func didTapClose() {
         dismiss(animated: true)
+    }
+
+    private func createRoomNotificationFrequencySetting() -> SettingsPresenter.Selection {
+        SettingsPresenter.Selection(
+            name: NSLocalizedString("Settings.Notifications.RoomNotifications", comment: ""),
+            handler: {
+                let sheet = ActionSheet()
+
+                func frequencyToggle(frequency: Int) {
+                    self.notificationsEdited = true
+                    self.notifications.roomFrequency = frequency
+                    self.tableView.reloadData()
+                }
+
+                // @todo set title
+
+                sheet.add(action: ActionSheet.Action(title: self.title(forFrequency: 0), style: .default, handler: { _ in
+                    frequencyToggle(frequency: 0)
+                }))
+
+                sheet.add(action: ActionSheet.Action(title: self.title(forFrequency: 1), style: .default, handler: { _ in
+                    frequencyToggle(frequency: 1)
+                }))
+
+                sheet.add(action: ActionSheet.Action(title: self.title(forFrequency: 2), style: .default, handler: { _ in
+                    frequencyToggle(frequency: 2)
+                }))
+
+                sheet.add(action: ActionSheet.Action(title: self.title(forFrequency: 3), style: .default, handler: { _ in
+                    frequencyToggle(frequency: 3)
+                }))
+
+                sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
+
+                DispatchQueue.main.async {
+                    self.present(sheet, animated: true)
+                }
+            },
+            value: {
+                self.title(forFrequency: self.notifications == nil ? 0 : self.notifications.roomFrequency)
+            }
+        )
     }
 
     private func createThemeSetting() -> SettingsPresenter.Selection {
@@ -162,6 +224,21 @@ class SettingsViewController: UIViewController {
                 }
             }
         )
+    }
+
+    private func title(forFrequency frequency: Int) -> String {
+        switch frequency {
+        case 0:
+            return NSLocalizedString("Settings.Notifications.Frequency.Off", comment: "")
+        case 1:
+            return NSLocalizedString("Settings.Notifications.Frequency.Infrequent", comment: "")
+        case 2:
+            return NSLocalizedString("Settings.Notifications.Frequency.Normal", comment: "")
+        case 3:
+            return NSLocalizedString("Settings.Notifications.Frequency.Frequent", comment: "")
+        default:
+            return NSLocalizedString("Settings.Notifications.Frequency.Normal", comment: "")
+        }
     }
 }
 
