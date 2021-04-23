@@ -158,7 +158,10 @@ class SettingsViewController: UIViewController {
         SettingsPresenter.Selection(
             name: NSLocalizedString("Settings.Notifications.RoomNotifications", comment: ""),
             handler: {
-                let sheet = ActionSheet(description: NSLocalizedString("Settings.Notifications.Frequency.Description", comment: ""))
+                let sheet = ActionSheet(
+                    title: NSLocalizedString("Settings.Notifications.Frequency.Title", comment: ""),
+                    description: NSLocalizedString("Settings.Notifications.Frequency.Description", comment: "")
+                )
 
                 func frequencyToggle(frequency: APIClient.Frequency) {
                     self.notificationsEdited = true

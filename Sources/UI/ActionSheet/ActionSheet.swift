@@ -38,7 +38,7 @@ class ActionSheet: DrawerViewController {
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .rounded(forTextStyle: .title2, weight: .bold)
+        label.font = .rounded(forTextStyle: .title3, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.textAlignment = .center
@@ -47,10 +47,11 @@ class ActionSheet: DrawerViewController {
 
     private let descriptionLabel: UILabel = {
         let label = UILabel()
-        label.font = .rounded(forTextStyle: .title2, weight: .semibold)
+        label.font = .rounded(forTextStyle: .callout, weight: .semibold)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.numberOfLines = 0
         label.textAlignment = .center
+        label.textColor = .secondaryLabel
         return label
     }()
 
@@ -93,28 +94,7 @@ class ActionSheet: DrawerViewController {
 
         view.addSubview(stack)
 
-        let imageContainer = UIView()
-        imageContainer.translatesAutoresizingMaskIntoConstraints = false
-        imageContainer.addSubview(image)
-
-        stack.addArrangedSubview(imageContainer)
-
-        if image.image == nil {
-            imageContainer.isHidden = true
-        }
-
-        NSLayoutConstraint.activate([
-            image.heightAnchor.constraint(equalToConstant: 40),
-            image.widthAnchor.constraint(equalToConstant: 40),
-            image.centerXAnchor.constraint(equalTo: imageContainer.centerXAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
-            imageContainer.heightAnchor.constraint(equalToConstant: 40),
-        ])
-
-        stack.addArrangedSubview(titleLabel)
-        stack.addArrangedSubview(descriptionLabel)
+        stack.addArrangedSubview(createHeader())
 
         let actionsView = UIView()
         actionsView.translatesAutoresizingMaskIntoConstraints = false
@@ -162,6 +142,58 @@ class ActionSheet: DrawerViewController {
         NSLayoutConstraint.activate([
             spacer.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
+    }
+
+    private func createHeader() -> UIView {
+        let header = UIView()
+        header.translatesAutoresizingMaskIntoConstraints = false
+
+        if titleLabel.text == nil || titleLabel.text == "", descriptionLabel.text == nil || descriptionLabel.text == "", image.image == nil {
+            return header
+        }
+
+        let stack = UIStackView()
+        stack.alignment = .fill
+        stack.distribution = .fill
+        stack.axis = .vertical
+        stack.spacing = 5
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.isLayoutMarginsRelativeArrangement = true
+        stack.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
+
+        header.addSubview(stack)
+
+        let imageContainer = UIView()
+        imageContainer.translatesAutoresizingMaskIntoConstraints = false
+        imageContainer.addSubview(image)
+
+        stack.addArrangedSubview(imageContainer)
+
+        if image.image == nil {
+            imageContainer.isHidden = true
+        }
+
+        NSLayoutConstraint.activate([
+            image.heightAnchor.constraint(equalToConstant: 40),
+            image.widthAnchor.constraint(equalToConstant: 40),
+            image.centerXAnchor.constraint(equalTo: imageContainer.centerXAnchor),
+        ])
+
+        NSLayoutConstraint.activate([
+            imageContainer.heightAnchor.constraint(equalToConstant: 40),
+        ])
+
+        stack.addArrangedSubview(titleLabel)
+        stack.addArrangedSubview(descriptionLabel)
+
+        NSLayoutConstraint.activate([
+            stack.leftAnchor.constraint(equalTo: header.leftAnchor),
+            stack.rightAnchor.constraint(equalTo: header.rightAnchor),
+            stack.topAnchor.constraint(equalTo: header.topAnchor),
+            stack.bottomAnchor.constraint(equalTo: header.bottomAnchor, constant: -20),
+        ])
+
+        return header
     }
 
     override func viewWillDisappear(_ animated: Bool) {
