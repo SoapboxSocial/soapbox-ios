@@ -45,6 +45,15 @@ class ActionSheet: DrawerViewController {
         return label
     }()
 
+    private let descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.font = .rounded(forTextStyle: .title2, weight: .semibold)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        return label
+    }()
+
     private let stack: UIStackView = {
         let view = UIStackView()
         view.alignment = .fill
@@ -57,10 +66,11 @@ class ActionSheet: DrawerViewController {
         return view
     }()
 
-    init(title: String? = nil, image: UIImage? = nil) {
+    init(title: String? = nil, description: String? = nil, image: UIImage? = nil) {
         super.init()
 
         titleLabel.text = title
+        descriptionLabel.text = description
         self.image.image = image
 
         manager.drawer.openHeightBehavior = .fitting
@@ -104,6 +114,7 @@ class ActionSheet: DrawerViewController {
         ])
 
         stack.addArrangedSubview(titleLabel)
+        stack.addArrangedSubview(descriptionLabel)
 
         let actionsView = UIView()
         actionsView.translatesAutoresizingMaskIntoConstraints = false
