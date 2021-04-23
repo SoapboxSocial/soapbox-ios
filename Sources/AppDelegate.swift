@@ -82,13 +82,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_: UIApplication, continue userActivity: NSUserActivity, restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
-            let incomingURL = userActivity.webpageURL,
-            let components = URLComponents(url: incomingURL, resolvingAgainstBaseURL: true) else {
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb, let incomingURL = userActivity.webpageURL else {
             return false
         }
 
-        let pathComponents = incomingURL.pathComponents
+        switch incomingURL.host {
+        case "soapbox.social":
+            return handleLegacySoapbox(incomingURL)
+        case "soap.link":
+            return handleSoapShortLinks(incomingURL)
+        default:
+            return false
+        }
+    }
+
+    private func handleLegacySoapbox(_ url: URL) -> Bool {
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
+            return false
+        }
+
+        let pathComponents = url.pathComponents
         if pathComponents.count < 2 {
             return false
         }
@@ -111,6 +124,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         default:
             return false
         }
+    }
+
+    private func handleSoapShortLinks(_ url: URL) -> Bool {
+        let pathComponents = url.pathComponents
+        if pathComponents.count != 2 {
+            return false
+        }
+
+        var path = pathComponents[1]
+
+        if path.prefix(1) == "@" {
+            path.remove(at: path.startIndex)
+            return handleUserURL(username: path)
+        }
+
+        return handleRoomURL(room: path)
     }
 
     private func handlePinURL(components: URLComponents) -> Bool {
