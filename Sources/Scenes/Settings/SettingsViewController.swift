@@ -81,6 +81,38 @@ class SettingsViewController: UIViewController {
         ])
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        let header = tableView.rectForHeader(inSection: 1)
+        let footer = tableView.rectForFooter(inSection: 1)
+        let rect = tableView.rect(forSection: 1)
+
+        let view = UIView(frame: CGRect(
+            x: rect.origin.x,
+            y: rect.origin.y + header.height,
+            width: rect.width,
+            height: rect.height - (header.height + footer.height)
+        ))
+        view.backgroundColor = UIColor.background.withAlphaComponent(0.3)
+
+        let indicator = UIActivityIndicatorView(style: .medium)
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.startAnimating()
+        view.addSubview(indicator)
+
+        NSLayoutConstraint.activate([
+            indicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            indicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+        ])
+
+        tableView.addSubview(view)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            view.removeFromSuperview()
+        }
+    }
+
     @objc private func didTapClose() {
         dismiss(animated: true)
     }
