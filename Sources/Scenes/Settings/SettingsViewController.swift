@@ -143,7 +143,7 @@ class SettingsViewController: UIViewController {
             handler: {
                 let sheet = ActionSheet()
 
-                func frequencyToggle(frequency: Int) {
+                func frequencyToggle(frequency: APIClient.Frequency) {
                     self.notificationsEdited = true
                     self.notifications.roomFrequency = frequency
                     self.tableView.reloadData()
@@ -151,20 +151,20 @@ class SettingsViewController: UIViewController {
 
                 // @todo set title
 
-                sheet.add(action: ActionSheet.Action(title: self.title(forFrequency: 0), style: .default, handler: { _ in
-                    frequencyToggle(frequency: 0)
+                sheet.add(action: ActionSheet.Action(title: self.title(forFrequency: .off), style: .default, handler: { _ in
+                    frequencyToggle(frequency: .off)
                 }))
 
-                sheet.add(action: ActionSheet.Action(title: self.title(forFrequency: 1), style: .default, handler: { _ in
-                    frequencyToggle(frequency: 1)
+                sheet.add(action: ActionSheet.Action(title: self.title(forFrequency: .infrequent), style: .default, handler: { _ in
+                    frequencyToggle(frequency: .infrequent)
                 }))
 
-                sheet.add(action: ActionSheet.Action(title: self.title(forFrequency: 2), style: .default, handler: { _ in
-                    frequencyToggle(frequency: 2)
+                sheet.add(action: ActionSheet.Action(title: self.title(forFrequency: .normal), style: .default, handler: { _ in
+                    frequencyToggle(frequency: .normal)
                 }))
 
-                sheet.add(action: ActionSheet.Action(title: self.title(forFrequency: 3), style: .default, handler: { _ in
-                    frequencyToggle(frequency: 3)
+                sheet.add(action: ActionSheet.Action(title: self.title(forFrequency: .frequent), style: .default, handler: { _ in
+                    frequencyToggle(frequency: .frequent)
                 }))
 
                 sheet.add(action: ActionSheet.Action(title: NSLocalizedString("cancel", comment: ""), style: .cancel))
@@ -174,7 +174,7 @@ class SettingsViewController: UIViewController {
                 }
             },
             value: {
-                self.title(forFrequency: self.notifications == nil ? 0 : self.notifications.roomFrequency)
+                self.title(forFrequency: self.notifications == nil ? .normal : self.notifications.roomFrequency)
             }
         )
     }
@@ -226,18 +226,16 @@ class SettingsViewController: UIViewController {
         )
     }
 
-    private func title(forFrequency frequency: Int) -> String {
+    private func title(forFrequency frequency: APIClient.Frequency) -> String {
         switch frequency {
-        case 0:
+        case .off:
             return NSLocalizedString("Settings.Notifications.Frequency.Off", comment: "")
-        case 1:
+        case .infrequent:
             return NSLocalizedString("Settings.Notifications.Frequency.Infrequent", comment: "")
-        case 2:
+        case .normal:
             return NSLocalizedString("Settings.Notifications.Frequency.Normal", comment: "")
-        case 3:
+        case .frequent:
             return NSLocalizedString("Settings.Notifications.Frequency.Frequent", comment: "")
-        default:
-            return NSLocalizedString("Settings.Notifications.Frequency.Normal", comment: "")
         }
     }
 }
