@@ -15,7 +15,7 @@ class SettingsViewController: UIViewController {
     }()
 
     private var notificationsEdited = false
-    private var notifications: APIClient.NotificationSettings!
+    private var notifications = APIClient.NotificationSettings(roomFrequency: .normal, follows: true)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,7 +34,7 @@ class SettingsViewController: UIViewController {
             createRoomNotificationFrequencySetting(),
             SettingsPresenter.Toggle(
                 name: NSLocalizedString("Settings.Notifications.NewFollowers", comment: ""),
-                isOn: { self.notifications == nil ? false : self.notifications.follows },
+                isOn: { self.notifications.follows },
                 handler: { value in
                     self.notificationsEdited = true
                     self.notifications.follows = value
@@ -68,8 +68,6 @@ class SettingsViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         view.addSubview(tableView)
-
-        tableView.reloadData()
 
         NSLayoutConstraint.activate([
             title.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -123,12 +121,12 @@ class SettingsViewController: UIViewController {
             case .failure:
                 break // @todo
             case let .success(settings):
-                view.removeFromSuperview()
                 self.notifications = settings.notifications
+            }
 
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
+            DispatchQueue.main.async {
+                view.removeFromSuperview()
+                self.tableView.reloadData()
             }
         })
     }
@@ -192,7 +190,7 @@ class SettingsViewController: UIViewController {
                 }
             },
             value: {
-                self.title(forFrequency: self.notifications == nil ? .normal : self.notifications.roomFrequency)
+                self.title(forFrequency: self.notifications.roomFrequency)
             }
         )
     }

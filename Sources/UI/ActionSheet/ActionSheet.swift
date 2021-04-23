@@ -148,10 +148,6 @@ class ActionSheet: DrawerViewController {
         let header = UIView()
         header.translatesAutoresizingMaskIntoConstraints = false
 
-        if titleLabel.text == nil || titleLabel.text == "", descriptionLabel.text == nil || descriptionLabel.text == "", image.image == nil {
-            return header
-        }
-
         let stack = UIStackView()
         stack.alignment = .fill
         stack.distribution = .fill
@@ -192,6 +188,10 @@ class ActionSheet: DrawerViewController {
             stack.topAnchor.constraint(equalTo: header.topAnchor),
             stack.bottomAnchor.constraint(equalTo: header.bottomAnchor, constant: -20),
         ])
+
+        if titleLabel.text == nil || titleLabel.text == "", descriptionLabel.text == nil || descriptionLabel.text == "", image.image == nil {
+            header.isHidden = true
+        }
 
         return header
     }

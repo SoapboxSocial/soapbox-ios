@@ -28,7 +28,7 @@ class SettingsToggleTableViewCell: UITableViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        toggle.removeTarget(self, action: #selector(toggled), for: .valueChanged)
+        handler = nil
     }
 
     required init?(coder _: NSCoder) {
