@@ -255,6 +255,8 @@
 "Settings.Notifications.NewFollowers" = "New Followers";
 "Settings.Notifications.RoomNotifications" = "Room Notifications";
 
+"Settings.Notifications.Frequency.Description" = "How often would you like notifications when the people you follow join or start rooms?";
+
 "Settings.Notifications.Frequency.Off" = "Off";
 "Settings.Notifications.Frequency.Infrequent" = "Infrequent";
 "Settings.Notifications.Frequency.Normal" = "Normal";
