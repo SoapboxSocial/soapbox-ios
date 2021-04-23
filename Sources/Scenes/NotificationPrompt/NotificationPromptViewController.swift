@@ -23,6 +23,7 @@ class NotificationPromptViewController: DrawerViewController {
         title.font = .rounded(forTextStyle: .title1, weight: .bold)
         title.numberOfLines = 0
         title.textColor = .white
+        title.textAlignment = .center
         view.addSubview(title)
 
         let content = UILabel()
