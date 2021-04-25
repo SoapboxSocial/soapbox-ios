@@ -1,7 +1,32 @@
 import UIKit
 
 class NotificationPromptViewController: DrawerViewController {
-    override init() {
+    enum PromptType {
+        case afterRoom, startup
+
+        var title: String {
+            switch self {
+            case .afterRoom:
+                return "NotificationPrompt.AfterRoom.Title"
+            case .startup:
+                return "NotificationPrompt.Startup.Title"
+            }
+        }
+
+        var description: String {
+            switch self {
+            case .afterRoom:
+                return "NotificationPrompt.AfterRoom.Description"
+            case .startup:
+                return "NotificationPrompt.Startup.Description"
+            }
+        }
+    }
+
+    let type: PromptType
+
+    init(_ type: PromptType) {
+        self.type = type
         super.init()
 
         manager.drawer.openHeightBehavior = .fitting
@@ -19,7 +44,7 @@ class NotificationPromptViewController: DrawerViewController {
 
         let title = UILabel()
         title.translatesAutoresizingMaskIntoConstraints = false
-        title.text = "Turn on notifications for Soapbox"
+        title.text = NSLocalizedString(type.title, comment: "")
         title.font = .rounded(forTextStyle: .title1, weight: .bold)
         title.numberOfLines = 0
         title.textColor = .white
@@ -28,7 +53,7 @@ class NotificationPromptViewController: DrawerViewController {
 
         let content = UILabel()
         content.translatesAutoresizingMaskIntoConstraints = false
-        content.text = "Enabling notifications keeps you in the loop with whats going on!\n\nYou can further customize what notifications you receive from your profile."
+        content.text = NSLocalizedString(type.description, comment: "")
         content.numberOfLines = 0
         content.textColor = .white
         content.font = .rounded(forTextStyle: .body, weight: .semibold)

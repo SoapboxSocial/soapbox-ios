@@ -24,4 +24,8 @@ class UserDefaultsKeys {
     class var theme: String {
         return "settings.theme"
     }
+
+    class var lastNotificationsPrompted: String {
+        return "lastNotificationsPrompted"
+    }
 }

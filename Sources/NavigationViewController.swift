@@ -213,7 +213,7 @@ extension NavigationViewController: RoomViewDelegate {
         }
 
         if askForNotifications {
-            promptForNotifications()
+            promptForNotifications(type: .afterRoom)
         }
     }
 
@@ -379,7 +379,7 @@ extension NavigationViewController {
             return false
         }
 
-        return minutesInRoom >= 5 && monthsSince >= 4
+        return minutesInRoom >= 5 && monthsSince >= 4 && room.maxMembers > 2
     }
 
     private func promptForReview() {
@@ -398,14 +398,22 @@ extension NavigationViewController {
             return false
         }
 
+        let now = Date()
+        let last = Date(timeIntervalSince1970: TimeInterval(UserDefaults.standard.integer(forKey: UserDefaultsKeys.lastNotificationsPrompted)))
+        let promptInterval = Calendar.current.dateComponents([.month], from: last, to: now)
+        guard let monthsSince = promptInterval.month else {
+            return false
+        }
+
         // @TODO CHECK THAT MORE THAN X PEOPLE WERE IN THE ROOM?
 
-        return minutesInRoom >= 5
+        return minutesInRoom >= 5 && monthsSince > 4 && room.maxMembers > 2
     }
 
-    private func promptForNotifications() {
-        let view = NotificationPromptViewController()
+    private func promptForNotifications(type: NotificationPromptViewController.PromptType) {
+        let view = NotificationPromptViewController(type)
         present(view, animated: true)
+        UserDefaults.standard.set(Int(Date().timeIntervalSince1970), forKey: UserDefaultsKeys.lastNotificationsPrompted)
     }
 }
 
