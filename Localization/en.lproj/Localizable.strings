@@ -251,6 +251,9 @@
 
 "copied" = "Copied!";
 
+"Settings.Errors.FailedToLoad" = "Failed to load settings!";
+"Settings.Errors.FailedToSave" = "Failed to save settings!";
+
 "Settings.Notifications.Title" = "Notifications";
 "Settings.Notifications.NewFollowers" = "New Followers";
 "Settings.Notifications.RoomNotifications" = "Room Notifications";

@@ -119,7 +119,14 @@ class SettingsViewController: UIViewController {
         APIClient().settings(callback: { result in
             switch result {
             case .failure:
-                break // @todo
+                let banner = NotificationBanner(
+                    title: NSLocalizedString("Settings.Errors.FailedToLoad", comment: ""),
+                    subtitle: NSLocalizedString("please_try_again_later", comment: ""),
+                    style: .danger,
+                    type: .floating
+                )
+
+                banner.show()
             case let .success(settings):
                 self.notifications = settings.notifications
             }
@@ -141,7 +148,14 @@ class SettingsViewController: UIViewController {
         APIClient().updateNotificationSettings(frequency: notifications.roomFrequency, follows: notifications.follows, callback: { result in
             switch result {
             case .failure:
-                break // @todo
+                let banner = NotificationBanner(
+                    title: NSLocalizedString("Settings.Errors.FailedToSave", comment: ""),
+                    subtitle: NSLocalizedString("please_try_again_later", comment: ""),
+                    style: .danger,
+                    type: .floating
+                )
+
+                banner.show()
             case .success:
                 break
             }
