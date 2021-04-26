@@ -29,6 +29,12 @@ class SettingsPresenter {
         let handler: () -> Void
     }
 
+    struct Toggle: SettingsItem {
+        let name: String
+        let isOn: () -> Bool
+        let handler: (Bool) -> Void
+    }
+
     struct Section {
         let title: String?
         var data: [SettingsItem]
@@ -67,6 +73,16 @@ class SettingsPresenter {
         item.selection.text = selection.value()
     }
 
+    func configure(item: SettingsToggleTableViewCell, for indexPath: IndexPath) {
+        guard let toggle = dataSource[indexPath.section].data[indexPath.row] as? Toggle else {
+            return
+        }
+
+        item.textLabel?.text = toggle.name
+        item.toggle.isOn = toggle.isOn()
+        item.handler = toggle.handler
+    }
+
     func configure(item: SettingsDestructiveTableViewCell, for indexPath: IndexPath) {
         guard let selection = dataSource[indexPath.section].data[indexPath.row] as? Destructive else {
             return
@@ -85,5 +101,9 @@ class SettingsPresenter {
 
     func set(deleteAccount: Destructive) {
         dataSource.append(Section(title: nil, data: [deleteAccount]))
+    }
+
+    func set(notifications: [SettingsItem]) {
+        dataSource.append(Section(title: NSLocalizedString("Settings.Notifications.Title", comment: ""), data: notifications))
     }
 }

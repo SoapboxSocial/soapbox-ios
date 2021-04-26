@@ -256,3 +256,19 @@
 
 "NotificationPrompt.Startup.Title" = "Turn on notifications for Soapbox";
 "NotificationPrompt.Startup.Description" = "Enabling notifications keeps you in the loop with whats going on!\n\nYou can further customize what notifications you receive from your profile.";
+
+"Settings.Errors.FailedToLoad" = "Failed to load settings!";
+"Settings.Errors.FailedToSave" = "Failed to save settings!";
+
+"Settings.Notifications.Title" = "Notifications";
+"Settings.Notifications.NewFollowers" = "New Followers";
+"Settings.Notifications.RoomNotifications" = "Room Notifications";
+
+"Settings.Notifications.Frequency.Title" = "Room Notifications";
+"Settings.Notifications.Frequency.Description" = "How often would you like notifications when the people you follow join or start rooms?";
+
+"Settings.Notifications.Frequency.Off" = "Off";
+"Settings.Notifications.Frequency.Infrequent" = "Infrequent";
+"Settings.Notifications.Frequency.Normal" = "Normal";
+"Settings.Notifications.Frequency.Frequent" = "Frequent";
+
