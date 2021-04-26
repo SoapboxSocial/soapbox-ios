@@ -44,12 +44,35 @@ class UserPrompts {
             return false
         }
 
-        if !(minutesInRoom >= 5 && monthsSince > 2 && room.maxMembers > 2) {
+        let startup = Date(timeIntervalSince1970: TimeInterval(UserDefaults.standard.integer(forKey: UserDefaultsKeys.lastNotificationsStartupPrompted)))
+        let startupInterval = Calendar.current.dateComponents([.month], from: startup, to: now)
+        guard let startupSince = startupInterval.hour else {
+            return false
+        }
+
+        if !(minutesInRoom >= 5 && monthsSince > 2 && room.maxMembers > 2 && startupSince > 6) {
             return false
         }
 
         view.present(NotificationPromptViewController(.afterRoom), animated: true)
         UserDefaults.standard.set(Int(Date().timeIntervalSince1970), forKey: UserDefaultsKeys.lastNotificationsAfterRoomPrompted)
+
+        return true
+    }
+
+    static func promptForNotifications(onView view: UIViewController) -> Bool {
+        let settings = UNUserNotificationCenter.current().notificationSettings
+        if settings.authorizationStatus != .denied {
+            return false
+        }
+
+        let prompted = UserDefaults.standard.integer(forKey: UserDefaultsKeys.lastNotificationsStartupPrompted)
+        if prompted > 0 {
+            return false
+        }
+
+        view.present(NotificationPromptViewController(.afterRoom), animated: true)
+        UserDefaults.standard.set(Int(Date().timeIntervalSince1970), forKey: UserDefaultsKeys.lastNotificationsStartupPrompted)
 
         return true
     }

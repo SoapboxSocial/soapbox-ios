@@ -28,4 +28,8 @@ class UserDefaultsKeys {
     class var lastNotificationsAfterRoomPrompted: String {
         return "lastNotificationsAfterRoomPrompted"
     }
+
+    class var lastNotificationsStartupPrompted: String {
+        return "lastNotificationsStartupPrompted"
+    }
 }

@@ -127,6 +127,10 @@ class NavigationViewController: UINavigationController {
         present(preview, animated: true)
     }
 
+    func presentNotificiationPrompt() {
+        UserPrompts.promptForNotifications(onView: self)
+    }
+
     private func showClosedError() {
         let banner = NotificationBanner(
             title: NSLocalizedString("room_was_closed", comment: ""),
