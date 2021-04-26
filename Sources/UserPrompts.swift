@@ -21,7 +21,7 @@ class UserPrompts {
         }
 
         SKStoreReviewController.requestReview()
-        UserDefaults.standard.set(Int(Date().timeIntervalSince1970), forKey: UserDefaultsKeys.lastReviewed)
+        UserDefaults.standard.set(Int(now.timeIntervalSince1970), forKey: UserDefaultsKeys.lastReviewed)
 
         return true
     }
@@ -55,7 +55,7 @@ class UserPrompts {
         }
 
         view.present(NotificationPromptViewController(.afterRoom), animated: true)
-        UserDefaults.standard.set(Int(Date().timeIntervalSince1970), forKey: UserDefaultsKeys.lastNotificationsAfterRoomPrompted)
+        UserDefaults.standard.set(Int(now.timeIntervalSince1970), forKey: UserDefaultsKeys.lastNotificationsAfterRoomPrompted)
 
         return true
     }
@@ -71,7 +71,7 @@ class UserPrompts {
             return false
         }
 
-        view.present(NotificationPromptViewController(.afterRoom), animated: true)
+        view.present(NotificationPromptViewController(.startup), animated: true)
         UserDefaults.standard.set(Int(Date().timeIntervalSince1970), forKey: UserDefaultsKeys.lastNotificationsStartupPrompted)
 
         return true
