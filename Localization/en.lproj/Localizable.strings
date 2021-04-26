@@ -251,6 +251,12 @@
 
 "copied" = "Copied!";
 
+"NotificationPrompt.AfterRoom.Title" = "Turn on notifications for Soapbox";
+"NotificationPrompt.AfterRoom.Description" = "Enable notifications to get notified to join rooms like this one.\n\nYou can further customize what notifications you receive from your profile.";
+
+"NotificationPrompt.Startup.Title" = "Turn on notifications for Soapbox";
+"NotificationPrompt.Startup.Description" = "Turning on notifications keeps you in the loop when your friends are online and chatting.\n\nYou can further customize what notifications you receive from your profile.";
+
 "Settings.Errors.FailedToLoad" = "Failed to load settings!";
 "Settings.Errors.FailedToSave" = "Failed to save settings!";
 
@@ -265,3 +271,4 @@
 "Settings.Notifications.Frequency.Infrequent" = "Infrequent";
 "Settings.Notifications.Frequency.Normal" = "Normal";
 "Settings.Notifications.Frequency.Frequent" = "Frequent";
+

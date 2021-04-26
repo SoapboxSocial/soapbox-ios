@@ -52,6 +52,7 @@ class Room {
     private let client: RoomClient
 
     let started: Date
+    private(set) var maxMembers = Int(0)
 
     init(client: RoomClient) {
         self.client = client
@@ -277,6 +278,7 @@ extension Room {
 
         state.members.append(joined.user)
         delegate?.userDidJoinRoom(user: joined.user.id)
+        maxMembers = max(maxMembers, state.members.count)
     }
 
     private func on(left id: Int64) {

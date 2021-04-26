@@ -127,6 +127,10 @@ class NavigationViewController: UINavigationController {
         present(preview, animated: true)
     }
 
+    func presentNotificiationPrompt() {
+        UserPrompts.promptForNotifications(onView: self)
+    }
+
     private func showClosedError() {
         let banner = NotificationBanner(
             title: NSLocalizedString("room_was_closed", comment: ""),
@@ -196,16 +200,19 @@ extension NavigationViewController: RoomViewDelegate {
     }
 
     func roomDidExit() {
-        var askForReview = false
-        if let room = self.room {
-            askForReview = shouldPromptForReview(room: room)
-        }
+        let room = self.room
 
-        shutdownRoom()
+        shutdownRoom(completion: {
+            guard room != nil else {
+                return
+            }
 
-        if askForReview {
-            promptForReview()
-        }
+            if UserPrompts.promptForReview(room: room!) {
+                return
+            }
+
+            _ = UserPrompts.promptForNotificationsAfter(room: room!, on: self)
+        })
     }
 
     private func shutdownRoom(completion: (() -> Void)? = nil) {
@@ -352,30 +359,6 @@ extension NavigationViewController: DrawerViewDelegate {
 
             roomView?.showMuteButton()
         }
-    }
-}
-
-extension NavigationViewController {
-    func shouldPromptForReview(room: Room) -> Bool {
-        let now = Date()
-
-        let last = Date(timeIntervalSince1970: TimeInterval(UserDefaults.standard.integer(forKey: UserDefaultsKeys.lastReviewed)))
-        let reviewInterval = Calendar.current.dateComponents([.month], from: last, to: now)
-        guard let monthsSince = reviewInterval.month else {
-            return false
-        }
-
-        let interval = Calendar.current.dateComponents([.minute], from: room.started, to: Date())
-        guard let minutesInRoom = interval.minute else {
-            return false
-        }
-
-        return minutesInRoom >= 5 && monthsSince >= 4
-    }
-
-    func promptForReview() {
-        SKStoreReviewController.requestReview()
-        UserDefaults.standard.set(Int(Date().timeIntervalSince1970), forKey: UserDefaultsKeys.lastReviewed)
     }
 }
 

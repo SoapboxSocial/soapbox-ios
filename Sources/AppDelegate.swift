@@ -254,11 +254,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         if let shortcut = launchedShortcutItem {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            launchedShortcutItem = nil
+            return DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 _ = self.handle(shortcutItem: shortcut)
             }
+        }
 
-            launchedShortcutItem = nil
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            guard let nav = self.window?.rootViewController as? NavigationViewController else {
+                return
+            }
+
+            nav.presentNotificiationPrompt()
         }
     }
 
