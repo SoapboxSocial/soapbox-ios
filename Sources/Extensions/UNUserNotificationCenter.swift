@@ -6,7 +6,8 @@ extension UNUserNotificationCenter {
 
         let group = DispatchGroup()
         group.enter()
-        UNUserNotificationCenter.current().getNotificationSettings { value in
+
+        getNotificationSettings { value in
             settings = value
             group.leave()
         }
