@@ -25,7 +25,7 @@ class UserDefaultsKeys {
         return "settings.theme"
     }
 
-    class var lastNotificationsPrompted: String {
-        return "lastNotificationsPrompted"
+    class var lastNotificationsAfterRoomPrompted: String {
+        return "lastNotificationsAfterRoomPrompted"
     }
 }

@@ -196,25 +196,19 @@ extension NavigationViewController: RoomViewDelegate {
     }
 
     func roomDidExit() {
-        var askForReview = false
-        var askForNotifications = false
-        if let room = self.room {
-            askForReview = shouldPromptForReview(room: room)
+        let room = self.room
 
-            if !askForReview {
-                askForNotifications = shouldPromptForNotifications(room: room)
+        shutdownRoom(completion: {
+            guard room != nil else {
+                return
             }
-        }
 
-        shutdownRoom()
+            if UserPrompts.promptForReview(room: room!) {
+                return
+            }
 
-        if askForReview {
-            return promptForReview()
-        }
-
-        if askForNotifications {
-            promptForNotifications(type: .afterRoom)
-        }
+            _ = UserPrompts.promptForNotificationsAfter(room: room!, on: self)
+        })
     }
 
     private func shutdownRoom(completion: (() -> Void)? = nil) {
@@ -361,59 +355,6 @@ extension NavigationViewController: DrawerViewDelegate {
 
             roomView?.showMuteButton()
         }
-    }
-}
-
-extension NavigationViewController {
-    private func shouldPromptForReview(room: Room) -> Bool {
-        let now = Date()
-
-        let last = Date(timeIntervalSince1970: TimeInterval(UserDefaults.standard.integer(forKey: UserDefaultsKeys.lastReviewed)))
-        let reviewInterval = Calendar.current.dateComponents([.month], from: last, to: now)
-        guard let monthsSince = reviewInterval.month else {
-            return false
-        }
-
-        let interval = Calendar.current.dateComponents([.minute], from: room.started, to: Date())
-        guard let minutesInRoom = interval.minute else {
-            return false
-        }
-
-        return minutesInRoom >= 5 && monthsSince >= 4 && room.maxMembers > 2
-    }
-
-    private func promptForReview() {
-        SKStoreReviewController.requestReview()
-        UserDefaults.standard.set(Int(Date().timeIntervalSince1970), forKey: UserDefaultsKeys.lastReviewed)
-    }
-
-    private func shouldPromptForNotifications(room: Room) -> Bool {
-        let settings = UNUserNotificationCenter.current().notificationSettings
-        if settings.authorizationStatus != .denied {
-            return false
-        }
-
-        let interval = Calendar.current.dateComponents([.minute], from: room.started, to: Date())
-        guard let minutesInRoom = interval.minute else {
-            return false
-        }
-
-        let now = Date()
-        let last = Date(timeIntervalSince1970: TimeInterval(UserDefaults.standard.integer(forKey: UserDefaultsKeys.lastNotificationsPrompted)))
-        let promptInterval = Calendar.current.dateComponents([.month], from: last, to: now)
-        guard let monthsSince = promptInterval.month else {
-            return false
-        }
-
-        // @TODO CHECK THAT MORE THAN X PEOPLE WERE IN THE ROOM?
-
-        return minutesInRoom >= 5 && monthsSince > 2 && room.maxMembers > 2
-    }
-
-    private func promptForNotifications(type: NotificationPromptViewController.PromptType) {
-        let view = NotificationPromptViewController(type)
-        present(view, animated: true)
-        UserDefaults.standard.set(Int(Date().timeIntervalSince1970), forKey: UserDefaultsKeys.lastNotificationsPrompted)
     }
 }
 
