@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.29.0] - 2021-04-26Z
+
  - This is a big one, we now allow you to change your notification settings, this is the start of many optimizations for notifications.
 
 ## [2.28.0] - 2021-04-22
