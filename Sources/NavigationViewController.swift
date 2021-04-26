@@ -202,7 +202,7 @@ extension NavigationViewController: RoomViewDelegate {
             askForReview = shouldPromptForReview(room: room)
 
             if !askForReview {
-                askForNotifications = true
+                askForNotifications = shouldPromptForNotifications(room: room)
             }
         }
 
