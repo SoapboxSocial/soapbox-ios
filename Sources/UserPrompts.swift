@@ -45,7 +45,7 @@ class UserPrompts {
         }
 
         let startup = Date(timeIntervalSince1970: TimeInterval(UserDefaults.standard.integer(forKey: UserDefaultsKeys.lastNotificationsStartupPrompted)))
-        let startupInterval = Calendar.current.dateComponents([.month], from: startup, to: now)
+        let startupInterval = Calendar.current.dateComponents([.hour], from: startup, to: now)
         guard let startupSince = startupInterval.hour else {
             return false
         }
