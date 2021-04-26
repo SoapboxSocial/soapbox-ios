@@ -407,7 +407,7 @@ extension NavigationViewController {
 
         // @TODO CHECK THAT MORE THAN X PEOPLE WERE IN THE ROOM?
 
-        return minutesInRoom >= 5 && monthsSince > 4 && room.maxMembers > 2
+        return minutesInRoom >= 5 && monthsSince > 2 && room.maxMembers > 2
     }
 
     private func promptForNotifications(type: NotificationPromptViewController.PromptType) {
