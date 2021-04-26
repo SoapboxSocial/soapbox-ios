@@ -6,10 +6,10 @@ extension UNUserNotificationCenter {
 
         let group = DispatchGroup()
         group.enter()
-        UNUserNotificationCenter.current().getNotificationSettings(completionHandler: { s in
-            settings = s
+        UNUserNotificationCenter.current().getNotificationSettings { value in
+            settings = value
             group.leave()
-        })
+        }
 
         group.wait()
 
