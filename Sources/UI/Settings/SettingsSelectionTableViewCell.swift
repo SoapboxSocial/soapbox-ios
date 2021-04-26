@@ -24,6 +24,11 @@ class SettingsSelectionTableViewCell: UITableViewCell {
         textLabel?.font = .rounded(forTextStyle: .body, weight: .regular)
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        selection.text = ""
+    }
+
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
