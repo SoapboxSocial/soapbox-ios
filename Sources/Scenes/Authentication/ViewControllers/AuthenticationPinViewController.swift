@@ -34,12 +34,23 @@ class AuthenticationPinViewController: ViewControllerWithKeyboardConstraint {
         return label
     }()
 
+    private let note: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = .white
+        label.text = NSLocalizedString("check_spam", comment: "")
+        label.font = .rounded(forTextStyle: .subheadline, weight: .semibold)
+        label.textAlignment = .center
+        return label
+    }()
+
     init() {
         super.init(nibName: nil, bundle: nil)
 
         view.addSubview(label)
         view.addSubview(textField)
         view.addSubview(submitButton)
+        view.addSubview(note)
 
         bottomLayoutConstraint = submitButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(view.frame.size.height / 3))
         bottomLayoutConstraint.isActive = true
@@ -54,7 +65,13 @@ class AuthenticationPinViewController: ViewControllerWithKeyboardConstraint {
             textField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             textField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             textField.heightAnchor.constraint(equalToConstant: 56),
-            textField.bottomAnchor.constraint(equalTo: submitButton.topAnchor, constant: -20),
+            textField.bottomAnchor.constraint(equalTo: note.topAnchor, constant: -20),
+        ])
+
+        NSLayoutConstraint.activate([
+            note.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            note.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            note.bottomAnchor.constraint(equalTo: submitButton.topAnchor, constant: -20),
         ])
 
         NSLayoutConstraint.activate([

@@ -30,6 +30,7 @@
 
 "email_login" = "Enter email";
 "enter_your_pin_received_by_mail" = "Enter pin sent to email";
+"check_spam" = "Didn’t receive the email? Check spam";
 "pin" = "Pin";
 
 "invalid_email" = "Please enter a valid email";
