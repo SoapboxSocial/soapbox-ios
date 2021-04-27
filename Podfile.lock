@@ -1,6 +1,6 @@
 PODS:
   - ACBAVPlayer (2.1)
-  - Alamofire (5.4.2)
+  - Alamofire (5.4.3)
   - AlamofireImage (4.2.0):
     - Alamofire (~> 5.4)
   - BetterSegmentedControl (2.0.1)
@@ -18,7 +18,7 @@ PODS:
   - SnapKit (5.0.1)
   - SwiftConfettiView (0.1.0)
   - Swifter (2.5.0)
-  - SwiftProtobuf (1.15.0)
+  - SwiftProtobuf (1.16.0)
   - UIWindowTransitions (1.0.0)
 
 DEPENDENCIES:
@@ -75,7 +75,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   ACBAVPlayer: 7ef1a2a6045552dc35d1b8b303908d90a3d7845e
-  Alamofire: bfbc4c2fe5909b1d94fb4ef2277c6b3727ef5dae
+  Alamofire: e447a2774a40c996748296fa2c55112fdbbc42f9
   AlamofireImage: 34a2d90b0e5fe6a5605f85ae4b7b01e784c60192
   BetterSegmentedControl: 09607b27861d49cbce48b7673b74f9150a3d371a
   DrawerView: 41c5e5d6593d86335ee2cf9b18d738835593dbc1
@@ -90,7 +90,7 @@ SPEC CHECKSUMS:
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   SwiftConfettiView: 1bdbc2e6913b6b1c76d8070802b212508ad5c352
   Swifter: 4c2f8cf320c2f751c10128f841d8e9bd8609d988
-  SwiftProtobuf: 3320217e9d8fb75f36b40282e78c482640fd75dd
+  SwiftProtobuf: 4e16842b83c6fda06b10fac50d73b3f1fce8ab7b
   UIWindowTransitions: 2237083382e11f100db7de934041bba0c4669c86
 
 PODFILE CHECKSUM: ec516e32bc7f02b2b6c4e23d0708fd86c4453e26
