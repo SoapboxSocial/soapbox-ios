@@ -118,7 +118,7 @@ class LinkSharingView: UIView {
 
         NSLayoutConstraint.activate([
             nameLabel.centerYAnchor.constraint(equalTo: progress.centerYAnchor),
-            nameLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            nameLabel.rightAnchor.constraint(equalTo: rightAnchor),
         ])
 
         NSLayoutConstraint.activate([
