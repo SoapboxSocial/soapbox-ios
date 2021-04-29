@@ -265,7 +265,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return
             }
 
-            nav.presentNotificiationPrompt()
+            if nav.presentNotificiationPrompt() {
+                return
+            }
+
+            _ = nav.presentSurveyPrompt()
         }
     }
 
