@@ -127,8 +127,12 @@ class NavigationViewController: UINavigationController {
         present(preview, animated: true)
     }
 
-    func presentNotificiationPrompt() {
-        UserPrompts.promptForNotifications(onView: self)
+    func presentNotificiationPrompt() -> Bool {
+        return UserPrompts.promptForNotifications(onView: self)
+    }
+
+    func presentSurveyPrompt() -> Bool {
+        return UserPrompts.promptForPMFSurvey(onView: self)
     }
 
     private func showClosedError() {
