@@ -86,7 +86,7 @@ class StoryPlayer {
             switch playerItem.timeControlStatus {
             case .paused, .waitingToPlayAtSpecifiedRate:
                 self.delegate?.didStartBuffering(self)
-            case AVPlayerTimeControlStatus.playing:
+            case AVPlayer.TimeControlStatus.playing:
                 self.delegate?.didEndBuffering(self)
             default:
                 break

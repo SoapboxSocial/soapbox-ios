@@ -439,3 +439,9 @@ extension APIClient {
         post(path: "/v1/me/settings/notifications", parameters: ["frequency": frequency.rawValue, "follows": follows], callback: callback)
     }
 }
+
+extension APIClient {
+    func opened(notification: String, callback: @escaping (Result<Void, Error>) -> Void) {
+        post(path: "/v1/analytics/notifications/" + notification + "/opened", callback: callback)
+    }
+}
