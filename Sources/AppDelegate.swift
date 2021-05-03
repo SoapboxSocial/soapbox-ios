@@ -326,6 +326,10 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 return
             }
 
+            guard let uuid = aps["uuid"] as? String else {
+                return
+            }
+
             guard let category = aps["category"] as? String else {
                 return
             }
@@ -334,7 +338,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 return
             }
 
-            self.handleNotificationAction(for: category, args: arguments)
+            self.handleNotificationAction(uuid, for: category, args: arguments)
         }
     }
 
@@ -344,6 +348,10 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         withCompletionHandler _: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
         guard let aps = notification.request.content.userInfo["aps"] as? [String: AnyObject] else {
+            return
+        }
+
+        guard let uuid = aps["uuid"] as? String else {
             return
         }
 
@@ -358,13 +366,19 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let notification = NotificationBanner(title: notification.request.content.body, style: .success)
 
         notification.onTap = {
-            self.handleNotificationAction(for: category, args: arguments)
+            self.handleNotificationAction(uuid, for: category, args: arguments)
         }
 
         notification.show()
     }
 
-    private func handleNotificationAction(for category: String, args: [String: AnyObject]) {
+    private func handleNotificationAction(_ uuid: String, for category: String, args: [String: AnyObject]) {
+        APIClient().opened(notification: uuid, callback: { result in
+            if case let .failure(err) = result {
+                debugPrint("failed \(err)")
+            }
+        })
+
         DispatchQueue.main.async {
             guard let nav = self.window?.rootViewController as? NavigationViewController else {
                 return
