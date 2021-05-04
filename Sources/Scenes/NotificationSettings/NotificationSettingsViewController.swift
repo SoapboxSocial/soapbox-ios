@@ -94,7 +94,7 @@ class NotificationSettingsViewController: UIViewController {
             return
         }
 
-        APIClient().updateNotificationSettings(frequency: notifications.roomFrequency, follows: notifications.follows, callback: { result in
+        APIClient().updateNotificationSettings(frequency: notifications.roomFrequency, follows: notifications.follows, welcomeRooms: notifications.welcomeRooms, callback: { result in
             switch result {
             case .failure:
                 let banner = NotificationBanner(
