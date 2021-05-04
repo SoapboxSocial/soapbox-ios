@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Fixed issue that allowed game and link to be visible.
+
 ## [2.30.0] - 2021-05-04Z
 
  - We shipped a big change to welcome rooms! If you're one of our top users you'll now get invited to welcome new users, we hope this allows new users to experience the Soapbox community!

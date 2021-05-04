@@ -775,6 +775,7 @@ extension RoomView: RoomDelegate {
 
         DispatchQueue.main.async {
             self.rightButtonBar.hide(button: .paste, animated: true)
+            self.rightButtonBar.hide(button: .minis, animated: true)
         }
 
         linkView.pinned(link: link)
@@ -783,6 +784,7 @@ extension RoomView: RoomDelegate {
     func pinnedLinkWasRemoved() {
         DispatchQueue.main.async {
             self.rightButtonBar.show(button: .paste, animated: true)
+            self.rightButtonBar.show(button: .minis, animated: true)
         }
 
         linkView.removePinnedLink()
