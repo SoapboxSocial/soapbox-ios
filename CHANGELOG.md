@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - We shipped a big change to welcome rooms! If you're one of our top users you'll now get invited to welcome new users, we hope this allows new users to experience the Soapbox community!
+
 ## [2.29.0] - 2021-04-26Z
 
  - This is a big one, we now allow you to change your notification settings, this is the start of many optimizations for notifications.
