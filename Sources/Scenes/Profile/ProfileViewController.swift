@@ -324,7 +324,7 @@ class ProfileViewController: ViewControllerWithRemoteContent<APIClient.Profile> 
 
         if content.id == id {
             sheet.add(action: ActionSheet.Action(title: NSLocalizedString("settings", comment: ""), style: .default, handler: { _ in
-                self.present(SceneFactory.createSettingsViewController(), animated: true)
+                self.navigationController?.pushViewController(SceneFactory.createSettingsViewController(), animated: true)
             }))
         } else {
             sheet.add(action: ActionSheet.Action(title: NSLocalizedString("report_incident", comment: ""), style: .destructive, handler: { _ in

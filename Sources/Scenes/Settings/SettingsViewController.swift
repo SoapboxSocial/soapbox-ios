@@ -30,17 +30,22 @@ class SettingsViewController: UIViewController {
             createThemeSetting(),
         ])
 
-        presenter.set(notifications: [
-            createRoomNotificationFrequencySetting(),
-            SettingsPresenter.Toggle(
-                name: NSLocalizedString("Settings.Notifications.NewFollowers", comment: ""),
-                isOn: { self.notifications.follows },
-                handler: { value in
-                    self.notificationsEdited = true
-                    self.notifications.follows = value
-                }
-            ),
-        ])
+        presenter.set(notifications: SettingsPresenter.Plain(
+            name: NSLocalizedString("Settings.Notifications.Title", comment: ""),
+            handler: {}
+        ))
+
+//        presenter.set(notifications: [
+//            createRoomNotificationFrequencySetting(),
+//            SettingsPresenter.Toggle(
+//                name: NSLocalizedString("Settings.Notifications.NewFollowers", comment: ""),
+//                isOn: { self.notifications.follows },
+//                handler: { value in
+//                    self.notificationsEdited = true
+//                    self.notifications.follows = value
+//                }
+//            ),
+//        ])
 
         presenter.set(links: [
             SettingsPresenter.Link(name: NSLocalizedString("contact_us", comment: ""), link: URL(string: "mailto:support@soapbox.social")!),
