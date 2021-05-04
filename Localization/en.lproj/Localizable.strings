@@ -262,14 +262,17 @@
 "Settings.Errors.FailedToSave" = "Failed to save settings!";
 
 "Settings.Notifications.Title" = "Notifications";
-"Settings.Notifications.NewFollowers" = "New Followers";
-"Settings.Notifications.RoomNotifications" = "Room Notifications";
 
-"Settings.Notifications.Frequency.Title" = "Room Notifications";
-"Settings.Notifications.Frequency.Description" = "How often would you like notifications when the people you follow join or start rooms?";
+"Notifications.NewFollowers" = "New Followers";
+"Notifications.RoomNotifications" = "Room Notifications";
 
-"Settings.Notifications.Frequency.Off" = "Off";
-"Settings.Notifications.Frequency.Infrequent" = "Infrequent";
-"Settings.Notifications.Frequency.Normal" = "Normal";
-"Settings.Notifications.Frequency.Frequent" = "Frequent";
+"Notifications.Frequency.Title" = "Room Notifications";
+"Notifications.Frequency.Description" = "How often would you like notifications when the people you follow join or start rooms?";
 
+"Notifications.Frequency.Off" = "Off";
+"Notifications.Frequency.Infrequent" = "Infrequent";
+"Notifications.Frequency.Normal" = "Normal";
+"Notifications.Frequency.Frequent" = "Frequent";
+
+"Notifications.FromUs" = "From us";
+"Notifications.WelcomeRooms" = "Welcome Rooms";

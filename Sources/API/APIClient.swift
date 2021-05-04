@@ -421,9 +421,10 @@ extension APIClient {
     struct NotificationSettings: Decodable {
         var roomFrequency: Frequency
         var follows: Bool
+        var welcomeRooms: Bool
 
         private enum CodingKeys: String, CodingKey {
-            case roomFrequency = "room_frequency", follows
+            case roomFrequency = "room_frequency", follows, welcomeRooms = "welcome_rooms"
         }
     }
 
@@ -435,8 +436,8 @@ extension APIClient {
         get(path: "/v1/me/settings", callback: callback)
     }
 
-    func updateNotificationSettings(frequency: Frequency, follows: Bool, callback: @escaping (Result<Void, Error>) -> Void) {
-        post(path: "/v1/me/settings/notifications", parameters: ["frequency": frequency.rawValue, "follows": follows], callback: callback)
+    func updateNotificationSettings(frequency: Frequency, follows: Bool, welcomeRooms: Bool, callback: @escaping (Result<Void, Error>) -> Void) {
+        post(path: "/v1/me/settings/notifications", parameters: ["frequency": frequency.rawValue, "follows": follows, "welcome_rooms": welcomeRooms], callback: callback)
     }
 }
 
