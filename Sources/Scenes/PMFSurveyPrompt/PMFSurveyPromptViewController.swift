@@ -23,7 +23,6 @@ class PMFSurveyPromptViewController: DrawerViewController {
         title.text = "We want your feedback!"
         title.font = .rounded(forTextStyle: .title1, weight: .bold)
         title.numberOfLines = 0
-        title.textColor = .white
         title.textAlignment = .center
         view.addSubview(title)
 
@@ -31,7 +30,6 @@ class PMFSurveyPromptViewController: DrawerViewController {
         content.translatesAutoresizingMaskIntoConstraints = false
         content.text = "Please take the time to complete this quick 2 minute survey. Your answers will help us create a better Soapbox experience for you!"
         content.numberOfLines = 0
-        content.textColor = .white
         content.font = .rounded(forTextStyle: .body, weight: .semibold)
         view.addSubview(content)
 
