@@ -274,3 +274,5 @@
 "Notifications.Frequency.Normal" = "Normal";
 "Notifications.Frequency.Frequent" = "Frequent";
 
+"Notifications.FromUs" = "From us";
+"Notifications.WelcomeRooms" = "Welcome Rooms";

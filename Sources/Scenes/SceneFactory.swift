@@ -55,4 +55,8 @@ class SceneFactory {
     static func createSettingsViewController() -> SettingsViewController {
         return SettingsViewController()
     }
+
+    static func createNotificationSettingsViewController() -> NotificationSettingsViewController {
+        return NotificationSettingsViewController()
+    }
 }
