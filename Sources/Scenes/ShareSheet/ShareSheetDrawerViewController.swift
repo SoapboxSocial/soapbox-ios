@@ -14,8 +14,6 @@ class ShareSheetDrawerViewController: DrawerViewController {
         return view
     }()
 
-    private var userList: UsersListWithSearch!
-
     private let room: Room
 
     init(room: Room) {

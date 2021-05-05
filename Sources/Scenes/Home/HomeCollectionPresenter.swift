@@ -192,14 +192,4 @@ class HomeCollectionPresenter {
     func index(of section: SectionType) -> Int? {
         return dataSource.firstIndex(where: { $0.type == section })
     }
-
-    private func removeRooms() {
-        dataSource.removeAll(where: { $0.type == .roomList })
-
-        if dataSource.contains(where: { $0.type == .noRooms || $0.type == .topRoom }) {
-            return
-        }
-
-        dataSource.append(Section(type: .noRooms, title: nil, subtitle: nil, data: []))
-    }
 }

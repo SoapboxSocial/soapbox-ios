@@ -7,12 +7,6 @@ protocol SettingsItem {
 class SettingsTableView: UITableView {
     var sections = [Section]()
 
-    enum SectionType: Int, CaseIterable {
-        case appearance
-        case links
-        case deleteAccount
-    }
-
     struct Link: SettingsItem {
         let name: String
         let link: URL
