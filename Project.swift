@@ -34,6 +34,7 @@ let project = Project(
             resources: ["Resources/**", "Configurations/*", "Entitlements/*", "Assets.xcassets", "Localization/**/*.strings"],
             dependencies: [
                 .cocoapods(path: "."),
+                .xcFramework(path: "../WebRTC.xcframework")
             ],
             settings: settings
         ),

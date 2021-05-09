@@ -6,7 +6,6 @@ PODS:
   - BetterSegmentedControl (2.0.1)
   - DrawerView (1.3.3)
   - EasyTipView (2.1.0)
-  - GoogleWebRTC (1.1.31999)
   - GSImageViewerController (1.6.3)
   - KDCircularProgress (1.5.4)
   - KeychainAccess (4.2.2)
@@ -28,7 +27,6 @@ DEPENDENCIES:
   - BetterSegmentedControl (~> 2.0)
   - "DrawerView (from `git@github.com:SoapboxSocial/DrawerView.git`, commit `b0f4ad7ac60e0a5cfe089e55995115ccb7893d01`)"
   - EasyTipView
-  - GoogleWebRTC
   - GSImageViewerController
   - KDCircularProgress
   - KeychainAccess
@@ -46,7 +44,6 @@ SPEC REPOS:
     - AlamofireImage
     - BetterSegmentedControl
     - EasyTipView
-    - GoogleWebRTC
     - GSImageViewerController
     - KDCircularProgress
     - KeychainAccess
@@ -80,7 +77,6 @@ SPEC CHECKSUMS:
   BetterSegmentedControl: 09607b27861d49cbce48b7673b74f9150a3d371a
   DrawerView: 41c5e5d6593d86335ee2cf9b18d738835593dbc1
   EasyTipView: a92b6edc377b81c5ac18e9fd35d5ee78e9409488
-  GoogleWebRTC: b39a78c4f5cc6b0323415b9233db03a2faa7b0f0
   GSImageViewerController: 20a257d7e3dd9ee171c2dfea659992eba2761839
   KDCircularProgress: 98200c6b8e85d22bc04eb644721d3b1e12b0686b
   KeychainAccess: c0c4f7f38f6fc7bbe58f5702e25f7bd2f65abf51
@@ -93,6 +89,6 @@ SPEC CHECKSUMS:
   SwiftProtobuf: 4e16842b83c6fda06b10fac50d73b3f1fce8ab7b
   UIWindowTransitions: 2237083382e11f100db7de934041bba0c4669c86
 
-PODFILE CHECKSUM: ec516e32bc7f02b2b6c4e23d0708fd86c4453e26
+PODFILE CHECKSUM: a3326625314027ca9400b4e1af13d652f700ef54
 
 COCOAPODS: 1.10.1
