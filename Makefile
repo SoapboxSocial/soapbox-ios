@@ -1,4 +1,4 @@
-.PHONY: protobuf setup format test lint autocorrect clean build
+.PHONY: protobuf setup format test lint autocorrect clean build release
 
 APP="Soapbox"
 
@@ -22,7 +22,10 @@ setup: install_deps
         tuist generate -P
 
 clean:
-	rm -rf .build $(APP).xcodeproj $(APP).xcworkspace Package.pins Pods Podfile.lock
+	rm -rf .build $(APP).xcodeproj $(APP).xcworkspace Package.pins Pods
+
+release: clean setup
+	fastlane release
 
 test: clean setup install_deps
 	set -o pipefail && swift test | $(XCPRETTY)
