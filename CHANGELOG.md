@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.31.0] - 2021-05-10Z
+
  - Fixed issue that allowed game and link to be visible.
 
 ## [2.30.0] - 2021-05-04Z
