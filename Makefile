@@ -13,14 +13,13 @@ ifeq ($(shell uname),Darwin)
 	endif
 endif
 
-setup:
-	tuist generate -P
-
 install_deps:
-	pod install
-ifneq ($(XCPRETTY_STATUS),0)
-	@echo "xcpretty not found: Run \`gem install xcpretty\` for nicer xcodebuild output.\n"
-endif
+	rm -rf WebRTC.xcframework
+	curl https://github.com/stasel/WebRTC/releases/download/90.0.0/WebRTC-M90.xcframework.zip -O -J -L
+	unzip WebRTC-M90.xcframework.zip
+
+setup: install_deps
+        tuist generate -P
 
 clean:
 	rm -rf .build $(APP).xcodeproj $(APP).xcworkspace Package.pins Pods Podfile.lock

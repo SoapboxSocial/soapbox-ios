@@ -6,7 +6,6 @@ target 'Soapbox' do
   use_frameworks!
 
   # Pods for trollbox
-  pod 'GoogleWebRTC'
   pod 'Alamofire'
   pod 'SwiftProtobuf'
   pod 'DrawerView', git: 'git@github.com:SoapboxSocial/DrawerView.git', commit: 'b0f4ad7ac60e0a5cfe089e55995115ccb7893d01'
