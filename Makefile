@@ -1,6 +1,8 @@
 .PHONY: protobuf setup format test lint autocorrect clean build release
 
 APP="Soapbox"
+WEBRTC="WebRTC-M90.xcframework.zip"
+
 
 # Apple
 ifeq ($(shell uname),Darwin)
@@ -15,11 +17,12 @@ endif
 
 install_deps:
 	rm -rf WebRTC.xcframework
-	curl https://github.com/stasel/WebRTC/releases/download/90.0.0/WebRTC-M90.xcframework.zip -O -J -L
+	curl https://github.com/stasel/WebRTC/releases/download/90.0.0/$(WEBRTC) -O -J -L
 	unzip WebRTC-M90.xcframework.zip
+	rm -rf $(WEBRTC)
 
 setup: install_deps
-        tuist generate -P
+	tuist generate -P
 
 clean:
 	rm -rf .build $(APP).xcodeproj $(APP).xcworkspace Package.pins Pods
