@@ -102,7 +102,7 @@ class NavigationViewController: UINavigationController {
         roomDrawer!.attachTo(view: view)
         roomDrawer!.backgroundEffect = .none
         roomDrawer!.snapPositions = [.collapsed, .open]
-        roomDrawer!.backgroundColor = .roomBackground
+        roomDrawer!.backgroundColor = .background
         roomDrawer!.delegate = self
         roomDrawer!.panDelegate = roomView!
         roomDrawer!.contentVisibilityBehavior = .custom(roomView!.hideViews)

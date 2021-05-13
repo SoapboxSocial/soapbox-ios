@@ -17,7 +17,7 @@ class ButtonBar<E: Item>: UIView where E.RawValue == String {
         return stack
     }()
 
-    class Button: UIButton {
+    class Button: EmojiButton {
         var value: E!
     }
 
@@ -41,7 +41,7 @@ class ButtonBar<E: Item>: UIView where E.RawValue == String {
             button.translatesAutoresizingMaskIntoConstraints = false
             button.setImage(UIImage(systemName: item.icon(), withConfiguration: iconConfig), for: .normal)
             button.tintColor = .brandColor
-            button.backgroundColor = .clear
+            button.backgroundColor = .background
             button.value = item
             button.addTarget(delegate, action: #selector(delegate?.didTap(button:)), for: .touchUpInside)
 
