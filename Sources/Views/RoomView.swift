@@ -223,6 +223,7 @@ class RoomView: UIView {
         ])
 
         let header = createHeader()
+        body.addSubview(header)
 
         NSLayoutConstraint.activate([
             header.topAnchor.constraint(equalTo: body.topAnchor),
@@ -293,6 +294,36 @@ class RoomView: UIView {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
 
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openBar)))
+
+        let buttonStack = UIStackView()
+        buttonStack.axis = .horizontal
+        buttonStack.spacing = 20
+        buttonStack.alignment = .center
+        buttonStack.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(buttonStack)
+
+        NSLayoutConstraint.activate([
+            buttonStack.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            buttonStack.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            buttonStack.heightAnchor.constraint(equalToConstant: 32),
+        ])
+
+        buttonStack.addArrangedSubview(muteButton)
+        buttonStack.addArrangedSubview(exitButton)
+
+        NSLayoutConstraint.activate([
+            muteButton.heightAnchor.constraint(equalToConstant: 32),
+            muteButton.widthAnchor.constraint(equalToConstant: 32),
+        ])
+
+        muteButton.isHidden = true
+
+        NSLayoutConstraint.activate([
+            exitButton.heightAnchor.constraint(equalToConstant: 32),
+            exitButton.widthAnchor.constraint(equalToConstant: 32),
+        ])
+
         let titleStack = UIStackView()
         titleStack.axis = .horizontal
         titleStack.spacing = 10
@@ -305,54 +336,18 @@ class RoomView: UIView {
         titleStack.addArrangedSubview(name)
 
         NSLayoutConstraint.activate([
+            titleStack.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            titleStack.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            titleStack.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            titleStack.heightAnchor.constraint(equalToConstant: 32),
+        ])
+
+        NSLayoutConstraint.activate([
             lock.heightAnchor.constraint(equalToConstant: 20),
             lock.widthAnchor.constraint(equalToConstant: 20),
         ])
 
         view.bottomAnchor.constraint(equalTo: titleStack.bottomAnchor, constant: 20).isActive = true
-        //
-        //        let topButtonStack = UIStackView()
-        //        topButtonStack.axis = .horizontal
-        //        topButtonStack.spacing = 20
-        //        topButtonStack.alignment = .center
-        //        topButtonStack.translatesAutoresizingMaskIntoConstraints = false
-        //        topBar.addSubview(topButtonStack)
-        //
-        //        topButtonStack.addArrangedSubview(muteButton)
-        //        topButtonStack.addArrangedSubview(exitButton)
-        //
-        //        topBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openBar)))
-        //
-        //
-        //
-        //
-        //        NSLayoutConstraint.activate([
-        //            muteButton.topAnchor.constraint(equalTo: foreground.topAnchor, constant: 20),
-        //            muteButton.heightAnchor.constraint(equalToConstant: 32),
-        //            muteButton.widthAnchor.constraint(equalToConstant: 32),
-        //        ])
-        //
-        //        muteButton.isHidden = true
-        //
-        //        NSLayoutConstraint.activate([
-        //            exitButton.topAnchor.constraint(equalTo: foreground.topAnchor, constant: 20),
-        //            exitButton.heightAnchor.constraint(equalToConstant: 32),
-        //            exitButton.widthAnchor.constraint(equalToConstant: 32),
-        //        ])
-        //
-        //        NSLayoutConstraint.activate([
-        //            stack.topAnchor.constraint(equalTo: topAnchor, constant: 20),
-        //            stack.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-        //            stack.rightAnchor.constraint(equalTo: topButtonStack.leftAnchor, constant: -10),
-        //            stack.heightAnchor.constraint(equalToConstant: 32),
-        //        ])
-        //
-        //        NSLayoutConstraint.activate([
-        //            topButtonStack.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
-        //            topButtonStack.heightAnchor.constraint(equalToConstant: 32),
-        //        ])
-        //
-        //
 
         return view
     }
