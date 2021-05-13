@@ -269,12 +269,6 @@ class RoomView: UIView {
             topButtonStack.heightAnchor.constraint(equalToConstant: 32),
         ])
 
-        if UIScreen.main.bounds.height <= 736 {
-            content.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height - (68 + 20 + 32 + 40 + 57 + 76)).isActive = true
-        } else {
-            content.heightAnchor.constraint(equalToConstant: UICollectionViewFlowLayout.heightForBubbleLayout(rows: 4, width: UIScreen.main.bounds.width)).isActive = true
-        }
-
         NSLayoutConstraint.activate([
             content.topAnchor.constraint(equalTo: exitButton.bottomAnchor, constant: 20),
             content.leftAnchor.constraint(equalTo: foreground.leftAnchor, constant: 20),
