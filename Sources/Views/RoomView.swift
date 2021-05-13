@@ -148,7 +148,7 @@ class RoomView: UIView {
         self.room = room
 
         super.init(frame: CGRect.zero)
-        
+
         room.delegate = self
         roomWasRenamed(room.state.name)
 
@@ -255,42 +255,42 @@ class RoomView: UIView {
             emojis.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -10),
             emojis.centerXAnchor.constraint(equalTo: centerXAnchor),
         ])
-        
+
         let body = UIView()
         body.backgroundColor = .foreground
         body.translatesAutoresizingMaskIntoConstraints = false
         body.layer.cornerRadius = 30
         addSubview(body)
-        
+
         NSLayoutConstraint.activate([
             body.leftAnchor.constraint(equalTo: leftAnchor),
             body.rightAnchor.constraint(equalTo: rightAnchor),
             body.topAnchor.constraint(equalTo: topAnchor),
             body.bottomAnchor.constraint(equalTo: emojis.topAnchor, constant: -10),
         ])
-        
+
         let handle = UIView()
         handle.translatesAutoresizingMaskIntoConstraints = false
         handle.backgroundColor = .quaternaryLabel
         handle.layer.cornerRadius = 2.5
         body.addSubview(handle)
-        
+
         NSLayoutConstraint.activate([
             handle.centerXAnchor.constraint(equalTo: centerXAnchor),
             handle.heightAnchor.constraint(equalToConstant: 5),
             handle.widthAnchor.constraint(equalToConstant: 36),
             handle.topAnchor.constraint(equalTo: body.topAnchor, constant: 5),
         ])
-        
+
         body.addSubview(bottomMuteButton)
-        
+
         NSLayoutConstraint.activate([
             bottomMuteButton.centerXAnchor.constraint(equalTo: centerXAnchor),
             bottomMuteButton.bottomAnchor.constraint(equalTo: body.bottomAnchor, constant: -20),
             bottomMuteButton.widthAnchor.constraint(equalToConstant: 64),
             bottomMuteButton.heightAnchor.constraint(equalToConstant: 64),
         ])
-        
+
         leftButtonBar.delegate = self
         body.addSubview(leftButtonBar)
 
@@ -299,7 +299,7 @@ class RoomView: UIView {
             leftButtonBar.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
             leftButtonBar.heightAnchor.constraint(equalToConstant: 40),
         ])
-        
+
         rightButtonBar.delegate = self
         body.addSubview(rightButtonBar)
 
@@ -308,14 +308,14 @@ class RoomView: UIView {
             rightButtonBar.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
             rightButtonBar.heightAnchor.constraint(equalToConstant: 40),
         ])
-        
+
         body.addSubview(content)
-        
+
         NSLayoutConstraint.activate([
             content.topAnchor.constraint(equalTo: body.topAnchor, constant: 20),
             content.leftAnchor.constraint(equalTo: body.leftAnchor, constant: 20),
             content.rightAnchor.constraint(equalTo: body.rightAnchor, constant: -20),
-            content.bottomAnchor.constraint(equalTo: bottomMuteButton.topAnchor, constant: 20)
+            content.bottomAnchor.constraint(equalTo: bottomMuteButton.topAnchor, constant: 20),
         ])
 
         let isMuted = me.muted
