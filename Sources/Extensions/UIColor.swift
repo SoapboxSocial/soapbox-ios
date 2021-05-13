@@ -39,20 +39,6 @@ extension UIColor {
         }
     }
 
-    static var roomButtonBar: UIColor {
-        return .systemGray6
-    }
-
-    static var roomBackground: UIColor {
-        return UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
-            if UITraitCollection.userInterfaceStyle == .dark {
-                return .black
-            } else {
-                return .systemGray5
-            }
-        }
-    }
-
     static var twitter: UIColor {
         UIColor(red: 29 / 255, green: 161 / 255, blue: 242 / 255, alpha: 1.0)
     }

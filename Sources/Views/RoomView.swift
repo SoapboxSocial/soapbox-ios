@@ -43,14 +43,14 @@ class RoomView: UIView {
     }()
 
     private let bottomMuteButton: EmojiButton = {
-        let iconConfig = UIImage.SymbolConfiguration(pointSize: 22, weight: .semibold)
+        let iconConfig = UIImage.SymbolConfiguration(pointSize: 25, weight: .semibold)
 
         let button = EmojiButton(frame: .zero)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "mic", withConfiguration: iconConfig), for: .normal)
         button.setImage(UIImage(systemName: "mic.slash", withConfiguration: iconConfig), for: .selected)
         button.tintColor = .brandColor
-        button.backgroundColor = .clear
+        button.backgroundColor = .background
         button.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
         return button
     }()
@@ -60,14 +60,6 @@ class RoomView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .rounded(forTextStyle: .title2, weight: .bold)
         return label
-    }()
-
-    private let foreground: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .roomForeground
-        view.layer.cornerRadius = 25
-        return view
     }()
 
     private let members: UICollectionView = {
@@ -157,26 +149,10 @@ class RoomView: UIView {
 
         super.init(frame: CGRect.zero)
 
-        isUserInteractionEnabled = true
-
-        backgroundColor = .roomBackground
-
         room.delegate = self
-
         roomWasRenamed(room.state.name)
 
-        translatesAutoresizingMaskIntoConstraints = false
-
-        let buttonBar = UIView()
-        buttonBar.backgroundColor = .roomButtonBar
-        buttonBar.translatesAutoresizingMaskIntoConstraints = false
-        buttonBar.layer.cornerRadius = 25
-        buttonBar.isUserInteractionEnabled = true
-        addSubview(buttonBar)
-
-        addSubview(foreground)
-
-        foreground.addSubview(content)
+        backgroundColor = .background
 
         content.addArrangedSubview(linkView)
 
@@ -188,99 +164,8 @@ class RoomView: UIView {
         ])
 
         content.addArrangedSubview(members)
-
-        let handle = UIView()
-        handle.translatesAutoresizingMaskIntoConstraints = false
-        handle.backgroundColor = .quaternaryLabel
-        handle.layer.cornerRadius = 2.5
-        addSubview(handle)
-
-        let topBar = UIView()
-        topBar.translatesAutoresizingMaskIntoConstraints = false
-        foreground.addSubview(topBar)
-
-        let stack = UIStackView()
-        stack.axis = .horizontal
-        stack.spacing = 10
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.distribution = .fill
-        stack.alignment = .center
-        topBar.addSubview(stack)
-
-        stack.addArrangedSubview(lock)
-        stack.addArrangedSubview(name)
-
-        NSLayoutConstraint.activate([
-            lock.heightAnchor.constraint(equalToConstant: 20),
-            lock.widthAnchor.constraint(equalToConstant: 20),
-        ])
-
-        let topButtonStack = UIStackView()
-        topButtonStack.axis = .horizontal
-        topButtonStack.spacing = 20
-        topButtonStack.alignment = .center
-        topButtonStack.translatesAutoresizingMaskIntoConstraints = false
-        topBar.addSubview(topButtonStack)
-
-        topButtonStack.addArrangedSubview(muteButton)
-        topButtonStack.addArrangedSubview(exitButton)
-
-        topBar.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openBar)))
-
-        members.dataSource = self
         members.delegate = self
-
-        NSLayoutConstraint.activate([
-            handle.centerXAnchor.constraint(equalTo: centerXAnchor),
-            handle.heightAnchor.constraint(equalToConstant: 5),
-            handle.widthAnchor.constraint(equalToConstant: 36),
-            handle.topAnchor.constraint(equalTo: topAnchor, constant: 5),
-        ])
-
-        NSLayoutConstraint.activate([
-            foreground.leftAnchor.constraint(equalTo: leftAnchor),
-            foreground.topAnchor.constraint(equalTo: topAnchor),
-            foreground.rightAnchor.constraint(equalTo: rightAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
-            muteButton.topAnchor.constraint(equalTo: foreground.topAnchor, constant: 20),
-            muteButton.heightAnchor.constraint(equalToConstant: 32),
-            muteButton.widthAnchor.constraint(equalToConstant: 32),
-        ])
-
-        muteButton.isHidden = true
-
-        NSLayoutConstraint.activate([
-            exitButton.topAnchor.constraint(equalTo: foreground.topAnchor, constant: 20),
-            exitButton.heightAnchor.constraint(equalToConstant: 32),
-            exitButton.widthAnchor.constraint(equalToConstant: 32),
-        ])
-
-        NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: topAnchor, constant: 20),
-            stack.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            stack.rightAnchor.constraint(equalTo: topButtonStack.leftAnchor, constant: -10),
-            stack.heightAnchor.constraint(equalToConstant: 32),
-        ])
-
-        NSLayoutConstraint.activate([
-            topButtonStack.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
-            topButtonStack.heightAnchor.constraint(equalToConstant: 32),
-        ])
-
-        if UIScreen.main.bounds.height <= 736 {
-            content.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height - (68 + 20 + 32 + 40 + 57 + 76)).isActive = true
-        } else {
-            content.heightAnchor.constraint(equalToConstant: UICollectionViewFlowLayout.heightForBubbleLayout(rows: 4, width: UIScreen.main.bounds.width)).isActive = true
-        }
-
-        NSLayoutConstraint.activate([
-            content.topAnchor.constraint(equalTo: exitButton.bottomAnchor, constant: 20),
-            content.leftAnchor.constraint(equalTo: foreground.leftAnchor, constant: 20),
-            content.rightAnchor.constraint(equalTo: foreground.rightAnchor, constant: -20),
-            foreground.bottomAnchor.constraint(equalTo: content.bottomAnchor),
-        ])
+        members.dataSource = self
 
         NSLayoutConstraint.activate([
             members.leftAnchor.constraint(equalTo: content.leftAnchor),
@@ -292,56 +177,85 @@ class RoomView: UIView {
             linkView.rightAnchor.constraint(equalTo: content.rightAnchor),
         ])
 
-        NSLayoutConstraint.activate([
-            topBar.topAnchor.constraint(equalTo: topAnchor),
-            topBar.leftAnchor.constraint(equalTo: leftAnchor),
-            topBar.rightAnchor.constraint(equalTo: rightAnchor),
-            topBar.bottomAnchor.constraint(equalTo: content.topAnchor),
-        ])
-
-        bottomMuteButton.backgroundColor = .roomBackground
-        addSubview(bottomMuteButton)
-
-        leftButtonBar.delegate = self
-        addSubview(leftButtonBar)
-
-        NSLayoutConstraint.activate([
-            leftButtonBar.centerYAnchor.constraint(equalTo: bottomMuteButton.centerYAnchor),
-            leftButtonBar.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
-            leftButtonBar.heightAnchor.constraint(equalToConstant: 32),
-        ])
-
-        rightButtonBar.delegate = self
-        addSubview(rightButtonBar)
-
-        NSLayoutConstraint.activate([
-            rightButtonBar.centerYAnchor.constraint(equalTo: bottomMuteButton.centerYAnchor),
-            rightButtonBar.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
-            rightButtonBar.heightAnchor.constraint(equalToConstant: 32),
-        ])
-
-        NSLayoutConstraint.activate([
-            bottomMuteButton.topAnchor.constraint(equalTo: foreground.bottomAnchor, constant: 10),
-            bottomMuteButton.centerXAnchor.constraint(equalTo: centerXAnchor),
-            bottomMuteButton.heightAnchor.constraint(equalToConstant: 56),
-            bottomMuteButton.widthAnchor.constraint(equalToConstant: 56),
-        ])
-
-        NSLayoutConstraint.activate([
-            buttonBar.topAnchor.constraint(equalTo: foreground.bottomAnchor, constant: -50),
-            buttonBar.leftAnchor.constraint(equalTo: leftAnchor),
-            buttonBar.rightAnchor.constraint(equalTo: rightAnchor),
-            buttonBar.bottomAnchor.constraint(equalTo: bottomMuteButton.bottomAnchor, constant: 10),
-        ])
-
         let userId = UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId)
         let emojis = EmojiBar(emojis: Room.Reaction.allCases.filter { !($0 == .poop && userId != 1 && userId != 170) })
         emojis.delegate = self
         addSubview(emojis)
 
         NSLayoutConstraint.activate([
-            emojis.topAnchor.constraint(equalTo: bottomMuteButton.bottomAnchor, constant: 20),
+            emojis.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -10),
             emojis.centerXAnchor.constraint(equalTo: centerXAnchor),
+        ])
+
+        let body = UIView()
+        body.backgroundColor = .foreground
+        body.translatesAutoresizingMaskIntoConstraints = false
+        body.layer.cornerRadius = 30
+        addSubview(body)
+
+        NSLayoutConstraint.activate([
+            body.leftAnchor.constraint(equalTo: leftAnchor),
+            body.rightAnchor.constraint(equalTo: rightAnchor),
+            body.topAnchor.constraint(equalTo: topAnchor),
+            body.bottomAnchor.constraint(equalTo: emojis.topAnchor, constant: -10),
+        ])
+
+        let handle = UIView()
+        handle.translatesAutoresizingMaskIntoConstraints = false
+        handle.backgroundColor = .quaternaryLabel
+        handle.layer.cornerRadius = 2.5
+        body.addSubview(handle)
+
+        NSLayoutConstraint.activate([
+            handle.centerXAnchor.constraint(equalTo: centerXAnchor),
+            handle.heightAnchor.constraint(equalToConstant: 5),
+            handle.widthAnchor.constraint(equalToConstant: 36),
+            handle.topAnchor.constraint(equalTo: body.topAnchor, constant: 5),
+        ])
+
+        body.addSubview(bottomMuteButton)
+
+        NSLayoutConstraint.activate([
+            bottomMuteButton.centerXAnchor.constraint(equalTo: centerXAnchor),
+            bottomMuteButton.bottomAnchor.constraint(equalTo: body.bottomAnchor, constant: -20),
+            bottomMuteButton.widthAnchor.constraint(equalToConstant: 64),
+            bottomMuteButton.heightAnchor.constraint(equalToConstant: 64),
+        ])
+
+        let header = createHeader()
+        body.addSubview(header)
+
+        NSLayoutConstraint.activate([
+            header.topAnchor.constraint(equalTo: body.topAnchor),
+            header.leftAnchor.constraint(equalTo: body.leftAnchor),
+            header.rightAnchor.constraint(equalTo: body.rightAnchor),
+        ])
+
+        leftButtonBar.delegate = self
+        body.addSubview(leftButtonBar)
+
+        NSLayoutConstraint.activate([
+            leftButtonBar.bottomAnchor.constraint(equalTo: bottomMuteButton.bottomAnchor),
+            leftButtonBar.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
+            leftButtonBar.heightAnchor.constraint(equalToConstant: 40),
+        ])
+
+        rightButtonBar.delegate = self
+        body.addSubview(rightButtonBar)
+
+        NSLayoutConstraint.activate([
+            rightButtonBar.bottomAnchor.constraint(equalTo: bottomMuteButton.bottomAnchor),
+            rightButtonBar.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
+            rightButtonBar.heightAnchor.constraint(equalToConstant: 40),
+        ])
+
+        body.addSubview(content)
+
+        NSLayoutConstraint.activate([
+            content.topAnchor.constraint(equalTo: header.bottomAnchor),
+            content.leftAnchor.constraint(equalTo: body.leftAnchor, constant: 20),
+            content.rightAnchor.constraint(equalTo: body.rightAnchor, constant: -20),
+            content.bottomAnchor.constraint(equalTo: bottomMuteButton.topAnchor, constant: 20),
         ])
 
         let isMuted = me.muted
@@ -374,6 +288,68 @@ class RoomView: UIView {
         }
 
         pulsateSocial()
+    }
+
+    private func createHeader() -> UIView {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openBar)))
+
+        let buttonStack = UIStackView()
+        buttonStack.axis = .horizontal
+        buttonStack.spacing = 20
+        buttonStack.alignment = .center
+        buttonStack.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(buttonStack)
+
+        NSLayoutConstraint.activate([
+            buttonStack.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            buttonStack.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            buttonStack.heightAnchor.constraint(equalToConstant: 32),
+        ])
+
+        buttonStack.addArrangedSubview(muteButton)
+        buttonStack.addArrangedSubview(exitButton)
+
+        NSLayoutConstraint.activate([
+            muteButton.heightAnchor.constraint(equalToConstant: 32),
+            muteButton.widthAnchor.constraint(equalToConstant: 32),
+        ])
+
+        muteButton.isHidden = true
+
+        NSLayoutConstraint.activate([
+            exitButton.heightAnchor.constraint(equalToConstant: 32),
+            exitButton.widthAnchor.constraint(equalToConstant: 32),
+        ])
+
+        let titleStack = UIStackView()
+        titleStack.axis = .horizontal
+        titleStack.spacing = 10
+        titleStack.translatesAutoresizingMaskIntoConstraints = false
+        titleStack.distribution = .fill
+        titleStack.alignment = .center
+        view.addSubview(titleStack)
+
+        titleStack.addArrangedSubview(lock)
+        titleStack.addArrangedSubview(name)
+
+        NSLayoutConstraint.activate([
+            titleStack.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            titleStack.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            titleStack.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            titleStack.heightAnchor.constraint(equalToConstant: 32),
+        ])
+
+        NSLayoutConstraint.activate([
+            lock.heightAnchor.constraint(equalToConstant: 20),
+            lock.widthAnchor.constraint(equalToConstant: 20),
+        ])
+
+        view.bottomAnchor.constraint(equalTo: titleStack.bottomAnchor, constant: 20).isActive = true
+
+        return view
     }
 
     func showMuteButton() {

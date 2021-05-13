@@ -102,15 +102,9 @@ class NavigationViewController: UINavigationController {
         roomDrawer!.attachTo(view: view)
         roomDrawer!.backgroundEffect = .none
         roomDrawer!.snapPositions = [.collapsed, .open]
-        roomDrawer!.backgroundColor = .roomBackground
+        roomDrawer!.backgroundColor = .background
         roomDrawer!.delegate = self
         roomDrawer!.panDelegate = roomView!
-
-        // check that we are in an iphone 11 or higher.
-        if view.frame.size.height > (RoomView.height() + view.safeAreaInsets.bottom + 68.0) {
-            roomDrawer!.openHeightBehavior = .fixed(height: RoomView.height() + view.safeAreaInsets.bottom)
-        }
-
         roomDrawer!.contentVisibilityBehavior = .custom(roomView!.hideViews)
         view.addSubview(roomDrawer!)
 
