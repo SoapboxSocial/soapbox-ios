@@ -186,7 +186,7 @@ class RoomView: UIView {
         addSubview(emojis)
 
         NSLayoutConstraint.activate([
-            emojis.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            emojis.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -20),
             emojis.centerXAnchor.constraint(equalTo: centerXAnchor),
         ])
 
@@ -399,7 +399,7 @@ class RoomView: UIView {
         super.layoutSubviews()
 
         // This is really ugly, but we must do it so the content can't resize itself if the link is too big
-        let height = frame.size.height - (safeAreaInsets.bottom + 10 + 32 + 20 + 32 + 20)
+        let height = frame.size.height - (safeAreaInsets.bottom + 20 + 32 + 20 + 32 + 20)
         content.heightAnchor.constraint(equalToConstant: height).isActive = true
     }
 
@@ -407,7 +407,7 @@ class RoomView: UIView {
         let interval = Calendar.current.dateComponents([.minute], from: room.started, to: Date())
         let minutes = interval.minute != nil ? interval.minute! : 0
 
-        if room.state.members.count == 1, room.maxMembers < 3 || minutes <= 3 {
+        if room.state.members.count == 1, room.maxMembers < 3, minutes <= 3 {
             showExitAlert()
             return
         }
