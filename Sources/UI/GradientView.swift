@@ -14,10 +14,7 @@ class GradientView: UIView {
         translatesAutoresizingMaskIntoConstraints = false
 
         gradient.masksToBounds = true
-        gradient.colors = [color.withAlphaComponent(0.0).cgColor, color.withAlphaComponent(1.0).cgColor]
-        gradient.locations = [0.0, 1.0]
-        gradient.startPoint = CGPoint(x: 0.0, y: 0.0)
-        gradient.endPoint = CGPoint(x: 0.0, y: 0.3)
+        gradient.colors = [color.withAlphaComponent(0.0).cgColor, color.cgColor]
         layer.addSublayer(gradient)
     }
 

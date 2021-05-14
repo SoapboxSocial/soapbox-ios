@@ -70,6 +70,8 @@ class RoomView: UIView {
         collection.register(cellWithClass: RoomMemberCell.self)
         collection.backgroundColor = .clear
         collection.layer.masksToBounds = true
+        collection.showsVerticalScrollIndicator = false
+        collection.showsHorizontalScrollIndicator = false
 
         return collection
     }()
@@ -191,6 +193,7 @@ class RoomView: UIView {
         body.backgroundColor = .foreground
         body.translatesAutoresizingMaskIntoConstraints = false
         body.layer.cornerRadius = 30
+        body.clipsToBounds = true
         addSubview(body)
 
         NSLayoutConstraint.activate([
@@ -213,7 +216,27 @@ class RoomView: UIView {
             handle.topAnchor.constraint(equalTo: body.topAnchor, constant: 5),
         ])
 
+        body.addSubview(content)
+
+        NSLayoutConstraint.activate([
+            content.leftAnchor.constraint(equalTo: body.leftAnchor, constant: 20),
+            content.rightAnchor.constraint(equalTo: body.rightAnchor, constant: -20),
+            content.bottomAnchor.constraint(equalTo: body.bottomAnchor),
+        ])
+
+        let gradient = GradientView(color: .foreground)
+        gradient.translatesAutoresizingMaskIntoConstraints = false
+        gradient.clipsToBounds = true
+        body.addSubview(gradient)
+
         body.addSubview(bottomMuteButton)
+
+        NSLayoutConstraint.activate([
+            gradient.topAnchor.constraint(equalTo: bottomMuteButton.topAnchor, constant: -20),
+            gradient.leftAnchor.constraint(equalTo: body.leftAnchor),
+            gradient.rightAnchor.constraint(equalTo: body.rightAnchor),
+            gradient.bottomAnchor.constraint(equalTo: body.bottomAnchor),
+        ])
 
         NSLayoutConstraint.activate([
             bottomMuteButton.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -226,6 +249,7 @@ class RoomView: UIView {
         body.addSubview(header)
 
         NSLayoutConstraint.activate([
+            content.topAnchor.constraint(equalTo: header.bottomAnchor),
             header.topAnchor.constraint(equalTo: body.topAnchor),
             header.leftAnchor.constraint(equalTo: body.leftAnchor),
             header.rightAnchor.constraint(equalTo: body.rightAnchor),
@@ -247,15 +271,6 @@ class RoomView: UIView {
             rightButtonBar.bottomAnchor.constraint(equalTo: bottomMuteButton.bottomAnchor),
             rightButtonBar.rightAnchor.constraint(equalTo: rightAnchor, constant: -20),
             rightButtonBar.heightAnchor.constraint(equalToConstant: 40),
-        ])
-
-        body.addSubview(content)
-
-        NSLayoutConstraint.activate([
-            content.topAnchor.constraint(equalTo: header.bottomAnchor),
-            content.leftAnchor.constraint(equalTo: body.leftAnchor, constant: 20),
-            content.rightAnchor.constraint(equalTo: body.rightAnchor, constant: -20),
-            content.bottomAnchor.constraint(equalTo: bottomMuteButton.topAnchor, constant: 20),
         ])
 
         let isMuted = me.muted

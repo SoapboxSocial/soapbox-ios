@@ -44,7 +44,7 @@ class NavigationViewController: UINavigationController {
             gradient.leftAnchor.constraint(equalTo: view.leftAnchor),
             gradient.rightAnchor.constraint(equalTo: view.rightAnchor),
             gradient.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            gradient.topAnchor.constraint(equalTo: createRoomButton.centerYAnchor),
+            gradient.topAnchor.constraint(equalTo: createRoomButton.topAnchor),
         ])
 
         NSLayoutConstraint.activate([
