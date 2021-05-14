@@ -6,7 +6,7 @@ class VisibilityPopAnimation {
             return
         }
 
-        view.transform = CGAffineTransform.identity.scaledBy(x: 0.1, y: 0.1)
+        view.transform = .identity.scaledBy(x: 0.1, y: 0.1)
         view.isHidden = false
 
         UIView.animate(
@@ -29,11 +29,11 @@ class VisibilityPopAnimation {
         UIView.animate(
             withDuration: 0.4,
             delay: 0,
-            usingSpringWithDamping: 1.0,
+            usingSpringWithDamping: 0.5,
             initialSpringVelocity: 3,
             options: [.curveEaseInOut],
             animations: {
-                view.transform = CGAffineTransform.identity.scaledBy(x: 0.0001, y: 0.0001)
+                view.transform = .identity.scaledBy(x: 0.0001, y: 0.0001)
             },
             completion: { _ in
                 view.isHidden = true

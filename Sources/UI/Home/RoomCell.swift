@@ -255,27 +255,4 @@ class RoomCell: UICollectionViewCell {
         imageViews.forEach { $0.removeFromSuperview() }
         title.text = ""
     }
-
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        animate(contentView, transform: CGAffineTransform.identity.scaledBy(x: 0.95, y: 0.95))
-    }
-
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesEnded(touches, with: event)
-        animate(contentView, transform: .identity)
-    }
-
-    private func animate(_ view: UIView, transform: CGAffineTransform) {
-        UIView.animate(
-            withDuration: 0.4,
-            delay: 0,
-            usingSpringWithDamping: 0.5,
-            initialSpringVelocity: 3,
-            options: [.curveEaseInOut],
-            animations: {
-                view.transform = transform
-            }
-        )
-    }
 }

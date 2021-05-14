@@ -16,7 +16,7 @@ class ButtonWithSpringAnimation: UIButton {
     }
 
     @objc private func animateDown(sender: UIButton) {
-        animate(sender, transform: CGAffineTransform.identity.scaledBy(x: 0.95, y: 0.95))
+        animate(sender, transform: .identity.scaledBy(x: 0.95, y: 0.95))
     }
 
     @objc private func animateUp(sender: UIButton) {

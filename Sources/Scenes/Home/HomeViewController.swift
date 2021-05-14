@@ -324,6 +324,32 @@ extension HomeViewController: HomePresenterOutput {
 }
 
 extension HomeViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
+        let type = presenter.sectionType(for: indexPath.section)
+        if type != .roomList, type != .topRoom {
+            return
+        }
+
+        guard let cell = collectionView.cellForItem(at: indexPath) else {
+            return
+        }
+
+        animate(cell.contentView, transform: .identity.scaledBy(x: 0.95, y: 0.95))
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
+        let type = presenter.sectionType(for: indexPath.section)
+        if type != .roomList, type != .topRoom {
+            return
+        }
+
+        guard let cell = collectionView.cellForItem(at: indexPath) else {
+            return
+        }
+
+        animate(cell.contentView, transform: .identity)
+    }
+
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch presenter.sectionType(for: indexPath.section) {
         case .storiesList:
@@ -361,10 +387,13 @@ extension HomeViewController: UICollectionViewDelegate {
             vc.modalPresentationStyle = .fullScreen
 
             present(vc, animated: true)
-        case .roomList:
-            let room = presenter.item(for: indexPath, ofType: RoomAPIClient.Room.self)
-            output.didSelectRoom(room: room.id)
-        case .topRoom:
+        case .roomList, .topRoom:
+            if let cell = content.cellForItem(at: indexPath) {
+                animate(cell.contentView, duration: 0.4, transform: .identity.scaledBy(x: 0.95, y: 0.95), completion: { _ in
+                    self.animate(cell.contentView, duration: 0.4, transform: .identity)
+                })
+            }
+
             let room = presenter.item(for: indexPath, ofType: RoomAPIClient.Room.self)
             output.didSelectRoom(room: room.id)
         case .activeUserList:
@@ -398,6 +427,20 @@ extension HomeViewController: UICollectionViewDelegate {
         case .noRooms:
             return
         }
+    }
+
+    private func animate(_ view: UIView, duration: TimeInterval = 0.4, transform: CGAffineTransform, completion: ((Bool) -> Void)? = nil) {
+        UIView.animate(
+            withDuration: duration,
+            delay: 0,
+            usingSpringWithDamping: 0.5,
+            initialSpringVelocity: 3,
+            options: [.curveEaseInOut],
+            animations: {
+                view.transform = transform
+            },
+            completion: completion
+        )
     }
 }
 
@@ -439,11 +482,7 @@ extension HomeViewController: UICollectionViewDataSource {
             let cell = collectionView.dequeueReusableCell(withClass: StoryCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
-        case .roomList:
-            let cell = collectionView.dequeueReusableCell(withClass: RoomCell.self, for: indexPath)
-            presenter.configure(item: cell, for: indexPath)
-            return cell
-        case .topRoom:
+        case .roomList, .topRoom:
             let cell = collectionView.dequeueReusableCell(withClass: RoomCell.self, for: indexPath)
             presenter.configure(item: cell, for: indexPath)
             return cell
