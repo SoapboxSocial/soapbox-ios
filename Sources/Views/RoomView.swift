@@ -291,6 +291,7 @@ class RoomView: UIView {
 
         if room.state.hasMini, room.state.mini.id != 0 {
             rightButtonBar.hide(button: .minis, animated: false)
+            rightButtonBar.hide(button: .paste, animated: false)
             open(mini: room.state.mini, isAppOpener: false)
         }
 
@@ -309,7 +310,17 @@ class RoomView: UIView {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
 
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openBar)))
+        let touchView = UIView()
+        touchView.translatesAutoresizingMaskIntoConstraints = false
+        touchView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openBar)))
+        view.addSubview(touchView)
+
+        NSLayoutConstraint.activate([
+            touchView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            touchView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            touchView.topAnchor.constraint(equalTo: view.topAnchor),
+            touchView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
 
         let buttonStack = UIStackView()
         buttonStack.axis = .horizontal
@@ -353,7 +364,7 @@ class RoomView: UIView {
         NSLayoutConstraint.activate([
             titleStack.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
             titleStack.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            titleStack.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            titleStack.rightAnchor.constraint(equalTo: buttonStack.rightAnchor, constant: -20),
             titleStack.heightAnchor.constraint(equalToConstant: 32),
         ])
 
@@ -368,29 +379,11 @@ class RoomView: UIView {
     }
 
     func showMuteButton() {
-        UIView.animate(
-            withDuration: 0.1,
-            delay: 0,
-            usingSpringWithDamping: 0.6,
-            initialSpringVelocity: 0.5,
-            options: .curveEaseOut,
-            animations: { [self] in
-                muteButton.isHidden = false
-                muteButton.alpha = 1
-            }
-        )
+        VisibilityPopAnimation.show(muteButton)
     }
 
     func hideMuteButton() {
-        UIView.animate(
-            withDuration: 0.1,
-            delay: 0,
-            options: .curveEaseOut,
-            animations: { [self] in
-                muteButton.isHidden = true
-                muteButton.alpha = 0
-            }
-        )
+        VisibilityPopAnimation.hide(muteButton)
     }
 
     required init?(coder _: NSCoder) {
@@ -961,7 +954,7 @@ extension RoomView: ButtonBarDelegate {
 
         switch mini.size {
         case .large:
-            miniView!.heightAnchor.constraint(equalTo: content.heightAnchor, constant: -20).isActive = true
+            miniView!.bottomAnchor.constraint(equalTo: bottomMuteButton.topAnchor, constant: -10).isActive = true
         case .small:
             miniView!.heightAnchor.constraint(equalTo: content.heightAnchor, multiplier: 0.33).isActive = true
         default:

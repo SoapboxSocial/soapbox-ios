@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - We made some design updates to the in-room experience!
+
 ## [2.31.0] - 2021-05-10Z
 
  - Fixed issue that allowed game and link to be visible.

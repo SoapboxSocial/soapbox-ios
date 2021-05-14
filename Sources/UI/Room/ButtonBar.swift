@@ -74,9 +74,7 @@ class ButtonBar<E: Item>: UIView where E.RawValue == String {
         }
 
         if animated {
-            UIView.animate(withDuration: 0.2, animations: {
-                button.isHidden = true
-            })
+            VisibilityPopAnimation.hide(button)
         } else {
             button.isHidden = true
         }
@@ -92,9 +90,7 @@ class ButtonBar<E: Item>: UIView where E.RawValue == String {
         }
 
         if animated {
-            UIView.animate(withDuration: 0.2, animations: {
-                button.isHidden = false
-            })
+            VisibilityPopAnimation.show(button)
         } else {
             button.isHidden = false
         }
