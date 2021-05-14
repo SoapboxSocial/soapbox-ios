@@ -395,12 +395,19 @@ class RoomView: UIView {
         return [content]
     }
 
-    static func height() -> CGFloat {
-        return UICollectionViewFlowLayout.heightForBubbleLayout(rows: 4, width: UIScreen.main.bounds.width) + 76 + 104
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        // This is really ugly, but we must do it so the content can't resize itself if the link is too big
+        let height = frame.size.height - (safeAreaInsets.bottom + 10 + 32 + 20 + 32 + 20)
+        content.heightAnchor.constraint(equalToConstant: height).isActive = true
     }
 
     @objc private func exitTapped() {
-        if room.state.members.count == 1 {
+        let interval = Calendar.current.dateComponents([.minute], from: room.started, to: Date())
+        let minutes = interval.minute != nil ? interval.minute! : 0
+
+        if room.state.members.count == 1, room.maxMembers < 3 || minutes <= 3 {
             showExitAlert()
             return
         }

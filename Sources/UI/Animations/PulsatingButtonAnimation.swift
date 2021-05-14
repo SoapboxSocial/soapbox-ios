@@ -2,6 +2,7 @@ import UIKit
 
 class PulsatingButtonAnimation {
     static func animate(_ button: UIButton, icon: UIImage, color: UIColor) {
+        let reset = button.backgroundColor
         let image = button.image(for: .normal)
 
         func animate() {
@@ -21,7 +22,7 @@ class PulsatingButtonAnimation {
 
             CATransaction.setCompletionBlock {
                 UIView.transition(with: button, duration: 0.3, options: .transitionCrossDissolve, animations: {
-                    button.backgroundColor = .clear
+                    button.backgroundColor = reset
                     button.setImage(image, for: .normal)
                 })
 

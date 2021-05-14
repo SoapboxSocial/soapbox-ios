@@ -122,7 +122,7 @@ class LinkSharingView: UIView {
         ])
 
         NSLayoutConstraint.activate([
-            bottomAnchor.constraint(equalTo: nameLabel.bottomAnchor),
+            bottomAnchor.constraint(equalTo: stack.bottomAnchor),
         ])
     }
 
@@ -196,7 +196,6 @@ class LinkSharingView: UIView {
 
             DispatchQueue.main.async {
                 self.linkView.metadata = data
-                self.linkView.sizeToFit()
             }
         })
 
