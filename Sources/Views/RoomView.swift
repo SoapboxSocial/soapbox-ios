@@ -22,18 +22,19 @@ class RoomView: UIView {
         return me
     }
 
-    private let muteButton: EmojiButton = {
-        let button = EmojiButton(frame: .zero)
+    private let muteButton: RoundButtonWithSpringAnimation = {
+        let button = RoundButtonWithSpringAnimation()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "mic", withConfiguration: iconConfig), for: .normal)
         button.setImage(UIImage(systemName: "mic.slash", withConfiguration: iconConfig), for: .selected)
         button.tintColor = .brandColor
+        button.backgroundColor = .background
         button.addTarget(self, action: #selector(muteTapped), for: .touchUpInside)
         return button
     }()
 
-    private let exitButton: EmojiButton = {
-        let button = EmojiButton(frame: .zero)
+    private let exitButton: RoundButtonWithSpringAnimation = {
+        let button = RoundButtonWithSpringAnimation()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "xmark", withConfiguration: iconConfig), for: .normal)
         button.tintColor = .systemRed
@@ -42,10 +43,10 @@ class RoomView: UIView {
         return button
     }()
 
-    private let bottomMuteButton: EmojiButton = {
+    private let bottomMuteButton: RoundButtonWithSpringAnimation = {
         let iconConfig = UIImage.SymbolConfiguration(pointSize: 25, weight: .semibold)
 
-        let button = EmojiButton(frame: .zero)
+        let button = RoundButtonWithSpringAnimation()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "mic", withConfiguration: iconConfig), for: .normal)
         button.setImage(UIImage(systemName: "mic.slash", withConfiguration: iconConfig), for: .selected)
@@ -310,6 +311,30 @@ class RoomView: UIView {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
 
+        let titleStack = UIStackView()
+        titleStack.axis = .horizontal
+        titleStack.spacing = 10
+        titleStack.translatesAutoresizingMaskIntoConstraints = false
+        titleStack.distribution = .fill
+        titleStack.alignment = .center
+        view.addSubview(titleStack)
+
+        titleStack.addArrangedSubview(lock)
+        titleStack.addArrangedSubview(name)
+
+        NSLayoutConstraint.activate([
+            titleStack.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
+            titleStack.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            titleStack.heightAnchor.constraint(equalToConstant: 32),
+        ])
+
+        NSLayoutConstraint.activate([
+            lock.heightAnchor.constraint(equalToConstant: 20),
+            lock.widthAnchor.constraint(equalToConstant: 20),
+        ])
+
+        view.bottomAnchor.constraint(equalTo: titleStack.bottomAnchor, constant: 20).isActive = true
+
         let touchView = UIView()
         touchView.translatesAutoresizingMaskIntoConstraints = false
         touchView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openBar)))
@@ -333,6 +358,7 @@ class RoomView: UIView {
             buttonStack.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
             buttonStack.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             buttonStack.heightAnchor.constraint(equalToConstant: 32),
+            titleStack.rightAnchor.constraint(equalTo: buttonStack.leftAnchor, constant: -20),
         ])
 
         buttonStack.addArrangedSubview(muteButton)
@@ -349,31 +375,6 @@ class RoomView: UIView {
             exitButton.heightAnchor.constraint(equalToConstant: 32),
             exitButton.widthAnchor.constraint(equalToConstant: 32),
         ])
-
-        let titleStack = UIStackView()
-        titleStack.axis = .horizontal
-        titleStack.spacing = 10
-        titleStack.translatesAutoresizingMaskIntoConstraints = false
-        titleStack.distribution = .fill
-        titleStack.alignment = .center
-        view.addSubview(titleStack)
-
-        titleStack.addArrangedSubview(lock)
-        titleStack.addArrangedSubview(name)
-
-        NSLayoutConstraint.activate([
-            titleStack.topAnchor.constraint(equalTo: view.topAnchor, constant: 20),
-            titleStack.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            titleStack.rightAnchor.constraint(equalTo: buttonStack.rightAnchor, constant: -20),
-            titleStack.heightAnchor.constraint(equalToConstant: 32),
-        ])
-
-        NSLayoutConstraint.activate([
-            lock.heightAnchor.constraint(equalToConstant: 20),
-            lock.widthAnchor.constraint(equalToConstant: 20),
-        ])
-
-        view.bottomAnchor.constraint(equalTo: titleStack.bottomAnchor, constant: 20).isActive = true
 
         return view
     }

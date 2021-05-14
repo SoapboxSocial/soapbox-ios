@@ -17,7 +17,7 @@ class ButtonBar<E: Item>: UIView where E.RawValue == String {
         return stack
     }()
 
-    class Button: EmojiButton {
+    class Button: RoundButtonWithSpringAnimation {
         var value: E!
     }
 
@@ -37,7 +37,7 @@ class ButtonBar<E: Item>: UIView where E.RawValue == String {
         var anchor: NSLayoutXAxisAnchor!
 
         for item in E.allCases {
-            let button = Button(frame: .zero)
+            let button = Button()
             button.translatesAutoresizingMaskIntoConstraints = false
             button.setImage(UIImage(systemName: item.icon(), withConfiguration: iconConfig), for: .normal)
             button.tintColor = .brandColor

@@ -16,7 +16,7 @@ class EmojiBar: UIView {
         var leftOffset = CGFloat(0)
 
         for emoji in emojis {
-            let button = EmojiButton()
+            let button = UIButton()
             button.translatesAutoresizingMaskIntoConstraints = false
             button.setTitle(emoji.rawValue, for: .normal)
             button.addTarget(self, action: #selector(reactionTapped), for: .touchUpInside)
@@ -44,11 +44,7 @@ class EmojiBar: UIView {
     }
 
     @objc private func reactionTapped(_ sender: UIButton) {
-        guard let button = sender as? EmojiButton else {
-            return
-        }
-
-        guard let label = button.title(for: .normal) else {
+        guard let label = sender.title(for: .normal) else {
             return
         }
 
