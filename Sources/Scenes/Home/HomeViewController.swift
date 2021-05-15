@@ -326,7 +326,7 @@ extension HomeViewController: HomePresenterOutput {
 extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
         let type = presenter.sectionType(for: indexPath.section)
-        if type != .roomList, type != .topRoom {
+        if type != .roomList, type != .topRoom, type != .activeUserList {
             return
         }
 
@@ -339,7 +339,7 @@ extension HomeViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
         let type = presenter.sectionType(for: indexPath.section)
-        if type != .roomList, type != .topRoom {
+        if type != .roomList, type != .topRoom, type != .activeUserList {
             return
         }
 
@@ -397,6 +397,12 @@ extension HomeViewController: UICollectionViewDelegate {
             let room = presenter.item(for: indexPath, ofType: RoomAPIClient.Room.self)
             output.didSelectRoom(room: room.id)
         case .activeUserList:
+            if let cell = content.cellForItem(at: indexPath) {
+                animate(cell.contentView, duration: 0.4, transform: .identity.scaledBy(x: 0.95, y: 0.95), completion: { _ in
+                    self.animate(cell.contentView, duration: 0.4, transform: .identity)
+                })
+            }
+
             let active = presenter.item(for: indexPath, ofType: APIClient.ActiveUser.self)
 
             let sheet = ActionSheet(title: active.displayName, image: nil)
