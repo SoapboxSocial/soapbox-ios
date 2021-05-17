@@ -99,11 +99,10 @@ class SearchViewController: ViewControllerWithScrollableContent<UICollectionView
             case .userList:
                 return self.content.section(hasHeader: true, hasFooter: true)
             case .inviteFriends:
-                return self.content.section(height: 182, hasBackground: false)
+                return self.content.section(height: 182)
             }
         }
 
-        layout.register(CollectionBackgroundView.self, forDecorationViewOfKind: "background")
         layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
 
         return layout
