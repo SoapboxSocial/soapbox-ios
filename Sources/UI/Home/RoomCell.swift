@@ -5,6 +5,16 @@ class RoomCell: UICollectionViewCell {
         case normal, current
     }
 
+    override var isHighlighted: Bool {
+        didSet {
+            if isHighlighted {
+                animate(contentView, transform: .identity.scaledBy(x: 0.95, y: 0.95))
+            } else {
+                animate(contentView, transform: .identity)
+            }
+        }
+    }
+
     var style: RoomStyle = .normal {
         didSet {
             switch style {
@@ -254,5 +264,19 @@ class RoomCell: UICollectionViewCell {
 
         imageViews.forEach { $0.removeFromSuperview() }
         title.text = ""
+    }
+
+    private func animate(_ view: UIView, transform: CGAffineTransform, completion: ((Bool) -> Void)? = nil) {
+        UIView.animate(
+            withDuration: 0.4,
+            delay: 0,
+            usingSpringWithDamping: 0.5,
+            initialSpringVelocity: 3,
+            options: [.curveEaseInOut, .allowUserInteraction],
+            animations: {
+                view.transform = transform
+            },
+            completion: completion
+        )
     }
 }

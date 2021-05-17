@@ -75,6 +75,7 @@ class SearchViewController: ViewControllerWithScrollableContent<UICollectionView
         content.register(cellWithClass: ViewMoreCellCollectionViewCell.self)
         content.register(supplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withClass: CollectionViewSectionTitle.self)
         content.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: EmptyCollectionFooterView.self)
+        content.delaysContentTouches = false
 
         output.search("*")
 

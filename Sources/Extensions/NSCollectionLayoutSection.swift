@@ -1,7 +1,7 @@
 import UIKit
 
 extension NSCollectionLayoutSection {
-    static func fullWidthSection(height: CGFloat = 48, hasHeader: Bool = false, hasFooter: Bool = false) -> NSCollectionLayoutSection {
+    static func fullWidthSection(height: CGFloat = 48) -> NSCollectionLayoutSection {
         let inset = CGFloat(20)
 
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .absolute(height))
