@@ -78,7 +78,7 @@ class CollectionViewCell: UICollectionViewCell {
             image.heightAnchor.constraint(equalToConstant: 48),
             image.widthAnchor.constraint(equalToConstant: 48),
             image.topAnchor.constraint(equalTo: contentView.topAnchor),
-            image.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 20),
+            image.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             image.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
         ])
 
