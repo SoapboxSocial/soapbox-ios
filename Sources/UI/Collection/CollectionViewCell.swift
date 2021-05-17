@@ -10,16 +10,6 @@ class CollectionViewCell: UICollectionViewCell {
             }
         }
     }
-    
-    override var isSelected: Bool {
-        didSet {
-            if isSelected {
-                animate(contentView, transform: .identity.scaledBy(x: 0.95, y: 0.95))
-            } else {
-                animate(contentView, transform: .identity)
-            }
-        }
-    }
 
     var image: RoundedImageView = {
         let view = RoundedImageView()
@@ -99,7 +89,7 @@ class CollectionViewCell: UICollectionViewCell {
         title.text = ""
         subtitle.text = ""
     }
-    
+
     private func animate(_ view: UIView, transform: CGAffineTransform, completion: ((Bool) -> Void)? = nil) {
         UIView.animate(
             withDuration: 0.4,

@@ -47,6 +47,7 @@ class HomeViewController: ViewControllerWithScrollableContent<UICollectionView> 
         content.register(cellWithClass: StoryCell.self)
         content.register(cellWithClass: CreateStoryCell.self)
         content.register(cellWithClass: ActiveUserCell.self)
+        content.delaysContentTouches = false
 
         content.refreshControl = refresh
         refresh.addTarget(self, action: #selector(loadData), for: .valueChanged)
@@ -325,10 +326,6 @@ extension HomeViewController: HomePresenterOutput {
 
 extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
-            self.content.deselectItem(at: indexPath, animated: false)
-        })
-
         switch presenter.sectionType(for: indexPath.section) {
         case .storiesList:
             if presenter.currentRoom != nil {

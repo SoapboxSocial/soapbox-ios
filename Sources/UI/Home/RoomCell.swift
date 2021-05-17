@@ -4,20 +4,10 @@ class RoomCell: UICollectionViewCell {
     enum RoomStyle {
         case normal, current
     }
-    
+
     override var isHighlighted: Bool {
         didSet {
             if isHighlighted {
-                animate(contentView, transform: .identity.scaledBy(x: 0.95, y: 0.95))
-            } else {
-                animate(contentView, transform: .identity)
-            }
-        }
-    }
-    
-    override var isSelected: Bool {
-        didSet {
-            if isSelected {
                 animate(contentView, transform: .identity.scaledBy(x: 0.95, y: 0.95))
             } else {
                 animate(contentView, transform: .identity)
@@ -275,7 +265,7 @@ class RoomCell: UICollectionViewCell {
         imageViews.forEach { $0.removeFromSuperview() }
         title.text = ""
     }
-    
+
     private func animate(_ view: UIView, transform: CGAffineTransform, completion: ((Bool) -> Void)? = nil) {
         UIView.animate(
             withDuration: 0.4,
