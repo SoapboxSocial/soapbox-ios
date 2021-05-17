@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.32.1] - 2021-05-17Z
+
  - Just some animation cleanups!
 
 ## [2.32.0] - 2021-05-14Z
