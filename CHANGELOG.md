@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Just some animation cleanups!
+
 ## [2.32.0] - 2021-05-14Z
 
  - We made some design updates to the in-room experience!
