@@ -23,6 +23,7 @@ class UserListViewController: ViewControllerWithScrollableContent<UICollectionVi
         content.register(cellWithClass: CollectionViewCell.self)
         content.register(cellWithClass: ViewMoreCellCollectionViewCell.self)
         content.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: EmptyCollectionFooterView.self)
+        content.delaysContentTouches = false
 
         output.loadUsers()
 
