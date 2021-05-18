@@ -28,7 +28,7 @@ class APIClient: Client {
 
     struct Notification: Decodable {
         let timestamp: Int
-        var from: NotificationUser
+        var from: NotificationUser?
         let room: String?
         let category: String
     }
