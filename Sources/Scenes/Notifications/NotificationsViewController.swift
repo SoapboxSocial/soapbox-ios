@@ -130,32 +130,35 @@ extension NotificationsViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let notification = notifications[indexPath.section].notifications[indexPath.item]
+        let cell = collectionView.dequeueReusableCell(withClass: NotificationCell.self, for: indexPath)
+
+        if notification.category == "FOLLOW_RECOMMENDATIONS" {
+            cell.setText(body: NSLocalizedString("Notifications.FollowRecommendations", comment: ""))
+            cell.image.backgroundColor = .brandColor
+            cell.image.image = UIImage(systemName: "person.badge.plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 40))
+            cell.image.tintColor = .white
+            cell.image.contentMode = .center
+            return cell
+        }
 
         var body: String
-
         switch notification.category {
         case "NEW_FOLLOWER":
             body = NSLocalizedString("started_following_you", comment: "")
         case "WELCOME_ROOM":
             body = NSLocalizedString("just_joined_welcome", comment: "")
-        case "FOLLOW_RECOMMENDATIONS":
-            body = NSLocalizedString("Notifications.FollowRecommendations", comment: "")
         default:
             body = ""
         }
 
-        let cell = collectionView.dequeueReusableCell(withClass: NotificationCell.self, for: indexPath)
-
         guard let user = notification.from else {
-            cell.image.isHidden = true
-            cell.setText(body: body)
             return cell
         }
 
         cell.setText(name: user.username, body: body)
 
-        cell.image.isHidden = false
         if user.image != "" {
+            cell.image.contentMode = .scaleAspectFill
             cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + user.image))
         }
 
