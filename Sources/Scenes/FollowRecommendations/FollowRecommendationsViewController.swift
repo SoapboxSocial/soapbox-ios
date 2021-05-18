@@ -89,6 +89,7 @@ class FollowRecommendationsViewController: DrawerViewController {
         ])
 
         collection.dataSource = self
+        collection.delegate = self
         view.addSubview(collection)
 
         APIClient().recommendedFollows(callback: { result in
@@ -135,5 +136,20 @@ extension FollowRecommendationsViewController: UICollectionViewDataSource {
         cell.subtitle.text = "@" + user.username
 
         return cell
+    }
+}
+
+extension FollowRecommendationsViewController: UICollectionViewDelegate {
+    func collectionView(_: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let user = users[indexPath.item]
+        guard let parent = presentingViewController as? NavigationViewController else {
+            return
+        }
+
+        dismiss(animated: true, completion: {
+            DispatchQueue.main.async {
+                parent.pushViewController(SceneFactory.createProfileViewController(id: user.id), animated: true)
+            }
+        })
     }
 }
