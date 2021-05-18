@@ -34,7 +34,7 @@ class FollowRecommendationsViewController: DrawerViewController {
 
         let collection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewCompositionalLayout(section: section))
         collection.translatesAutoresizingMaskIntoConstraints = false
-        collection.register(cellWithClass: CollectionViewCell.self)
+        collection.register(cellWithClass: FollowRecommendationsCollectionViewCell.self)
         collection.backgroundColor = .clear
         return collection
     }()
@@ -118,7 +118,7 @@ extension FollowRecommendationsViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withClass: CollectionViewCell.self, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withClass: FollowRecommendationsCollectionViewCell.self, for: indexPath)
 
         let user = users[indexPath.item]
 
