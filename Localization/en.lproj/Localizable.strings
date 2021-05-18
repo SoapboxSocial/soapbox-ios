@@ -285,3 +285,5 @@
 "FollowRecommendations.Title" = "For you";
 "FollowRecommendations.Description" = "We found some people you may know, add them and get chatting today.";
 "FollowRecommendations.YouMayKnow" = "You may know";
+
+"Notifications.FollowRecommendations" = "We found some people you may know, add them and get chatting today.";

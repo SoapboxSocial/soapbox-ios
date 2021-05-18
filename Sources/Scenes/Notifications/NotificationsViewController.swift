@@ -139,7 +139,7 @@ extension NotificationsViewController: UICollectionViewDataSource {
         case "WELCOME_ROOM":
             body = NSLocalizedString("just_joined_welcome", comment: "")
         case "FOLLOW_RECOMMENDATIONS":
-            body = ""
+            body = NSLocalizedString("Notifications.FollowRecommendations", comment: "")
         default:
             body = ""
         }
@@ -156,7 +156,7 @@ extension NotificationsViewController: UICollectionViewDataSource {
 
         cell.image.isHidden = false
         if user.image != "" {
-            cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + notification.from.image))
+            cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + user.image))
         }
 
         return cell
@@ -196,13 +196,15 @@ extension NotificationsViewController: UICollectionViewDelegate {
 
         switch item.category {
         case "NEW_FOLLOWER":
-            nav.pushViewController(SceneFactory.createProfileViewController(id: item.from.id), animated: true)
+            nav.pushViewController(SceneFactory.createProfileViewController(id: item.from!.id), animated: true)
         case "WELCOME_ROOM":
             guard let room = item.room else {
                 return
             }
 
             nav.didSelect(room: room)
+        case "FOLLOW_RECOMMENDATIONS":
+            present(FollowRecommendationsViewController(), animated: true)
         default:
             return
         }

@@ -16,11 +16,12 @@ class FollowRecommendationsViewController: DrawerViewController {
         label.font = .rounded(forTextStyle: .body, weight: .semibold)
         label.text = NSLocalizedString("FollowRecommendations.Description", comment: "")
         label.textColor = .white
+        label.numberOfLines = 0
         return label
     }()
 
     private let collection: UICollectionView = {
-        let collection = UICollectionView()
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.register(cellWithClass: CollectionViewCell.self)
         return collection
@@ -33,16 +34,20 @@ class FollowRecommendationsViewController: DrawerViewController {
 
         manager.drawer.backgroundColor = .brandColor
 
+        view.addSubview(titleLabel)
+
         NSLayoutConstraint.activate([
             titleLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             titleLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             titleLabel.topAnchor.constraint(equalTo: handle.topAnchor, constant: 30),
         ])
 
+        view.addSubview(descriptionLabel)
+
         NSLayoutConstraint.activate([
             descriptionLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             descriptionLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            descriptionLabel.topAnchor.constraint(equalTo: titleLabel.topAnchor, constant: 10),
+            descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10),
         ])
 
         let seperator = UIView()
@@ -54,7 +59,7 @@ class FollowRecommendationsViewController: DrawerViewController {
         NSLayoutConstraint.activate([
             seperator.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             seperator.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            seperator.topAnchor.constraint(equalTo: descriptionLabel.topAnchor, constant: 20),
+            seperator.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 20),
             seperator.heightAnchor.constraint(equalToConstant: 2),
         ])
 
