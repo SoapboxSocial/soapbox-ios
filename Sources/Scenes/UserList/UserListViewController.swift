@@ -23,6 +23,7 @@ class UserListViewController: ViewControllerWithScrollableContent<UICollectionVi
         content.register(cellWithClass: CollectionViewCell.self)
         content.register(cellWithClass: ViewMoreCellCollectionViewCell.self)
         content.register(supplementaryViewOfKind: UICollectionView.elementKindSectionFooter, withClass: EmptyCollectionFooterView.self)
+        content.delaysContentTouches = false
 
         output.loadUsers()
 
@@ -38,10 +39,9 @@ class UserListViewController: ViewControllerWithScrollableContent<UICollectionVi
 
     private func makeLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { (_: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-            self.content.section(hasFooter: true, hasBackground: self.users.count > 0)
+            self.content.section(hasFooter: true)
         }
 
-        layout.register(CollectionBackgroundView.self, forDecorationViewOfKind: "background")
         layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
 
         return layout

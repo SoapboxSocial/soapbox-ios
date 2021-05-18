@@ -59,7 +59,6 @@ class NotificationsViewController: ViewControllerWithScrollableContent<UICollect
             self.content.section(hasHeader: true, hasFooter: sectionIndex + 1 == self.notifications.count)
         }
 
-        layout.register(CollectionBackgroundView.self, forDecorationViewOfKind: "background")
         layout.configuration = UICollectionViewCompositionalLayoutConfiguration()
 
         return layout

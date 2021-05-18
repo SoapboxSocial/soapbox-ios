@@ -30,8 +30,8 @@ extension UICollectionView {
         return cell
     }
 
-    func section(height: CGFloat = 48, hasHeader: Bool = false, hasFooter: Bool = false, hasBackground: Bool = true) -> NSCollectionLayoutSection {
-        let section = NSCollectionLayoutSection.fullWidthSection(height: height, hasHeader: hasHeader, hasFooter: hasFooter, hasBackground: hasBackground)
+    func section(height: CGFloat = 48, hasHeader: Bool = false, hasFooter: Bool = false) -> NSCollectionLayoutSection {
+        let section = NSCollectionLayoutSection.fullWidthSection(height: height)
 
         if hasHeader {
             section.boundarySupplementaryItems.append(header())
