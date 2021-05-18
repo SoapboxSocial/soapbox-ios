@@ -138,6 +138,7 @@ extension NotificationsViewController: UICollectionViewDataSource {
             body = NSLocalizedString("started_following_you", comment: "")
         case "WELCOME_ROOM":
             body = NSLocalizedString("just_joined_welcome", comment: "")
+//        case "":
         default:
             body = ""
         }

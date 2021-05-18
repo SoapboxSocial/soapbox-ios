@@ -19,12 +19,14 @@ class FollowRecommendationsViewController: DrawerViewController {
         return label
     }()
 
-    private let users: UICollectionView = {
+    private let collection: UICollectionView = {
         let collection = UICollectionView()
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.register(cellWithClass: CollectionViewCell.self)
         return collection
     }()
+
+    private var users = [APIClient.User]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,13 +71,13 @@ class FollowRecommendationsViewController: DrawerViewController {
             youMayKnow.topAnchor.constraint(equalTo: seperator.topAnchor, constant: 20),
         ])
 
-        view.addSubview(users)
+        view.addSubview(collection)
 
         NSLayoutConstraint.activate([
-            users.leftAnchor.constraint(equalTo: view.leftAnchor),
-            users.rightAnchor.constraint(equalTo: view.rightAnchor),
-            users.topAnchor.constraint(equalTo: youMayKnow.bottomAnchor, constant: 10),
-            users.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collection.leftAnchor.constraint(equalTo: view.leftAnchor),
+            collection.rightAnchor.constraint(equalTo: view.rightAnchor),
+            collection.topAnchor.constraint(equalTo: youMayKnow.bottomAnchor, constant: 10),
+            collection.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
 }

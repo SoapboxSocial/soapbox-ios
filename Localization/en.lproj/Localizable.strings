@@ -67,6 +67,11 @@
 "join_room_name_with_3_notification" = "Join \"%@\" with %@, %@ and %@";
 "join_room_name_with_3_and_more_notification" = "Join \"%@\" with %@, %@, %@ and %@ others";
 
+"1_follow_recommendations_notification" = "%@ who you may know is on Soapbox, why not follow them?";
+"2_follow_recommendations_notification" = "%@ and %@ who you may know are on Soapbox, why not follow them?";
+"3_follow_recommendations_notification" = "%@, %@ and %@ who you may know are on Soapbox, why not follow them?";
+"3_and_more_follow_recommendations_notification" = "%@, %@, %@ and %@ others who you may know are on Soapbox, why not follow them?";
+
 "save" = "Save";
 "invalid_display_name" = "Valid display name required";
 
