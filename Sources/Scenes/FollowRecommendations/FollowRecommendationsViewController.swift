@@ -24,6 +24,7 @@ class FollowRecommendationsViewController: DrawerViewController {
         let collection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.register(cellWithClass: CollectionViewCell.self)
+        collection.backgroundColor = .clear
         return collection
     }()
 

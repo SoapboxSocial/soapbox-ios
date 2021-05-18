@@ -135,7 +135,7 @@ extension NotificationsViewController: UICollectionViewDataSource {
         if notification.category == "FOLLOW_RECOMMENDATIONS" {
             cell.setText(body: NSLocalizedString("Notifications.FollowRecommendations", comment: ""))
             cell.image.backgroundColor = .brandColor
-            cell.image.image = UIImage(systemName: "person.badge.plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 40))
+            cell.image.image = UIImage(systemName: "person.badge.plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 20))
             cell.image.tintColor = .white
             cell.image.contentMode = .center
             return cell
