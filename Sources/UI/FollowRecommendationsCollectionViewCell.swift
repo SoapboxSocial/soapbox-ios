@@ -1,6 +1,8 @@
 import UIKit
 
 class FollowRecommendationsCollectionViewCell: CollectionViewCell {
+    var handler: (() -> Void)?
+
     override init(frame: CGRect) {
         super.init(frame: frame)
 
@@ -9,6 +11,7 @@ class FollowRecommendationsCollectionViewCell: CollectionViewCell {
         button.setTitleColor(.black, for: .normal)
         button.backgroundColor = .white
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(didPressFollow), for: .touchUpInside)
         contentView.addSubview(button)
 
         NSLayoutConstraint.activate([
@@ -19,5 +22,9 @@ class FollowRecommendationsCollectionViewCell: CollectionViewCell {
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    @objc private func didPressFollow() {
+        handler?()
     }
 }

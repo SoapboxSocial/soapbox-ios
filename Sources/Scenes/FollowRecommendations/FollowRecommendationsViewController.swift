@@ -123,6 +123,10 @@ extension FollowRecommendationsViewController: UICollectionViewDataSource {
 
         let user = users[indexPath.item]
 
+        cell.handler = {
+            self.follow(user: user.id, indexPath: indexPath)
+        }
+
         cell.image.backgroundColor = .lightBrandColor
 
         if let image = user.image, image != "" {
@@ -136,6 +140,21 @@ extension FollowRecommendationsViewController: UICollectionViewDataSource {
         cell.subtitle.text = "@" + user.username
 
         return cell
+    }
+
+    private func follow(user: Int, indexPath: IndexPath) {
+        APIClient().follow(id: user, callback: { result in
+            switch result {
+            case .failure:
+                break // @TODO ERROR
+            case .success:
+                self.users.removeAll(where: { $0.id == user })
+
+                DispatchQueue.main.async {
+                    self.collection.deleteItems(at: [indexPath])
+                }
+            }
+        })
     }
 }
 
