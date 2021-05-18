@@ -19,6 +19,13 @@ class FollowRecommendationsViewController: DrawerViewController {
         return label
     }()
 
+    private let users: UICollectionView = {
+        let collection = UICollectionView()
+        collection.translatesAutoresizingMaskIntoConstraints = false
+        collection.register(cellWithClass: CollectionViewCell.self)
+        return collection
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -55,5 +62,13 @@ class FollowRecommendationsViewController: DrawerViewController {
         youMayKnow.text = NSLocalizedString("FollowRecommendations.YouMayKnow", comment: "").uppercased()
         youMayKnow.font = .boldSystemFont(ofSize: 17)
         view.addSubview(youMayKnow)
+
+        NSLayoutConstraint.activate([
+            youMayKnow.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            youMayKnow.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            youMayKnow.topAnchor.constraint(equalTo: seperator.topAnchor, constant: 20),
+        ])
+
+        view.addSubview(users)
     }
 }
