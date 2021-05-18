@@ -241,6 +241,10 @@ extension APIClient {
     func removeTwitter(callback: @escaping (Result<Void, Error>) -> Void) {
         void(path: "/v1/me/profiles/twitter", method: .delete, callback: callback)
     }
+
+    func recommendedFollows(callback: @escaping (Result<[User], Error>) -> Void) {
+        get(path: "/v1/me/following/recommendations", callback: callback)
+    }
 }
 
 extension APIClient {
