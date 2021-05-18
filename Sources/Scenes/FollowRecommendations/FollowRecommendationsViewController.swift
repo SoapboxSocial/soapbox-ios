@@ -70,5 +70,12 @@ class FollowRecommendationsViewController: DrawerViewController {
         ])
 
         view.addSubview(users)
+
+        NSLayoutConstraint.activate([
+            users.leftAnchor.constraint(equalTo: view.leftAnchor),
+            users.rightAnchor.constraint(equalTo: view.rightAnchor),
+            users.topAnchor.constraint(equalTo: youMayKnow.bottomAnchor, constant: 10),
+            users.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
     }
 }
