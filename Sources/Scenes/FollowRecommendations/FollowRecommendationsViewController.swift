@@ -21,7 +21,18 @@ class FollowRecommendationsViewController: DrawerViewController {
     }()
 
     private let collection: UICollectionView = {
-        let collection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
+        let size = NSCollectionLayoutSize(
+            widthDimension: NSCollectionLayoutDimension.fractionalWidth(1),
+            heightDimension: .estimated(48)
+        )
+        let item = NSCollectionLayoutItem(layoutSize: size)
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: size, subitem: item, count: 1)
+
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20)
+        section.interGroupSpacing = 20
+
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewCompositionalLayout(section: section))
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.register(cellWithClass: CollectionViewCell.self)
         collection.backgroundColor = .clear
@@ -77,7 +88,20 @@ class FollowRecommendationsViewController: DrawerViewController {
             youMayKnow.topAnchor.constraint(equalTo: seperator.topAnchor, constant: 20),
         ])
 
+        collection.dataSource = self
         view.addSubview(collection)
+
+        APIClient().recommendedFollows(callback: { result in
+            switch result {
+            case .failure:
+                break // @todo
+            case let .success(users):
+                self.users = users
+                DispatchQueue.main.async {
+                    self.collection.reloadData()
+                }
+            }
+        })
 
         NSLayoutConstraint.activate([
             collection.leftAnchor.constraint(equalTo: view.leftAnchor),
@@ -85,5 +109,31 @@ class FollowRecommendationsViewController: DrawerViewController {
             collection.topAnchor.constraint(equalTo: youMayKnow.bottomAnchor, constant: 10),
             collection.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
+    }
+}
+
+extension FollowRecommendationsViewController: UICollectionViewDataSource {
+    func collectionView(_: UICollectionView, numberOfItemsInSection _: Int) -> Int {
+        return users.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withClass: CollectionViewCell.self, for: indexPath)
+
+        let user = users[indexPath.item]
+
+        cell.image.backgroundColor = .lightBrandColor
+
+        if let image = user.image, image != "" {
+            cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + image))
+        }
+
+        cell.title.textColor = .white
+        cell.title.text = user.displayName
+
+        cell.subtitle.textColor = .white
+        cell.subtitle.text = "@" + user.username
+
+        return cell
     }
 }
