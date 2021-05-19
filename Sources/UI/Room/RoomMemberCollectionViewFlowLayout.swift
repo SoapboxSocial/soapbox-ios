@@ -1,8 +1,8 @@
 import UIKit
 
 class RoomMemberCollectionViewFlowLayout: UICollectionViewFlowLayout {
-    var inserting = [IndexPath]()
-    var removing = [IndexPath]()
+    private var inserting = [IndexPath]()
+    private var removing = [IndexPath]()
 
     init(width: CGFloat) {
         super.init()
