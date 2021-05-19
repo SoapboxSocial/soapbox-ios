@@ -146,7 +146,16 @@ extension FollowRecommendationsViewController: UICollectionViewDataSource {
         APIClient().follow(id: user, callback: { result in
             switch result {
             case .failure:
-                break // @TODO ERROR
+                let banner = NotificationBanner(
+                    title: NSLocalizedString("something_went_wrong", comment: ""),
+                    subtitle: NSLocalizedString("please_try_again_later", comment: ""),
+                    style: .danger,
+                    type: .floating
+                )
+
+                DispatchQueue.main.async {
+                    banner.show()
+                }
             case .success:
                 self.users.removeAll(where: { $0.id == user })
 
