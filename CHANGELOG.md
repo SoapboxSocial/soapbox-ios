@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [2.33.0] - 2021-05-19Z
+
  - We are working on getting better at recommending who you should follow!
  - Added some nice animations to rooms.
 
