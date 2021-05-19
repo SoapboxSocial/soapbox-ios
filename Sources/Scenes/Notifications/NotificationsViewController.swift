@@ -130,9 +130,18 @@ extension NotificationsViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let notification = notifications[indexPath.section].notifications[indexPath.item]
+        let cell = collectionView.dequeueReusableCell(withClass: NotificationCell.self, for: indexPath)
+
+        if notification.category == "FOLLOW_RECOMMENDATIONS" {
+            cell.setText(body: NSLocalizedString("Notifications.FollowRecommendations", comment: ""))
+            cell.image.backgroundColor = .brandColor
+            cell.image.image = UIImage(systemName: "person.badge.plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 20))
+            cell.image.tintColor = .white
+            cell.image.contentMode = .center
+            return cell
+        }
 
         var body: String
-
         switch notification.category {
         case "NEW_FOLLOWER":
             body = NSLocalizedString("started_following_you", comment: "")
@@ -142,11 +151,15 @@ extension NotificationsViewController: UICollectionViewDataSource {
             body = ""
         }
 
-        let cell = collectionView.dequeueReusableCell(withClass: NotificationCell.self, for: indexPath)
-        cell.setText(name: notification.from.username, body: body)
+        guard let user = notification.from else {
+            return cell
+        }
 
-        if notification.from.image != "" {
-            cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + notification.from.image))
+        cell.setText(name: user.username, body: body)
+
+        if user.image != "" {
+            cell.image.contentMode = .scaleAspectFill
+            cell.image.af.setImage(withURL: Configuration.cdn.appendingPathComponent("/images/" + user.image))
         }
 
         return cell
@@ -186,13 +199,15 @@ extension NotificationsViewController: UICollectionViewDelegate {
 
         switch item.category {
         case "NEW_FOLLOWER":
-            nav.pushViewController(SceneFactory.createProfileViewController(id: item.from.id), animated: true)
+            nav.pushViewController(SceneFactory.createProfileViewController(id: item.from!.id), animated: true)
         case "WELCOME_ROOM":
             guard let room = item.room else {
                 return
             }
 
             nav.didSelect(room: room)
+        case "FOLLOW_RECOMMENDATIONS":
+            present(FollowRecommendationsViewController(), animated: true)
         default:
             return
         }

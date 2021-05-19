@@ -28,7 +28,7 @@ class APIClient: Client {
 
     struct Notification: Decodable {
         let timestamp: Int
-        var from: NotificationUser
+        var from: NotificationUser?
         let room: String?
         let category: String
     }
@@ -240,6 +240,10 @@ extension APIClient {
 
     func removeTwitter(callback: @escaping (Result<Void, Error>) -> Void) {
         void(path: "/v1/me/profiles/twitter", method: .delete, callback: callback)
+    }
+
+    func recommendedFollows(callback: @escaping (Result<[User], Error>) -> Void) {
+        get(path: "/v1/me/following/recommendations", callback: callback)
     }
 }
 

@@ -403,6 +403,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 }
 
                 nav.pushViewController(SceneFactory.createProfileViewController(id: id), animated: true)
+            case "FOLLOW_RECOMMENDATIONS":
+                nav.visibleViewController?.present(FollowRecommendationsViewController(), animated: true)
             default:
                 break
             }

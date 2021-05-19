@@ -35,17 +35,21 @@ class CollectionViewCell: UICollectionViewCell {
         return label
     }()
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-
+    var stack: UIStackView = {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.spacing = 0
         stack.distribution = .fill
         stack.alignment = .fill
         stack.axis = .vertical
+        return stack
+    }()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+
         contentView.addSubview(stack)
 
         stack.addArrangedSubview(title)
