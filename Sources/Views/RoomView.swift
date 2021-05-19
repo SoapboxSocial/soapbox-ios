@@ -64,9 +64,10 @@ class RoomView: UIView {
     }()
 
     private let members: UICollectionView = {
-        let layout = UICollectionViewFlowLayout.basicUserBubbleLayout(itemsPerRow: 4, width: UIScreen.main.bounds.width)
-
-        let collection = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+        let collection = UICollectionView(
+            frame: CGRect.zero,
+            collectionViewLayout: RoomMemberCollectionViewFlowLayout(width: UIScreen.main.bounds.width)
+        )
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.register(cellWithClass: RoomMemberCell.self)
         collection.backgroundColor = .clear
@@ -643,8 +644,21 @@ extension RoomView: RoomDelegate {
 
     //  @todo for efficiency these should all only update the user that was changed
     func userDidJoinRoom(user _: Int64) {
+        let indexPath = IndexPath(item: room.state.members.count - 1, section: 0)
+
         DispatchQueue.main.async {
-            self.members.reloadData()
+            UIView.animate(
+                withDuration: 0.4,
+                delay: 0,
+                usingSpringWithDamping: 0.5,
+                initialSpringVelocity: 3,
+                options: [.curveEaseInOut],
+                animations: {
+                    self.members.performBatchUpdates({
+                        self.members.insertItems(at: [indexPath])
+                    })
+                }
+            )
         }
 
         Sounds.blop()
@@ -661,9 +675,28 @@ extension RoomView: RoomDelegate {
         }
     }
 
-    func userDidLeaveRoom(user _: Int64) {
+    func userDidLeaveRoom(user: Int64) {
+        guard
+            let cell = self.members.visibleCells.first(where: { ($0 as? RoomMemberCell)?.user == user }),
+            let indexPath = members.indexPath(for: cell) else {
+            return DispatchQueue.main.async {
+                self.members.reloadData()
+            }
+        }
+
         DispatchQueue.main.async {
-            self.members.reloadData()
+            UIView.animate(
+                withDuration: 0.4,
+                delay: 0,
+                usingSpringWithDamping: 0.5,
+                initialSpringVelocity: 3,
+                options: [.curveEaseInOut],
+                animations: {
+                    self.members.performBatchUpdates({
+                        self.members.deleteItems(at: [indexPath])
+                    })
+                }
+            )
         }
     }
 
