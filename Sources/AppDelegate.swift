@@ -404,8 +404,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
                 nav.pushViewController(SceneFactory.createProfileViewController(id: id), animated: true)
             case "FOLLOW_RECOMMENDATIONS":
-                // @TODO
-                break
+                nav.visibleViewController?.present(FollowRecommendationsViewController(), animated: true)
             default:
                 break
             }
