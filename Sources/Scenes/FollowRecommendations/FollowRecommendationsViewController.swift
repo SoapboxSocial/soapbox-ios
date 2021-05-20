@@ -177,11 +177,6 @@ extension FollowRecommendationsViewController: UICollectionViewDataSource {
             return
         }
 
-        defer {
-            self.removeUsers.removeFirst()
-            self.removeUser()
-        }
-
         if let item = self.users.firstIndex(where: { $0.id == user }) {
             users.removeAll(where: { $0.id == user })
             DispatchQueue.main.async {
@@ -193,6 +188,9 @@ extension FollowRecommendationsViewController: UICollectionViewDataSource {
                 self.collection.reloadData()
             }
         }
+
+        removeUsers.removeFirst()
+        removeUser()
     }
 }
 
