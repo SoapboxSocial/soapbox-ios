@@ -169,7 +169,7 @@ extension FollowRecommendationsViewController: UICollectionViewDataSource {
     private func remove(user: Int) {
         removeUsers.append(user)
 
-        if removeUsers.count == 0 {
+        if removeUsers.count == 1 {
             removeUser()
         }
     }

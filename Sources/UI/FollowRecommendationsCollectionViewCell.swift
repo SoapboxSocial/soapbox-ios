@@ -7,6 +7,7 @@ class FollowRecommendationsCollectionViewCell: CollectionViewCell {
         button.setTitleColor(.black, for: .normal)
         button.backgroundColor = .white
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.activityIndicator.color = .black
         return button
     }()
 
