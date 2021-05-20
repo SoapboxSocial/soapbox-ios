@@ -41,6 +41,8 @@ class FollowRecommendationsViewController: DrawerViewController {
 
     private var users = [APIClient.User]()
 
+    private var removeUsers = [Int]()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -124,7 +126,7 @@ extension FollowRecommendationsViewController: UICollectionViewDataSource {
         let user = users[indexPath.item]
 
         cell.handler = {
-            self.follow(user: user.id, indexPath: indexPath)
+            self.follow(user: user.id)
         }
 
         cell.image.backgroundColor = .lightBrandColor
@@ -142,8 +144,8 @@ extension FollowRecommendationsViewController: UICollectionViewDataSource {
         return cell
     }
 
-    private func follow(user: Int, indexPath: IndexPath) {
-        APIClient().follow(id: user, callback: { result in
+    private func follow(user: Int) {
+        APIClient().follow(id: user, callback: { [self] result in
             switch result {
             case .failure:
                 let banner = NotificationBanner(
@@ -157,13 +159,40 @@ extension FollowRecommendationsViewController: UICollectionViewDataSource {
                     banner.show()
                 }
             case .success:
-                self.users.removeAll(where: { $0.id == user })
-
-                DispatchQueue.main.async {
-                    self.collection.deleteItems(at: [indexPath])
-                }
+                self.remove(user: user)
             }
         })
+    }
+
+    private func remove(user: Int) {
+        removeUsers.append(user)
+
+        if removeUsers.count == 0 {
+            removeUser()
+        }
+    }
+
+    private func removeUser() {
+        guard let user = removeUsers.first else {
+            return
+        }
+
+        defer {
+            self.removeUsers.removeFirst()
+            self.removeUser()
+        }
+
+        if let item = self.users.firstIndex(where: { $0.id == user }) {
+            users.removeAll(where: { $0.id == user })
+            DispatchQueue.main.async {
+                self.collection.deleteItems(at: [IndexPath(item: item, section: 0)])
+            }
+        } else {
+            users.removeAll(where: { $0.id == user })
+            return DispatchQueue.main.async {
+                self.collection.reloadData()
+            }
+        }
     }
 }
 
