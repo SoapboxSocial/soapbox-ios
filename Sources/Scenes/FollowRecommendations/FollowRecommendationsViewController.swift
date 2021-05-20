@@ -122,10 +122,12 @@ extension FollowRecommendationsViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withClass: FollowRecommendationsCollectionViewCell.self, for: indexPath)
+        cell.button.isLoading = false
 
         let user = users[indexPath.item]
 
         cell.handler = {
+            cell.button.isLoading = true
             self.follow(user: user.id)
         }
 
