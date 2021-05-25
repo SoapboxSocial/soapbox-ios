@@ -4,7 +4,11 @@ protocol AuthenticationPinViewControllerDelegate {
     func didSubmit(pin: String?)
 }
 
-class AuthenticationPinViewController: ViewControllerWithKeyboardConstraint {
+class AuthenticationPinViewController: ViewControllerWithKeyboardConstraint, AuthenticationStepViewController {
+    var hasBackButton: Bool {
+        return false
+    }
+
     var delegate: AuthenticationPinViewControllerDelegate?
 
     private let textField: TextField = {

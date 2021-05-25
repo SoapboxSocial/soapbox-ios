@@ -28,7 +28,6 @@
 "username" = "Username";
 "display_name" = "Display Name";
 
-"email_login" = "Enter email";
 "enter_your_pin_received_by_mail" = "Enter pin sent to email";
 "check_spam" = "Didn’t receive the email? Check spam";
 "pin" = "Pin";
@@ -287,3 +286,5 @@
 "FollowRecommendations.YouMayKnow" = "You may know";
 
 "Notifications.FollowRecommendations" = "We found some people you may know, add them and get chatting today.";
+
+"Authentication.Email" = "Email";

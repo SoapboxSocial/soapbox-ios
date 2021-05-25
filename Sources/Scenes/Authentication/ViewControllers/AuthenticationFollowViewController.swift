@@ -4,7 +4,11 @@ protocol AuthenticationFollowViewControllerDelegate {
     func didSubmit(users: [Int])
 }
 
-class AuthenticationFollowViewController: UIViewController {
+class AuthenticationFollowViewController: UIViewController, AuthenticationStepViewController {
+    var hasBackButton: Bool {
+        return false
+    }
+
     var delegate: AuthenticationFollowViewControllerDelegate?
 
     private let label: UILabel = {

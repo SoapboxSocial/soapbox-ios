@@ -1,6 +1,10 @@
 import UIKit
 
-class AuthenticationRequestNotificationsViewController: UIViewController {
+class AuthenticationRequestNotificationsViewController: UIViewController, AuthenticationStepViewController {
+    var hasBackButton: Bool {
+        return false
+    }
+
     private let label: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false

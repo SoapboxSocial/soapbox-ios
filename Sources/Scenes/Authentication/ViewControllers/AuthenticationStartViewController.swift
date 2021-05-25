@@ -6,7 +6,11 @@ protocol AuthenticationStartViewControllerDelegate {
     func didRequestSignInWithApple()
 }
 
-class AuthenticationStartViewController: UIViewController {
+class AuthenticationStartViewController: UIViewController, AuthenticationStepViewController {
+    var hasBackButton: Bool {
+        return false
+    }
+
     var delegate: AuthenticationStartViewControllerDelegate?
 
     private let terms: UITextView = {

@@ -12,15 +12,60 @@ protocol AuthenticationViewControllerOutput {
     func follow(users: [Int])
 }
 
+protocol AuthenticationStepViewController where Self: UIViewController {
+    var hasBackButton: Bool { get }
+}
+
 class AuthenticationViewController: UIPageViewController {
     var output: AuthenticationViewControllerOutput!
 
-    private var orderedViewControllers = [UIViewController]()
+    private var orderedViewControllers = [AuthenticationStepViewController]()
 
     private var state = AuthenticationInteractor.AuthenticationState.getStarted
 
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .rounded(forTextStyle: .title3, weight: .bold)
+        label.textColor = .white
+        label.textAlignment = .center
+        return label
+    }()
+
+    private let backButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
+        button.backgroundColor = .lightBrandColor
+        button.imageView?.tintColor = .white
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.isHidden = true
+        button.addTarget(self, action: #selector(didTapBackButton), for: .touchUpInside)
+        return button
+    }()
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+
     init() {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal)
+
+        view.addSubview(titleLabel)
+        view.addSubview(backButton)
+
+        NSLayoutConstraint.activate([
+            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            backButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            backButton.heightAnchor.constraint(equalToConstant: 40),
+            backButton.widthAnchor.constraint(equalToConstant: 40),
+        ])
+
+        backButton.layer.cornerRadius = 20
+
+        NSLayoutConstraint.activate([
+            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 18),
+        ])
 
         let start = AuthenticationStartViewController()
         start.delegate = self
@@ -47,6 +92,10 @@ class AuthenticationViewController: UIPageViewController {
         orderedViewControllers.append(AuthenticationSuccessViewController())
 
         setViewControllers([orderedViewControllers[0]], direction: .forward, animated: false)
+    }
+
+    @objc private func didTapBackButton() {
+        transitionTo(state: AuthenticationInteractor.AuthenticationState(rawValue: state.rawValue - 1)!) // @TODO safe
     }
 
     required init?(coder _: NSCoder) {
@@ -102,7 +151,19 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
 
         self.state = state
 
-        setViewControllers([orderedViewControllers[state.rawValue]], direction: direction, animated: true)
+        let view = orderedViewControllers[state.rawValue]
+
+        UIView.animate(withDuration: 0.3, animations: {
+            if view.hasBackButton {
+                self.backButton.isHidden = false
+            } else {
+                self.backButton.isHidden = true
+            }
+
+            self.titleLabel.text = view.title
+        })
+
+        setViewControllers([view], direction: direction, animated: true)
     }
 }
 

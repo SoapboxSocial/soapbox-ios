@@ -4,7 +4,11 @@ protocol AuthenticationRegistrationViewControllerDelegate {
     func didSubmit(username: String?, displayName: String?, image: UIImage?)
 }
 
-class AuthenticationRegistrationViewController: ViewControllerWithKeyboardConstraint {
+class AuthenticationRegistrationViewController: ViewControllerWithKeyboardConstraint, AuthenticationStepViewController {
+    var hasBackButton: Bool {
+        return false
+    }
+
     var delegate: AuthenticationRegistrationViewControllerDelegate?
 
     private let usernameTextField: TextField = {

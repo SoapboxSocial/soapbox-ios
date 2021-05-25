@@ -1,7 +1,11 @@
 import SwiftConfettiView
 import UIKit
 
-class AuthenticationSuccessViewController: UIViewController {
+class AuthenticationSuccessViewController: UIViewController, AuthenticationStepViewController {
+    var hasBackButton: Bool {
+        return false
+    }
+
     private let label: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
