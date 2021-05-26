@@ -288,3 +288,4 @@
 "Notifications.FollowRecommendations" = "We found some people you may know, add them and get chatting today.";
 
 "Authentication.Email" = "Email";
+"Authentication.Pin" = "Login Code";

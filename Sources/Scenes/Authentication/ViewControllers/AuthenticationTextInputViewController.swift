@@ -36,12 +36,16 @@ class AuthenticationTextInputViewController: ViewControllerWithKeyboardConstrain
 
         textField.delegate = self
 
+        // @TODO CHANGE THIS CONSTRAINT
+
         NSLayoutConstraint.activate([
             textField.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             textField.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
             textField.heightAnchor.constraint(equalToConstant: 56),
             textField.bottomAnchor.constraint(equalTo: submitButton.topAnchor, constant: -10),
         ])
+
+        // @TODO CHANGE THIS CONSTRAINT
 
         NSLayoutConstraint.activate([
             submitButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
