@@ -54,7 +54,13 @@ final class WebRTCClient: NSObject {
             mandatoryConstraints: nil,
             optionalConstraints: ["DtlsSrtpKeyAgreement": kRTCMediaConstraintsValueTrue]
         )
-        peerConnection = WebRTCClient.factory.peerConnection(with: config, constraints: constraints, delegate: nil)
+
+        // @TODO GRACEFULLY?
+        guard let connection = WebRTCClient.factory.peerConnection(with: config, constraints: constraints, delegate: nil) else {
+            fatalError("failed to create connection")
+        }
+
+        peerConnection = connection
 
         super.init()
 
