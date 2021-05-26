@@ -15,7 +15,7 @@ protocol AuthenticationViewControllerOutput {
 protocol AuthenticationStepViewController where Self: UIViewController {
     var hasBackButton: Bool { get }
 
-    var description: String? { get set }
+    var stepDescription: String? { get }
 }
 
 class AuthenticationViewController: UIPageViewController {

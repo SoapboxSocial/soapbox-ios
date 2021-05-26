@@ -5,6 +5,10 @@ protocol AuthenticationRegistrationViewControllerDelegate {
 }
 
 class AuthenticationRegistrationViewController: ViewControllerWithKeyboardConstraint, AuthenticationStepViewController {
+    var stepDescription: String? {
+        return nil
+    }
+
     var hasBackButton: Bool {
         return false
     }

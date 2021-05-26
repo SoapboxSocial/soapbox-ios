@@ -1,6 +1,10 @@
 import UIKit
 
 class AuthenticationTextInputViewController: ViewControllerWithKeyboardConstraint, AuthenticationStepViewController {
+    var stepDescription: String? {
+        return nil
+    }
+
     var hasBackButton: Bool {
         return false
     }

@@ -1,6 +1,10 @@
 import UIKit
 
 class AuthenticationRequestNotificationsViewController: UIViewController, AuthenticationStepViewController {
+    var stepDescription: String? {
+        return nil
+    }
+
     var hasBackButton: Bool {
         return false
     }

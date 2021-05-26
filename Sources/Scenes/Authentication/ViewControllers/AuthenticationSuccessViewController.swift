@@ -2,6 +2,10 @@ import SwiftConfettiView
 import UIKit
 
 class AuthenticationSuccessViewController: UIViewController, AuthenticationStepViewController {
+    var stepDescription: String? {
+        return nil
+    }
+
     var hasBackButton: Bool {
         return false
     }

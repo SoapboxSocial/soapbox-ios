@@ -7,6 +7,10 @@ protocol AuthenticationStartViewControllerDelegate {
 }
 
 class AuthenticationStartViewController: UIViewController, AuthenticationStepViewController {
+    var stepDescription: String? {
+        return ""
+    }
+
     var hasBackButton: Bool {
         return false
     }

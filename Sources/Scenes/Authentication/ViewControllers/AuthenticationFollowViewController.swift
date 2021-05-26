@@ -5,6 +5,10 @@ protocol AuthenticationFollowViewControllerDelegate {
 }
 
 class AuthenticationFollowViewController: UIViewController, AuthenticationStepViewController {
+    var stepDescription: String? {
+        return nil
+    }
+
     var hasBackButton: Bool {
         return false
     }
