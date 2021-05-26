@@ -15,6 +15,12 @@ class AuthenticationEmailViewController: AuthenticationTextInputViewController {
         super.init()
 
         title = NSLocalizedString("Authentication.Email", comment: "")
+        
+        textField.keyboardType = .emailAddress
+        textField.textContentType = .emailAddress
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
+        textField.placeholder = NSLocalizedString("Authentication.Email", comment: "")
     }
 
     required init?(coder _: NSCoder) {

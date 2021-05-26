@@ -12,10 +12,6 @@ class AuthenticationTextInputViewController: ViewControllerWithKeyboardConstrain
     let textField: TextField = {
         let textField = TextField(frame: .zero, theme: .light)
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.keyboardType = .emailAddress
-        textField.textContentType = .emailAddress
-        textField.autocorrectionType = .no
-        textField.autocapitalizationType = .none
         return textField
     }()
 
