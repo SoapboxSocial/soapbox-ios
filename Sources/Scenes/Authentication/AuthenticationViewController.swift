@@ -109,8 +109,6 @@ class AuthenticationViewController: UIPageViewController {
         follow.delegate = self
         orderedViewControllers.append(follow)
 
-        orderedViewControllers.append(AuthenticationSuccessViewController())
-
         setViewControllers([orderedViewControllers[0]], direction: .forward, animated: false)
     }
 
