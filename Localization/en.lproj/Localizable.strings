@@ -29,7 +29,6 @@
 "display_name" = "Display Name";
 
 "enter_your_pin_received_by_mail" = "Enter pin sent to email";
-"check_spam" = "Didn’t receive the email? Check spam";
 "pin" = "Pin";
 
 "invalid_email" = "Please enter a valid email";
@@ -289,5 +288,7 @@
 
 "Authentication.Email" = "Email";
 "Authentication.Pin" = "Login Code";
+"Authentication.Pin.Description" = "Didn’t receive the email? Check spam";
+
 "Authentication.Name" = "Name";
 "Authentication.Username" = "Username";

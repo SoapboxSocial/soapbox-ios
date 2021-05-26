@@ -5,30 +5,15 @@ protocol AuthenticationPinViewControllerDelegate {
 }
 
 class AuthenticationPinViewController: AuthenticationTextInputViewController {
+    override var stepDescription: String? {
+        return NSLocalizedString("Authentication.Pin.Description", comment: "")
+    }
+
     override var hasBackButton: Bool {
         return true
     }
 
     var delegate: AuthenticationPinViewControllerDelegate?
-
-    private let label: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .white
-        label.text = NSLocalizedString("enter_your_pin_received_by_mail", comment: "")
-        label.font = .rounded(forTextStyle: .title1, weight: .bold)
-        return label
-    }()
-
-    private let note: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = .white
-        label.text = NSLocalizedString("check_spam", comment: "")
-        label.font = .rounded(forTextStyle: .subheadline, weight: .semibold)
-        label.textAlignment = .center
-        return label
-    }()
 
     override init() {
         super.init()
@@ -37,14 +22,7 @@ class AuthenticationPinViewController: AuthenticationTextInputViewController {
 
         textField.keyboardType = .numberPad
         textField.textContentType = .oneTimeCode
-//
-//        view.addSubview(note)
-//
-//        NSLayoutConstraint.activate([
-//            note.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-//            note.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-//            note.bottomAnchor.constraint(equalTo: submitButton.topAnchor, constant: -20),
-//        ])
+        textField.placeholder = NSLocalizedString("Authentication.Pin", comment: "")
     }
 
     required init?(coder _: NSCoder) {

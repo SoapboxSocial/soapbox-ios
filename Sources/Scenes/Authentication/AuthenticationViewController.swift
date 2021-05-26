@@ -34,6 +34,15 @@ class AuthenticationViewController: UIPageViewController {
         return label
     }()
 
+    private let descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .rounded(forTextStyle: .body, weight: .semibold)
+        label.textColor = .white
+        label.textAlignment = .center
+        return label
+    }()
+
     private let backButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
@@ -53,6 +62,7 @@ class AuthenticationViewController: UIPageViewController {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal)
 
         view.addSubview(titleLabel)
+        view.addSubview(descriptionLabel)
         view.addSubview(backButton)
 
         NSLayoutConstraint.activate([
@@ -67,6 +77,12 @@ class AuthenticationViewController: UIPageViewController {
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 18),
+        ])
+
+        NSLayoutConstraint.activate([
+            descriptionLabel.topAnchor.constraint(equalTo: backButton.bottomAnchor, constant: 20),
+            descriptionLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            descriptionLabel.rightAnchor.constraint(equalTo: view.leftAnchor, constant: -20),
         ])
 
         let start = AuthenticationStartViewController()
@@ -165,6 +181,7 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
             }
 
             self.titleLabel.text = view.title
+            self.descriptionLabel.text = view.stepDescription
         })
 
         setViewControllers([view], direction: direction, animated: true)
