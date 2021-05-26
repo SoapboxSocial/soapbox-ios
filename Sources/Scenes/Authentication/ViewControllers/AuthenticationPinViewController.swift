@@ -37,14 +37,14 @@ class AuthenticationPinViewController: AuthenticationTextInputViewController {
 
         textField.keyboardType = .numberPad
         textField.textContentType = .oneTimeCode
-
-        view.addSubview(note)
-
-        NSLayoutConstraint.activate([
-            note.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            note.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
-            note.bottomAnchor.constraint(equalTo: submitButton.topAnchor, constant: -20),
-        ])
+//
+//        view.addSubview(note)
+//
+//        NSLayoutConstraint.activate([
+//            note.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+//            note.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+//            note.bottomAnchor.constraint(equalTo: submitButton.topAnchor, constant: -20),
+//        ])
     }
 
     required init?(coder _: NSCoder) {
