@@ -208,12 +208,6 @@ extension AuthenticationViewController: AuthenticationPinViewControllerDelegate 
     }
 }
 
-extension AuthenticationViewController: AuthenticationRegistrationViewControllerDelegate {
-    func didSubmit(username: String?, displayName: String?, image: UIImage?) {
-        output.register(username: username, displayName: displayName, image: image)
-    }
-}
-
 extension AuthenticationViewController: AuthenticationFollowViewControllerDelegate {
     func didSubmit(users: [Int]) {
         output.follow(users: users)
