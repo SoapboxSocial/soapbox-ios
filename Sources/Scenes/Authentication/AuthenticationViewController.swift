@@ -14,6 +14,8 @@ protocol AuthenticationViewControllerOutput {
 
 protocol AuthenticationStepViewController where Self: UIViewController {
     var hasBackButton: Bool { get }
+
+    var description: String? { get set }
 }
 
 class AuthenticationViewController: UIPageViewController {
@@ -79,9 +81,11 @@ class AuthenticationViewController: UIPageViewController {
         pin.delegate = self
         orderedViewControllers.append(pin)
 
-        let registration = AuthenticationRegistrationViewController()
-        registration.delegate = self
-        orderedViewControllers.append(registration)
+        let name = AuthenticationNameViewController()
+        orderedViewControllers.append(name)
+
+        let username = AuthenticationUsernameViewController()
+        orderedViewControllers.append(username)
 
         orderedViewControllers.append(AuthenticationRequestNotificationsViewController())
 

@@ -16,7 +16,7 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
     private var token: String?
 
     enum AuthenticationState: Int {
-        case getStarted, login, pin, registration, requestNotifications, follow, success
+        case getStarted, login, pin, name, username, profilePhoto, twitter, findFriends, requestNotifications, invite
     }
 
     enum AuthenticationError {
@@ -97,7 +97,8 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
                         self.output.presentLoggedInView()
                     }
                 case .register:
-                    self.output.present(state: .registration)
+                    break
+//                    self.output.present(state: .registration)
                 }
             }
         }
@@ -158,7 +159,7 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
             }
         })
 
-        output.present(state: .success)
+//        output.present(state: .success)
     }
 
     private func isValidUsername(_ username: String) -> Bool {
@@ -195,11 +196,11 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
 
 extension AuthenticationInteractor: NotificationManagerDelegate {
     func deviceTokenFailedToSet() {
-        output.present(state: .follow)
+//        output.present(state: .follow)
     }
 
     func deviceTokenWasSet() {
-        output.present(state: .follow)
+//        output.present(state: .follow)
     }
 }
 
@@ -248,7 +249,7 @@ extension AuthenticationInteractor: ASAuthorizationControllerDelegate {
 
                     self.token = token
 
-                    self.output.present(state: .registration)
+//                    self.output.present(state: .registration)
                 }
             }
         })

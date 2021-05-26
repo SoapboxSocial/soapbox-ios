@@ -40,11 +40,11 @@ class AuthenticationPresenter: AuthenticationInteractorOutput {
     func present(state: AuthenticationInteractor.AuthenticationState) {
         output.transitionTo(state: state)
 
-        if state == .success {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.1) {
-                self.presentLoggedInView()
-            }
-        }
+//        if state == .success {
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 2.1) {
+//                self.presentLoggedInView()
+//            }
+//        }
     }
 
     func presentLoggedInView() {
