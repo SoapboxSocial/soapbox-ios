@@ -1,10 +1,13 @@
 import UIKit
 
 class AuthenticationNameViewController: AuthenticationTextInputViewController {
+    override var stepDescription: String? {
+        return NSLocalizedString("Authentication.Name.Description", comment: "")
+    }
+
     override init() {
         super.init()
 
-        // @TODO description
         title = NSLocalizedString("Authentication.Name", comment: "")
         textField.text = NSLocalizedString("Authentication.Name", comment: "")
     }

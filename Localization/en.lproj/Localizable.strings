@@ -291,4 +291,7 @@
 "Authentication.Pin.Description" = "Didn’t receive the email? Check spam";
 
 "Authentication.Name" = "Name";
+"Authentication.Name.Description" = "What's your name?";
+
 "Authentication.Username" = "Username";
+"Authentication.Username.Description" = "Choose a username for people to find you on Soapbox.";

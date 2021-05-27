@@ -7,8 +7,9 @@ protocol AuthenticationViewControllerWithInput {
 protocol AuthenticationViewControllerOutput {
     func login(email: String?)
     func loginWithApple()
-    func submitPin(pin: String?)
-    func register(username: String?, displayName: String?, image: UIImage?)
+    func submit(pin: String?)
+    func submit(displayName: String?)
+    func register(withUsername username: String?)
     func follow(users: [Int])
 }
 
@@ -40,6 +41,7 @@ class AuthenticationViewController: UIPageViewController {
         label.font = .rounded(forTextStyle: .body, weight: .semibold)
         label.textColor = .white
         label.textAlignment = .center
+        label.numberOfLines = 0
         return label
     }()
 
@@ -202,7 +204,11 @@ extension AuthenticationViewController: AuthenticationTextInputViewControllerDel
         case .login:
             output.login(email: text)
         case .pin:
-            output.submitPin(pin: text)
+            output.submit(pin: text)
+        case .name:
+            output.submit(displayName: text)
+        case .username:
+            output.register(withUsername: text)
         default:
             return
         }

@@ -1,6 +1,10 @@
 import UIKit
 
 class AuthenticationUsernameViewController: AuthenticationTextInputViewController {
+    override var stepDescription: String? {
+        return NSLocalizedString("Authentication.Username.Description", comment: "")
+    }
+
     override var hasBackButton: Bool {
         return true
     }
@@ -8,7 +12,6 @@ class AuthenticationUsernameViewController: AuthenticationTextInputViewControlle
     override init() {
         super.init()
 
-        // @TODO description
         title = NSLocalizedString("Authentication.Username", comment: "")
     }
 

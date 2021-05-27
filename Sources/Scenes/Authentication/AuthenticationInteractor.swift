@@ -14,6 +14,7 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
     private let api: APIClient
 
     private var token: String?
+    private var displayName: String!
 
     enum AuthenticationState: Int {
         case start, login, pin, name, username, profilePhoto, twitter, findFriends, permissions, invite
@@ -64,7 +65,7 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
         authController.performRequests()
     }
 
-    func submitPin(pin: String?) {
+    func submit(pin: String?) {
         guard let input = pin else {
             return output.present(error: .invalidPin)
         }
@@ -102,40 +103,49 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
             }
         }
     }
-
-    func register(username: String?, displayName: String?, image: UIImage?) {
-        guard let usernameInput = username, isValidUsername(usernameInput) else {
-            return output.present(error: .invalidUsername)
-        }
-
-        guard let profileImage = image else {
-            return output.present(error: .missingProfileImage)
-        }
-
-        api.register(token: token!, username: usernameInput, displayName: displayName ?? usernameInput, image: profileImage) { result in
-            switch result {
-            case let .failure(error):
-                switch error {
-                case let .endpoint(response):
-                    if response.code == .usernameAlreadyExists {
-                        return self.output.present(error: .usernameTaken)
-                    }
-                default:
-                    break
-                }
-
-                return self.output.present(error: .general)
-            case let .success((user, expires)):
-                self.store(token: self.token!, expires: expires, user: user)
-                DispatchQueue.main.async {
-                    self.output.present(state: .permissions)
-
-                    NotificationManager.shared.delegate = self
-                    NotificationManager.shared.requestAuthorization()
-                }
-            }
-        }
+    
+    func submit(displayName: String?) {
+        // @TODO check if empty
+        output.present(state: .username)
     }
+    
+    func register(withUsername username: String?) {
+        // @TODO
+    }
+
+//    func register(username: String?, displayName: String?, image: UIImage?) {
+//        guard let usernameInput = username, isValidUsername(usernameInput) else {
+//            return output.present(error: .invalidUsername)
+//        }
+//
+//        guard let profileImage = image else {
+//            return output.present(error: .missingProfileImage)
+//        }
+//
+//        api.register(token: token!, username: usernameInput, displayName: displayName ?? usernameInput, image: profileImage) { result in
+//            switch result {
+//            case let .failure(error):
+//                switch error {
+//                case let .endpoint(response):
+//                    if response.code == .usernameAlreadyExists {
+//                        return self.output.present(error: .usernameTaken)
+//                    }
+//                default:
+//                    break
+//                }
+//
+//                return self.output.present(error: .general)
+//            case let .success((user, expires)):
+//                self.store(token: self.token!, expires: expires, user: user)
+//                DispatchQueue.main.async {
+//                    self.output.present(state: .permissions)
+//
+//                    NotificationManager.shared.delegate = self
+//                    NotificationManager.shared.requestAuthorization()
+//                }
+//            }
+//        }
+//    }
 
     func follow(users: [Int]) {
         if users.count == 0 {
