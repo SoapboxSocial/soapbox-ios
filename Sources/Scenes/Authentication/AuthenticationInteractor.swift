@@ -103,14 +103,40 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
             }
         }
     }
-    
-    func submit(displayName: String?) {
+
+    func submit(displayName _: String?) {
         // @TODO check if empty
         output.present(state: .username)
     }
-    
+
     func register(withUsername username: String?) {
-        // @TODO
+        guard let usernameInput = username, isValidUsername(usernameInput) else {
+            return output.present(error: .invalidUsername)
+        }
+
+        api.register(token: token!, username: usernameInput, displayName: displayName ?? usernameInput) { result in
+            switch result {
+            case let .failure(error):
+                switch error {
+                case let .endpoint(response):
+                    if response.code == .usernameAlreadyExists {
+                        return self.output.present(error: .usernameTaken)
+                    }
+                default:
+                    break
+                }
+
+                return self.output.present(error: .general)
+            case let .success((user, expires)):
+                self.store(token: self.token!, expires: expires, user: user)
+                DispatchQueue.main.async {
+                    self.output.present(state: .permissions)
+
+                    NotificationManager.shared.delegate = self
+                    NotificationManager.shared.requestAuthorization()
+                }
+            }
+        }
     }
 
 //    func register(username: String?, displayName: String?, image: UIImage?) {
