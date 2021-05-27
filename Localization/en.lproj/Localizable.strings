@@ -295,3 +295,5 @@
 
 "Authentication.Username" = "Username";
 "Authentication.Username.Description" = "Choose a username for people to find you on Soapbox.";
+
+"Authentication.Error.InvalidDisplayName" = "Please enter a name.";

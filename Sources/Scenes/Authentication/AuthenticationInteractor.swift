@@ -21,7 +21,7 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
     }
 
     enum AuthenticationError {
-        case invalidEmail, invalidPin, invalidUsername, usernameTaken, missingProfileImage, general, registerWithEmailDisabled
+        case invalidEmail, invalidPin, invalidUsername, invalidDisplayName, usernameTaken, general, registerWithEmailDisabled
     }
 
     init(output: AuthenticationInteractorOutput, api: APIClient) {
@@ -104,8 +104,19 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
         }
     }
 
-    func submit(displayName _: String?) {
-        // @TODO check if empty
+    func submit(displayName: String?) {
+        guard let input = displayName else {
+            output.present(error: .invalidDisplayName)
+            return
+        }
+
+        let name = input.trimmingCharacters(in: .whitespacesAndNewlines)
+        if input == "" {
+            output.present(error: .invalidDisplayName)
+            return
+        }
+
+        self.displayName = name
         output.present(state: .username)
     }
 
@@ -114,7 +125,7 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
             return output.present(error: .invalidUsername)
         }
 
-        api.register(token: token!, username: usernameInput, displayName: displayName ?? usernameInput) { result in
+        api.register(token: token!, username: usernameInput, displayName: displayName) { result in
             switch result {
             case let .failure(error):
                 switch error {
@@ -189,16 +200,6 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
         try? keychain.set(String(Int(Date().timeIntervalSince1970) + expires), key: "expiry")
 
         UserStore.store(user: user)
-    }
-}
-
-extension AuthenticationInteractor: NotificationManagerDelegate {
-    func deviceTokenFailedToSet() {
-//        output.present(state: .follow)
-    }
-
-    func deviceTokenWasSet() {
-//        output.present(state: .follow)
     }
 }
 

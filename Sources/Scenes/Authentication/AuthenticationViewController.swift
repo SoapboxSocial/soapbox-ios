@@ -154,7 +154,7 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
         banner.show()
     }
 
-    func displayError(_ style: NotificationBanner.BannerType, title: String, description: String?) {
+    func displayError(_ style: NotificationBanner.BannerType, title: String, description: String? = nil) {
         if let controller = orderedViewControllers[state.rawValue] as? AuthenticationViewControllerWithInput {
             controller.enableSubmit()
         }
