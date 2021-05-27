@@ -286,12 +286,11 @@
 
 "Notifications.FollowRecommendations" = "We found some people you may know, add them and get chatting today.";
 
-
 "Authentication.Skip" = "Skip";
 
 "Authentication.Email" = "Email";
 "Authentication.Pin" = "Login Code";
-"Authentication.Pin.Description" = "Didn’t receive the email? Check spam";
+"Authentication.Pin.Description" = "Didn't receive the email? Check spam";
 
 "Authentication.Name" = "Name";
 "Authentication.Name.Description" = "What's your name?";
