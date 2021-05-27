@@ -6,6 +6,7 @@ class AuthenticationNameViewController: AuthenticationTextInputViewController {
 
         // @TODO description
         title = NSLocalizedString("Authentication.Name", comment: "")
+        textField.text = NSLocalizedString("Authentication.Name", comment: "")
     }
 
     required init?(coder _: NSCoder) {

@@ -97,8 +97,7 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
                         self.output.presentLoggedInView()
                     }
                 case .register:
-                    break
-//                    self.output.present(state: .registration)
+                    self.output.present(state: .name)
                 }
             }
         }

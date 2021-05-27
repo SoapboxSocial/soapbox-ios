@@ -198,7 +198,14 @@ extension AuthenticationViewController: AuthenticationStartViewControllerDelegat
 
 extension AuthenticationViewController: AuthenticationTextInputViewControllerDelegate {
     func didSubmit(withText text: String?) {
-        // @TODO switch state and call appropriate function
+        switch state {
+        case .login:
+            output.login(email: text)
+        case .pin:
+            output.submitPin(pin: text)
+        default:
+            return
+        }
     }
 }
 

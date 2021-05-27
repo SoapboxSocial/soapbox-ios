@@ -12,8 +12,6 @@ class AuthenticationEmailViewController: AuthenticationTextInputViewController {
 
         textField.keyboardType = .emailAddress
         textField.textContentType = .emailAddress
-        textField.autocorrectionType = .no
-        textField.autocapitalizationType = .none
         textField.placeholder = NSLocalizedString("Authentication.Email", comment: "")
     }
 
