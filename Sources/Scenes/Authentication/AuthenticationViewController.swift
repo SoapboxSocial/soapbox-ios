@@ -98,9 +98,11 @@ class AuthenticationViewController: UIPageViewController {
         orderedViewControllers.append(pin)
 
         let name = AuthenticationNameViewController()
+        name.delegate = self
         orderedViewControllers.append(name)
 
         let username = AuthenticationUsernameViewController()
+        username.delegate = self
         orderedViewControllers.append(username)
 
         let follow = AuthenticationFollowViewController()
@@ -129,7 +131,7 @@ class AuthenticationViewController: UIPageViewController {
             return false
         }
 
-        didSubmit(pin: pin)
+        didSubmit(withText: pin)
         return true
     }
 }
@@ -194,15 +196,9 @@ extension AuthenticationViewController: AuthenticationStartViewControllerDelegat
     }
 }
 
-extension AuthenticationViewController: AuthenticationEmailViewControllerDelegate {
-    func didSubmit(email: String?) {
-        output.login(email: email)
-    }
-}
-
-extension AuthenticationViewController: AuthenticationPinViewControllerDelegate {
-    func didSubmit(pin: String?) {
-        output.submitPin(pin: pin)
+extension AuthenticationViewController: AuthenticationTextInputViewControllerDelegate {
+    func didSubmit(withText text: String?) {
+        // @TODO switch state and call appropriate function
     }
 }
 
