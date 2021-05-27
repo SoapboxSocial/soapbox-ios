@@ -95,8 +95,9 @@ class AuthenticationViewController: UIPageViewController {
         ])
 
         NSLayoutConstraint.activate([
-            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 18),
+            titleLabel.leftAnchor.constraint(equalTo: backButton.rightAnchor, constant: 10),
+            titleLabel.rightAnchor.constraint(equalTo: backButton.leftAnchor, constant: -10),
         ])
 
         NSLayoutConstraint.activate([
