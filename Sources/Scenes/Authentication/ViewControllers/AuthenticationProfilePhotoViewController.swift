@@ -24,7 +24,13 @@ private class ImageButton: UIButton {
     }
 }
 
+protocol AuthenticationProfilePhotoViewControllerDelegate: AnyObject {
+    func didUpload(image: UIImage)
+}
+
 class AuthenticationProfilePhotoViewController: UIViewController, AuthenticationStepViewController {
+    weak var delegate: AuthenticationProfilePhotoViewControllerDelegate?
+
     var hasBackButton: Bool {
         return false
     }
@@ -37,9 +43,21 @@ class AuthenticationProfilePhotoViewController: UIViewController, Authentication
         return NSLocalizedString("Authentication.ProfilePhoto.Description", comment: "")
     }
 
+    var image: UIImage?
+
     private let imageButton: ImageButton = {
         let button = ImageButton()
         button.addTarget(self, action: #selector(didTapImageButton), for: .touchUpInside)
+        return button
+    }()
+
+    let submitButton: Button = {
+        let button = Button(size: .large)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle(NSLocalizedString("next", comment: ""), for: .normal)
+        button.backgroundColor = UIColor.white.withAlphaComponent(0.3)
+        button.isEnabled = false
+        button.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
         return button
     }()
 
@@ -76,6 +94,14 @@ class AuthenticationProfilePhotoViewController: UIViewController, Authentication
         ])
 
         circleView.layer.cornerRadius = 180 / 2
+
+        view.addSubview(submitButton)
+
+        NSLayoutConstraint.activate([
+            submitButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            submitButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            submitButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+        ])
     }
 
     required init?(coder _: NSCoder) {
@@ -84,6 +110,14 @@ class AuthenticationProfilePhotoViewController: UIViewController, Authentication
 
     @objc private func didTapImageButton() {
         imagePicker.present(self)
+    }
+
+    @objc private func didSubmit() {
+        guard let image = image else {
+            return
+        }
+
+        delegate?.didUpload(image: image)
     }
 }
 
@@ -98,6 +132,10 @@ extension AuthenticationProfilePhotoViewController: ImagePickerDelegate {
         imageButton.contentVerticalAlignment = .fill
         imageButton.contentMode = .scaleAspectFill
 
-        // @TODO
+        self.image = profilePhoto
+
+        UIView.animate(withDuration: 0.3, animations: {
+            self.submitButton.isEnabled = true
+        })
     }
 }
