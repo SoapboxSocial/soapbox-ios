@@ -23,7 +23,7 @@ class AuthenticationViewController: UIPageViewController {
 
     private var orderedViewControllers = [AuthenticationStepViewController]()
 
-    private var state = AuthenticationInteractor.AuthenticationState.getStarted
+    private var state = AuthenticationInteractor.AuthenticationState.start
 
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -103,8 +103,6 @@ class AuthenticationViewController: UIPageViewController {
         let username = AuthenticationUsernameViewController()
         orderedViewControllers.append(username)
 
-        orderedViewControllers.append(AuthenticationRequestNotificationsViewController())
-
         let follow = AuthenticationFollowViewController()
         follow.delegate = self
         orderedViewControllers.append(follow)
@@ -145,7 +143,7 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
         let banner = NotificationBanner(title: NSLocalizedString("register_with_email_disabled_use_apple", comment: ""), style: .danger, type: .normal)
         banner.onTap = {
             DispatchQueue.main.async {
-                self.transitionTo(state: .getStarted)
+                self.transitionTo(state: .start)
             }
         }
 

@@ -1,6 +1,12 @@
 import UIKit
 
+protocol AuthenticationTextInputViewControllerDelegate: AnyObject {
+    func didSubmit(withText text: String?)
+}
+
 class AuthenticationTextInputViewController: ViewControllerWithKeyboardConstraint, AuthenticationStepViewController {
+    weak var delegate: AuthenticationTextInputViewControllerDelegate?
+
     var stepDescription: String? {
         return nil
     }
@@ -21,6 +27,7 @@ class AuthenticationTextInputViewController: ViewControllerWithKeyboardConstrain
         button.setTitle(NSLocalizedString("next", comment: ""), for: .normal)
         button.backgroundColor = UIColor.white.withAlphaComponent(0.3)
         button.isEnabled = false
+        button.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
         return button
     }()
 
@@ -61,6 +68,20 @@ class AuthenticationTextInputViewController: ViewControllerWithKeyboardConstrain
     override func viewWillDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         view.endEditing(true)
+    }
+
+    func enableSubmit() {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.submitButton.isEnabled = true
+        })
+    }
+
+    @objc private func didSubmit() {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.submitButton.isEnabled = false
+        })
+
+        delegate?.didSubmit(withText: textField.text)
     }
 }
 

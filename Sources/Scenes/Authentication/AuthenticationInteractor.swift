@@ -16,7 +16,7 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
     private var token: String?
 
     enum AuthenticationState: Int {
-        case getStarted, login, pin, name, username, profilePhoto, twitter, findFriends, requestNotifications, invite
+        case start, login, pin, name, username, profilePhoto, twitter, findFriends, permissions, invite
     }
 
     enum AuthenticationError {
@@ -129,7 +129,7 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
             case let .success((user, expires)):
                 self.store(token: self.token!, expires: expires, user: user)
                 DispatchQueue.main.async {
-                    self.output.present(state: .requestNotifications)
+                    self.output.present(state: .permissions)
 
                     NotificationManager.shared.delegate = self
                     NotificationManager.shared.requestAuthorization()

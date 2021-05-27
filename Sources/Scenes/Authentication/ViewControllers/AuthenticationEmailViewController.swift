@@ -1,12 +1,6 @@
 import UIKit
 
-protocol AuthenticationEmailViewControllerDelegate {
-    func didSubmit(email: String?)
-}
-
 class AuthenticationEmailViewController: AuthenticationTextInputViewController {
-    var delegate: AuthenticationEmailViewControllerDelegate?
-
     override var hasBackButton: Bool {
         return true
     }
@@ -15,7 +9,7 @@ class AuthenticationEmailViewController: AuthenticationTextInputViewController {
         super.init()
 
         title = NSLocalizedString("Authentication.Email", comment: "")
-        
+
         textField.keyboardType = .emailAddress
         textField.textContentType = .emailAddress
         textField.autocorrectionType = .no
@@ -30,16 +24,5 @@ class AuthenticationEmailViewController: AuthenticationTextInputViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         view.endEditing(true)
-    }
-
-    @objc private func didSubmit() {
-        submitButton.isEnabled = false
-        delegate?.didSubmit(email: textField.text)
-    }
-}
-
-extension AuthenticationEmailViewController: AuthenticationViewControllerWithInput {
-    func enableSubmit() {
-        submitButton.isEnabled = true
     }
 }
