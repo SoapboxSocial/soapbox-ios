@@ -200,17 +200,8 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
         let view = orderedViewControllers[state.rawValue]
 
         UIView.animate(withDuration: 0.3, animations: {
-            if view.hasBackButton {
-                self.backButton.isHidden = false
-            } else {
-                self.backButton.isHidden = true
-            }
-
-            if view.hasSkipButton {
-                self.skipButton.isHidden = false
-            } else {
-                self.skipButton.isHidden = true
-            }
+            self.backButton.isHidden = !view.hasBackButton
+            self.skipButton.isHidden = !view.hasSkipButton
 
             self.titleLabel.text = view.title
             self.descriptionLabel.text = view.stepDescription
