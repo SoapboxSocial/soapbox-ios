@@ -16,7 +16,7 @@ class AuthenticationTextInputViewController: ViewControllerWithKeyboardConstrain
     }
 
     var hasSkipButton: Bool {
-        return false
+        return true
     }
 
     let textField: TextField = {
@@ -63,12 +63,6 @@ class AuthenticationTextInputViewController: ViewControllerWithKeyboardConstrain
 
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        textField.becomeFirstResponder()
     }
 
     override func viewWillDisappear(_ animated: Bool) {

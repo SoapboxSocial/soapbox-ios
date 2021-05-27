@@ -13,6 +13,7 @@ class AuthenticationUsernameViewController: AuthenticationTextInputViewControlle
         super.init()
 
         title = NSLocalizedString("Authentication.Username", comment: "")
+        textField.placeholder = NSLocalizedString("Authentication.Username", comment: "")
     }
 
     required init?(coder _: NSCoder) {

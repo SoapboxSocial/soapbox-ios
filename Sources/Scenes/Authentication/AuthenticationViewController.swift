@@ -90,20 +90,19 @@ class AuthenticationViewController: UIPageViewController {
         backButton.layer.cornerRadius = 20
 
         NSLayoutConstraint.activate([
-            skipButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
-            skipButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            skipButton.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
+            skipButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20),
         ])
 
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 18),
-            titleLabel.leftAnchor.constraint(equalTo: backButton.rightAnchor, constant: 10),
-            titleLabel.rightAnchor.constraint(equalTo: backButton.leftAnchor, constant: -10),
+            titleLabel.centerYAnchor.constraint(equalTo: backButton.centerYAnchor),
+            titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
 
         NSLayoutConstraint.activate([
             descriptionLabel.topAnchor.constraint(equalTo: backButton.bottomAnchor, constant: 20),
             descriptionLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            descriptionLabel.rightAnchor.constraint(equalTo: view.leftAnchor, constant: -20),
+            descriptionLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
 
         let start = AuthenticationStartViewController()
@@ -129,9 +128,8 @@ class AuthenticationViewController: UIPageViewController {
         let photo = AuthenticationProfilePhotoViewController()
         orderedViewControllers.append(photo)
 
-        let follow = AuthenticationFollowViewController()
-        follow.delegate = self
-        orderedViewControllers.append(follow)
+        let permissions = AuthenticationPermissionsViewController()
+        orderedViewControllers.append(permissions)
 
         setViewControllers([orderedViewControllers[0]], direction: .forward, animated: false)
     }
@@ -235,11 +233,5 @@ extension AuthenticationViewController: AuthenticationTextInputViewControllerDel
         default:
             return
         }
-    }
-}
-
-extension AuthenticationViewController: AuthenticationFollowViewControllerDelegate {
-    func didSubmit(users: [Int]) {
-        output.follow(users: users)
     }
 }

@@ -302,3 +302,6 @@
 
 "Authentication.ProfilePhoto" = "Profile Photo";
 "Authentication.ProfilePhoto.Description" = "Set your profile photo so your friends will recognize you.";
+
+"Authentication.Permissions" = "Permissions";
+"Authentication.Permissions.Description" = "Soapbox is an audio-first app, we'll need few permissions from you.";
