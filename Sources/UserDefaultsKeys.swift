@@ -32,8 +32,4 @@ class UserDefaultsKeys {
     class var lastNotificationsStartupPrompted: String {
         return "lastNotificationsStartupPrompted"
     }
-
-    class var hasAskedForPMFSurvey: String {
-        return "hasAskedForPMFSurvey"
-    }
 }

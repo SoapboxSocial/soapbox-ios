@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+ - Thank you for everyone who recently completed our survey.
+
 ## [2.33.0] - 2021-05-19Z
 
  - We are working on getting better at recommending who you should follow!

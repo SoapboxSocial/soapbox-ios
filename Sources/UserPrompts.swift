@@ -76,19 +76,4 @@ class UserPrompts {
 
         return true
     }
-
-    static func promptForPMFSurvey(onView view: UIViewController) -> Bool {
-        if UserDefaults.standard.bool(forKey: UserDefaultsKeys.hasAskedForPMFSurvey) {
-            return false
-        }
-
-        if UserDefaults.standard.integer(forKey: UserDefaultsKeys.userId) == 19 {
-            return false
-        }
-
-        view.present(PMFSurveyPromptViewController(), animated: true)
-        UserDefaults.standard.set(true, forKey: UserDefaultsKeys.hasAskedForPMFSurvey)
-
-        return true
-    }
 }
