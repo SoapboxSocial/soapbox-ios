@@ -248,7 +248,7 @@ extension AuthenticationInteractor: ASAuthorizationControllerDelegate {
 
                     self.token = token
 
-//                    self.output.present(state: .registration)
+                    self.output.present(state: .name)
                 }
             }
         })
