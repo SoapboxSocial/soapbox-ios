@@ -13,6 +13,10 @@ class AuthenticationFollowViewController: UIViewController, AuthenticationStepVi
         return false
     }
 
+    var hasSkipButton: Bool {
+        return false
+    }
+
     var delegate: AuthenticationFollowViewControllerDelegate?
 
     private let label: UILabel = {

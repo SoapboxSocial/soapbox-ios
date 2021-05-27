@@ -16,6 +16,8 @@ protocol AuthenticationViewControllerOutput {
 protocol AuthenticationStepViewController where Self: UIViewController {
     var hasBackButton: Bool { get }
 
+    var hasSkipButton: Bool { get }
+
     var stepDescription: String? { get }
 }
 
@@ -56,6 +58,16 @@ class AuthenticationViewController: UIPageViewController {
         return button
     }()
 
+    private let skipButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.isHidden = true
+        button.setTitle(NSLocalizedString("Authentication.Skip", comment: ""), for: .normal)
+        button.titleLabel?.font = .rounded(forTextStyle: .body, weight: .semibold)
+        button.addTarget(self, action: #selector(didTapSkipButton), for: .touchUpInside)
+        return button
+    }()
+
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
@@ -66,6 +78,7 @@ class AuthenticationViewController: UIPageViewController {
         view.addSubview(titleLabel)
         view.addSubview(descriptionLabel)
         view.addSubview(backButton)
+        view.addSubview(skipButton)
 
         NSLayoutConstraint.activate([
             backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
@@ -75,6 +88,11 @@ class AuthenticationViewController: UIPageViewController {
         ])
 
         backButton.layer.cornerRadius = 20
+
+        NSLayoutConstraint.activate([
+            skipButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            skipButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+        ])
 
         NSLayoutConstraint.activate([
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -107,6 +125,9 @@ class AuthenticationViewController: UIPageViewController {
         username.delegate = self
         orderedViewControllers.append(username)
 
+        let photo = AuthenticationProfilePhotoViewController()
+        orderedViewControllers.append(photo)
+
         let follow = AuthenticationFollowViewController()
         follow.delegate = self
         orderedViewControllers.append(follow)
@@ -116,6 +137,10 @@ class AuthenticationViewController: UIPageViewController {
 
     @objc private func didTapBackButton() {
         transitionTo(state: AuthenticationInteractor.AuthenticationState(rawValue: state.rawValue - 1)!) // @TODO safe
+    }
+
+    @objc private func didTapSkipButton() {
+        transitionTo(state: AuthenticationInteractor.AuthenticationState(rawValue: state.rawValue + 1)!) // @TODO safe + skip on final
     }
 
     required init?(coder _: NSCoder) {
@@ -178,6 +203,12 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
                 self.backButton.isHidden = false
             } else {
                 self.backButton.isHidden = true
+            }
+
+            if view.hasSkipButton {
+                self.skipButton.isHidden = false
+            } else {
+                self.skipButton.isHidden = true
             }
 
             self.titleLabel.text = view.title

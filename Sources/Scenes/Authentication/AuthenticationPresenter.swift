@@ -31,7 +31,7 @@ class AuthenticationPresenter: AuthenticationInteractorOutput {
         case .invalidDisplayName:
             output.displayError(
                 .normal,
-                title: NSLocalizedString("Authentication.Error.InvalidDisplayName", comment: ""),
+                title: NSLocalizedString("Authentication.Error.InvalidName", comment: ""),
                 description: nil
             )
         case .usernameTaken:

@@ -286,6 +286,9 @@
 
 "Notifications.FollowRecommendations" = "We found some people you may know, add them and get chatting today.";
 
+
+"Authentication.Skip" = "Skip";
+
 "Authentication.Email" = "Email";
 "Authentication.Pin" = "Login Code";
 "Authentication.Pin.Description" = "Didn’t receive the email? Check spam";
@@ -296,4 +299,7 @@
 "Authentication.Username" = "Username";
 "Authentication.Username.Description" = "Choose a username for people to find you on Soapbox.";
 
-"Authentication.Error.InvalidDisplayName" = "Please enter a name.";
+"Authentication.Error.InvalidName" = "Please enter a name.";
+
+"Authentication.ProfilePhoto" = "Profile Photo";
+"Authentication.ProfilePhoto.Description" = "Set your profile photo so your friends will recognize you.";

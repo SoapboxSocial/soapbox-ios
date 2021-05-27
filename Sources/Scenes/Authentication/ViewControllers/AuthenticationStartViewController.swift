@@ -15,6 +15,10 @@ class AuthenticationStartViewController: UIViewController, AuthenticationStepVie
         return false
     }
 
+    var hasSkipButton: Bool {
+        return false
+    }
+
     var delegate: AuthenticationStartViewControllerDelegate?
 
     private let terms: UITextView = {

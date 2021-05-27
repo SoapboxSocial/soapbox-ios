@@ -15,6 +15,10 @@ class AuthenticationTextInputViewController: ViewControllerWithKeyboardConstrain
         return false
     }
 
+    var hasSkipButton: Bool {
+        return false
+    }
+
     let textField: TextField = {
         let textField = TextField(frame: .zero, theme: .light)
         textField.translatesAutoresizingMaskIntoConstraints = false
