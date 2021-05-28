@@ -12,7 +12,7 @@ struct PillButtonStyle: ButtonStyle {
         configuration.label
             .frame(height: 40)
             .padding(.horizontal, 20)
-            .background(Color(.systemPurple))
+            .background(Color(.brandColor))
             .clipShape(Capsule())
             .foregroundColor(.white)
             .font(.body.weight(.semibold))
@@ -56,7 +56,7 @@ struct IconButton: View {
             Image(systemName: icon).font(.body.weight(.semibold))
         }
             .buttonStyle(IconButtonStyle(
-                bgColor: type == .primary ? Color(.systemPurple) : Color(.systemGray5),
+                bgColor: type == .primary ? Color(.brandColor) : Color(.systemGray5),
                 fgColor: type == .primary ? .white : .primary)
             )
     }
@@ -66,7 +66,7 @@ struct ProfilePicture: View {
     var body: some View {
         Image(systemName: "")
             .frame(width: 80, height: 80)
-            .background(Color(.systemPurple))
+            .background(Color(.brandColor))
             .clipShape(Circle())
     }
 }
