@@ -31,15 +31,13 @@ struct PillButton: View {
     var action: () -> Void;
     
     var body: some View {
-        Button(action: action) {
-            Text(text)
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
-                .frame(height: 40)
-                .padding(.horizontal, 20)
-                .background(Color(.systemPurple))
-                .clipShape(Capsule())
-        }
+        Text(text)
+            .fontWeight(.semibold)
+            .foregroundColor(.white)
+            .frame(height: 40)
+            .padding(.horizontal, 20)
+            .background(Color(.systemPurple))
+            .clipShape(Capsule())
     }
 }
 
@@ -70,7 +68,7 @@ struct ProfileView: View {
     }
     
     var body: some View {
-        ScrollView {
+        ScrollView() {
             VStack(alignment: .leading, spacing: 20) {
                 VStack(alignment: .leading, spacing: 10) {
                     ProfilePicture()
@@ -84,6 +82,8 @@ struct ProfileView: View {
                     Text(following_count).bold() + Text(" ") + Text("Following").foregroundColor(.secondary)
                     
                     Text(followers_count).bold() + Text(" ") + Text("Followers").foregroundColor(.secondary)
+                    
+                    Spacer()
                 }
                 
                 HStack(spacing: 10) {
@@ -102,11 +102,24 @@ struct ProfileView: View {
                     IconButton(icon: "link", type: .secondary, action: {})
                     
                     IconButton(icon: "link", type: .secondary, action: {})
+                    
+                    Spacer()
                 }
-                
-                Spacer()
-            }
+            }.padding(20)
+            
+            Divider()
+            
+            VStack {
+                HStack {
+                    Text("Your Bubble")
+                    
+                    Spacer()
+                }
+            }.padding(20)
+               
         }
+        
+        
     }
 }
 
