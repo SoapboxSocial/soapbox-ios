@@ -68,40 +68,42 @@ struct ProfileView: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            VStack(alignment: .leading, spacing: 10) {
-                ProfilePicture()
-                
-                Text(display_name).font(.system(size: 24)).fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
-                
-                Text(bio)
-            }
-            
-            HStack(spacing: 10) {
-                Text(following).bold() + Text(" ") + Text("following_count").foregroundColor(.secondary)
-                
-                Text(followers_count).bold() + Text(" ") + Text("Followers").foregroundColor(.secondary)
-            }
-            
-            HStack(spacing: 10) {
-                if isFollowing {
-                    PillButton(text: "Following", action: toggleFollowing)
-                } else {
-                    PillButton(text: "Follow", action: toggleFollowing)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 10) {
+                    ProfilePicture()
+                    
+                    Text(display_name).font(.system(size: 24)).fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                    
+                    Text(bio)
                 }
                 
-                if isNotifying {
-                    IconButton(icon: "bell.fill", action: toggleNotifying)
-                } else {
-                    IconButton(icon: "bell", type: .secondary, action: toggleNotifying)
+                HStack(spacing: 10) {
+                    Text(following_count).bold() + Text(" ") + Text("Following").foregroundColor(.secondary)
+                    
+                    Text(followers_count).bold() + Text(" ") + Text("Followers").foregroundColor(.secondary)
                 }
                 
-                IconButton(icon: "link", type: .secondary, action: {})
+                HStack(spacing: 10) {
+                    if isFollowing {
+                        PillButton(text: "Following", action: toggleFollowing)
+                    } else {
+                        PillButton(text: "Follow", action: toggleFollowing)
+                    }
+                    
+                    if isNotifying {
+                        IconButton(icon: "bell.fill", action: toggleNotifying)
+                    } else {
+                        IconButton(icon: "bell", type: .secondary, action: toggleNotifying)
+                    }
+                    
+                    IconButton(icon: "link", type: .secondary, action: {})
+                    
+                    IconButton(icon: "link", type: .secondary, action: {})
+                }
                 
-                IconButton(icon: "link", type: .secondary, action: {})
+                Spacer()
             }
-            
-            Spacer()
         }
     }
 }
