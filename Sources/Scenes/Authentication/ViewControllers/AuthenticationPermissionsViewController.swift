@@ -3,6 +3,7 @@ import UIKit
 class PermissionButton: UIButton {
     let emoji: UILabel = {
         let label = UILabel()
+        label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .rounded(forTextStyle: .title1, weight: .semibold)
         return label
@@ -45,6 +46,7 @@ class PermissionButton: UIButton {
         NSLayoutConstraint.activate([
             emoji.leftAnchor.constraint(equalTo: leftAnchor),
             emoji.centerYAnchor.constraint(equalTo: stack.centerYAnchor),
+            emoji.widthAnchor.constraint(equalTo: emoji.heightAnchor),
         ])
 
         NSLayoutConstraint.activate([
