@@ -126,6 +126,7 @@ class AuthenticationViewController: UIPageViewController {
         orderedViewControllers.append(username)
 
         let photo = AuthenticationProfilePhotoViewController()
+        photo.delegate = self
         orderedViewControllers.append(photo)
 
         let permissions = AuthenticationPermissionsViewController()
@@ -135,7 +136,11 @@ class AuthenticationViewController: UIPageViewController {
     }
 
     @objc private func didTapBackButton() {
-        transitionTo(state: AuthenticationInteractor.AuthenticationState(rawValue: state.rawValue - 1)!) // @TODO safe
+        guard let state = AuthenticationInteractor.AuthenticationState(rawValue: state.rawValue - 1) else {
+            return
+        }
+
+        transitionTo(state: state)
     }
 
     @objc private func didTapSkipButton() {
@@ -233,5 +238,12 @@ extension AuthenticationViewController: AuthenticationTextInputViewControllerDel
         default:
             return
         }
+    }
+}
+
+extension AuthenticationViewController: AuthenticationProfilePhotoViewControllerDelegate {
+    func didUpload(image _: UIImage) {
+        // @TODO
+        transitionTo(state: .permissions)
     }
 }
