@@ -31,13 +31,15 @@ struct PillButton: View {
     var action: () -> Void;
     
     var body: some View {
-        Text(text)
-            .fontWeight(.semibold)
-            .foregroundColor(.white)
-            .frame(height: 40)
-            .padding(.horizontal, 20)
-            .background(Color(.systemPurple))
-            .clipShape(Capsule())
+        Button(action: action) {
+            Text(text)
+                .fontWeight(.semibold)
+                .foregroundColor(.white)
+                .frame(height: 40)
+                .padding(.horizontal, 20)
+                .background(Color(.systemPurple))
+                .clipShape(Capsule())
+        }
     }
 }
 
