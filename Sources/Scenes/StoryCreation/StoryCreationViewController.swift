@@ -36,7 +36,7 @@ class StoryCreationViewController: DrawerViewController {
     }()
 
     private let shareButton: UIButton = {
-        let button = Button(size: .regular)
+        let button = SoapButton(size: .regular)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .white
         button.setTitleColor(.black, for: .normal)

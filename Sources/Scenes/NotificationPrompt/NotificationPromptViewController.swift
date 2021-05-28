@@ -59,7 +59,7 @@ class NotificationPromptViewController: DrawerViewController {
         content.font = .rounded(forTextStyle: .body, weight: .semibold)
         view.addSubview(content)
 
-        let settingsButton = Button(size: .large)
+        let settingsButton = SoapButton(size: .large)
         settingsButton.translatesAutoresizingMaskIntoConstraints = false
         settingsButton.backgroundColor = .white
         settingsButton.setTitle("Go to Settings", for: .normal)

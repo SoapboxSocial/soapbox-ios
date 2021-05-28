@@ -23,7 +23,7 @@ class ButtonBar<E: Item>: UIView where E.RawValue == String {
 
     private let iconConfig = UIImage.SymbolConfiguration(weight: .semibold)
 
-    private(set) var buttons = [E: Button]()
+    private(set) var buttons = [E: SoapButton]()
 
     weak var delegate: ButtonBarDelegate?
 
@@ -37,7 +37,7 @@ class ButtonBar<E: Item>: UIView where E.RawValue == String {
         var anchor: NSLayoutXAxisAnchor!
 
         for item in E.allCases {
-            let button = Button()
+            let button = SoapButton()
             button.translatesAutoresizingMaskIntoConstraints = false
             button.setImage(UIImage(systemName: item.icon(), withConfiguration: iconConfig), for: .normal)
             button.tintColor = .brandColor

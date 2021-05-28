@@ -33,7 +33,7 @@ class PMFSurveyPromptViewController: DrawerViewController {
         content.font = .rounded(forTextStyle: .body, weight: .semibold)
         view.addSubview(content)
 
-        let survey = Button(size: .large)
+        let survey = SoapButton(size: .large)
         survey.translatesAutoresizingMaskIntoConstraints = false
         survey.setTitle("Complete Survey", for: .normal)
         survey.addTarget(self, action: #selector(openSurvey), for: .touchUpInside)

@@ -12,8 +12,8 @@ class InviteFriendsCell: UICollectionViewCell {
         return label
     }()
 
-    private let button: Button = {
-        let button = Button(size: .small)
+    private let button: SoapButton = {
+        let button = SoapButton(size: .small)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(NSLocalizedString("send_invite", comment: ""), for: .normal)
         return button

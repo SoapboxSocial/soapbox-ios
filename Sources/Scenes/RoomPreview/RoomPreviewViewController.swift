@@ -70,7 +70,7 @@ class RoomPreviewViewController: DrawerViewController {
         muted.textAlignment = .center
         view.addSubview(muted)
 
-        let button = Button(size: .regular)
+        let button = SoapButton(size: .regular)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(NSLocalizedString("join_in", comment: ""), for: .normal)
         button.addTarget(self, action: #selector(didTapJoin), for: .touchUpInside)

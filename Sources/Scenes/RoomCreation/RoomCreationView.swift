@@ -49,8 +49,8 @@ class RoomCreationView: DrawerViewController, UITextFieldDelegate {
         return label
     }()
 
-    private let button: Button = {
-        let button = Button(size: .large)
+    private let button: SoapButton = {
+        let button = SoapButton(size: .large)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(NSLocalizedString("start_room", comment: ""), for: .normal)
         button.backgroundColor = .white

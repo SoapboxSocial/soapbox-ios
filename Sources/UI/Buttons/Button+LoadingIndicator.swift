@@ -1,6 +1,6 @@
 import UIKit
 
-class ButtonWithLoadingIndicator: Button {
+class ButtonWithLoadingIndicator: SoapButton {
     var isLoading: Bool = false {
         didSet {
             if isLoading {
@@ -23,7 +23,7 @@ class ButtonWithLoadingIndicator: Button {
         return indicator
     }()
 
-    override init(size: Button.Size) {
+    override init(size: SoapButton.Size) {
         super.init(size: size)
 
         addSubview(activityIndicator)
