@@ -7,37 +7,58 @@
 
 import SwiftUI
 
-enum IconButtonStyle {
-    case primary, secondary
-}
-
-struct IconButton: View {
-    var icon: String;
-    var type: IconButtonStyle = .primary
-    var action: () -> Void;
-    
-    var body: some View {
-        Image(systemName: icon)
-            .font(.system(size: 16, weight: .semibold))
-            .frame(width: 40, height: 40)
-            .foregroundColor(type == .primary ? .white : .primary)
-            .background(type == .primary ? Color(.systemPurple) : Color(.systemGray5))
-            .clipShape(Circle())
-    }
-}
-
-struct PillButton: View {
-    var text: String;
-    var action: () -> Void;
-    
-    var body: some View {
-        Text(text)
-            .fontWeight(.semibold)
-            .foregroundColor(.white)
+struct PillButtonStyle: ButtonStyle {
+    func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label
             .frame(height: 40)
             .padding(.horizontal, 20)
             .background(Color(.systemPurple))
             .clipShape(Capsule())
+            .foregroundColor(.white)
+            .font(.body.weight(.semibold))
+            .scaleEffect(configuration.isPressed ? 0.95 : 1)
+            .animation(
+                .spring(response: 0.3, dampingFraction: 0.5, blendDuration: 0.4)
+                .delay(0)
+            )
+    }
+}
+
+struct IconButtonStyle: ButtonStyle {
+    var bgColor: Color
+    var fgColor: Color
+    
+    func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label
+            .frame(width: 40, height: 40)
+            .background(bgColor)
+            .foregroundColor(fgColor)
+            .clipShape(Circle())
+            .scaleEffect(configuration.isPressed ? 0.95 : 1)
+            .animation(
+                .spring(response: 0.3, dampingFraction: 0.5, blendDuration: 0.4)
+                .delay(0)
+            )
+    }
+}
+
+struct IconButton: View {
+    var icon: String;
+    var type: Style = .primary
+    var action: () -> Void;
+    
+    enum Style {
+        case primary, secondary
+    }
+    
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: icon).font(.body.weight(.semibold))
+        }
+            .buttonStyle(IconButtonStyle(
+                bgColor: type == .primary ? Color(.systemPurple) : Color(.systemGray5),
+                fgColor: type == .primary ? .white : .primary)
+            )
     }
 }
 
@@ -88,16 +109,12 @@ struct ProfileView: View {
                 
                 HStack(spacing: 10) {
                     if isFollowing {
-                        PillButton(text: "Following", action: toggleFollowing)
+                        Button("Following", action: toggleFollowing).buttonStyle(PillButtonStyle())
                     } else {
-                        PillButton(text: "Follow", action: toggleFollowing)
+                        Button("Follow", action: toggleFollowing).buttonStyle(PillButtonStyle())
                     }
                     
-                    if isNotifying {
-                        IconButton(icon: "bell.fill", action: toggleNotifying)
-                    } else {
-                        IconButton(icon: "bell", type: .secondary, action: toggleNotifying)
-                    }
+                    IconButton(icon: isNotifying ? "bell.fill" : "bell", type: isNotifying ? .primary : .secondary, action: toggleNotifying)
                     
                     IconButton(icon: "link", type: .secondary, action: {})
                     
@@ -111,7 +128,7 @@ struct ProfileView: View {
             
             VStack {
                 HStack {
-                    Text("Your Bubble")
+                    Text("Your Bubble").font(.system(size: 24)).bold()
                     
                     Spacer()
                 }
