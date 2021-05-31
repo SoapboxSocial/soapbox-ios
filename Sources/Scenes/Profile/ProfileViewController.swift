@@ -93,6 +93,8 @@ class ProfileViewController: ViewControllerWithRemoteContent<APIClient.Profile> 
 
         view.backgroundColor = .background
         
+        // NOTE: Try to add Profile to view controller
+        
         let childView = UIHostingController(rootView: ProfileView())
         addChild(childView)
         childView.view.frame = view.frame
