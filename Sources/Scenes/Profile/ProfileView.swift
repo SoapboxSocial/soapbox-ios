@@ -8,13 +8,16 @@
 import SwiftUI
 
 struct PillButtonStyle: ButtonStyle {
+    var bgColor: Color = Color(.brandColor)
+    var fgColor: Color = .white
+    
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
             .frame(height: 40)
             .padding(.horizontal, 20)
-            .background(Color(.brandColor))
+            .background(bgColor)
             .clipShape(Capsule())
-            .foregroundColor(.white)
+            .foregroundColor(fgColor)
             .font(.body.weight(.semibold))
             .scaleEffect(configuration.isPressed ? 0.95 : 1)
             .animation(
