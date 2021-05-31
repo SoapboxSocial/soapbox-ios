@@ -131,19 +131,36 @@ class AuthenticationPermissionsViewController: UIViewController, AuthenticationS
         return button
     }()
 
+    private let notificationsButton: PermissionButton = {
+        let button = PermissionButton()
+        button.title.text = "Microphone"
+        button.emoji.text = "🎙"
+        button.descriptionLabel.text = "So your friends can hear your beautiful voice."
+        return button
+    }()
+
     init() {
         super.init(nibName: nil, bundle: nil)
 
         title = NSLocalizedString("Authentication.Permissions", comment: "")
 
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.spacing = 0
+        stack.distribution = .fill
+        stack.alignment = .fill
+        stack.axis = .vertical
+        view.addSubview(stack)
+
         microphoneButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(micPermissions)))
 
-        view.addSubview(microphoneButton)
+        stack.addArrangedSubview(microphoneButton)
+        stack.addArrangedSubview(notificationsButton)
 
         NSLayoutConstraint.activate([
-            microphoneButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            microphoneButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
-            microphoneButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            stack.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            stack.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            stack.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
     }
 
@@ -152,7 +169,6 @@ class AuthenticationPermissionsViewController: UIViewController, AuthenticationS
     }
 
     @objc private func micPermissions() {
-//        debugPrint("poop")
         UIView.animate(withDuration: 0.3, animations: {
             self.microphoneButton.isSelected.toggle()
         })
