@@ -1,8 +1,9 @@
 import UIKit
 
-class PermissionButton: UIView {
+class PermissionButton: UIButton {
     let emoji: UILabel = {
         let label = UILabel()
+        label.isUserInteractionEnabled = false
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .rounded(forTextStyle: .title1, weight: .semibold)
@@ -11,6 +12,7 @@ class PermissionButton: UIView {
 
     let title: UILabel = {
         let label = UILabel()
+        label.isUserInteractionEnabled = false
         label.textColor = .white
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .rounded(forTextStyle: .headline, weight: .semibold)
@@ -19,6 +21,7 @@ class PermissionButton: UIView {
 
     let descriptionLabel: UILabel = {
         let label = UILabel()
+        label.isUserInteractionEnabled = false
         label.textColor = .white
         label.font = .rounded(forTextStyle: .subheadline, weight: .regular)
         label.numberOfLines = 0
@@ -28,34 +31,40 @@ class PermissionButton: UIView {
 
     let checkmark: UIView = {
         let view = UIView()
+        view.isUserInteractionEnabled = false
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .brandColor
 
         view.layer.borderWidth = 1.0
         view.layer.borderColor = UIColor.white.cgColor
 
-        let image = UIImageView(image: UIImage(systemName: "checkmark"))
+        let image = UIImageView(image: UIImage(
+            systemName: "checkmark",
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: 17, weight: .heavy)
+        ))
         image.tintColor = .brandColor
         image.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(image)
 
         NSLayoutConstraint.activate([
-            image.leftAnchor.constraint(equalTo: view.leftAnchor),
-            image.rightAnchor.constraint(equalTo: view.rightAnchor),
-            image.topAnchor.constraint(equalTo: view.topAnchor),
-            image.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            image.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            image.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            image.heightAnchor.constraint(equalToConstant: 20),
+            image.widthAnchor.constraint(equalToConstant: 20),
         ])
 
         return view
     }()
 
-    var isSelected: Bool = false {
+    override var isSelected: Bool {
         didSet {
-            if isSelected {
-                checkmark.backgroundColor = .white
-            } else {
-                checkmark.backgroundColor = .brandColor
-            }
+            UIView.animate(withDuration: 0.3, animations: {
+                if self.isSelected {
+                    self.checkmark.backgroundColor = .white
+                } else {
+                    self.checkmark.backgroundColor = .brandColor
+                }
+            })
         }
     }
 
@@ -68,10 +77,11 @@ class PermissionButton: UIView {
 
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.spacing = 0
+        stack.spacing = 5
         stack.distribution = .fill
         stack.alignment = .fill
         stack.axis = .vertical
+        stack.isUserInteractionEnabled = false
         addSubview(stack)
 
         stack.addArrangedSubview(title)
@@ -88,8 +98,8 @@ class PermissionButton: UIView {
         NSLayoutConstraint.activate([
             checkmark.rightAnchor.constraint(equalTo: rightAnchor),
             checkmark.centerYAnchor.constraint(equalTo: stack.centerYAnchor),
-            checkmark.widthAnchor.constraint(equalTo: emoji.heightAnchor),
-            checkmark.heightAnchor.constraint(equalTo: emoji.heightAnchor),
+            checkmark.widthAnchor.constraint(equalToConstant: 32),
+            checkmark.heightAnchor.constraint(equalToConstant: 32),
         ])
 
         NSLayoutConstraint.activate([
@@ -133,9 +143,9 @@ class AuthenticationPermissionsViewController: UIViewController, AuthenticationS
 
     private let notificationsButton: PermissionButton = {
         let button = PermissionButton()
-        button.title.text = "Microphone"
-        button.emoji.text = "🎙"
-        button.descriptionLabel.text = "So your friends can hear your beautiful voice."
+        button.title.text = "Notifications"
+        button.emoji.text = "🔔"
+        button.descriptionLabel.text = "So you'll know when your friends are online and chatting."
         return button
     }()
 
@@ -146,15 +156,16 @@ class AuthenticationPermissionsViewController: UIViewController, AuthenticationS
 
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.spacing = 0
+        stack.spacing = 30
         stack.distribution = .fill
         stack.alignment = .fill
         stack.axis = .vertical
         view.addSubview(stack)
 
-        microphoneButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(micPermissions)))
-
+        microphoneButton.addTarget(self, action: #selector(micPermissions), for: .touchUpInside)
         stack.addArrangedSubview(microphoneButton)
+
+        notificationsButton.addTarget(self, action: #selector(notificationPermissions), for: .touchUpInside)
         stack.addArrangedSubview(notificationsButton)
 
         NSLayoutConstraint.activate([
@@ -169,8 +180,10 @@ class AuthenticationPermissionsViewController: UIViewController, AuthenticationS
     }
 
     @objc private func micPermissions() {
-        UIView.animate(withDuration: 0.3, animations: {
-            self.microphoneButton.isSelected.toggle()
-        })
+        microphoneButton.isSelected.toggle()
+    }
+
+    @objc private func notificationPermissions() {
+        notificationsButton.isSelected.toggle()
     }
 }
