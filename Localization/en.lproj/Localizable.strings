@@ -305,3 +305,9 @@
 
 "Authentication.Permissions" = "Permissions";
 "Authentication.Permissions.Description" = "Soapbox is an audio-first app, we'll need few permissions from you.";
+
+"Authentication.Permissions.Microphone" = "Microphone";
+"Authentication.Permissions.Microphone.Description" = "So your friends can hear your beautiful voice.";
+
+"Authentication.Permissions.Notifications" = "Notifications";
+"Authentication.Permissions.Notifications.Description" = "So you'll know when your friends are online and chatting.";

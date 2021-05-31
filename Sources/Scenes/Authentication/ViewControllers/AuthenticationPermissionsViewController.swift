@@ -7,7 +7,7 @@ class AuthenticationPermissionsViewController: UIViewController, AuthenticationS
     }
 
     var hasSkipButton: Bool {
-        return true
+        return false
     }
 
     var stepDescription: String? {
@@ -16,17 +16,17 @@ class AuthenticationPermissionsViewController: UIViewController, AuthenticationS
 
     private let microphoneButton: PermissionButton = {
         let button = PermissionButton()
-        button.title.text = "Microphone"
+        button.title.text = NSLocalizedString("Authentication.Permissions.Microphone", comment: "")
         button.emoji.text = "🎙"
-        button.descriptionLabel.text = "So your friends can hear your beautiful voice."
+        button.descriptionLabel.text = NSLocalizedString("Authentication.Permissions.Microphone.Description", comment: "")
         return button
     }()
 
     private let notificationsButton: PermissionButton = {
         let button = PermissionButton()
-        button.title.text = "Notifications"
+        button.title.text = NSLocalizedString("Authentication.Permissions.Notifications", comment: "")
         button.emoji.text = "🔔"
-        button.descriptionLabel.text = "So you'll know when your friends are online and chatting."
+        button.descriptionLabel.text = NSLocalizedString("Authentication.Permissions.Notifications.Description", comment: "")
         return button
     }()
 
@@ -69,6 +69,10 @@ class AuthenticationPermissionsViewController: UIViewController, AuthenticationS
     }
 
     @objc private func notificationPermissions() {
-        notificationsButton.isSelected = true
+        NotificationManager.shared.requestAuthorization(callback: { _ in
+            DispatchQueue.main.async {
+                self.notificationsButton.isSelected = true
+            }
+        })
     }
 }
