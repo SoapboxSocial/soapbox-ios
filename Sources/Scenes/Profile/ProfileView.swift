@@ -120,6 +120,8 @@ struct ProfilePicture: View {
 }
 
 struct ProfileView: View {
+    var profile: APIClient.Profile
+    
     var display_name: String = "Amy"
     var bio: String = "About Me. Think you can beat my Flappy Bird score? Try me."
     var followers_count: String = "1,100"
@@ -150,15 +152,15 @@ struct ProfileView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     ProfilePicture()
                     
-                    Text(display_name).font(.system(size: 24)).fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                    Text(profile.displayName).font(.system(size: 24)).fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                     
-                    Text(bio)
+                    Text(profile.bio)
                 }
                 
                 HStack(spacing: 10) {
-                    Text(following_count).bold() + Text(" ") + Text("Following").foregroundColor(.secondary)
+                    Text(String(profile.following)).bold() + Text(" ") + Text("Following").foregroundColor(.secondary)
                     
-                    Text(followers_count).bold() + Text(" ") + Text("Followers").foregroundColor(.secondary)
+                    Text(String(profile.followers)).bold() + Text(" ") + Text("Followers").foregroundColor(.secondary)
                     
                     Spacer()
                 }
@@ -168,8 +170,10 @@ struct ProfileView: View {
                     
                     IconButton(icon: isNotifying ? Image(systemName: "bell.fill") : Image(systemName: "bell"), type: isNotifying ? .primary : .secondary, action: toggleNotifying)
                     
-                    IconButton(icon: Image("twitter-outline"), type: .secondary, action: {})
-                                        
+                    if (profile.linkedAccounts.first(where: { $0.provider == "twitter" }) != nil) {
+                        IconButton(icon: Image("twitter-outline"), type: .secondary, action: {})
+                    }
+                    
                     Spacer()
                 }
             }.padding(20)
@@ -192,6 +196,6 @@ struct ProfileView: View {
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileView().preferredColorScheme(.dark)
+        ProfileView().preferredColorScheme(.light)
     }
 }
