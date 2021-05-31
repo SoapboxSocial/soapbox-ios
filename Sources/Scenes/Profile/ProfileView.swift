@@ -36,6 +36,7 @@ struct IconButtonStyle: ButtonStyle {
             .frame(width: 40, height: 40)
             .background(bgColor)
             .foregroundColor(fgColor)
+            .font(.body.weight(.semibold))
             .clipShape(Circle())
             .scaleEffect(configuration.isPressed ? 0.95 : 1)
             .animation(
@@ -45,8 +46,52 @@ struct IconButtonStyle: ButtonStyle {
     }
 }
 
+struct ActivityIndicator: UIViewRepresentable {
+
+    @Binding var isAnimating: Bool
+    let style: UIActivityIndicatorView.Style = .medium
+
+    func makeUIView(context: UIViewRepresentableContext<ActivityIndicator>) -> UIActivityIndicatorView {
+        let indicator = UIActivityIndicatorView(style: style);
+        
+        indicator.color = UIColor.white
+        
+        return indicator
+    }
+
+    func updateUIView(_ uiView: UIActivityIndicatorView, context: UIViewRepresentableContext<ActivityIndicator>) {
+        isAnimating ? uiView.startAnimating() : uiView.stopAnimating()
+    }
+}
+
+extension String {
+   func widthOfString(usingFont font: UIFont) -> CGFloat {
+        let fontAttributes = [NSAttributedString.Key.font: font]
+        let size = self.size(withAttributes: fontAttributes)
+        return size.width
+    }
+}
+
+struct PillButtonWithLoadingIndicator: View {
+    var label: String
+    var isLoading: Bool
+    var action: () -> Void;
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 0) {
+                if isLoading {
+                    ActivityIndicator(isAnimating: .constant(isLoading))
+                } else {
+                    Text(label)
+                }
+            }.frame(width: label.widthOfString(usingFont: UIFont.systemFont(ofSize: 17, weight: .bold)))
+        }.buttonStyle(PillButtonStyle())
+    }
+}
+
 struct IconButton: View {
-    var icon: String;
+    var icon: Image;
     var type: Style = .primary
     var action: () -> Void;
     
@@ -56,7 +101,7 @@ struct IconButton: View {
     
     var body: some View {
         Button(action: action) {
-            Image(systemName: icon).font(.body.weight(.semibold))
+            icon
         }
             .buttonStyle(IconButtonStyle(
                 bgColor: type == .primary ? Color(.brandColor) : Color(.systemGray5),
@@ -83,8 +128,16 @@ struct ProfileView: View {
     @State private var isFollowing = true
     @State private var isNotifying = true
     
+    @State private var isLoading = false;
+    
     func toggleFollowing() {
-        isFollowing.toggle()
+        isLoading = true
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            isFollowing.toggle()
+            
+            isLoading = false
+        }
     }
     
     func toggleNotifying() {
@@ -111,18 +164,12 @@ struct ProfileView: View {
                 }
                 
                 HStack(spacing: 10) {
-                    if isFollowing {
-                        Button("Following", action: toggleFollowing).buttonStyle(PillButtonStyle())
-                    } else {
-                        Button("Follow", action: toggleFollowing).buttonStyle(PillButtonStyle())
-                    }
+                    PillButtonWithLoadingIndicator(label: isFollowing ? "Following" : "Follow", isLoading: isLoading, action: toggleFollowing)
                     
-                    IconButton(icon: isNotifying ? "bell.fill" : "bell", type: isNotifying ? .primary : .secondary, action: toggleNotifying)
+                    IconButton(icon: isNotifying ? Image(systemName: "bell.fill") : Image(systemName: "bell"), type: isNotifying ? .primary : .secondary, action: toggleNotifying)
                     
-                    IconButton(icon: "link", type: .secondary, action: {})
-                    
-                    IconButton(icon: "link", type: .secondary, action: {})
-                    
+                    IconButton(icon: Image("twitter-outline"), type: .secondary, action: {})
+                                        
                     Spacer()
                 }
             }.padding(20)
@@ -145,6 +192,6 @@ struct ProfileView: View {
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileView().preferredColorScheme(.light)
+        ProfileView().preferredColorScheme(.dark)
     }
 }
