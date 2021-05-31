@@ -144,7 +144,22 @@ class AuthenticationViewController: UIPageViewController {
     }
 
     @objc private func didTapSkipButton() {
-        transitionTo(state: AuthenticationInteractor.AuthenticationState(rawValue: state.rawValue + 1)!) // @TODO safe + skip on final
+        if state == .invite {
+            guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
+                return
+            }
+
+            return delegate.window!.set(
+                rootViewController: delegate.createLoggedIn(),
+                options: UIWindow.TransitionOptions(direction: .fade, style: .easeOut)
+            )
+        }
+
+        guard let state = AuthenticationInteractor.AuthenticationState(rawValue: state.rawValue + 1) else {
+            return
+        }
+
+        transitionTo(state: state)
     }
 
     required init?(coder _: NSCoder) {

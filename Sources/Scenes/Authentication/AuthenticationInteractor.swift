@@ -6,7 +6,6 @@ import UIWindowTransitions
 protocol AuthenticationInteractorOutput {
     func present(error: AuthenticationInteractor.AuthenticationError)
     func present(state: AuthenticationInteractor.AuthenticationState)
-    func presentLoggedInView()
 }
 
 class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
@@ -17,7 +16,7 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
     private var displayName: String!
 
     enum AuthenticationState: Int {
-        case start, login, pin, name, username, profilePhoto, twitter, findFriends, permissions, invite
+        case start, login, pin, name, username, profilePhoto, permissions, invite
     }
 
     enum AuthenticationError {
@@ -92,10 +91,8 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
 
                     self.store(token: self.token!, expires: expires, user: user)
 
-                    NotificationManager.shared.requestAuthorization()
-
                     DispatchQueue.main.async {
-                        self.output.presentLoggedInView()
+                        self.output.present(state: .invite)
                     }
                 case .register:
                     self.output.present(state: .name)
