@@ -133,6 +133,9 @@ class AuthenticationViewController: UIPageViewController {
         permissions.delegate = self
         orderedViewControllers.append(permissions)
 
+        let invite = AuthenticationInviteFriendsViewController()
+        orderedViewControllers.append(invite)
+
         setViewControllers([orderedViewControllers[0]], direction: .forward, animated: false)
     }
 
