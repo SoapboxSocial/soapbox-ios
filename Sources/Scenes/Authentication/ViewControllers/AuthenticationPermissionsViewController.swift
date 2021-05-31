@@ -1,6 +1,10 @@
 import AVFoundation
 import UIKit
 
+protocol AuthenticationPermissionsViewControllerDelegate: AnyObject {
+    func didFinishPermissions()
+}
+
 class AuthenticationPermissionsViewController: UIViewController, AuthenticationStepViewController {
     var hasBackButton: Bool {
         return false
@@ -13,6 +17,8 @@ class AuthenticationPermissionsViewController: UIViewController, AuthenticationS
     var stepDescription: String? {
         return NSLocalizedString("Authentication.Permissions.Description", comment: "")
     }
+
+    var delegate: AuthenticationPermissionsViewControllerDelegate?
 
     private let microphoneButton: PermissionButton = {
         let button = PermissionButton()
@@ -27,6 +33,16 @@ class AuthenticationPermissionsViewController: UIViewController, AuthenticationS
         button.title.text = NSLocalizedString("Authentication.Permissions.Notifications", comment: "")
         button.emoji.text = "🔔"
         button.descriptionLabel.text = NSLocalizedString("Authentication.Permissions.Notifications.Description", comment: "")
+        return button
+    }()
+
+    let submitButton: Button = {
+        let button = Button(size: .large)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle(NSLocalizedString("next", comment: ""), for: .normal)
+        button.backgroundColor = UIColor.white.withAlphaComponent(0.3)
+        button.isEnabled = false
+        button.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)
         return button
     }()
 
@@ -54,6 +70,14 @@ class AuthenticationPermissionsViewController: UIViewController, AuthenticationS
             stack.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
             stack.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
         ])
+
+        view.addSubview(submitButton)
+
+        NSLayoutConstraint.activate([
+            submitButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 20),
+            submitButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -20),
+            submitButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+        ])
     }
 
     required init?(coder _: NSCoder) {
@@ -64,6 +88,7 @@ class AuthenticationPermissionsViewController: UIViewController, AuthenticationS
         AVAudioSession.sharedInstance().requestRecordPermission { _ in
             DispatchQueue.main.async {
                 self.microphoneButton.isSelected = true
+                self.enableNext()
             }
         }
     }
@@ -72,7 +97,22 @@ class AuthenticationPermissionsViewController: UIViewController, AuthenticationS
         NotificationManager.shared.requestAuthorization(callback: { _ in
             DispatchQueue.main.async {
                 self.notificationsButton.isSelected = true
+                self.enableNext()
             }
+        })
+    }
+
+    @objc private func didSubmit() {
+        delegate?.didFinishPermissions()
+    }
+
+    private func enableNext() {
+        if !notificationsButton.isSelected || !microphoneButton.isSelected {
+            return
+        }
+
+        UIView.animate(withDuration: 0.3, animations: {
+            self.submitButton.isEnabled = true
         })
     }
 }

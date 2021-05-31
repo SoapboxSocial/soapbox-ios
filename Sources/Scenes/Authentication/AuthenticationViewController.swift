@@ -130,6 +130,7 @@ class AuthenticationViewController: UIPageViewController {
         orderedViewControllers.append(photo)
 
         let permissions = AuthenticationPermissionsViewController()
+        permissions.delegate = self
         orderedViewControllers.append(permissions)
 
         setViewControllers([orderedViewControllers[0]], direction: .forward, animated: false)
@@ -260,5 +261,11 @@ extension AuthenticationViewController: AuthenticationProfilePhotoViewController
     func didUpload(image _: UIImage) {
         // @TODO
         transitionTo(state: .permissions)
+    }
+}
+
+extension AuthenticationViewController: AuthenticationPermissionsViewControllerDelegate {
+    func didFinishPermissions() {
+        transitionTo(state: .invite)
     }
 }
