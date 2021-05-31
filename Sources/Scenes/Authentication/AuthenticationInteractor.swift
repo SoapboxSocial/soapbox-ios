@@ -233,10 +233,10 @@ extension AuthenticationInteractor: ASAuthorizationControllerDelegate {
 
                     self.store(token: token, expires: expires, user: user)
 
-                    NotificationManager.shared.requestAuthorization()
+//                    NotificationManager.shared.requestAuthorization()
 
                     DispatchQueue.main.async {
-                        self.output.presentLoggedInView()
+//                        self.output.presentLoggedInView()
                     }
                 case .register:
                     guard let token = response.3 else {
