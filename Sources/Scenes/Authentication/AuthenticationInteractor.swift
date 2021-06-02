@@ -16,7 +16,7 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
     private var displayName: String!
 
     enum AuthenticationState: Int {
-        case start, login, pin, name, username, profilePhoto, permissions, invite
+        case start, login, pin, name, username, profilePhoto, permissions, invite, completed
     }
 
     enum AuthenticationError {
@@ -144,6 +144,17 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
         }
     }
 
+    func submit(image: UIImage) {
+        api.edit(image: image, callback: { result in
+            switch result {
+            case let .failure(error):
+                return
+            case let .success:
+                return
+            }
+        })
+    }
+
     func follow(users: [Int]) {
         if users.count == 0 {
             return registrationCompleted()
@@ -233,11 +244,9 @@ extension AuthenticationInteractor: ASAuthorizationControllerDelegate {
 
                     self.store(token: token, expires: expires, user: user)
 
-//                    NotificationManager.shared.requestAuthorization()
+                    NotificationManager.shared.requestAuthorization()
 
-                    DispatchQueue.main.async {
-//                        self.output.presentLoggedInView()
-                    }
+                    self.output.present(state: .completed)
                 case .register:
                     guard let token = response.3 else {
                         return self.output.present(error: .general)

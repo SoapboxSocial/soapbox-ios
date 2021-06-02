@@ -27,8 +27,8 @@ class AuthenticationTextInputViewController: ViewControllerWithKeyboardConstrain
         return textField
     }()
 
-    let submitButton: Button = {
-        let button = Button(size: .large)
+    let submitButton: ButtonWithLoadingIndicator = {
+        let button = ButtonWithLoadingIndicator(size: .large)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(NSLocalizedString("next", comment: ""), for: .normal)
         button.backgroundColor = UIColor.white.withAlphaComponent(0.3)
@@ -71,15 +71,11 @@ class AuthenticationTextInputViewController: ViewControllerWithKeyboardConstrain
     }
 
     func enableSubmit() {
-        UIView.animate(withDuration: 0.3, animations: {
-            self.submitButton.isEnabled = true
-        })
+        submitButton.isLoading = false
     }
 
     @objc private func didSubmit() {
-        UIView.animate(withDuration: 0.3, animations: {
-            self.submitButton.isEnabled = false
-        })
+        submitButton.isLoading = true
 
         delegate?.didSubmit(withText: textField.text)
     }

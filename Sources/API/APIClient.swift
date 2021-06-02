@@ -121,6 +121,28 @@ class APIClient: Client {
         }
     }
 
+    func edit(image: UIImage, callback: @escaping (Result<Void, Error>) -> Void) {
+        AF.upload(
+            multipartFormData: { multipartFormData in
+                guard let imgData = image.jpegData(compressionQuality: 0.5) else {
+                    return callback(.failure(.preprocessing))
+                }
+
+                multipartFormData.append(imgData, withName: "profile", fileName: "profile", mimeType: "image/jpg")
+            },
+            to: Configuration.rootURL.appendingPathComponent("/v1/users/upload"),
+            headers: ["Authorization": token!]
+        )
+        .validate()
+        .response { result in
+            if let error = self.validate(result) {
+                return callback(.failure(error))
+            }
+
+            callback(.success(()))
+        }
+    }
+
     func completeRegistration(callback: @escaping (Result<Void, Error>) -> Void) {
         post(path: "/v1/login/register/completed", callback: callback)
     }

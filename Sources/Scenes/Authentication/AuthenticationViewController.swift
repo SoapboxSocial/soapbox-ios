@@ -1,14 +1,11 @@
 import UIKit
 
-protocol AuthenticationViewControllerWithInput {
-    func enableSubmit()
-}
-
 protocol AuthenticationViewControllerOutput {
     func login(email: String?)
     func loginWithApple()
     func submit(pin: String?)
     func submit(displayName: String?)
+    func submit(image: UIImage)
     func register(withUsername username: String?)
     func follow(users: [Int])
 }
@@ -19,6 +16,8 @@ protocol AuthenticationStepViewController where Self: UIViewController {
     var hasSkipButton: Bool { get }
 
     var stepDescription: String? { get }
+
+    func enableSubmit()
 }
 
 class AuthenticationViewController: UIPageViewController {
@@ -148,17 +147,6 @@ class AuthenticationViewController: UIPageViewController {
     }
 
     @objc private func didTapSkipButton() {
-        if state == .invite {
-            guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
-                return
-            }
-
-            return delegate.window!.set(
-                rootViewController: delegate.createLoggedIn(),
-                options: UIWindow.TransitionOptions(direction: .fade, style: .easeOut)
-            )
-        }
-
         guard let state = AuthenticationInteractor.AuthenticationState(rawValue: state.rawValue + 1) else {
             return
         }
@@ -188,9 +176,7 @@ class AuthenticationViewController: UIPageViewController {
 
 extension AuthenticationViewController: AuthenticationPresenterOutput {
     func displayEmailRegistrationDisabledError() {
-        if let controller = orderedViewControllers[state.rawValue] as? AuthenticationViewControllerWithInput {
-            controller.enableSubmit()
-        }
+        orderedViewControllers[state.rawValue].enableSubmit()
 
         let banner = NotificationBanner(title: NSLocalizedString("register_with_email_disabled_use_apple", comment: ""), style: .danger, type: .normal)
         banner.onTap = {
@@ -203,9 +189,7 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
     }
 
     func displayError(_ style: NotificationBanner.BannerType, title: String, description: String? = nil) {
-        if let controller = orderedViewControllers[state.rawValue] as? AuthenticationViewControllerWithInput {
-            controller.enableSubmit()
-        }
+        orderedViewControllers[state.rawValue].enableSubmit()
 
         let banner = NotificationBanner(title: title, subtitle: description, style: .danger, type: style)
         banner.show()
@@ -219,6 +203,10 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
 
         self.state = state
 
+        if state == .completed {
+            return transitionToHome()
+        }
+
         let view = orderedViewControllers[state.rawValue]
 
         UIView.animate(withDuration: 0.3, animations: {
@@ -230,6 +218,19 @@ extension AuthenticationViewController: AuthenticationPresenterOutput {
         })
 
         setViewControllers([view], direction: direction, animated: true)
+    }
+
+    private func transitionToHome() {
+        guard let delegate = UIApplication.shared.delegate as? AppDelegate else {
+            return
+        }
+
+        // @TODO CALL REGISTRATION COMPLETED
+
+        delegate.window!.set(
+            rootViewController: delegate.createLoggedIn(),
+            options: UIWindow.TransitionOptions(direction: .fade, style: .easeOut)
+        )
     }
 }
 
@@ -261,9 +262,8 @@ extension AuthenticationViewController: AuthenticationTextInputViewControllerDel
 }
 
 extension AuthenticationViewController: AuthenticationProfilePhotoViewControllerDelegate {
-    func didUpload(image _: UIImage) {
-        // @TODO
-        transitionTo(state: .permissions)
+    func didUpload(image: UIImage) {
+        output.submit(image: image)
     }
 }
 

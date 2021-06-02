@@ -51,8 +51,8 @@ class AuthenticationProfilePhotoViewController: UIViewController, Authentication
         return button
     }()
 
-    let submitButton: Button = {
-        let button = Button(size: .large)
+    let submitButton: ButtonWithLoadingIndicator = {
+        let button = ButtonWithLoadingIndicator(size: .large)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(NSLocalizedString("next", comment: ""), for: .normal)
         button.backgroundColor = UIColor.white.withAlphaComponent(0.3)
@@ -104,6 +104,10 @@ class AuthenticationProfilePhotoViewController: UIViewController, Authentication
         ])
     }
 
+    func enableSubmit() {
+        submitButton.isLoading = false
+    }
+
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -134,8 +138,6 @@ extension AuthenticationProfilePhotoViewController: ImagePickerDelegate {
 
         self.image = profilePhoto
 
-        UIView.animate(withDuration: 0.3, animations: {
-            self.submitButton.isEnabled = true
-        })
+        submitButton.isLoading = true
     }
 }

@@ -12,4 +12,6 @@ class AuthenticationInviteFriendsViewController: UIViewController, Authenticatio
     var hasBackButton: Bool {
         return false
     }
+
+    func enableSubmit() {}
 }

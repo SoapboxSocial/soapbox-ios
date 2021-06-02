@@ -84,6 +84,10 @@ class AuthenticationStartViewController: UIViewController, AuthenticationStepVie
         ])
     }
 
+    func enableSubmit() {
+        // do nothing
+    }
+
     private func termsNoticeAttributedString() -> NSMutableAttributedString {
         let notice = NSLocalizedString("login_terms_notice", comment: "")
         let termsText = NSLocalizedString("terms", comment: "")

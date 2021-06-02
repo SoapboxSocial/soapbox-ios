@@ -80,6 +80,10 @@ class AuthenticationPermissionsViewController: UIViewController, AuthenticationS
         ])
     }
 
+    func enableSubmit() {
+        // do nothing
+    }
+
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
