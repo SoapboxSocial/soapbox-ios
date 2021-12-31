@@ -6,7 +6,19 @@ protocol AuthenticationStartViewControllerDelegate {
     func didRequestSignInWithApple()
 }
 
-class AuthenticationStartViewController: UIViewController {
+class AuthenticationStartViewController: UIViewController, AuthenticationStepViewController {
+    var stepDescription: String? {
+        return ""
+    }
+
+    var hasBackButton: Bool {
+        return false
+    }
+
+    var hasSkipButton: Bool {
+        return false
+    }
+
     var delegate: AuthenticationStartViewControllerDelegate?
 
     private let terms: UITextView = {
@@ -16,7 +28,7 @@ class AuthenticationStartViewController: UIViewController {
         text.isEditable = false
         text.backgroundColor = .clear
         text.contentInset = .zero
-        text.font = .rounded(forTextStyle: .caption1, weight: .medium)
+        text.font = .rounded(forTextStyle: .subheadline, weight: .semibold)
         text.linkTextAttributes = [
             NSAttributedString.Key.foregroundColor: UIColor.white,
         ]
@@ -45,59 +57,12 @@ class AuthenticationStartViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let logo = UIImageView(image: UIImage(named: "soapbar"))
-        logo.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(logo)
-
-        let logoPlaceholder = UIView()
-        logoPlaceholder.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(logoPlaceholder)
-
-        let greenDude = UIImageView(image: UIImage(named: "greendude"))
-        greenDude.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(greenDude)
-
-        let blueDude = UIImageView(image: UIImage(named: "bluedude"))
-        blueDude.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(blueDude)
-
-        let pinkDude = UIImageView(image: UIImage(named: "pinkdude"))
-        pinkDude.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(pinkDude)
-
         view.addSubview(signInWithApple)
         view.addSubview(submitButton)
 
         terms.attributedText = termsNoticeAttributedString()
         terms.textAlignment = .center
         view.addSubview(terms)
-
-        NSLayoutConstraint.activate([
-            greenDude.leftAnchor.constraint(equalTo: view.leftAnchor),
-            greenDude.bottomAnchor.constraint(equalTo: submitButton.topAnchor, constant: -20),
-        ])
-
-        NSLayoutConstraint.activate([
-            blueDude.rightAnchor.constraint(equalTo: view.rightAnchor),
-            blueDude.bottomAnchor.constraint(equalTo: greenDude.centerYAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
-            pinkDude.leftAnchor.constraint(equalTo: view.leftAnchor),
-            pinkDude.topAnchor.constraint(equalTo: view.topAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
-            logoPlaceholder.leftAnchor.constraint(equalTo: view.leftAnchor),
-            logoPlaceholder.rightAnchor.constraint(equalTo: view.rightAnchor),
-            logoPlaceholder.topAnchor.constraint(equalTo: pinkDude.bottomAnchor),
-            logoPlaceholder.bottomAnchor.constraint(equalTo: blueDude.topAnchor),
-        ])
-
-        NSLayoutConstraint.activate([
-            logo.centerXAnchor.constraint(equalTo: logoPlaceholder.centerXAnchor),
-            logo.centerYAnchor.constraint(equalTo: logoPlaceholder.centerYAnchor),
-        ])
 
         NSLayoutConstraint.activate([
             signInWithApple.heightAnchor.constraint(equalTo: submitButton.heightAnchor),
@@ -117,6 +82,10 @@ class AuthenticationStartViewController: UIViewController {
             terms.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -40),
             terms.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
         ])
+    }
+
+    func enableSubmit() {
+        // do nothing
     }
 
     private func termsNoticeAttributedString() -> NSMutableAttributedString {

@@ -6,7 +6,6 @@ import UIWindowTransitions
 protocol AuthenticationInteractorOutput {
     func present(error: AuthenticationInteractor.AuthenticationError)
     func present(state: AuthenticationInteractor.AuthenticationState)
-    func presentLoggedInView()
 }
 
 class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
@@ -14,13 +13,14 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
     private let api: APIClient
 
     private var token: String?
+    private var displayName: String!
 
     enum AuthenticationState: Int {
-        case getStarted, login, pin, registration, requestNotifications, follow, success
+        case start, login, pin, name, username, profilePhoto, permissions, invite, completed
     }
 
     enum AuthenticationError {
-        case invalidEmail, invalidPin, invalidUsername, usernameTaken, missingProfileImage, general, registerWithEmailDisabled
+        case invalidEmail, invalidPin, invalidUsername, invalidDisplayName, usernameTaken, general, registerWithEmailDisabled
     }
 
     init(output: AuthenticationInteractorOutput, api: APIClient) {
@@ -64,7 +64,7 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
         authController.performRequests()
     }
 
-    func submitPin(pin: String?) {
+    func submit(pin: String?) {
         guard let input = pin else {
             return output.present(error: .invalidPin)
         }
@@ -91,28 +91,38 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
 
                     self.store(token: self.token!, expires: expires, user: user)
 
-                    NotificationManager.shared.requestAuthorization()
-
                     DispatchQueue.main.async {
-                        self.output.presentLoggedInView()
+                        self.output.present(state: .invite)
                     }
                 case .register:
-                    self.output.present(state: .registration)
+                    self.output.present(state: .name)
                 }
             }
         }
     }
 
-    func register(username: String?, displayName: String?, image: UIImage?) {
+    func submit(displayName: String?) {
+        guard let input = displayName else {
+            output.present(error: .invalidDisplayName)
+            return
+        }
+
+        let name = input.trimmingCharacters(in: .whitespacesAndNewlines)
+        if input == "" {
+            output.present(error: .invalidDisplayName)
+            return
+        }
+
+        self.displayName = name
+        output.present(state: .username)
+    }
+
+    func register(withUsername username: String?) {
         guard let usernameInput = username, isValidUsername(usernameInput) else {
             return output.present(error: .invalidUsername)
         }
 
-        guard let profileImage = image else {
-            return output.present(error: .missingProfileImage)
-        }
-
-        api.register(token: token!, username: usernameInput, displayName: displayName ?? usernameInput, image: profileImage) { result in
+        api.register(token: token!, username: usernameInput, displayName: displayName) { result in
             switch result {
             case let .failure(error):
                 switch error {
@@ -128,13 +138,21 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
             case let .success((user, expires)):
                 self.store(token: self.token!, expires: expires, user: user)
                 DispatchQueue.main.async {
-                    self.output.present(state: .requestNotifications)
-
-                    NotificationManager.shared.delegate = self
-                    NotificationManager.shared.requestAuthorization()
+                    self.output.present(state: .profilePhoto)
                 }
             }
         }
+    }
+
+    func submit(image: UIImage) {
+        api.edit(image: image, callback: { result in
+            switch result {
+            case let .failure(error):
+                return
+            case let .success:
+                return
+            }
+        })
     }
 
     func follow(users: [Int]) {
@@ -158,7 +176,7 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
             }
         })
 
-        output.present(state: .success)
+//        output.present(state: .success)
     }
 
     private func isValidUsername(_ username: String) -> Bool {
@@ -190,16 +208,6 @@ class AuthenticationInteractor: NSObject, AuthenticationViewControllerOutput {
         try? keychain.set(String(Int(Date().timeIntervalSince1970) + expires), key: "expiry")
 
         UserStore.store(user: user)
-    }
-}
-
-extension AuthenticationInteractor: NotificationManagerDelegate {
-    func deviceTokenFailedToSet() {
-        output.present(state: .follow)
-    }
-
-    func deviceTokenWasSet() {
-        output.present(state: .follow)
     }
 }
 
@@ -238,9 +246,7 @@ extension AuthenticationInteractor: ASAuthorizationControllerDelegate {
 
                     NotificationManager.shared.requestAuthorization()
 
-                    DispatchQueue.main.async {
-                        self.output.presentLoggedInView()
-                    }
+                    self.output.present(state: .completed)
                 case .register:
                     guard let token = response.3 else {
                         return self.output.present(error: .general)
@@ -248,7 +254,7 @@ extension AuthenticationInteractor: ASAuthorizationControllerDelegate {
 
                     self.token = token
 
-                    self.output.present(state: .registration)
+                    self.output.present(state: .name)
                 }
             }
         })

@@ -15,7 +15,6 @@ PODS:
     - SnapKit (~> 5.0.1)
   - Siren (5.8.1)
   - SnapKit (5.0.1)
-  - SwiftConfettiView (0.1.0)
   - Swifter (2.5.0)
   - SwiftProtobuf (1.17.0)
   - UIWindowTransitions (1.0.0)
@@ -32,7 +31,6 @@ DEPENDENCIES:
   - KeychainAccess
   - NotificationBannerSwift
   - Siren
-  - SwiftConfettiView
   - "Swifter (from `git@github.com:mattdonnelly/Swifter.git`)"
   - SwiftProtobuf
   - UIWindowTransitions
@@ -51,7 +49,6 @@ SPEC REPOS:
     - NotificationBannerSwift
     - Siren
     - SnapKit
-    - SwiftConfettiView
     - SwiftProtobuf
     - UIWindowTransitions
 
@@ -84,11 +81,10 @@ SPEC CHECKSUMS:
   NotificationBannerSwift: 7021be2338f8f29cf424b0aca43da462bf9e2a1a
   Siren: de768099aff1f1c9acda4247064788a4940b4bf3
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
-  SwiftConfettiView: 1bdbc2e6913b6b1c76d8070802b212508ad5c352
   Swifter: 4c2f8cf320c2f751c10128f841d8e9bd8609d988
   SwiftProtobuf: 9c85136c6ba74b0a1b84279dbf0f6db8efb714e0
   UIWindowTransitions: 2237083382e11f100db7de934041bba0c4669c86
 
-PODFILE CHECKSUM: a3326625314027ca9400b4e1af13d652f700ef54
+PODFILE CHECKSUM: c10badbc8db03cfc239205760cb09131995a79fe
 
 COCOAPODS: 1.10.1

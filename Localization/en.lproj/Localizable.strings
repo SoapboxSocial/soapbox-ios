@@ -28,9 +28,7 @@
 "username" = "Username";
 "display_name" = "Display Name";
 
-"email_login" = "Enter email";
 "enter_your_pin_received_by_mail" = "Enter pin sent to email";
-"check_spam" = "Didn’t receive the email? Check spam";
 "pin" = "Pin";
 
 "invalid_email" = "Please enter a valid email";
@@ -287,3 +285,29 @@
 "FollowRecommendations.YouMayKnow" = "You may know";
 
 "Notifications.FollowRecommendations" = "We found some people you may know, add them and get chatting today.";
+
+"Authentication.Skip" = "Skip";
+
+"Authentication.Email" = "Email";
+"Authentication.Pin" = "Login Code";
+"Authentication.Pin.Description" = "Didn't receive the email? Check spam";
+
+"Authentication.Name" = "Name";
+"Authentication.Name.Description" = "What's your name?";
+
+"Authentication.Username" = "Username";
+"Authentication.Username.Description" = "Choose a username for people to find you on Soapbox.";
+
+"Authentication.Error.InvalidName" = "Please enter a name.";
+
+"Authentication.ProfilePhoto" = "Profile Photo";
+"Authentication.ProfilePhoto.Description" = "Set your profile photo so your friends will recognize you.";
+
+"Authentication.Permissions" = "Permissions";
+"Authentication.Permissions.Description" = "Soapbox is an audio-first app, we'll need few permissions from you.";
+
+"Authentication.Permissions.Microphone" = "Microphone";
+"Authentication.Permissions.Microphone.Description" = "So your friends can hear your beautiful voice.";
+
+"Authentication.Permissions.Notifications" = "Notifications";
+"Authentication.Permissions.Notifications.Description" = "So you'll know when your friends are online and chatting.";

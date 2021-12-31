@@ -26,8 +26,10 @@ class NotificationManager {
         delegate?.deviceTokenFailedToSet()
     }
 
-    func requestAuthorization() {
+    func requestAuthorization(callback: ((Bool) -> Void)? = nil) {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, _ in
+            callback?(granted)
+
             guard granted else {
                 DispatchQueue.main.async {
                     self.delegate?.deviceTokenFailedToSet()

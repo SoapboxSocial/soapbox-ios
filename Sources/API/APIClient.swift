@@ -97,20 +97,12 @@ class APIClient: Client {
             }
     }
 
-    func register(token: String, username: String, displayName: String, image: UIImage, callback: @escaping (Result<(User, Int), Error>) -> Void) {
-        AF.upload(
-            multipartFormData: { multipartFormData in
-                guard let imgData = image.jpegData(compressionQuality: 0.5) else {
-                    return callback(.failure(.preprocessing))
-                }
-
-                multipartFormData.append(imgData, withName: "profile", fileName: "profile", mimeType: "image/jpg")
-
-                multipartFormData.append(displayName.data(using: String.Encoding.utf8)!, withName: "display_name")
-                multipartFormData.append(username.data(using: String.Encoding.utf8)!, withName: "username")
-                multipartFormData.append(token.data(using: String.Encoding.utf8)!, withName: "token")
-            },
-            to: Configuration.rootURL.appendingPathComponent("/v1/login/register")
+    func register(token: String, username: String, displayName: String, callback: @escaping (Result<(User, Int), Error>) -> Void) {
+        AF.request(
+            Configuration.rootURL.appendingPathComponent("/v1/login/register"),
+            method: .post,
+            parameters: ["display_name": displayName, "username": username, "token": token],
+            encoding: URLEncoding.default
         )
         .validate()
         .response { result in
@@ -126,6 +118,28 @@ class APIClient: Client {
                     callback(.success((user, expires)))
                 }
             })
+        }
+    }
+
+    func edit(image: UIImage, callback: @escaping (Result<Void, Error>) -> Void) {
+        AF.upload(
+            multipartFormData: { multipartFormData in
+                guard let imgData = image.jpegData(compressionQuality: 0.5) else {
+                    return callback(.failure(.preprocessing))
+                }
+
+                multipartFormData.append(imgData, withName: "profile", fileName: "profile", mimeType: "image/jpg")
+            },
+            to: Configuration.rootURL.appendingPathComponent("/v1/users/upload"),
+            headers: ["Authorization": token!]
+        )
+        .validate()
+        .response { result in
+            if let error = self.validate(result) {
+                return callback(.failure(error))
+            }
+
+            callback(.success(()))
         }
     }
 
