@@ -125,10 +125,6 @@ class NavigationViewController: UINavigationController {
         return UserPrompts.promptForNotifications(onView: self)
     }
 
-    func presentSurveyPrompt() -> Bool {
-        return UserPrompts.promptForPMFSurvey(onView: self)
-    }
-
     private func showClosedError() {
         let banner = NotificationBanner(
             title: NSLocalizedString("room_was_closed", comment: ""),
