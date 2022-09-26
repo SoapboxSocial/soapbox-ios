@@ -1,6 +1,7 @@
 import AlamofireImage
 import GSImageViewerController
 import UIKit
+import SwiftUI
 
 protocol ProfileViewControllerOutput {
     func loadData()
@@ -86,12 +87,20 @@ class ProfileViewController: ViewControllerWithRemoteContent<APIClient.Profile> 
         badge.isUserInteractionEnabled = true
         return badge
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .background
-
+        
+        // NOTE: Try to add Profile to view controller
+        
+        let childView = UIHostingController(rootView: ProfileView())
+        addChild(childView)
+        childView.view.frame = view.frame
+        view.addSubview(childView.view)
+        childView.didMove(toParent: self)
+        
         contentView.addSubview(stack)
 
         headerView.button.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)

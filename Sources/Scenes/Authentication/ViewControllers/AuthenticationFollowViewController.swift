@@ -17,8 +17,8 @@ class AuthenticationFollowViewController: UIViewController {
         return label
     }()
 
-    private let followButton: Button = {
-        let button = Button(size: .large)
+    private let followButton: SoapButton = {
+        let button = SoapButton(size: .large)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(NSLocalizedString("follow", comment: ""), for: .normal)
         button.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)

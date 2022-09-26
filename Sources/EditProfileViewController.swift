@@ -10,7 +10,7 @@ class EditProfileViewController: UIViewController {
     private var imageView: EditImageButton!
     private var imagePicker: ImagePicker!
     private var bioTextField: TextView!
-    private var twitterButton: Button!
+    private var twitterButton: SoapButton!
 
     private var image: UIImage?
 
@@ -86,7 +86,7 @@ class EditProfileViewController: UIViewController {
         bioTextField.text = user.bio
         view.addSubview(bioTextField)
 
-        twitterButton = Button(size: .small)
+        twitterButton = SoapButton(size: .small)
         twitterButton.backgroundColor = .twitter
         twitterButton.translatesAutoresizingMaskIntoConstraints = false
         twitterButton.setTitle(NSLocalizedString("connect_twitter", comment: ""), for: .normal)

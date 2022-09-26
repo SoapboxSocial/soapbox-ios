@@ -25,8 +25,8 @@ class AuthenticationRegistrationViewController: ViewControllerWithKeyboardConstr
         return textField
     }()
 
-    private let submitButton: Button = {
-        let button = Button(size: .large)
+    private let submitButton: SoapButton = {
+        let button = SoapButton(size: .large)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(NSLocalizedString("submit", comment: ""), for: .normal)
         button.addTarget(self, action: #selector(didSubmit), for: .touchUpInside)

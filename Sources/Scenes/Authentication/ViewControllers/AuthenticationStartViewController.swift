@@ -24,8 +24,8 @@ class AuthenticationStartViewController: UIViewController {
         return text
     }()
 
-    private let submitButton: Button = {
-        let button = Button(size: .large)
+    private let submitButton: SoapButton = {
+        let button = SoapButton(size: .large)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle(NSLocalizedString("continue_email", comment: ""), for: .normal)
         button.setTitleColor(.black, for: .normal)

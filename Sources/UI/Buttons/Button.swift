@@ -1,6 +1,6 @@
 import UIKit
 
-class Button: ButtonWithSpringAnimation {
+class SoapButton: ButtonWithSpringAnimation {
     open override var isEnabled: Bool {
         didSet {
             alpha = isEnabled ? 1.0 : 0.25
